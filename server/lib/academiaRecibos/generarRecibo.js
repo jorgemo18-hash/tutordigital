@@ -27,6 +27,10 @@ import { calcularTotalesFamilia } from "./totalesFamilia.js";
 export async function generarReciboParaFamilia(admin, {
   tenantId, familiaId, alumnosActivos, mes, anio, concepto, descuentosPorAlumno = {},
   descuentoPuntualPct = 0, descuentoPuntualNota = null, numeroReciboPrevio = null,
+  // Si el recibo que se rehace estaba PAGADO, el nuevo nace pagado con la
+  // misma fecha: el pago es un hecho, no depende de la versión del papel
+  // (ver modosDeRegenerar.js, 24/09/2026).
+  pagadoPrevio = false, fechaPagoPrevia = null,
 }) {
   // El cálculo vive en totalesFamilia.js y lo comparte con la previsión de
   // "Por emitir" de Finanzas: una pantalla que promete un importe y un lote
@@ -56,6 +60,7 @@ export async function generarReciboParaFamilia(admin, {
       total_neto: totalNeto,
       descuento_puntual_pct: descuentoPuntualPct,
       descuento_puntual_nota: descuentoPuntualNota,
+      ...(pagadoPrevio ? { estado: "pagado", fecha_pago: fechaPagoPrevia } : {}),
     })
     .select("id")
     .single();

@@ -262,6 +262,7 @@ async function loadTests() {
     "./academiaFinanzasIngresosPendientes.test.mjs",
     "./academiaFinanzas/porEmitir.test.mjs",
     "./academiaFinanzas/sinReciboDrawer.test.mjs",
+    "./academiaRecibos/regenerarSinPerderPagos.test.mjs",
     "./academiaFinanzas/ingresosCobradoVsFacturado.test.mjs",
     "./academiaFinanzas/tarjetaMetodoCompleta.test.mjs",
     "./academiaFinanzas/aniosDisponibles.test.mjs",

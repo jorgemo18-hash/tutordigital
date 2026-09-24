@@ -40,8 +40,20 @@ export function elegirAccion({ titulo, opciones }) {
     opciones.forEach((opcion, i) => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = `ac-btn ${i === 0 ? "primary" : "copper"}`;
-      btn.textContent = opcion.label;
+      // `peligro`: la opción que destruye algo, en rojo. `detalle`: una
+      // línea debajo que dice qué va a pasar, con números.
+      btn.className = `ac-btn ${opcion.peligro ? "danger" : i === 0 ? "primary" : "copper"}`;
+      if (opcion.detalle) btn.classList.add("ac-btn--con-detalle");
+      const rotulo = document.createElement("span");
+      rotulo.className = "ac-btn-rotulo";
+      rotulo.textContent = opcion.label;
+      btn.appendChild(rotulo);
+      if (opcion.detalle) {
+        const detalle = document.createElement("span");
+        detalle.className = "ac-btn-detalle";
+        detalle.textContent = opcion.detalle;
+        btn.appendChild(detalle);
+      }
       btn.addEventListener("click", () => cerrar(opcion));
       acciones.appendChild(btn);
       if (i === 0) botonDefecto = btn;

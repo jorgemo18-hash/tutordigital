@@ -1,7 +1,7 @@
 import { buildPeriodoSelector } from "./periodoSelector.js";
 import { buildRegenerarBoton } from "./regenerarBoton.js";
 import { elegirAccion } from "./elegirAccionDialog.js";
-import { opcionesLote } from "./acciones/opcionesAccion.js";
+import { opcionesLote, opcionesRegenerarRecibos } from "./acciones/opcionesAccion.js";
 
 function textoOkLote(base) {
   return (resultado) => (resultado?.fallidos ? `${base} (${resultado.fallidos} error${resultado.fallidos > 1 ? "es" : ""})` : base);
@@ -27,6 +27,7 @@ export function buildCabecera({
   mesesEnviados,
   anioActualSistema,
   hayPendientes,
+  resumenRecibos = {},
   onCambiarPeriodo,
   onRegenerar,
   onEnviar,
@@ -55,7 +56,15 @@ export function buildCabecera({
       ejecutar: async () => {
         const opcion = await elegirAccionFn({ titulo: "¿Qué quieres regenerar?", opciones: opcionesLote("Regenerar") });
         if (!opcion) throw cancelado();
-        return onRegenerar(opcion.tipo);
+        // Con recibos de por medio, SIEMPRE se pregunta cuáles: por defecto,
+        // crear los que faltan sin tocar nada (24/09/2026).
+        let modo = null;
+        if (opcion.tipo !== "solo_informe") {
+          const elegido = await elegirAccionFn({ titulo: "¿Qué recibos?", opciones: opcionesRegenerarRecibos(resumenRecibos) });
+          if (!elegido) throw cancelado();
+          modo = elegido.modo;
+        }
+        return onRegenerar(opcion.tipo, modo);
       },
       onError: (err) => { msg.textContent = err.message || "No se pudo regenerar."; msg.className = "ac-drawer-msg error"; },
     })

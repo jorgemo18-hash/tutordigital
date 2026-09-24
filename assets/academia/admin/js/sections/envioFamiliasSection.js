@@ -9,6 +9,7 @@ import { separarPorAlumnosActivos, buildPieSinActivos } from "./envioFamilias/fa
 import { buildPanelDerecho } from "./envioFamilias/panelDerecho.js";
 import { calcularEstadoFamilia, familiaPendienteParaTipo } from "./envioFamilias/estadoFamilia.js";
 import { regenerarLote } from "./envioFamilias/acciones/accionesLote.js";
+import { resumenDeRecibos } from "./envioFamilias/acciones/resumenDeRecibos.js";
 import { buildResultadoEnvioTodos, clasificarEnvio } from "./envioFamilias/resultadoEnvio.js";
 import { buildAvisoSinPrecio } from "./envioFamilias/alumnosSinPrecio.js";
 import { buildAvisoSinEmail } from "./envioFamilias/familiasSinEmail.js";
@@ -119,10 +120,11 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
         // sin lanzar. El resultado se devuelve (no se descarta) para que
         // el botón pueda mostrar cuántos fallaron, si alguno lo hizo — ver
         // textoOkLote en cabecera.js.
-        onRegenerar: async (tipo) => {
+        resumenRecibos: resumenDeRecibos(familias),
+        onRegenerar: async (tipo, modo) => {
           try {
             return await regenerarLote(tipo, {
-              mes, anio, hayRecibosEnPeriodo: familias.some((f) => f.recibo),
+              mes, anio, modo: modo || "faltan", hayRecibosEnPeriodo: familias.some((f) => f.recibo),
               regenerarRecibosFn: regenerarRecibos, generarRecibosFn: generarRecibos, regenerarInformesFn: regenerarInformes,
             });
           } finally {

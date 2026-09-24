@@ -38,3 +38,39 @@ export function opcionesFamilia(verbo, alumnosActivos) {
   }
   return opciones;
 }
+
+// QUÉ RECIBOS SE REHACEN (Jorge, 24/09/2026, después de perder las marcas de
+// pago de septiembre con un "Regenerar"): *"que cuando des te diga todos o
+// solo los que no están creados o no tocar los que ya estén enviados"*.
+// La primera, la que no toca nada, es la de por defecto. Cada opción dice
+// con números QUÉ va a pasar, que es lo que le faltaba al aviso de antes.
+// `resumen`: { sinRecibo, borradores, enviados, pagados } del mes.
+const plural = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
+
+export function opcionesRegenerarRecibos({ sinRecibo = 0, borradores = 0, enviados = 0, pagados = 0 } = {}) {
+  const yaHechos = enviados + pagados;
+  return [
+    {
+      modo: "faltan",
+      label: "Crear solo los que faltan",
+      detalle: sinRecibo
+        ? `${plural(sinRecibo, "familia sin recibo", "familias sin recibo")}. No toca ninguno de los que ya hay.`
+        : "Ahora mismo no falta ninguno. No toca los que ya hay.",
+    },
+    {
+      modo: "borradores",
+      label: "Rehacer los que no se han enviado",
+      detalle: (borradores ? `Rehace ${plural(borradores, "borrador", "borradores")} y crea los que faltan.` : "No hay borradores que rehacer: solo crea los que faltan.")
+        + (yaHechos ? ` Los ${yaHechos} enviados o pagados no se tocan.` : ""),
+    },
+    {
+      modo: "todos",
+      label: "Rehacer todos, también los enviados",
+      detalle: [
+        enviados ? `${plural(enviados, "enviado vuelve", "enviados vuelven")} a «Sin enviar» y habrá que reenviarlos.` : "",
+        pagados ? `${plural(pagados, "pagado sigue marcado como pagado", "pagados siguen marcados como pagados")}.` : "",
+      ].filter(Boolean).join(" ") || "Rehace todos los recibos del mes.",
+      peligro: true,
+    },
+  ];
+}

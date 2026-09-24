@@ -73,7 +73,7 @@ function cuerpo(doc, filas) {
   for (const fila of filas) lista.appendChild(filaDeFamilia(fila, doc));
   const pista = doc.createElement("p");
   pista.className = "ac-sinrecibo-pista";
-  pista.textContent = "Para emitirles el recibo, ve a «Envío a familias» y genera los que faltan.";
+  pista.textContent = "Para emitirles el recibo: «Envío a familias» → Regenerar → «Crear solo los que faltan». Esa opción no toca los recibos que ya existen.";
   body.append(resumen, lista, pista);
   return body;
 }

@@ -112,7 +112,7 @@ export async function fetchRecibosDelMes(admin, tenantId, { mes, anio }) {
   const { data, error } = await admin
     .from("academia_recibos")
     .select(
-      "id, familia_id, numero_recibo, concepto, estado, total_neto, fecha_envio, descuento_puntual_pct, descuento_puntual_nota"
+      "id, familia_id, numero_recibo, concepto, estado, total_neto, fecha_envio, fecha_pago, descuento_puntual_pct, descuento_puntual_nota"
     )
     .eq("tenant_id", tenantId)
     .eq("mes", mes)

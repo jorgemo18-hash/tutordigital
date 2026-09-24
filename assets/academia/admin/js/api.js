@@ -293,11 +293,11 @@ export async function fetchMesesEnviados(anio) {
   return data.meses || [];
 }
 
-export async function regenerarRecibos({ mes, anio, confirmar = false }) {
+export async function regenerarRecibos({ mes, anio, confirmar = false, modo = "borradores" }) {
   return callJson("/api/v1/academia/recibos/regenerar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mes, anio, confirmar }),
+    body: JSON.stringify({ mes, anio, confirmar, modo }),
   });
 }
 
