@@ -39,8 +39,9 @@ export async function run({ test, assert }) {
       const r = initMtRecursos({
         pageEl, headerEl, mtState, centro: "IES",
         crearPantallaFn: (op) => { creadas.push(op); return { render() {}, revisarAsignatura() { revisada += 1; } }; },
+        crearCurriculoFn: () => ({ render() {} }),
       });
-      assert.ok(headerEl.textContent.includes("Hojas de"));
+      assert.ok(headerEl.textContent.includes("currículo"));
       assert.ok(pageEl.querySelector(".rc.rc--movil"));
       r.alMostrar();
       r.alMostrar();
@@ -49,6 +50,9 @@ export async function run({ test, assert }) {
       assert.equal(creadas[0].centro, "IES");
       assert.equal(creadas[0].getAsignatura(), "Música");
       assert.equal(revisada, 1, "al volver a la pestaña se revisa la asignatura");
+      // Dos pestañas dentro de Recursos: Hojas (abierta) y Currículo.
+      const pestanas = [...pageEl.querySelectorAll(".rc-subnav__btn")].map((b) => b.textContent);
+      assert.deepEqual(pestanas, ["Hojas de ejercicios", "Currículo"]);
     } finally {
       globalThis.window = prev.window;
       globalThis.document = prev.document;

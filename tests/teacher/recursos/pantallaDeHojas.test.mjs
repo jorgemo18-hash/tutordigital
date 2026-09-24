@@ -377,10 +377,21 @@ export async function run({ test, assert }) {
     assert.equal(raiz.textContent, "Sin permiso");
   });
 
-  test("Recursos se monta UNA vez, la primera que se abre", () => {
-    let veces = 0;
-    const al = crearMontajeDeRecursos({ raiz: {}, crearPantallaFn: () => ({ render: () => { veces += 1; } }) });
+  test("Recursos se monta UNA vez, la primera que se abre; el Currículo, al abrir su pestaña", () => {
+    let hojas = 0;
+    let curriculo = 0;
+    const raiz = document.createElement("section");
+    const al = crearMontajeDeRecursos({
+      raiz, doc: document,
+      crearPantallaFn: () => ({ render: () => { hojas += 1; } }),
+      crearCurriculoFn: () => ({ render: () => { curriculo += 1; } }),
+    });
     al(); al(); al();
-    assert.equal(veces, 1);
+    assert.equal(hojas, 1);
+    assert.equal(curriculo, 0, "no se carga hasta que se abre");
+    raiz.querySelectorAll(".rc-subnav__btn")[1].click();
+    raiz.querySelectorAll(".rc-subnav__btn")[1].click();
+    assert.equal(curriculo, 1);
+    assert.equal(raiz.querySelector('[data-sub="hojas"]').hidden, true);
   });
 }

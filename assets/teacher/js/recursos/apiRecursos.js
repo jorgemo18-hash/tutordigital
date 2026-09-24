@@ -22,6 +22,7 @@ export function crearCallJson({ apiFetchFn = apiFetch, clearSessionFn = clearSes
 }
 
 export const BASE_HOJAS = "/api/v1/recursos/hojas";
+export const BASE_CURRICULO = "/api/v1/recursos/curriculo";
 
 // Además del generador, las hojas GUARDADAS (paso 2, migración 129): se
 // guarda la que se imprime, con su código, y se puede volver a abrir.
@@ -34,6 +35,9 @@ export function crearApiDeRecursos(deps) {
       method: "POST", headers: json, body: JSON.stringify({ hoja, huecos, parametros }),
     }),
     recientes: () => callJsonFn(`${BASE_HOJAS}/recientes`),
+    // El currículo oficial (server/lib/curriculo/): materias y una materia/curso.
+    materiasDelCurriculo: () => callJsonFn(BASE_CURRICULO),
+    curriculo: (slug, curso) => callJsonFn(`${BASE_CURRICULO}/${encodeURIComponent(slug)}${curso ? `?curso=${curso}` : ""}`),
     abrir: (id) => callJsonFn(`${BASE_HOJAS}/guardadas/${encodeURIComponent(id)}`),
   };
 }

@@ -1,6 +1,7 @@
 // mobileTeacherRecursos.js — Recursos → Hojas de ejercicios en el panel móvil.
 //
-// Es LA MISMA PANTALLA que en escritorio (js/recursos/pantallaDeHojas.js),
+// Recursos: Hojas de ejercicios y Currículo, como en escritorio. La de
+// hojas es LA MISMA PANTALLA que en escritorio (js/recursos/pantallaDeHojas.js),
 // en modo móvil: una columna, la barra de contexto plegada, el folio a
 // pantalla completa, subir/bajar con botones y los diálogos como hojas
 // inferiores (ver styles/teacher-new/11-recursos-movil.css). Una sola
@@ -8,25 +9,37 @@
 //
 // Se monta la primera vez que se abre la pestaña, como en escritorio.
 import { createPantallaDeHojas } from "../js/recursos/pantallaDeHojas.js";
+import { createPantallaDeCurriculo } from "../js/recursos/curriculo/pantallaDeCurriculo.js";
+import { montarRecursosConPestanas } from "../js/recursos/recursosConPestanas.js";
+import { crearApiDeRecursos } from "../js/recursos/apiRecursos.js";
 
-export function initMtRecursos({ pageEl, headerEl, mtState, centro = "", crearPantallaFn = createPantallaDeHojas }) {
+export function initMtRecursos({
+  pageEl, headerEl, mtState, centro = "", crearPantallaFn = createPantallaDeHojas,
+  crearCurriculoFn = createPantallaDeCurriculo,
+}) {
   headerEl.innerHTML = `
     <div class="mt-header-eyebrow">Recursos</div>
-    <div class="mt-header-title">Hojas de <em>ejercicios</em></div>`;
+    <div class="mt-header-title">Hojas y <em>currículo</em></div>`;
   const raiz = document.createElement("section");
   raiz.className = "rc rc--movil";
   raiz.id = "mtRecursosContent";
   pageEl.appendChild(raiz);
 
-  let pantalla = null;
+  const getAsignatura = () => mtState.currentSubjectName || "";
+  let recursos = null;
   return {
     alMostrar() {
-      if (pantalla) {
-        pantalla.revisarAsignatura();
+      if (recursos) {
+        recursos.revisarAsignatura();
         return;
       }
-      pantalla = crearPantallaFn({ centro, movil: true, getAsignatura: () => mtState.currentSubjectName || "" });
-      pantalla.render(raiz);
+      recursos = montarRecursosConPestanas({
+        raiz,
+        crear: {
+          hojas: () => crearPantallaFn({ centro, movil: true, getAsignatura }),
+          curriculo: () => crearCurriculoFn({ api: crearApiDeRecursos(), getAsignatura }),
+        },
+      });
     },
   };
 }
