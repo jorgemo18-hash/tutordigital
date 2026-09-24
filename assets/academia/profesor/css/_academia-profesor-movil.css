@@ -1,0 +1,17 @@
+/* EL PANEL DEL PROFESOR DE LA ACADEMIA EN EL MÓVIL (24/09/2026).
+   La cabecera eran tres columnas (marca | pestañas | botones) y en 390 px
+   empujaba la página a 620 px. Ahora: marca y botones arriba, pestañas en
+   su propia fila. Con `.ac-frame` delante porque este archivo se importa
+   antes que las reglas de escritorio y con la misma especificidad perdía. */
+@media (max-width: 720px) {
+  .ac-frame .ac-shell { padding: calc(env(safe-area-inset-top, 0px) + 10px) 10px 10px; gap: 10px; }
+  .ac-frame .ac-header { grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding: 12px; }
+  .ac-frame .ac-h-center { grid-column: 1 / -1; grid-row: 2; }
+  .ac-frame .ac-h-actions { flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+  .ac-frame .ac-pill { padding: 8px 11px; }
+  .ac-frame .ac-brand-name { font-size: 20px; }
+  .ac-frame .ac-tabs { width: 100%; justify-content: center; }
+  .ac-frame .ac-tab { flex: 1; justify-content: center; padding: 9px 12px; }
+  .ac-frame .ac-body { padding: 16px 12px; min-width: 0; }
+  .ac-frame .ac-title { font-size: 26px; white-space: normal; }
+}

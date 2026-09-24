@@ -96,7 +96,9 @@ export function buildHorarioGrid(franjas, dias, bloques, maxPorFranja = 0, { sin
   // días no cabían y el viernes se salía de la pantalla. Con minmax(0,…)
   // las columnas se reparten el ancho que haya y los nombres largos se
   // cortan con puntos suspensivos, que ya estaba previsto en el CSS.
-  grid.style.gridTemplateColumns = `76px repeat(${dias.length}, minmax(0, 1fr))`;
+  // El número de días va en una variable y las columnas las pone el CSS:
+  // así el móvil puede darles un ancho mínimo (diario-horario.css).
+  grid.style.setProperty("--ac-dias", String(dias.length));
 
   const corner = document.createElement("div");
   corner.className = "ac-corner";
