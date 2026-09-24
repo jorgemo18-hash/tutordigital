@@ -114,6 +114,13 @@ export async function run({ test }) {
     }
   });
 
+  test("REGRESIÓN: el autor apunta a auth.users, no a profiles (8 de 13 usuarios no tenían perfil y crear daba 500)", () => {
+    const sql = fs.readFileSync(`${RAIZ}supabase/migrations/133_autor_de_hojas_y_programaciones.sql`, "utf8");
+    for (const t of ["contenido_hojas", "programaciones"]) {
+      assert.match(sql, new RegExp(`alter table public\\.${t}\\s+add constraint ${t}_creada_por_fkey\\s+foreign key \\(creada_por\\) references auth\\.users\\(id\\)`));
+    }
+  });
+
   test("la migración 130 crea la tabla con RLS", () => {
     const sql = fs.readFileSync(`${RAIZ}supabase/migrations/130_programaciones.sql`, "utf8");
     assert.ok(sql.includes("create table if not exists public.programaciones"));
