@@ -169,6 +169,17 @@ export async function run({ test, assert }) {
     ]);
   });
 
+  test("«A = ___» con espacios duros va junto: la línea no parte entre la letra y su hueco", () => {
+    const cont = doc.createElement("p");
+    cont.appendChild(fragmentoConHuecos("A\u00a0=\u00a0___  B\u00a0=\u00a0___ y z = ___", doc));
+    const grupos = [...cont.querySelectorAll(".hj-hueco-con-etiqueta")];
+    assert.deepEqual(grupos.map((g) => g.textContent), ["A\u00a0=\u00a0", "B\u00a0=\u00a0"]);
+    assert.ok(grupos.every((g) => g.querySelector(".hj-hueco")));
+    assert.equal(cont.querySelectorAll(".hj-hueco").length, 3, "el hueco con espacio normal, suelto como siempre");
+    assert.equal(cont.textContent, "A\u00a0=\u00a0  B\u00a0=\u00a0 y z = ");
+    assert.match(CSS, /\.hj-hueco-con-etiqueta\s*\{[^}]*white-space:\s*nowrap/);
+  });
+
   test("dos guiones bajos no son un hueco (así se puede escribir a__b sin sorpresas)", () => {
     const cont = doc.createElement("p");
     cont.appendChild(fragmentoConHuecos("a__b", doc));

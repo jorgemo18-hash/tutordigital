@@ -216,6 +216,7 @@ async function loadTests() {
     "./generadorEjercicios/naturales.test.mjs",
     "./generadorEjercicios/medida.test.mjs",
     "./generadorEjercicios/geometria.test.mjs",
+    "./generadorEjercicios/funciones.test.mjs",
     "./backup/avisoDeBackup.test.mjs",
     "./academiaFamilias/familiasSinAlumnosActivos.test.mjs",
     "./academiaInscripciones/erroresVisibles.test.mjs",

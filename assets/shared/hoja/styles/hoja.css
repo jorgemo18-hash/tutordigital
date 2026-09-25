@@ -388,6 +388,11 @@
   border-bottom: 0.5pt solid var(--hj-filete);
 }
 
+/* «A = ___» que no se parte al final de la línea (ver js/huecos.js). */
+.hj-hueco-con-etiqueta {
+  white-space: nowrap;
+}
+
 /* Respuestas de unos cuantos caracteres a dos columnas (ver js/huecos.js). */
 .hj-hueco--medio {
   min-width: 30mm;

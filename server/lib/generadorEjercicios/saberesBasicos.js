@@ -32,6 +32,7 @@ export const NOMBRE_DEL_SABER = {
   "D.2": "Modelo matemático",
   "D.3": "Variable",
   "D.4": "Igualdad y desigualdad",
+  "D.5": "Relaciones y funciones",
 };
 
 const CANTIDADES = "Números enteros, fraccionarios y decimales y raíces en la expresión de cantidades en contextos de la vida cotidiana.";
@@ -54,6 +55,10 @@ const AREAS = "Longitud de la circunferencia, áreas en figuras planas: deducci�
 const REPRESENTACIONES_AREAS = "Representaciones planas de objetos en la visualización y resolución de problemas de áreas.";
 const CLASIFICACION = "Figuras geométricas planas y tridimensionales: descripción y clasificación de en función de sus propiedades o características.";
 const MODELIZACION_GEO = "Modelización geométrica: relaciones numéricas y algebraicas en la resolución de problemas.";
+// Funciones (D.5).
+const CUANTITATIVAS = "Relaciones cuantitativas en situaciones de la vida cotidiana y clases de funciones que las modelizan.";
+const LINEALES_REPRESENTACION = "Relaciones lineales: identificación y comparación de diferentes modos de representación, tablas, gráficas o expresiones algebraicas, y sus propiedades a partir de ellas.";
+const INFORMACION_FUNCION = "Estrategias de deducción de la información relevante de una función mediante el uso de diferentes representaciones simbólicas.";
 // Naturales: el conteo (A.1) y el cálculo mental (A.3).
 const RECUENTO = "Estrategias variadas de recuento sistemático en situaciones de la vida cotidiana.";
 const TAMANO = "Adaptación del conteo al tamaño de los números en problemas de la vida cotidiana.";
@@ -84,7 +89,8 @@ export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INV
   REGLA, MODELIZACION, VARIABLE, EQUIVALENCIA, ECUACIONES,
   RAZONES, PORCENTAJES, SITUACIONES, PORCENTAJES_RAROS, CONSUMO, FINANCIERA,
   ESTIMACIONES, EFECTO, RECUENTO, TAMANO, MENTAL, ATRIBUTOS, ELECCION, CONJETURAS,
-  ANGULOS, AREAS, REPRESENTACIONES_AREAS, CLASIFICACION, MODELIZACION_GEO };
+  ANGULOS, AREAS, REPRESENTACIONES_AREAS, CLASIFICACION, MODELIZACION_GEO,
+  CUANTITATIVAS, LINEALES_REPRESENTACION, INFORMACION_FUNCION };
 
 // Por tema y número de concepto (ver conceptosDelTema.js).
 const VINETA_POR_CONCEPTO = {
@@ -137,6 +143,14 @@ const VINETA_POR_CONCEPTO = {
     4: { texto: MENTAL },
     5: { texto: RECUENTO },
     6: { texto: OPERACIONES },
+  },
+  // Funciones y gráficas.
+  "c0000000-0000-4000-8000-000000000011": {
+    1: { texto: LINEALES_REPRESENTACION },
+    2: { texto: LINEALES_REPRESENTACION },
+    3: { texto: LINEALES_REPRESENTACION },
+    4: { texto: INFORMACION_FUNCION },
+    5: { texto: CUANTITATIVAS },
   },
   // Geometría plana.
   "c0000000-0000-4000-8000-000000000010": {

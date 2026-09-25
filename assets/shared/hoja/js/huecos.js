@@ -31,12 +31,24 @@ export function fragmentoConHuecos(texto = "", doc = globalThis.document) {
   MARCA.lastIndex = 0;
   let m = MARCA.exec(cadena);
   while (m) {
-    if (m.index > ultimo) frag.appendChild(doc.createTextNode(cadena.slice(ultimo, m.index)));
+    const antes = cadena.slice(ultimo, m.index);
+    // «A\u00a0=\u00a0___»: con un espacio duro justo antes, la etiqueta y su
+    // hueco van juntos y la línea nunca parte entre ellos (el navegador
+    // parte antes de un bloque en línea aunque le preceda un espacio duro).
+    const pegado = antes.endsWith("\u00a0") ? antes.slice(antes.lastIndexOf(" ") + 1) : "";
+    if (antes.length > pegado.length) frag.appendChild(doc.createTextNode(antes.slice(0, antes.length - pegado.length)));
     const hueco = doc.createElement("span");
     hueco.className = m[0].length >= LARGO_DEL_HUECO_LARGO
       ? "hj-hueco hj-hueco--largo"
       : m[0].length >= LARGO_DEL_HUECO_MEDIO ? "hj-hueco hj-hueco--medio" : "hj-hueco";
-    frag.appendChild(hueco);
+    if (pegado) {
+      const grupo = doc.createElement("span");
+      grupo.className = "hj-hueco-con-etiqueta";
+      grupo.append(doc.createTextNode(pegado), hueco);
+      frag.appendChild(grupo);
+    } else {
+      frag.appendChild(hueco);
+    }
     ultimo = m.index + m[0].length;
     m = MARCA.exec(cadena);
   }

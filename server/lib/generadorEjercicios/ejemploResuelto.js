@@ -34,7 +34,12 @@ import { explicaApartado } from "./explicacion.js";
 // `(-3)^2` con `-3^2`, así que resolver uno de los dos miembros de una pareja
 // regala justo lo que el alumno tiene que descubrir. Y además sus apartados
 // van de dos en dos: uno de más rompe las filas.
-export const SIN_EJEMPLO = new Set(["pares_con_y_sin_parentesis"]);
+//
+// `lee_grafica` no tiene un procedimiento que imitar: cada gráfica cuenta
+// su historia y las preguntas son de mirar. El ejemplo (una gráfica más,
+// resuelta y a todo lo ancho) costaba 70 mm y dejaba la hoja del objetivo
+// con una sola actividad. La explicación de cada respuesta se guarda igual.
+export const SIN_EJEMPLO = new Set(["pares_con_y_sin_parentesis", "lee_grafica"]);
 
 // Marca un apartado como resuelto: se imprime con la respuesta puesta y con
 // una línea de explicación debajo.
