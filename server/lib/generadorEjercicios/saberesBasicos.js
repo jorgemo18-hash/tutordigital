@@ -23,6 +23,8 @@ export const NOMBRE_DEL_SABER = {
   "A.4": "Relaciones",
   "A.5": "Razonamiento proporcional",
   "A.6": "Educación financiera",
+  "B.1": "Magnitud",
+  "B.3": "Estimación y relaciones",
   "D.1": "Patrones",
   "D.2": "Modelo matemático",
   "D.3": "Variable",
@@ -37,6 +39,10 @@ const PATRONES = "Patrones y regularidades numéricas.";
 const COMPARACION = "Comparación y ordenación de fracciones, decimales y porcentajes: situación exacta o aproximada en la recta numérica.";
 const GRANDES = "Números grandes y pequeños: notación exponencial y científica y uso de la calculadora.";
 const FACTORES = "Factores, múltiplos y divisores. Factorización en números primos para resolver problemas: estrategias y herramientas.";
+// Sistema métrico (sentido de la medida, B.1 y B.3).
+const ATRIBUTOS = "Atributos mensurables de los objetos físicos y matemáticos: investigación y relación entre los mismos.";
+const ELECCION = "Estrategias de elección de las unidades y operaciones adecuadas en problemas que impliquen medida.";
+const CONJETURAS = "Formulación de conjeturas sobre medidas o relaciones entre las mismas basadas en estimaciones.";
 // Naturales: el conteo (A.1) y el cálculo mental (A.3).
 const RECUENTO = "Estrategias variadas de recuento sistemático en situaciones de la vida cotidiana.";
 const TAMANO = "Adaptación del conteo al tamaño de los números en problemas de la vida cotidiana.";
@@ -66,7 +72,7 @@ const PROPIEDADES = "Propiedades de las operaciones (suma, resta, multiplicació
 export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INVERSAS, PATRONES, FACTORES, GRANDES, COMPARACION,
   REGLA, MODELIZACION, VARIABLE, EQUIVALENCIA, ECUACIONES,
   RAZONES, PORCENTAJES, SITUACIONES, PORCENTAJES_RAROS, CONSUMO, FINANCIERA,
-  ESTIMACIONES, EFECTO, RECUENTO, TAMANO, MENTAL };
+  ESTIMACIONES, EFECTO, RECUENTO, TAMANO, MENTAL, ATRIBUTOS, ELECCION, CONJETURAS };
 
 // Por tema y número de concepto (ver conceptosDelTema.js).
 const VINETA_POR_CONCEPTO = {
@@ -119,6 +125,15 @@ const VINETA_POR_CONCEPTO = {
     4: { texto: MENTAL },
     5: { texto: RECUENTO },
     6: { texto: OPERACIONES },
+  },
+  // Sistema métrico decimal.
+  "c0000000-0000-4000-8000-000000000009": {
+    1: { texto: ATRIBUTOS },
+    2: { texto: ELECCION },
+    3: { texto: ELECCION },
+    4: { texto: ELECCION },
+    5: { texto: CONJETURAS },
+    6: { texto: ELECCION },
   },
   // Números decimales.
   "c0000000-0000-4000-8000-000000000007": {
@@ -183,6 +198,8 @@ const SABER_POR_BATERIA = {
   // operaciones», no trucos de cálculo mental.
   distributiva_naturales: { codigo: "A.3", texto: PROPIEDADES },
   factor_comun_naturales: { codigo: "A.3", texto: PROPIEDADES },
+  // Medida: elegir la unidad es la «elección de las unidades» de B.1.
+  unidad_adecuada: { codigo: "B.1", texto: ELECCION },
 };
 
 // { codigo, nombre, vineta, implicito, referencia } o null si el concepto no
