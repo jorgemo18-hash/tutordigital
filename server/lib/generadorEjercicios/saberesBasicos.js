@@ -17,6 +17,7 @@
 export const REFERENCIA = "ORDEN ECD/1172/2022 (Aragón)";
 
 export const NOMBRE_DEL_SABER = {
+  "A.1": "Conteo",
   "A.2": "Cantidad",
   "A.3": "Sentido de las operaciones",
   "A.4": "Relaciones",
@@ -36,6 +37,10 @@ const PATRONES = "Patrones y regularidades numéricas.";
 const COMPARACION = "Comparación y ordenación de fracciones, decimales y porcentajes: situación exacta o aproximada en la recta numérica.";
 const GRANDES = "Números grandes y pequeños: notación exponencial y científica y uso de la calculadora.";
 const FACTORES = "Factores, múltiplos y divisores. Factorización en números primos para resolver problemas: estrategias y herramientas.";
+// Naturales: el conteo (A.1) y el cálculo mental (A.3).
+const RECUENTO = "Estrategias variadas de recuento sistemático en situaciones de la vida cotidiana.";
+const TAMANO = "Adaptación del conteo al tamaño de los números en problemas de la vida cotidiana.";
+const MENTAL = "Estrategias de cálculo mental con números naturales, fracciones y decimales.";
 // Decimales: la estimación (A.2) y el efecto de las operaciones (A.3).
 const ESTIMACIONES = "Realización de estimaciones con la precisión requerida.";
 const EFECTO = "Efecto de las operaciones aritméticas con números enteros, fracciones y expresiones decimales.";
@@ -61,7 +66,7 @@ const PROPIEDADES = "Propiedades de las operaciones (suma, resta, multiplicació
 export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INVERSAS, PATRONES, FACTORES, GRANDES, COMPARACION,
   REGLA, MODELIZACION, VARIABLE, EQUIVALENCIA, ECUACIONES,
   RAZONES, PORCENTAJES, SITUACIONES, PORCENTAJES_RAROS, CONSUMO, FINANCIERA,
-  ESTIMACIONES, EFECTO };
+  ESTIMACIONES, EFECTO, RECUENTO, TAMANO, MENTAL };
 
 // Por tema y número de concepto (ver conceptosDelTema.js).
 const VINETA_POR_CONCEPTO = {
@@ -103,6 +108,17 @@ const VINETA_POR_CONCEPTO = {
     6: { texto: OPERACIONES },
     7: { texto: PROPIEDADES, implicito: true },
     8: { texto: OPERACIONES },
+  },
+  // Números naturales. El sistema de numeración (1) no lo nombra ningún
+  // saber de 1.º con esas palabras; lo más cercano es «adaptación del
+  // conteo al tamaño de los números» (A.1), y así se cita.
+  "c0000000-0000-4000-8000-000000000008": {
+    1: { texto: TAMANO },
+    2: { texto: ESTIMACIONES },
+    3: { texto: INVERSAS },
+    4: { texto: MENTAL },
+    5: { texto: RECUENTO },
+    6: { texto: OPERACIONES },
   },
   // Números decimales.
   "c0000000-0000-4000-8000-000000000007": {
@@ -163,6 +179,10 @@ const SABER_POR_BATERIA = {
   // la «información numérica en contextos financieros» de A.6.
   porcentaje_fraccion_decimal: { codigo: "A.2", texto: PORCENTAJES_RAROS },
   promociones: { codigo: "A.6", texto: FINANCIERA },
+  // Naturales: la distributiva y el factor común son «propiedades de las
+  // operaciones», no trucos de cálculo mental.
+  distributiva_naturales: { codigo: "A.3", texto: PROPIEDADES },
+  factor_comun_naturales: { codigo: "A.3", texto: PROPIEDADES },
 };
 
 // { codigo, nombre, vineta, implicito, referencia } o null si el concepto no
