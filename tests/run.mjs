@@ -209,6 +209,7 @@ async function loadTests() {
     "./generadorEjercicios/divisibilidad.test.mjs",
     "./generadorEjercicios/potenciasRaices.test.mjs",
     "./generadorEjercicios/fracciones.test.mjs",
+    "./generadorEjercicios/algebra.test.mjs",
     "./backup/avisoDeBackup.test.mjs",
     "./academiaFamilias/familiasSinAlumnosActivos.test.mjs",
     "./academiaInscripciones/erroresVisibles.test.mjs",

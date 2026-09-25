@@ -20,6 +20,10 @@ export const NOMBRE_DEL_SABER = {
   "A.2": "Cantidad",
   "A.3": "Sentido de las operaciones",
   "A.4": "Relaciones",
+  "D.1": "Patrones",
+  "D.2": "Modelo matemático",
+  "D.3": "Variable",
+  "D.4": "Igualdad y desigualdad",
 };
 
 const CANTIDADES = "Números enteros, fraccionarios y decimales y raíces en la expresión de cantidades en contextos de la vida cotidiana.";
@@ -30,12 +34,19 @@ const PATRONES = "Patrones y regularidades numéricas.";
 const COMPARACION = "Comparación y ordenación de fracciones, decimales y porcentajes: situación exacta o aproximada en la recta numérica.";
 const GRANDES = "Números grandes y pequeños: notación exponencial y científica y uso de la calculadora.";
 const FACTORES = "Factores, múltiplos y divisores. Factorización en números primos para resolver problemas: estrategias y herramientas.";
+// Sentido algebraico (bloque D).
+const REGLA = "Patrones, pautas y regularidades: observación y determinación de la regla de formación en casos sencillos.";
+const MODELIZACION = "Modelización de situaciones de la vida cotidiana usando representaciones matemáticas y el lenguaje algebraico.";
+const VARIABLE = "Variable: comprensión del concepto en sus diferentes naturalezas.";
+const EQUIVALENCIA = "Equivalencia de expresiones algebraicas en la resolución de problemas basados en relaciones lineales.";
+const ECUACIONES = "Estrategias de búsqueda de soluciones en ecuaciones en situaciones de la vida cotidiana.";
 const PROPIEDADES = "Propiedades de las operaciones (suma, resta, multiplicación, división y potenciación): cálculos de manera eficiente con números naturales, enteros, fraccionarios y decimales tanto mentalmente como de forma manual, con calculadora u hoja de cálculo.";
 
 // Las citas, para comprobarlas contra el currículo extraído de los PDF
 // oficiales (tests/curriculo.test.mjs): dos copias hechas por caminos
 // distintos que tienen que coincidir.
-export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INVERSAS, PATRONES, FACTORES, GRANDES, COMPARACION };
+export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INVERSAS, PATRONES, FACTORES, GRANDES, COMPARACION,
+  REGLA, MODELIZACION, VARIABLE, EQUIVALENCIA, ECUACIONES };
 
 // Por tema y número de concepto (ver conceptosDelTema.js).
 const VINETA_POR_CONCEPTO = {
@@ -77,6 +88,19 @@ const VINETA_POR_CONCEPTO = {
     6: { texto: OPERACIONES },
     7: { texto: PROPIEDADES, implicito: true },
     8: { texto: OPERACIONES },
+  },
+  // Álgebra: cada concepto tiene su viñeta del bloque D casi palabra por
+  // palabra. D.4 también dice «resolución mediante el uso de la
+  // tecnología», que aquí no se cita: en 1.º no se deja calculadora.
+  "c0000000-0000-4000-8000-000000000005": {
+    1: { texto: MODELIZACION },
+    2: { texto: VARIABLE },
+    3: { texto: EQUIVALENCIA },
+    4: { texto: REGLA },
+    5: { texto: ECUACIONES },
+    6: { texto: ECUACIONES },
+    7: { texto: ECUACIONES },
+    8: { texto: MODELIZACION },
   },
 };
 
