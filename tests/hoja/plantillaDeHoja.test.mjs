@@ -523,7 +523,8 @@ export async function run({ test, assert }) {
   test("todas las clases que pinta el JS existen en hoja.css", () => {
     const dir = `${RAIZ}assets/shared/hoja/js/`;
     const usadas = new Set();
-    for (const f of fs.readdirSync(dir)) {
+    // Recursivo: las figuras viven en js/figuras/ y también pintan clases.
+    for (const f of fs.readdirSync(dir, { recursive: true }).filter((n) => n.endsWith(".js"))) {
       const src = fs.readFileSync(`${dir}${f}`, "utf8");
       for (const m of src.matchAll(/"(hj-[a-z0-9-]+(?:\s+hj-[a-z0-9-]+)*)"/g)) {
         m[1].split(/\s+/).forEach((c) => usadas.add(c));

@@ -417,6 +417,31 @@
 .hj-recta-rotulo { fill: var(--hj-tinta-suave); }
 .hj-recta-etiqueta { font-weight: 600; }
 
+/* ---------- las demás figuras (ver js/figuras/) ---------- */
+
+/* Miden en mm (width y height los pone el dibujo); aquí solo el trazo. */
+.hj-figura { display: block; max-width: 100%; height: auto; margin: 1.2mm 0 0.4mm; overflow: visible; }
+.hj-figura text { font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: 3px; fill: var(--hj-tinta); }
+.hj-geo-linea { stroke: var(--hj-tinta); stroke-width: 0.35; fill: none; }
+.hj-geo-discontinua { stroke-dasharray: 1.2 0.9; stroke-width: 0.25; }
+.hj-geo-punto { fill: var(--hj-tinta); }
+.hj-geo-cota line { stroke: var(--hj-tinta-suave); stroke-width: 0.2; }
+.hj-geo-angulo path, .hj-geo-angulo polyline { stroke: var(--hj-tinta); stroke-width: 0.25; fill: none; }
+.hj-geo-texto { font-size: 3px; }
+.hj-geo-etiqueta { font-weight: 600; }
+.hj-ejes-cuadricula { stroke: var(--hj-pauta); stroke-width: 0.15; }
+.hj-ejes-eje { stroke: var(--hj-tinta); stroke-width: 0.35; fill: none; }
+.hj-ejes-grafica { stroke: var(--hj-tinta); stroke-width: 0.45; fill: none; }
+.hj-ejes-punto { fill: var(--hj-tinta); }
+.hj-figura .hj-ejes-rotulo { font-size: 2.6px; fill: var(--hj-tinta-suave); }
+.hj-figura .hj-ejes-nombre { font-size: 2.6px; font-style: italic; }
+.hj-ejes-etiqueta { font-weight: 600; }
+/* Un halo blanco detrás de los números y las letras: si caen sobre la
+   cuadrícula o un trazo, se siguen leyendo. */
+.hj-figura text { paint-order: stroke; stroke: #fff; stroke-width: 0.7px; stroke-linejoin: round; }
+.hj-barras-barra { fill: #d9d4cb; stroke: var(--hj-tinta); stroke-width: 0.3; }
+.hj-sectores-borde, .hj-sectores-radio { stroke: var(--hj-tinta); stroke-width: 0.3; fill: none; }
+
 /* Espacio en blanco para operar. Líneas de puntos, no vacío: sin pauta los
    alumnos escriben torcido y no cabe la operación. */
 .hj-espacio { margin-top: 2mm; }

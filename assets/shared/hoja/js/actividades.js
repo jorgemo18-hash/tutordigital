@@ -18,7 +18,7 @@
 
 import { buildDificultad } from "./dificultad.js";
 import { fragmentoConHuecos } from "./huecos.js";
-import { buildRecta } from "./rectaNumerica.js";
+import { buildFigura } from "./figuras/index.js";
 
 export const MAX_ACTIVIDADES = 10;
 const LETRAS = "abcdefghij";
@@ -39,11 +39,10 @@ function buildApartados(apartados, columnas, doc) {
     const esObjeto = apartado && typeof apartado === "object";
     const texto = esObjeto ? apartado.texto : apartado;
     const resuelto = Boolean(esObjeto && apartado.resuelto);
-    // UNA FIGURA (hoy solo la recta numérica) va debajo del texto del
-    // apartado y ocupa su ancho. Si el dato no se puede dibujar, el apartado
-    // sale sin ella antes que con un dibujo roto (ver rectaNumerica.js).
-    const figura = esObjeto && apartado.figura?.tipo === "recta"
-      ? buildRecta(apartado.figura, doc) : null;
+    // UNA FIGURA (la recta, un dibujo geométrico, unos ejes, un gráfico) va
+    // debajo del texto del apartado. Si el dato no se puede dibujar, el
+    // apartado sale sin ella antes que con un dibujo roto (figuras/index.js).
+    const figura = esObjeto && apartado.figura ? buildFigura(apartado.figura, doc) : null;
 
     const li = doc.createElement("li");
     li.className = ["hj-apartado", resuelto && "hj-apartado--resuelto", figura && "hj-apartado--figura"]
