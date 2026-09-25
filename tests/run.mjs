@@ -210,6 +210,7 @@ async function loadTests() {
     "./generadorEjercicios/potenciasRaices.test.mjs",
     "./generadorEjercicios/fracciones.test.mjs",
     "./generadorEjercicios/algebra.test.mjs",
+    "./generadorEjercicios/proporcionalidad.test.mjs",
     "./backup/avisoDeBackup.test.mjs",
     "./academiaFamilias/familiasSinAlumnosActivos.test.mjs",
     "./academiaInscripciones/erroresVisibles.test.mjs",

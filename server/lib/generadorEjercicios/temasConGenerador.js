@@ -3,6 +3,7 @@ import { DIVISIBILIDAD_1ESO } from "./temas/divisibilidad1eso.js";
 import { POTENCIAS_RAICES_1ESO } from "./temas/potenciasRaices1eso.js";
 import { FRACCIONES_1ESO } from "./temas/fracciones1eso.js";
 import { ALGEBRA_1ESO } from "./temas/algebra1eso.js";
+import { PROPORCIONALIDAD_1ESO } from "./temas/proporcionalidad1eso.js";
 import { objetivosDe } from "./catalogoDeBaterias.js";
 
 // LOS TEMAS PARA LOS QUE HAY GENERADOR, con su curso y su materia.
@@ -19,7 +20,7 @@ import { objetivosDe } from "./catalogoDeBaterias.js";
 // Enteros sigue el primero aunque en los materiales vaya después (el orden
 // de los demás sí es el del curso: potencias, tema 2; divisibilidad, tema 3): es el tema que el panel abre por defecto (el primero de la lista),
 // y cambiárselo a quien ya lo usa por añadir otro sería una sorpresa.
-export const TEMAS_CON_GENERADOR = [ENTEROS_1ESO, POTENCIAS_RAICES_1ESO, DIVISIBILIDAD_1ESO, FRACCIONES_1ESO, ALGEBRA_1ESO];
+export const TEMAS_CON_GENERADOR = [ENTEROS_1ESO, POTENCIAS_RAICES_1ESO, DIVISIBILIDAD_1ESO, FRACCIONES_1ESO, PROPORCIONALIDAD_1ESO, ALGEBRA_1ESO];
 
 export function temaPorId(id) {
   return TEMAS_CON_GENERADOR.find((t) => t.id === id) || null;

@@ -4,6 +4,7 @@ import { TRAMPAS_DIVISIBILIDAD } from "./trampasDivisibilidad.js";
 import { TRAMPAS_POTENCIAS_RAICES } from "./trampasPotenciasRaices.js";
 import { TRAMPAS_FRACCIONES } from "./trampasFracciones.js";
 import { TRAMPAS_ALGEBRA } from "./trampasAlgebra.js";
+import { TRAMPAS_PROPORCIONALIDAD } from "./trampasProporcionalidad.js";
 
 // LAS RESPUESTAS-TRAMPA DE UN APARTADO: qué escribiría un alumno con cada
 // error predecible (erroresPredecibles.js). NUNCA se imprimen: van con la
@@ -91,6 +92,7 @@ const POR_BATERIA = {
   ...TRAMPAS_POTENCIAS_RAICES,
   ...TRAMPAS_FRACCIONES,
   ...TRAMPAS_ALGEBRA,
+  ...TRAMPAS_PROPORCIONALIDAD,
 };
 
 export function trampasDelApartado(clave, apartado) {

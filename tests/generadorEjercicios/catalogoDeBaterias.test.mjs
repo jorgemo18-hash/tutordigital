@@ -193,12 +193,12 @@ export async function run({ test, assert }) {
     }
   });
 
-  test(T + "NINGÚN COMANDO DE LaTeX FUERA DE LOS $: se imprimiría tal cual ('\\quad' en el folio)", () => {
+  test(T + "NINGUNA BARRA DE LaTeX FUERA DE LOS $: se imprimiría tal cual ('\\quad', '\\ ' en el folio)", () => {
     for (const b of TODAS) {
       for (const s of ["a", "b", 7, 42]) {
         for (const a of b.generador(crearAzar(s), { cuantos: b.maximo }).apartados) {
           for (const campo of [a.latex, a.latexResuelto]) {
-            assert.ok(!/\\[a-zA-Z]/.test(campo.replace(/\$[^$]*\$/g, "")), `${b.clave}: ${campo}`);
+            assert.ok(!/\\/.test(campo.replace(/\$[^$]*\$/g, "")), `${b.clave}: ${campo}`);
           }
         }
       }

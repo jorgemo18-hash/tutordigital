@@ -20,6 +20,8 @@ export const NOMBRE_DEL_SABER = {
   "A.2": "Cantidad",
   "A.3": "Sentido de las operaciones",
   "A.4": "Relaciones",
+  "A.5": "Razonamiento proporcional",
+  "A.6": "Educación financiera",
   "D.1": "Patrones",
   "D.2": "Modelo matemático",
   "D.3": "Variable",
@@ -34,6 +36,14 @@ const PATRONES = "Patrones y regularidades numéricas.";
 const COMPARACION = "Comparación y ordenación de fracciones, decimales y porcentajes: situación exacta o aproximada en la recta numérica.";
 const GRANDES = "Números grandes y pequeños: notación exponencial y científica y uso de la calculadora.";
 const FACTORES = "Factores, múltiplos y divisores. Factorización en números primos para resolver problemas: estrategias y herramientas.";
+// Razonamiento proporcional y educación financiera (A.5, A.6) y los
+// porcentajes raros de A.2.
+const RAZONES = "Razones entre magnitudes: comprensión y representación de relaciones cuantitativas.";
+const PORCENTAJES = "Porcentajes: comprensión y resolución de problemas.";
+const SITUACIONES = "Situaciones de proporcionalidad en diferentes contextos: análisis y desarrollo de métodos para la resolución de problemas (aumentos y disminuciones porcentuales, rebajas y subidas de precios, impuestos, escalas, cambio de divisas, velocidad y tiempo, etc.).";
+const PORCENTAJES_RAROS = "Porcentajes mayores que 100 y menores que 1: interpretación.";
+const CONSUMO = "Métodos para la toma de decisiones de consumo responsable: relaciones calidad-precio y valor-precio en contextos cotidianos.";
+const FINANCIERA = "Información numérica en contextos financieros sencillos: interpretación.";
 // Sentido algebraico (bloque D).
 const REGLA = "Patrones, pautas y regularidades: observación y determinación de la regla de formación en casos sencillos.";
 const MODELIZACION = "Modelización de situaciones de la vida cotidiana usando representaciones matemáticas y el lenguaje algebraico.";
@@ -46,7 +56,8 @@ const PROPIEDADES = "Propiedades de las operaciones (suma, resta, multiplicació
 // oficiales (tests/curriculo.test.mjs): dos copias hechas por caminos
 // distintos que tienen que coincidir.
 export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INVERSAS, PATRONES, FACTORES, GRANDES, COMPARACION,
-  REGLA, MODELIZACION, VARIABLE, EQUIVALENCIA, ECUACIONES };
+  REGLA, MODELIZACION, VARIABLE, EQUIVALENCIA, ECUACIONES,
+  RAZONES, PORCENTAJES, SITUACIONES, PORCENTAJES_RAROS, CONSUMO, FINANCIERA };
 
 // Por tema y número de concepto (ver conceptosDelTema.js).
 const VINETA_POR_CONCEPTO = {
@@ -89,6 +100,17 @@ const VINETA_POR_CONCEPTO = {
     7: { texto: PROPIEDADES, implicito: true },
     8: { texto: OPERACIONES },
   },
+  // Proporcionalidad y porcentajes: A.5 casi palabra por palabra.
+  "c0000000-0000-4000-8000-000000000006": {
+    1: { texto: RAZONES },
+    2: { texto: RAZONES },
+    3: { texto: SITUACIONES },
+    4: { texto: SITUACIONES },
+    5: { texto: PORCENTAJES },
+    6: { texto: PORCENTAJES },
+    7: { texto: SITUACIONES },
+    8: { texto: CONSUMO },
+  },
   // Álgebra: cada concepto tiene su viñeta del bloque D casi palabra por
   // palabra. D.4 también dice «resolución mediante el uso de la
   // tecnología», que aquí no se cita: en 1.º no se deja calculadora.
@@ -121,6 +143,11 @@ const SABER_POR_BATERIA = {
   potencia_que_falta: { codigo: "A.3", texto: INVERSAS },
   // Fracciones: el total a partir de una parte es la operación inversa.
   cantidad_desde_fraccion: { codigo: "A.3", texto: INVERSAS },
+  // Proporcionalidad: los porcentajes de más de 100 y de menos de 1 (siempre
+  // hay uno de cada en esa batería) los nombra A.2; leer una promoción es
+  // la «información numérica en contextos financieros» de A.6.
+  porcentaje_fraccion_decimal: { codigo: "A.2", texto: PORCENTAJES_RAROS },
+  promociones: { codigo: "A.6", texto: FINANCIERA },
 };
 
 // { codigo, nombre, vineta, implicito, referencia } o null si el concepto no
