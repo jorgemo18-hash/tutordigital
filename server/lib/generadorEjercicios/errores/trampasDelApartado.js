@@ -8,6 +8,7 @@ import { TRAMPAS_PROPORCIONALIDAD } from "./trampasProporcionalidad.js";
 import { TRAMPAS_DECIMALES } from "./trampasDecimales.js";
 import { TRAMPAS_NATURALES } from "./trampasNaturales.js";
 import { TRAMPAS_MEDIDA } from "./trampasMedida.js";
+import { TRAMPAS_GEOMETRIA } from "./trampasGeometria.js";
 
 // LAS RESPUESTAS-TRAMPA DE UN APARTADO: qué escribiría un alumno con cada
 // error predecible (erroresPredecibles.js). NUNCA se imprimen: van con la
@@ -99,6 +100,7 @@ const POR_BATERIA = {
   ...TRAMPAS_DECIMALES,
   ...TRAMPAS_NATURALES,
   ...TRAMPAS_MEDIDA,
+  ...TRAMPAS_GEOMETRIA,
 };
 
 export function trampasDelApartado(clave, apartado) {

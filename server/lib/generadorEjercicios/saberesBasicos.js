@@ -24,7 +24,10 @@ export const NOMBRE_DEL_SABER = {
   "A.5": "Razonamiento proporcional",
   "A.6": "Educación financiera",
   "B.1": "Magnitud",
+  "B.2": "Medición",
   "B.3": "Estimación y relaciones",
+  "C.1": "Figuras geométricas de dos y tres dimensiones",
+  "C.4": "Visualización, razonamiento y modelización geométrica",
   "D.1": "Patrones",
   "D.2": "Modelo matemático",
   "D.3": "Variable",
@@ -43,6 +46,14 @@ const FACTORES = "Factores, múltiplos y divisores. Factorización en números p
 const ATRIBUTOS = "Atributos mensurables de los objetos físicos y matemáticos: investigación y relación entre los mismos.";
 const ELECCION = "Estrategias de elección de las unidades y operaciones adecuadas en problemas que impliquen medida.";
 const CONJETURAS = "Formulación de conjeturas sobre medidas o relaciones entre las mismas basadas en estimaciones.";
+// Geometría (B.2, C.1, C.4). La de C.1 se copia con la errata del anexo
+// ("clasificación de en función"): es una cita, y se comprueba contra el
+// texto extraído del PDF.
+const ANGULOS = "Medición directa de ángulos y deducción de la medida a partir de las relaciones angulares.";
+const AREAS = "Longitud de la circunferencia, áreas en figuras planas: deducción, interpretación y aplicación de fórmulas.";
+const REPRESENTACIONES_AREAS = "Representaciones planas de objetos en la visualización y resolución de problemas de áreas.";
+const CLASIFICACION = "Figuras geométricas planas y tridimensionales: descripción y clasificación de en función de sus propiedades o características.";
+const MODELIZACION_GEO = "Modelización geométrica: relaciones numéricas y algebraicas en la resolución de problemas.";
 // Naturales: el conteo (A.1) y el cálculo mental (A.3).
 const RECUENTO = "Estrategias variadas de recuento sistemático en situaciones de la vida cotidiana.";
 const TAMANO = "Adaptación del conteo al tamaño de los números en problemas de la vida cotidiana.";
@@ -72,7 +83,8 @@ const PROPIEDADES = "Propiedades de las operaciones (suma, resta, multiplicació
 export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INVERSAS, PATRONES, FACTORES, GRANDES, COMPARACION,
   REGLA, MODELIZACION, VARIABLE, EQUIVALENCIA, ECUACIONES,
   RAZONES, PORCENTAJES, SITUACIONES, PORCENTAJES_RAROS, CONSUMO, FINANCIERA,
-  ESTIMACIONES, EFECTO, RECUENTO, TAMANO, MENTAL, ATRIBUTOS, ELECCION, CONJETURAS };
+  ESTIMACIONES, EFECTO, RECUENTO, TAMANO, MENTAL, ATRIBUTOS, ELECCION, CONJETURAS,
+  ANGULOS, AREAS, REPRESENTACIONES_AREAS, CLASIFICACION, MODELIZACION_GEO };
 
 // Por tema y número de concepto (ver conceptosDelTema.js).
 const VINETA_POR_CONCEPTO = {
@@ -125,6 +137,16 @@ const VINETA_POR_CONCEPTO = {
     4: { texto: MENTAL },
     5: { texto: RECUENTO },
     6: { texto: OPERACIONES },
+  },
+  // Geometría plana.
+  "c0000000-0000-4000-8000-000000000010": {
+    1: { texto: ANGULOS },
+    2: { texto: ANGULOS },
+    3: { texto: CLASIFICACION },
+    4: { texto: AREAS },
+    5: { texto: AREAS },
+    6: { texto: AREAS },
+    7: { texto: MODELIZACION_GEO },
   },
   // Sistema métrico decimal.
   "c0000000-0000-4000-8000-000000000009": {
@@ -200,6 +222,9 @@ const SABER_POR_BATERIA = {
   factor_comun_naturales: { codigo: "A.3", texto: PROPIEDADES },
   // Medida: elegir la unidad es la «elección de las unidades» de B.1.
   unidad_adecuada: { codigo: "B.1", texto: ELECCION },
+  // Geometría: los problemas de pintar y embaldosar son «representaciones
+  // planas de objetos… problemas de áreas» (B.2), no modelización.
+  problemas_de_areas: { codigo: "B.2", texto: REPRESENTACIONES_AREAS },
 };
 
 // { codigo, nombre, vineta, implicito, referencia } o null si el concepto no

@@ -39,6 +39,9 @@ export async function run({ test }) {
     assert.ok(de("A.3").saberes.includes(CITAS.MENTAL));
     for (const cita of [CITAS.ATRIBUTOS, CITAS.ELECCION]) assert.ok(de("B.1").saberes.includes(cita), cita);
     assert.ok(de("B.3").saberes.includes(CITAS.CONJETURAS));
+    for (const cita of [CITAS.ANGULOS, CITAS.AREAS, CITAS.REPRESENTACIONES_AREAS]) assert.ok(de("B.2").saberes.includes(cita), cita);
+    assert.ok(de("C.1").saberes.includes(CITAS.CLASIFICACION));
+    assert.ok(de("C.4").saberes.includes(CITAS.MODELIZACION_GEO));
     for (const cita of [CITAS.RAZONES, CITAS.PORCENTAJES, CITAS.SITUACIONES]) assert.ok(de("A.5").saberes.includes(cita), cita);
     for (const cita of [CITAS.CONSUMO, CITAS.FINANCIERA]) assert.ok(de("A.6").saberes.includes(cita), cita);
     assert.ok(de("D.1").saberes.includes(CITAS.REGLA));

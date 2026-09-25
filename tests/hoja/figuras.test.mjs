@@ -35,6 +35,13 @@ export async function run({ test, assert }) {
     assert.ok(vb[2] <= CAJA.ancho + 0.01 && vb[3] <= CAJA.alto + 0.01);
   });
 
+  test("geometría/el alto de la figura no depende de su forma (la paginación lo necesita)", () => {
+    const alto = (v) => Number(buildFigura({ tipo: "geometria", elementos: [{ poligono: v }] }, doc).getAttribute("viewBox").split(" ")[3]);
+    assert.equal(alto([[0, 0], [10, 0], [5, 9]]), alto([[0, 0], [10, 0], [5, 1]]));
+    const real = (g) => Number(buildFigura({ tipo: "geometria", escala: "real", altoMinimo: 28, elementos: [{ segmento: [[0, 0], [28, 0]] }, { segmento: [[0, 0], [28 * Math.cos(g), 28 * Math.sin(g)]] }] }, doc).getAttribute("viewBox").split(" ")[3]);
+    assert.equal(real(0.3), real(1.2));
+  });
+
   test("geometría/el eje y del dato va hacia ARRIBA: el vértice (0, 4) queda más alto que el (0, 0)", () => {
     const { f } = transformacion({ elementos: [{ poligono: [[0, 0], [7, 0], [0, 4]] }] });
     assert.ok(f([0, 4])[1] < f([0, 0])[1]);

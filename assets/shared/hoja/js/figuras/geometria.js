@@ -25,8 +25,12 @@ import { el, texto, lienzo, mm, esNumero, esPunto } from "./svg.js";
 // 40° con el transportador; un segmento de 5 cm mide 5 cm con la regla). Es
 // lo que permite «medición directa de ángulos» (B.2) en papel.
 
-export const CAJA = { ancho: 70, alto: 42 };
-const MARGEN = 7;
+// La caja: lo que ocupa una figura en la columna de un apartado. Con 48 × 26
+// caben TRES apartados por fila (la columna mide unos 55 mm); con 70 × 42,
+// un ejercicio de cinco triángulos llenaba la hoja entera, y con 58 × 30 en
+// dos columnas cabía un ejercicio y medio.
+export const CAJA = { ancho: 48, alto: 26 };
+const MARGEN = 6;
 
 // Todas las coordenadas del dibujo, para calcular la caja que ocupa.
 function puntosDe(elementos) {
@@ -71,10 +75,21 @@ export function transformacion(figura) {
   const [w, h] = [x1 - x0, y1 - y0];
   if (w <= 0 && h <= 0) return null;
   const real = figura.escala === "real";
-  const k = real ? 1 : Math.min((CAJA.ancho - 2 * MARGEN) / (w || 1), (CAJA.alto - 2 * MARGEN) / (h || 1));
+  // Una figura puede pedir más alto que la caja (`alto`, en mm): un
+  // triángulo con sus tres ángulos rotulados no se lee en 26 mm.
+  const cajaAlto = esNumero(figura.alto) ? figura.alto : CAJA.alto;
+  const k = real ? 1 : Math.min((CAJA.ancho - 2 * MARGEN) / (w || 1), (cajaAlto - 2 * MARGEN) / (h || 1));
   const ancho = w * k + 2 * MARGEN;
-  const alto = h * k + 2 * MARGEN;
-  const f = ([x, y]) => [MARGEN + (x - x0) * k, MARGEN + (y1 - y) * k];
+  // EL ALTO ES SIEMPRE EL MISMO, y el dibujo se centra en él: si dependiera
+  // de la forma (un triángulo alto frente a uno chato), la altura de la
+  // actividad variaría con el azar y la paginación calculada fallaría (una
+  // hoja de refuerzo salió con el pie solo en un folio). A escala real, el
+  // alto lo fija `altoMinimo` (en mm de dibujo) si el dato lo trae.
+  const dibujo = h * k;
+  const util = real ? Math.max(dibujo, figura.altoMinimo || 0) : cajaAlto - 2 * MARGEN;
+  const alto = util + 2 * MARGEN;
+  const arriba = MARGEN + (util - dibujo) / 2;
+  const f = ([x, y]) => [MARGEN + (x - x0) * k, arriba + (y1 - y) * k];
   return { f, k, ancho, alto };
 }
 
@@ -112,7 +127,7 @@ function angulo(doc, { vertice, desde, hasta, texto: t, recto }, f) {
   const dir = (p) => { const q = f(p); const d = Math.hypot(q[0] - v[0], q[1] - v[1]) || 1; return [(q[0] - v[0]) / d, (q[1] - v[1]) / d]; };
   const [u, w] = [dir(desde), dir(hasta)];
   const g = el(doc, "g", { class: "hj-geo-angulo" });
-  const r = 5;
+  const r = 3.5;
   if (recto) {
     const s = 2.5;
     const [a, b, c] = [[v[0] + u[0] * s, v[1] + u[1] * s], [v[0] + (u[0] + w[0]) * s, v[1] + (u[1] + w[1]) * s], [v[0] + w[0] * s, v[1] + w[1] * s]];
@@ -126,7 +141,7 @@ function angulo(doc, { vertice, desde, hasta, texto: t, recto }, f) {
   if (t) {
     const bis = [u[0] + w[0], u[1] + w[1]];
     const d = Math.hypot(...bis) || 1;
-    const lejos = r + 3.6;
+    const lejos = r + 3.4;
     g.appendChild(texto(doc, v[0] + (bis[0] / d) * lejos, v[1] + (bis[1] / d) * lejos + 1, t, "hj-geo-texto"));
   }
   return g;
@@ -154,8 +169,15 @@ export function buildGeometria(figura, doc = globalThis.document) {
     if (e.cota) svg.appendChild(cota(doc, e.cota, f));
     if (e.angulo) svg.appendChild(angulo(doc, e.angulo, f));
     if (e.etiqueta) {
+      // `ancla: "start"` pone el texto a la DERECHA del punto, separado 1 mm
+      // (para rotular una altura sin tacharla); "end", a la izquierda.
       const [x, y] = f(e.etiqueta.en);
-      svg.appendChild(texto(doc, x, y + 1, e.etiqueta.texto, "hj-geo-texto hj-geo-etiqueta"));
+      const ancla = e.etiqueta.ancla || "middle";
+      const dx = ancla === "start" ? 1 : ancla === "end" ? -1 : 0;
+      // `dy` (mm) sube o baja el texto: −1,2 lo pone encima de una línea
+      // horizontal en vez de sobre ella.
+      const dy = esNumero(e.etiqueta.dy) ? e.etiqueta.dy : 1;
+      svg.appendChild(texto(doc, x + dx, y + dy, e.etiqueta.texto, "hj-geo-texto hj-geo-etiqueta", ancla));
     }
   }
   return svg;
