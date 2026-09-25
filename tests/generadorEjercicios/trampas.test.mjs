@@ -17,7 +17,7 @@ export async function run({ test, assert }) {
     assert.equal(evaluarConError(suma(-9, 4), 3), 5, "3: -9 + 4 = +5");
     assert.equal(evaluarConError(por(-4, -3), 5), -12, "5: (-4)·(-3) = -12");
     assert.equal(evaluarConError(resta(5, -3), 6), 2, "6: 5 - (-3) = 2");
-    assert.equal(evaluarConError(resta(8, suma(-3, 5)), 7), 10, "7: 8 - (-3 + 5) = 8 - 3 + 5");
+    assert.equal(evaluarConError(resta(8, suma(-3, 5)), 7), 16, "7: 8 - (-3 + 5) = 8 + 3 + 5 (Jorge, 25/9: solo cambian el primero)");
     assert.equal(evaluarConError(suma(3, por(4, -2)), 8), -14, "8: 3 + 4·(-2) = 7·(-2)");
     assert.equal(evaluarConError(suma(-7, -2), 10), 9, "10: -7 + (-2) = +9");
   });
@@ -30,8 +30,10 @@ export async function run({ test, assert }) {
   test("un error de concepto es SISTEMÁTICO: se aplica en toda la expresión", () => {
     // -3 + 5 + (-7): con el 2, -3 + 5 = +8 y 8 + (-7) = +15.
     assert.equal(evaluarConError(suma(suma(-3, 5), -7), 2), 15);
-    // -(-3 + 10) con el 7: se abre sin cambiar signos, -3 + 10.
-    assert.equal(evaluarConError(neg(suma(-3, 10)), 7), 7);
+    // -(-3 + 10) con el 7: se cambia solo el primero, +3 + 10.
+    assert.equal(evaluarConError(neg(suma(-3, 10)), 7), 13);
+    // Con tres términos, los dos últimos se quedan como están: 20 - (4 - 6 + 1) = 20 - 4 - 6 + 1.
+    assert.equal(evaluarConError(resta(20, suma(resta(4, 6), 1)), 7), 11);
   });
 
   test("SIN UN NEGATIVO A LA VISTA no hay error de enteros: 50 - 14 no da trampa del 2 ni del 3", () => {

@@ -25,9 +25,11 @@ import { OPERADORES } from "../expresion.js";
 //   5  "(-4)·(-3) = -12": en productos y cocientes con algún negativo, el
 //      signo al revés.
 //   6  "5 - (-3) = 2": restar un negativo hace más pequeño.
-//   7  "8 - (-3 + 5) = 8 - 3 + 5": quita el paréntesis que lleva un menos
-//      delante SIN cambiar ningún signo de dentro (es la variante del
-//      ejemplo; la de "cambia solo el primero" está anotada para Jorge).
+//   7  "8 - (-3 + 5) = 8 + 3 + 5": quita el paréntesis que lleva un menos
+//      delante cambiando el signo SOLO DEL PRIMER término de dentro. La
+//      migración 120 describe dos variantes ("solo el primero, o ninguno")
+//      y su ejemplo es el de "ninguno"; Jorge, el 25/9, al preguntarle qué
+//      hacen sus alumnos: *"solo cambian el primero"*. Es la que se usa.
 //   8  "3 + 4·(-2) = 7·(-2)": opera en el orden en que está escrito, sin
 //      jerarquía (los paréntesis sí los respeta: los ve).
 //   10 "-7 + (-2) = +9": "menos y menos es más" aplicado a la suma.
@@ -62,22 +64,23 @@ function terminos(nodo) {
 
 const esAditiva = (n) => n.tipo === "op" && (n.simbolo === "+" || n.simbolo === "-");
 
-// Error 7: el grupo se "abre" sin tocar ningún signo de dentro.
-function grupoSinCambiarSignos(grupo, error) {
-  return terminos(grupo).reduce((s, t) => s + t.signo * calcula(t.nodo, error), 0);
+// Error 7: el grupo se "abre" cambiando el signo del primer término y
+// dejando los demás como están: -(-3 + 5) → +3 + 5.
+function grupoCambiandoSoloElPrimero(grupo, error) {
+  return terminos(grupo).reduce((s, t, i) => s + (i === 0 ? -1 : 1) * t.signo * calcula(t.nodo, error), 0);
 }
 
 function calcula(nodo, error) {
   if (nodo.tipo === "num") return nodo.valor;
   if (nodo.tipo === "neg") {
-    if (error === 7 && esAditiva(nodo.hijo)) return entero(grupoSinCambiarSignos(nodo.hijo, error));
+    if (error === 7 && esAditiva(nodo.hijo)) return entero(grupoCambiandoSoloElPrimero(nodo.hijo, error));
     return entero(-calcula(nodo.hijo, error));
   }
   if (error === 8 && nodo.simbolo !== "^") return entero(deIzquierdaADerecha(nodo, error));
 
   const a = calcula(nodo.izq, error);
   if (error === 7 && nodo.simbolo === "-" && esAditiva(nodo.der)) {
-    return entero(a + grupoSinCambiarSignos(nodo.der, error));
+    return entero(a + grupoCambiandoSoloElPrimero(nodo.der, error));
   }
   const b = calcula(nodo.der, error);
   return entero(opera(nodo.simbolo, a, b, nodo.der, error));
