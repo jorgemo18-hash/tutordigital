@@ -36,6 +36,9 @@ const PATRONES = "Patrones y regularidades numéricas.";
 const COMPARACION = "Comparación y ordenación de fracciones, decimales y porcentajes: situación exacta o aproximada en la recta numérica.";
 const GRANDES = "Números grandes y pequeños: notación exponencial y científica y uso de la calculadora.";
 const FACTORES = "Factores, múltiplos y divisores. Factorización en números primos para resolver problemas: estrategias y herramientas.";
+// Decimales: la estimación (A.2) y el efecto de las operaciones (A.3).
+const ESTIMACIONES = "Realización de estimaciones con la precisión requerida.";
+const EFECTO = "Efecto de las operaciones aritméticas con números enteros, fracciones y expresiones decimales.";
 // Razonamiento proporcional y educación financiera (A.5, A.6) y los
 // porcentajes raros de A.2.
 const RAZONES = "Razones entre magnitudes: comprensión y representación de relaciones cuantitativas.";
@@ -57,7 +60,8 @@ const PROPIEDADES = "Propiedades de las operaciones (suma, resta, multiplicació
 // distintos que tienen que coincidir.
 export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INVERSAS, PATRONES, FACTORES, GRANDES, COMPARACION,
   REGLA, MODELIZACION, VARIABLE, EQUIVALENCIA, ECUACIONES,
-  RAZONES, PORCENTAJES, SITUACIONES, PORCENTAJES_RAROS, CONSUMO, FINANCIERA };
+  RAZONES, PORCENTAJES, SITUACIONES, PORCENTAJES_RAROS, CONSUMO, FINANCIERA,
+  ESTIMACIONES, EFECTO };
 
 // Por tema y número de concepto (ver conceptosDelTema.js).
 const VINETA_POR_CONCEPTO = {
@@ -98,6 +102,17 @@ const VINETA_POR_CONCEPTO = {
     5: { texto: OPERACIONES },
     6: { texto: OPERACIONES },
     7: { texto: PROPIEDADES, implicito: true },
+    8: { texto: OPERACIONES },
+  },
+  // Números decimales.
+  "c0000000-0000-4000-8000-000000000007": {
+    1: { texto: CANTIDADES },
+    2: { texto: REPRESENTACION },
+    3: { texto: COMPARACION },
+    4: { texto: ESTIMACIONES },
+    5: { texto: OPERACIONES },
+    6: { texto: OPERACIONES },
+    7: { texto: EFECTO },
     8: { texto: OPERACIONES },
   },
   // Proporcionalidad y porcentajes: A.5 casi palabra por palabra.

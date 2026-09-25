@@ -33,6 +33,8 @@ export async function run({ test }) {
     assert.ok(de("A.4").saberes.includes(CITAS.FACTORES));
     assert.ok(de("A.4").saberes.includes(CITAS.COMPARACION));
     assert.ok(de("A.2").saberes.includes(CITAS.PORCENTAJES_RAROS));
+    assert.ok(de("A.2").saberes.includes(CITAS.ESTIMACIONES));
+    assert.ok(de("A.3").saberes.includes(CITAS.EFECTO));
     for (const cita of [CITAS.RAZONES, CITAS.PORCENTAJES, CITAS.SITUACIONES]) assert.ok(de("A.5").saberes.includes(cita), cita);
     for (const cita of [CITAS.CONSUMO, CITAS.FINANCIERA]) assert.ok(de("A.6").saberes.includes(cita), cita);
     assert.ok(de("D.1").saberes.includes(CITAS.REGLA));
