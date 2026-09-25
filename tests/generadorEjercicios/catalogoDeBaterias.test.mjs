@@ -16,6 +16,7 @@ export async function run({ test, assert }) {
   const { TEMAS_CON_GENERADOR } = await import("../../server/lib/generadorEjercicios/temasConGenerador.js");
   const { ENTEROS_1ESO } = await import("../../server/lib/generadorEjercicios/temas/enteros1eso.js");
   const { crearAzar } = await import("../../server/lib/generadorEjercicios/aleatorio.js");
+  const { SIN_EJEMPLO } = await import("../../server/lib/generadorEjercicios/ejemploResuelto.js");
   const { ALTURA_DE_LA_BATERIA_MM } = await import(
     "../../server/lib/generadorEjercicios/alturasMedidas.js"
   );
@@ -189,6 +190,20 @@ export async function run({ test, assert }) {
           ej.apartados.length >= b.minimo,
           `${b.generador.name} con semilla ${s}: ${ej.apartados.length} de ${b.minimo}`,
         );
+      }
+    }
+  });
+
+  test(T + "EL EJEMPLO RESUELTO CABE SIEMPRE: cada batería da su máximo de apartados MÁS UNO", () => {
+    // El montador pide un apartado de más para convertirlo en el ejemplo
+    // (ejemploResuelto.js). Si el generador no llega, la actividad sale SIN
+    // ejemplo, sin avisar: pasaba en refuerzo con siete bases de potencias
+    // y seis situaciones de razones.
+    for (const b of TODAS) {
+      if (SIN_EJEMPLO.has(b.clave)) continue;
+      for (const s of ["a", "b", 7, 42, "x", "y"]) {
+        const n = b.generador(crearAzar(s), { cuantos: b.maximo + 1 }).apartados.length;
+        assert.ok(n >= b.maximo + 1, `${b.clave} con semilla ${s}: ${n} de ${b.maximo + 1}`);
       }
     }
   });

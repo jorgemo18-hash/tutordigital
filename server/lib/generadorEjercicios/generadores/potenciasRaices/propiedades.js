@@ -16,7 +16,10 @@ import { potenciaLatex, potenciaTexto, superindice } from "./formato.js";
 // Los números se eligen para que cada error dé una respuesta distinta de la
 // buena (con 2 y 2 sumar y multiplicar dan lo mismo: no sirve).
 
-const BASES = [2, 3, 5, 6, 7, 10, 11];
+// Una base distinta en cada apartado (es la clave de `reuneApartados`), y
+// hacen falta el máximo de apartados MÁS UNO, que es el ejemplo resuelto:
+// con siete bases, la hoja de refuerzo salía sin ejemplo.
+const BASES = [2, 3, 4, 5, 6, 7, 9, 10, 11];
 
 // ── "Producto de potencias de la misma base" (dificultad 1) ─────────────
 export function productoMismaBase(azar, { cuantos = 5 } = {}) {
