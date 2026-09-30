@@ -66,7 +66,7 @@ export default async function academiaRecibosListadoRoutes(app) {
 
     const admin = createSupabaseAdmin();
     const [{ items, error: itemsErr }, { porFamilia, error: recibosErr }] = await Promise.all([
-      fetchFamiliasConAlumnos(admin, auth.tenant.id),
+      fetchFamiliasConAlumnos(admin, auth.tenant.id, { mes, anio }),
       fetchRecibosDelMes(admin, auth.tenant.id, { mes, anio }),
     ]);
     if (itemsErr || recibosErr) {

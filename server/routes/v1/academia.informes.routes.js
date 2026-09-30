@@ -159,7 +159,7 @@ export default async function academiaInformesRoutes(app) {
     const tenantId = auth.tenant.id;
     const { mes, anio, confirmar } = parsed.data;
 
-    const { items, error: itemsErr } = await fetchFamiliasConAlumnos(admin, tenantId);
+    const { items, error: itemsErr } = await fetchFamiliasConAlumnos(admin, tenantId, { mes, anio });
     if (itemsErr) {
       req.log.error({ err: itemsErr, requestId }, "academia informes regenerar: fetch familias failed");
       return fail(reply, 500, "informes_fetch_failed", "Failed to fetch familias", requestId);

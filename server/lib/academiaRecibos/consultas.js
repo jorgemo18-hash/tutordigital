@@ -1,3 +1,4 @@
+import { empiezaEnElMesOAntes } from "./empiezaEnElMes.js";
 export async function fetchConfig(admin, tenantId) {
   const { data } = await admin
     .from("academia_config")
@@ -10,7 +11,12 @@ export async function fetchConfig(admin, tenantId) {
 // Familias activas del tenant + sus alumnos activos con el precio_bruto y el
 // descuento propio de la tarifa vigente de cada uno — base tanto para GET (listado) como para
 // generar/regenerar recibos (cálculo de totales).
-export async function fetchFamiliasConAlumnos(admin, tenantId) {
+//
+// `periodo` ({mes, anio}): deja fuera a los alumnos que todavía no han
+// empezado ese mes (ver empiezaEnElMes.js). Todos los que construyen un
+// recibo, lo prevén o lo listan lo pasan; sin él se devuelven todos los
+// activos, que es lo que quiere quien no piensa en un mes concreto.
+export async function fetchFamiliasConAlumnos(admin, tenantId, periodo = null) {
   const [{ data: familias, error: famErr }, { data: alumnos, error: alErr }] = await Promise.all([
     admin
       .from("academia_familias")
@@ -39,9 +45,22 @@ export async function fetchFamiliasConAlumnos(admin, tenantId) {
     tarifaPorAlumno = Object.fromEntries((tarifas || []).map((t) => [t.alumno_id, t]));
   }
 
+  let horariosPorAlumno = null;
+  if (periodo && alumnoIds.length) {
+    const { data: horarios, error: horErr } = await admin
+      .from("academia_horario")
+      .select("alumno_id, fecha_inicio, fecha_fin")
+      .eq("tenant_id", tenantId)
+      .in("alumno_id", alumnoIds);
+    if (horErr) return { error: horErr };
+    horariosPorAlumno = {};
+    for (const h of horarios || []) (horariosPorAlumno[h.alumno_id] ||= []).push(h);
+  }
+
   const alumnosPorFamilia = {};
   for (const a of alumnos || []) {
     if (!a.familia_id) continue;
+    if (horariosPorAlumno && !empiezaEnElMesOAntes({ fechaAlta: a.fecha_alta, horarios: horariosPorAlumno[a.id] || [] }, periodo)) continue;
     const item = {
       id: a.id, nombre: a.nombre, curso: a.curso, fecha_alta: a.fecha_alta,
       // SIN TARIFA y TARIFA DE 0 € no son lo mismo, aunque los dos den un

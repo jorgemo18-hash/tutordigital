@@ -40,7 +40,7 @@ async function generarParaFamiliasSinRecibo(admin, {
   tenantId, tenantNombre, mes, anio, soloFamiliaIds, previoPorFamilia = {}, log,
 } = {}) {
   const [{ items, error: itemsErr }, { porFamilia, error: recibosErr }, config] = await Promise.all([
-    fetchFamiliasConAlumnos(admin, tenantId),
+    fetchFamiliasConAlumnos(admin, tenantId, { mes, anio }),
     fetchRecibosDelMes(admin, tenantId, { mes, anio }),
     fetchConfig(admin, tenantId),
   ]);

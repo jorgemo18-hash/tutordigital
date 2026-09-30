@@ -34,7 +34,7 @@ import { calcularTotalesFamilia } from "../academiaRecibos/totalesFamilia.js";
 // gestor— así que las dos cifras no pueden vivir en el mismo saco.
 export async function fetchPorEmitir(admin, tenantId, { mes, anio }) {
   const [{ items, error: itemsErr }, { porFamilia, error: recibosErr }] = await Promise.all([
-    fetchFamiliasConAlumnos(admin, tenantId),
+    fetchFamiliasConAlumnos(admin, tenantId, { mes, anio }),
     fetchRecibosDelMes(admin, tenantId, { mes, anio }),
   ]);
   if (itemsErr || recibosErr) return { error: itemsErr || recibosErr };
