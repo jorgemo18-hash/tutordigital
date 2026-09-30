@@ -272,5 +272,14 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
     cargarLista();
   }
 
-  return { render };
+  // El aviso de "toca enviar" (ver avisoEnvio/avisoEnvio.js) abre esta
+  // sección en el mes del envío pendiente, que no tiene por qué ser el actual.
+  function irAPeriodo(periodo) {
+    mes = periodo.mes;
+    anio = periodo.anio;
+    familiaSeleccionadaId = null;
+    familiasConError.clear();
+  }
+
+  return { render, irAPeriodo };
 }

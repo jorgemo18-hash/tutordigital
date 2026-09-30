@@ -41,6 +41,14 @@ function buildSelectModoEnvio(valor) {
   return { wrap, select };
 }
 
+// Lo escrito en el campo del día, como lo guarda la base de datos: vacío o
+// fuera de 1–28 es null (sin aviso), para no mandar un 31 que no existe en
+// febrero ni un texto que el servidor rechazaría entero.
+export function diaDeEnvio(valor) {
+  const n = Number(String(valor ?? "").trim());
+  return String(valor ?? "").trim() && Number.isInteger(n) && n >= 1 && n <= 28 ? n : null;
+}
+
 function buildField(label, attrs = {}) {
   const wrap = document.createElement("div");
   wrap.className = "ac-field";
@@ -97,6 +105,14 @@ function buildRecibosPanel({ fetchConfigFn, updateConfigFn }) {
     const modoEnvio = buildSelectModoEnvio(config.modo_envio);
     panel.appendChild(modoEnvio.wrap);
 
+    // Día del envío (migración 146): desde ese día, franja "Toca el envío…
+    // Revisar" arriba del panel hasta que esté hecho. Vacío = sin aviso.
+    const diaEnvio = buildField("Día del envío a familias (vacío: sin aviso)", {
+      type: "number", min: "1", max: "28", step: "1", placeholder: "Por ejemplo, 5",
+      value: config.dia_envio ?? "",
+    });
+    panel.appendChild(diaEnvio.wrap);
+
     const { foot, hint } = buildPanelFoot();
     const actualizarVistaPrevia = () => {
       hint.textContent = `Vista previa: ${plantilla.input.value.replace("{mes}", "junio").replace("{año}", "2026")}`;
@@ -115,6 +131,7 @@ function buildRecibosPanel({ fetchConfigFn, updateConfigFn }) {
           concepto_recibo_plantilla: plantilla.input.value.trim() || "Clases {mes} {año}",
           enviar_recibo_al_pagar: enviarAlPagar.input.checked,
           modo_envio: modoEnvio.select.value || MODO_ENVIO_POR_DEFECTO,
+          dia_envio: diaDeEnvio(diaEnvio.input.value),
         });
         const previo = hint.textContent;
         hint.textContent = "✓ Guardado";

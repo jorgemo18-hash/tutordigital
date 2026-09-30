@@ -32,6 +32,8 @@
 
   .ac-app .ac-main { margin-left: 0; }
   .ac-app .ac-main-shell { padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 40px; }
+  /* A la derecha del botón del menú, que está fijo arriba a la izquierda. */
+  .ac-app .ac-aviso-envio { width: auto; margin: calc(env(safe-area-inset-top, 0px) + 12px) 16px 0 64px; }
   /* El título de cada sección, a la derecha del botón del menú. */
   .ac-app .ac-body-head { padding-left: 56px; min-height: 44px; align-items: center; }
   .ac-app .ac-title { font-size: 24px; }

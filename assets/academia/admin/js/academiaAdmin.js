@@ -4,7 +4,7 @@ import { getTheme, saveTheme } from "../../../shared/js/header.js";
 import { aplicarTema } from "../../js/tema.js";
 import { seccionDeUrl, escribirSeccionEnUrl, escucharUrl } from "./seccionEnUrl.js";
 import { createFicharFab } from "../../../shared/js/fichaje/ficharFab.js";
-import { fetchMe, fetchConfig } from "./api.js";
+import { fetchMe, fetchConfig, fetchRecibos } from "./api.js";
 import { fichar, fetchMiEstadoFichaje } from "./apiFichajes.js";
 import { buildSidebar, seccionesAdmin } from "./sidebar.js";
 import { montarMenuMovil } from "./menuMovil.js";
@@ -22,6 +22,7 @@ import { aplicarFondoGlobal } from "./sections/ajustes/personalizacionDom.js";
 import { createHorarioSection } from "./sections/horarioSection.js";
 import { createDarClaseSection } from "./sections/darClaseSection.js";
 import { hayUnSoloProfesor } from "./plantilla.js";
+import { crearAvisoEnvio } from "./avisoEnvio/avisoEnvio.js";
 
 function buildLayout(root) {
   root.innerHTML = "";
@@ -157,11 +158,26 @@ async function init() {
   // válido para este centro, Alumnos.
   let activeId = seccionDeUrl(window.location.hash, idsVisibles) || "alumnos";
 
+  // La franja de "toca enviar" (Ajustes › Facturación › día del envío). Se
+  // recalcula al cambiar de sección: así se va sola al terminar de enviar.
+  const avisoSlot = document.createElement("div");
+  main.insertBefore(avisoSlot, mainShell);
+  const avisoEnvio = crearAvisoEnvio({
+    contenedor: avisoSlot,
+    diaEnvio: config?.dia_envio,
+    fetchRecibosFn: fetchRecibos,
+    onRevisar: (periodo) => {
+      envioFamiliasSection.irAPeriodo(periodo);
+      selectSection("envio_familias");
+    },
+  });
+
   function selectSection(sectionId) {
     activeId = sectionId;
     escribirSeccionEnUrl(sectionId);
     sidebar.setActive(sectionId);
     SECTION_RENDERERS[sectionId]?.();
+    avisoEnvio.actualizar();
   }
 
   escucharUrl({

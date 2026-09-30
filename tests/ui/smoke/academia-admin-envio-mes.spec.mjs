@@ -16,7 +16,7 @@ const RECIBOS = [
   { familia_id: "f2", familia_nombre: "Familia Val", familia_email: "v@x.es", recibo: { id: "r2", estado: "borrador", total_neto: 85 }, alumnos_activos: [alumno("a2", "Aarón Val"), alumno("a3", "Nora Val", { informe_redactado: true })] },
 ];
 
-async function abrir(browser, { width = 1440, height = 900 } = {}) {
+async function abrir(browser, { width = 1440, height = 900, seccion = "envio_familias", config = {} } = {}) {
   const context = await browser.newContext({ viewport: { width, height }, isMobile: width < 720, hasTouch: width < 720 });
   await forceTheme(context, "dark");
   await forceFakeSession(context);
@@ -26,8 +26,9 @@ async function abrir(browser, { width = 1440, height = 900 } = {}) {
     "**/api/v1/academia/recibos?mes=*": { data: { recibos: RECIBOS, periodo_informe: { mes: 9, anio: 2026 } } },
     "**/api/v1/academia/recibos/meses-enviados*": { data: { meses: [] } },
     "**/api/v1/academia/informes/*": { data: { dias: [], tieneSesionesClase: true, comentario: null, enviadoAt: null } },
+    "**/api/v1/academia/config": { data: { config } },
   } });
-  await page.goto("/assets/academia/admin/index.html#envio_familias", { waitUntil: "networkidle" });
+  await page.goto(`/assets/academia/admin/index.html#${seccion}`, { waitUntil: "networkidle" });
   return { context, page };
 }
 
@@ -60,6 +61,37 @@ test.describe("academia admin — envío del mes", () => {
     const { scroll, ancho } = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, ancho: window.innerWidth }));
     expect(scroll).toBeLessThanOrEqual(ancho);
     if (process.env.CAPTURAS) await page.screenshot({ path: `${process.env.CAPTURAS}/envio-movil.png`, fullPage: true });
+    await context.close();
+  });
+
+  // "TOCA ENVIAR" (30/09/2026): con día del envío configurado, desde ese día
+  // hay una franja arriba en cualquier sección, y Revisar lleva al envío.
+  test("la franja de 'toca el envío' sale en cualquier sección y Revisar abre Envío a familias", async ({ browser }) => {
+    const { context, page } = await abrir(browser, { seccion: "finanzas", config: { dia_envio: 5 } });
+    const franja = page.locator(".ac-aviso-envio");
+    await expect(franja).toContainText("Toca el envío a familias — recibo de octubre · informe de septiembre · 2 familias pendientes");
+    if (process.env.CAPTURAS) await page.screenshot({ path: `${process.env.CAPTURAS}/aviso-escritorio.png` });
+    await franja.getByRole("button", { name: "Revisar" }).click();
+    await expect(page.locator("h1.ac-title")).toHaveText("Envío a familias");
+    await context.close();
+  });
+
+  test("la franja en el móvil no tapa el menú ni hace scroll horizontal", async ({ browser }) => {
+    const { context, page } = await abrir(browser, { width: 390, height: 844, seccion: "alumnos", config: { dia_envio: 5 } });
+    await expect(page.locator(".ac-aviso-envio")).toBeVisible();
+    const menu = await page.locator(".ac-menu-btn").boundingBox();
+    const franja = await page.locator(".ac-aviso-envio").boundingBox();
+    expect(franja.x).toBeGreaterThanOrEqual(menu.x + menu.width);
+    const { scroll, ancho } = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, ancho: window.innerWidth }));
+    expect(scroll).toBeLessThanOrEqual(ancho);
+    if (process.env.CAPTURAS) await page.screenshot({ path: `${process.env.CAPTURAS}/aviso-movil.png` });
+    await context.close();
+  });
+
+  test("sin día configurado no hay franja", async ({ browser }) => {
+    const { context, page } = await abrir(browser, { seccion: "finanzas" });
+    await page.waitForTimeout(300);
+    await expect(page.locator(".ac-aviso-envio")).toHaveCount(0);
     await context.close();
   });
 });
