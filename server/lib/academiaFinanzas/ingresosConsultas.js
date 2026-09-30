@@ -1,12 +1,20 @@
+import { importesPorLinea } from "../academiaRecibos/importePorLinea.js";
 import { mesesDelCurso, claveMesAnio } from "./cursoAcademico.js";
 
 // Vista "Pendientes": alumnos con recibo ese mes, agrupados por el
 // metodo_pago de su familia — un recibo es por familia, así que todos los
 // hermanos de una misma familia comparten recibo_id y estado.
+//
+// `cuota` es LO QUE DICE EL RECIBO para ese alumno, con todos sus
+// descuentos (ver importePorLinea.js). Hasta el 30/09/2026 era la tarifa
+// vigente del alumno, y un recibo con un 50 % puntual seguía saliendo
+// entero aquí mientras Resumen y Fiscal —que sí leen el recibo— decían
+// otra cosa. De paso desaparece la consulta de tarifas, y con ella el
+// .in() con alumno_id null que rompía esta vista (TUTORDIGITAL-BACKEND-5).
 export async function fetchPendientesAgrupados(admin, tenantId, { mes, anio }) {
   const { data: recibos, error: errRecibos } = await admin
     .from("academia_recibos")
-    .select("id, estado, familia:academia_familias(nombre, metodo_pago)")
+    .select("id, estado, total_bruto, total_neto, familia:academia_familias(nombre, metodo_pago)")
     .eq("tenant_id", tenantId)
     .eq("mes", mes)
     .eq("anio", anio);
@@ -14,35 +22,29 @@ export async function fetchPendientesAgrupados(admin, tenantId, { mes, anio }) {
 
   const reciboIds = (recibos || []).map((r) => r.id);
   const { data: lineas, error: errLineas } = reciboIds.length
-    ? await admin.from("academia_recibos_lineas").select("alumno_id, recibo_id, nombre_alumno").in("recibo_id", reciboIds)
+    ? await admin
+      .from("academia_recibos_lineas")
+      .select("alumno_id, recibo_id, nombre_alumno, precio_bruto, descuentos_recurrentes")
+      .in("recibo_id", reciboIds)
     : { data: [] };
   if (errLineas) return { error: errLineas };
 
-  // .filter(Boolean): academia_recibos_lineas.alumno_id es nullable (una
-  // línea de recibo puede quedar sin alumno vinculado, p.ej. tras borrar el
-  // alumno) — sin el filtro, `null` entraba en el array y Postgres rechazaba
-  // el .in() con "invalid input syntax for type uuid: null" (visto en
-  // producción con datos reales de Lyceo, TUTORDIGITAL-BACKEND-5).
-  const alumnoIds = [...new Set((lineas || []).map((l) => l.alumno_id).filter(Boolean))];
-  const { data: tarifas, error: errTarifas } = alumnoIds.length
-    ? await admin.from("academia_tarifas").select("alumno_id, precio_neto").eq("tenant_id", tenantId).in("alumno_id", alumnoIds).is("fecha_fin", null)
-    : { data: [] };
-  if (errTarifas) return { error: errTarifas };
-
-  const cuotaPorAlumno = Object.fromEntries((tarifas || []).map((t) => [t.alumno_id, Number(t.precio_neto) || 0]));
-  const recibosPorId = Object.fromEntries((recibos || []).map((r) => [r.id, r]));
+  const lineasPorRecibo = {};
+  for (const l of lineas || []) (lineasPorRecibo[l.recibo_id] ||= []).push(l);
 
   const gruposPorMetodo = {};
-  for (const linea of lineas || []) {
-    const recibo = recibosPorId[linea.recibo_id];
-    if (!recibo) continue;
+  for (const recibo of recibos || []) {
+    const suyas = lineasPorRecibo[recibo.id] || [];
+    const importes = importesPorLinea(recibo, suyas);
     const metodoPago = recibo.familia?.metodo_pago || null;
-    (gruposPorMetodo[metodoPago] ||= []).push({
-      recibo_id: recibo.id,
-      alumno_nombre: linea.nombre_alumno,
-      familia_nombre: recibo.familia?.nombre || "",
-      cuota: cuotaPorAlumno[linea.alumno_id] || 0,
-      estado: recibo.estado,
+    suyas.forEach((linea, i) => {
+      (gruposPorMetodo[metodoPago] ||= []).push({
+        recibo_id: recibo.id,
+        alumno_nombre: linea.nombre_alumno,
+        familia_nombre: recibo.familia?.nombre || "",
+        cuota: importes[i],
+        estado: recibo.estado,
+      });
     });
   }
 
