@@ -29,8 +29,10 @@ function mensajeConfirmacionEnvioFamilia({ afectados }) {
 // confirmación forward-only, independiente de las demás (si "completo"
 // afecta a varios documentos, se preguntan uno a uno, nunca en un único
 // diálogo combinado).
+// `periodoInforme`: el mes de los informes, que puede no ser el del recibo
+// (ver assets/shared/js/periodosDeEnvio.js). Sin él, el mismo.
 export async function regenerarFamilia(opcion, {
-  item, mes, anio,
+  item, mes, anio, periodoInforme = { mes, anio },
   regenerarReciboFn, generarReciboFamiliaFn, generarInformeFn,
   confirmFn,
 }) {
@@ -39,7 +41,7 @@ export async function regenerarFamilia(opcion, {
   if (opcion.tipo === "informe_alumno") {
     resultado.informes.push(
       await confirmarYEjecutar(
-        (confirmar) => generarInformeFn({ alumno_id: opcion.alumnoId, mes, anio, forzar: true, confirmar }),
+        (confirmar) => generarInformeFn({ alumno_id: opcion.alumnoId, ...periodoInforme, forzar: true, confirmar }),
         { mensajeConfirmacion: (details) => mensajeConfirmacionInformeRegenerar(details, opcion.alumnoNombre), confirmFn }
       )
     );
@@ -59,7 +61,7 @@ export async function regenerarFamilia(opcion, {
     for (const alumno of item.alumnos_activos) {
       resultado.informes.push(
         await confirmarYEjecutar(
-          (confirmar) => generarInformeFn({ alumno_id: alumno.id, mes, anio, forzar: true, confirmar }),
+          (confirmar) => generarInformeFn({ alumno_id: alumno.id, ...periodoInforme, forzar: true, confirmar }),
           { mensajeConfirmacion: (details) => mensajeConfirmacionInformeRegenerar(details, alumno.nombre), confirmFn }
         )
       );
@@ -74,13 +76,13 @@ export async function regenerarFamilia(opcion, {
 // el backend en una sola llamada) o el informe de un único alumno
 // ("informe_alumno", email aparte, sin recibo).
 export async function enviarFamiliaAccion(opcion, {
-  item, mes, anio,
+  item, mes, anio, periodoInforme = { mes, anio },
   enviarFamiliaFn, enviarInformeFn,
   confirmFn,
 }) {
   if (opcion.tipo === "informe_alumno") {
     return confirmarYEjecutar(
-      (confirmar) => enviarInformeFn({ alumno_id: opcion.alumnoId, mes, anio, confirmar }),
+      (confirmar) => enviarInformeFn({ alumno_id: opcion.alumnoId, ...periodoInforme, confirmar }),
       { mensajeConfirmacion: (details) => mensajeConfirmacionInformeEnviar(details, opcion.alumnoNombre), confirmFn }
     );
   }

@@ -9,7 +9,7 @@ export function buildEmailTextoCompletoPanel(deps) {
     campo: "email_texto_completo",
     titulo: "Email — recibo + informe",
     descripcion: "Texto de acompañamiento cuando el envío lleva el recibo y el informe adjuntos.",
-    variables: ["{mes}", "{anio}", "{total}", "{familia}"],
+    variables: ["{mes}", "{mes_informe}", "{anio}", "{total}", "{familia}"],
     variablesEsperadas: ["{total}"],
     ...deps,
   });

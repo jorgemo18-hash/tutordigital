@@ -28,7 +28,7 @@ export function mensajeConfirmacionRecibosTodos({ afectados = 0, enviados = 0, p
 // `modo` (recibos): faltan | borradores | todos, ver opcionesRegenerarRecibos.
 // "faltan" solo crea: va a generarRecibosFn y no puede borrar nada.
 export async function regenerarLote(tipo, {
-  mes, anio, hayRecibosEnPeriodo, modo = "borradores",
+  mes, anio, periodoInforme = { mes, anio }, hayRecibosEnPeriodo, modo = "borradores",
   regenerarRecibosFn, generarRecibosFn, regenerarInformesFn,
   confirmFn,
 }) {
@@ -46,7 +46,7 @@ export async function regenerarLote(tipo, {
 
   if (tipo !== "solo_recibo") {
     const resultado = await confirmarYEjecutar(
-      (confirmar) => regenerarInformesFn({ mes, anio, confirmar }),
+      (confirmar) => regenerarInformesFn({ ...periodoInforme, confirmar }),
       { mensajeConfirmacion: mensajeConfirmacionLote("informe"), confirmFn }
     );
     fallidosInformes = resultado?.fallidos || 0;

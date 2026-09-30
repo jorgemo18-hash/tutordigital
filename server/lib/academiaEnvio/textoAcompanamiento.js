@@ -8,14 +8,14 @@ import { formatoEuros } from "../../../assets/shared/js/formatoDinero.js";
 // real solo llevaba uno de los dos. Mismos textos por defecto que la
 // migración 092 (duplicado ahí a propósito: SQL no puede importar JS).
 export const DEFAULT_TEXTO_COMPLETO =
-  "Hola {familia}, os adjuntamos el recibo de {mes} ({total}) y el informe del trabajo realizado este mes. " +
+  "Hola {familia}, os adjuntamos el recibo de {mes} ({total}) y el informe del trabajo realizado en {mes_informe}. " +
   "Cualquier duda, quedamos a vuestra disposición.";
 
 export const DEFAULT_TEXTO_SOLO_RECIBO =
   "Hola {familia}, os adjuntamos el recibo de {mes} ({total}). Cualquier duda, quedamos a vuestra disposición.";
 
 export const DEFAULT_TEXTO_SOLO_INFORME =
-  "Hola {familia}, os adjuntamos el informe del trabajo realizado este mes. Cualquier duda, quedamos a vuestra disposición.";
+  "Hola {familia}, os adjuntamos el informe del trabajo realizado en {mes_informe}. Cualquier duda, quedamos a vuestra disposición.";
 
 export const MESES = [
   null, "enero", "febrero", "marzo", "abril", "mayo", "junio",
@@ -43,9 +43,16 @@ function formatEuros(n) {
 // saltos de línea reales, p. ej. el texto de inscripción) para no
 // interferir con el escapado de {familia} ni acabar escapando el <br>
 // que acabamos de insertar.
-export function sustituirVariables(plantilla, { mes, anio, total, familia }, fallback = DEFAULT_TEXTO_COMPLETO) {
+//
+// {mes_informe} (migración 145): el mes del informe, que en el modo
+// "informe_mes_anterior" es el anterior al del recibo. Sin `mesInforme`
+// vale lo mismo que {mes}. Se sustituye ANTES que {mes}: si no, "{mes}"
+// dentro de "{mes_informe}" no existe, pero así ni siquiera hay que
+// pensarlo.
+export function sustituirVariables(plantilla, { mes, anio, total, familia, mesInforme = mes }, fallback = DEFAULT_TEXTO_COMPLETO) {
   const base = plantilla || fallback;
   const sustituido = base
+    .split("{mes_informe}").join(MESES[mesInforme] || "")
     .split("{mes}").join(MESES[mes] || "")
     .split("{anio}").join(String(anio ?? ""))
     .split("{total}").join(total != null && total !== "" ? formatEuros(total) : "")

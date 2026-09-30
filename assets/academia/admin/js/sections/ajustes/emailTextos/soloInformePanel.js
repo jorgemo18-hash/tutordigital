@@ -9,7 +9,7 @@ export function buildEmailTextoSoloInformePanel(deps) {
     campo: "email_texto_solo_informe",
     titulo: "Email — solo informe",
     descripcion: "Texto de acompañamiento cuando el envío lleva únicamente el informe.",
-    variables: ["{mes}", "{anio}", "{familia}"],
+    variables: ["{mes}", "{mes_informe}", "{anio}", "{familia}"],
     variablesEsperadas: [],
     ...deps,
   });

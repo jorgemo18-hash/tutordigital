@@ -3,8 +3,43 @@ import { buildPanelHead, buildPanelFoot, buildVarchip } from "../panelChrome.js"
 import { buildDescuentosPanel } from "../descuentosPanel.js";
 import { buildCategoriasGastoPanel } from "../categoriasGastoPanel.js";
 import { buildToggle } from "../toggle.js";
+import { MODO_ENVIO_POR_DEFECTO, modoDeEnvio } from "../../../../../../shared/js/periodosDeEnvio.js";
 
 const PLANTILLA_EJEMPLOS = ["Clases {mes} {año}", "Clases {mes} en {academia}"];
+
+// Qué va en el envío mensual (migración 145). Dos modos y no más: ver
+// assets/shared/js/periodosDeEnvio.js.
+// Etiquetas cortas (en el móvil el desplegable corta a unos 38 caracteres);
+// la explicación de cada una va debajo, y cambia con la elección.
+const OPCIONES_MODO_ENVIO = [
+  { value: "informe_mes_anterior", label: "Recibo del mes + informe del anterior", ayuda: "Para cobrar a principio de mes: el envío de octubre lleva el recibo de octubre y el informe de septiembre." },
+  { value: "mismo_mes", label: "Recibo e informe del mismo mes", ayuda: "Para cobrar a mes vencido: el envío de octubre lleva el recibo y el informe de octubre." },
+];
+
+function buildSelectModoEnvio(valor) {
+  const wrap = document.createElement("div");
+  wrap.className = "ac-field";
+  const label = document.createElement("label");
+  label.className = "ac-field-label";
+  label.textContent = "Qué se manda cada mes";
+  const select = document.createElement("select");
+  select.className = "ac-input";
+  for (const op of OPCIONES_MODO_ENVIO) {
+    const option = document.createElement("option");
+    option.value = op.value;
+    option.textContent = op.label;
+    select.appendChild(option);
+  }
+  select.value = modoDeEnvio(valor);
+  const ayuda = document.createElement("p");
+  ayuda.className = "ac-field-hint";
+  const pintarAyuda = () => { ayuda.textContent = OPCIONES_MODO_ENVIO.find((op) => op.value === select.value)?.ayuda || ""; };
+  select.addEventListener("change", pintarAyuda);
+  pintarAyuda();
+  wrap.style.marginTop = "12px";
+  wrap.append(label, select, ayuda);
+  return { wrap, select };
+}
 
 function buildField(label, attrs = {}) {
   const wrap = document.createElement("div");
@@ -59,6 +94,9 @@ function buildRecibosPanel({ fetchConfigFn, updateConfigFn }) {
     enviarAlPagar.wrap.style.marginTop = "4px";
     panel.appendChild(enviarAlPagar.wrap);
 
+    const modoEnvio = buildSelectModoEnvio(config.modo_envio);
+    panel.appendChild(modoEnvio.wrap);
+
     const { foot, hint } = buildPanelFoot();
     const actualizarVistaPrevia = () => {
       hint.textContent = `Vista previa: ${plantilla.input.value.replace("{mes}", "junio").replace("{año}", "2026")}`;
@@ -76,6 +114,7 @@ function buildRecibosPanel({ fetchConfigFn, updateConfigFn }) {
         await updateConfigFn({
           concepto_recibo_plantilla: plantilla.input.value.trim() || "Clases {mes} {año}",
           enviar_recibo_al_pagar: enviarAlPagar.input.checked,
+          modo_envio: modoEnvio.select.value || MODO_ENVIO_POR_DEFECTO,
         });
         const previo = hint.textContent;
         hint.textContent = "✓ Guardado";

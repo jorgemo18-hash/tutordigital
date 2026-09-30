@@ -1,4 +1,5 @@
 import { buildPeriodoSelector } from "./periodoSelector.js";
+import { textoDelEnvio } from "../../../../../shared/js/periodosDeEnvio.js";
 import { buildRegenerarBoton } from "./regenerarBoton.js";
 import { elegirAccion } from "./elegirAccionDialog.js";
 import { opcionesLote, opcionesRegenerarRecibos } from "./acciones/opcionesAccion.js";
@@ -24,6 +25,7 @@ function cancelado() {
 export function buildCabecera({
   mes,
   anio,
+  periodoInforme = null,
   mesesEnviados,
   anioActualSistema,
   hayPendientes,
@@ -35,10 +37,19 @@ export function buildCabecera({
 }) {
   const head = document.createElement("div");
   head.className = "ac-body-head";
+  const titulos = document.createElement("div");
   const title = document.createElement("h1");
   title.className = "ac-title";
   title.textContent = "Envío a familias";
-  head.appendChild(title);
+  titulos.appendChild(title);
+  // Qué va en el correo, dicho con palabras: con el modo "informe del mes
+  // anterior" el selector dice octubre y el informe es de septiembre, y
+  // eso no puede quedar para que lo adivine nadie.
+  const queSeEnvia = document.createElement("p");
+  queSeEnvia.className = "ef-que-se-envia";
+  queSeEnvia.textContent = textoDelEnvio({ mes, anio }, periodoInforme);
+  titulos.appendChild(queSeEnvia);
+  head.appendChild(titulos);
 
   const acciones = document.createElement("div");
   acciones.className = "ef-head-acciones";

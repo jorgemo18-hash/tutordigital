@@ -39,6 +39,10 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   const anioActualSistema = anio;
   const branding = { nombreAcademia: config.nombre_emisor || tenantNombre, emailEmisor: config.email_emisor, logoUrl: config.logo_url };
   let mesesEnviados = [];
+  // El mes del informe que acompaña al recibo de {mes, anio}. Lo manda el
+  // servidor con cada listado (ver api.fetchRecibos): todo lo que toca
+  // informes en esta sección usa este, nunca `mes` a secas.
+  let periodoInforme = { mes, anio };
   // SOLO LAS ACCIONABLES: las que tienen al menos un alumno activo. Las
   // demás van a `familiasSinActivos` y de ahí al pie de la lista (ver
   // familiasSinActivos.js). El filtro se hace AL ASIGNAR y no en cada uso
@@ -58,7 +62,8 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   // recargan (primer render, cambio de período y tras un envío) no puedan
   // divergir en el filtro.
   async function cargarFamilias() {
-    const [todas, meses] = await Promise.all([fetchRecibos({ mes, anio }), fetchMesesEnviados(anio)]);
+    const [{ recibos: todas, periodoInforme: informe }, meses] = await Promise.all([fetchRecibos({ mes, anio }), fetchMesesEnviados(anio)]);
+    periodoInforme = informe;
     const { conActivos, sinActivos } = separarPorAlumnosActivos(todas);
     return [conActivos, sinActivos, meses];
   }
@@ -98,6 +103,7 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
       buildCabecera({
         mes,
         anio,
+        periodoInforme,
         mesesEnviados,
         anioActualSistema,
         // Pendientes O con error: si falla el lote entero (microservicio de
@@ -125,7 +131,7 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
         onRegenerar: async (tipo, modo) => {
           try {
             return await regenerarLote(tipo, {
-              mes, anio, modo: modo || "faltan", hayRecibosEnPeriodo: familias.some((f) => f.recibo),
+              mes, anio, periodoInforme, modo: modo || "faltan", hayRecibosEnPeriodo: familias.some((f) => f.recibo),
               regenerarRecibosFn: regenerarRecibos, generarRecibosFn: generarRecibos, regenerarInformesFn: regenerarInformes,
             });
           } finally {
@@ -182,11 +188,11 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
     renderCabecera();
     renderLista();
     const item = familias.find((f) => f.familia_id === familiaSeleccionadaId);
-    if (item) panelDerecho.actualizar(item, { mes, anio, api: API, branding, onCambio: refrescarListaSinTocarPanel, onAccionFamilia: refrescarListaYPanel });
+    if (item) panelDerecho.actualizar(item, { mes, anio, periodoInforme, api: API, branding, onCambio: refrescarListaSinTocarPanel, onAccionFamilia: refrescarListaYPanel });
   }
 
   function mostrarEnPanel(item) {
-    panelDerecho.mostrar(item, { mes, anio, api: API, branding, onCambio: refrescarListaSinTocarPanel, onAccionFamilia: refrescarListaYPanel });
+    panelDerecho.mostrar(item, { mes, anio, periodoInforme, api: API, branding, onCambio: refrescarListaSinTocarPanel, onAccionFamilia: refrescarListaYPanel });
   }
 
   function seleccionarFamilia(item) {

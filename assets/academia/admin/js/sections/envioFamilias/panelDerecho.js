@@ -47,7 +47,7 @@ export function buildPanelDerecho() {
     accionesWrap.innerHTML = "";
     if (!itemActual) return;
     accionesWrap.appendChild(
-      buildAccionesFamilia(itemActual, { mes: ctxActual.mes, anio: ctxActual.anio, api: ctxActual.api, onAccionFamilia: ctxActual.onAccionFamilia })
+      buildAccionesFamilia(itemActual, { mes: ctxActual.mes, anio: ctxActual.anio, periodoInforme: ctxActual.periodoInforme, api: ctxActual.api, onAccionFamilia: ctxActual.onAccionFamilia })
     );
   }
 

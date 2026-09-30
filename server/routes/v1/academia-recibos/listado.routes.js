@@ -5,12 +5,9 @@ import { requireRole } from "../../../lib/middleware.js";
 import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
-import {
-  fetchFamiliasConAlumnos, fetchRecibosDelMes, fetchReciboCompleto,
-  fetchAlumnosConSesionesMes, fetchInformesEnviadosMes,
-} from "../../../lib/academiaRecibos/consultas.js";
+import { fetchReciboCompleto } from "../../../lib/academiaRecibos/consultas.js";
+import { buildListItem, fetchListadoDelEnvio } from "../../../lib/academiaEnvio/listadoDelEnvio.js";
 import { fetchMesesEnviados } from "../../../lib/academiaRecibos/mesesEnviados.js";
-import { fetchUltimoEnvioPorFamilia } from "../../../lib/academiaEnvio/consultasEnvios.js";
 
 const MesAnioQuerySchema = z.object({
   mes: z.coerce.number().int().min(1).max(12),
@@ -21,33 +18,10 @@ const AnioQuerySchema = z.object({
 });
 const ParamsSchema = z.object({ id: z.string().uuid() });
 
-// Exportado para los tests: lo que se arma aquí lo lee el panel por el
-// nombre de cada clave, y una clave que se renombra o se olvida no da
-// ningún error — la pantalla simplemente deja de pintar ese dato. Es el
-// mismo fallo silencioso que el `reply_to` que no llegaba a Resend, así que
-// el viaje se comprueba de punta a punta (ver tests/academiaEnvio).
-export function buildListItem({ familia, alumnosActivos, recibo, conSesiones, informesEnviados, ultimoEnvio = null }) {
-  return {
-    familia_id: familia.id,
-    familia_nombre: familia.nombre,
-    familia_email: familia.email,
-    familia_metodo_pago: familia.metodo_pago,
-    recibo: recibo
-      ? { id: recibo.id, estado: recibo.estado, total_neto: recibo.total_neto, fecha_envio: recibo.fecha_envio }
-      : null,
-    alumnos_activos: alumnosActivos.map((a) => ({
-      ...a,
-      tiene_sesiones: conSesiones.has(a.id),
-      informe_enviado_at: informesEnviados[a.id] || null,
-    })),
-    tiene_hermanos: alumnosActivos.length > 1,
-    // El ÚLTIMO email que le mandamos a esta familia y si llegó (migración
-    // 122). null = no hay ninguno registrado, que es lo normal en todo lo
-    // enviado antes de que existiera este registro: la pantalla no puede
-    // pintar eso como un problema. Ver consultasEnvios.js.
-    envio_email: ultimoEnvio,
-  };
-}
+// buildListItem vive con el resto del listado en
+// lib/academiaEnvio/listadoDelEnvio.js; se reexporta porque los tests del
+// viaje ruta -> pantalla la importan desde aquí.
+export { buildListItem };
 
 // GET/listado de recibos: por período, por id, y meses con enviados de un año.
 export default async function academiaRecibosListadoRoutes(app) {
@@ -65,46 +39,14 @@ export default async function academiaRecibosListadoRoutes(app) {
     const { mes, anio } = parsed.data;
 
     const admin = createSupabaseAdmin();
-    const [{ items, error: itemsErr }, { porFamilia, error: recibosErr }] = await Promise.all([
-      fetchFamiliasConAlumnos(admin, auth.tenant.id, { mes, anio }),
-      fetchRecibosDelMes(admin, auth.tenant.id, { mes, anio }),
-    ]);
-    if (itemsErr || recibosErr) {
-      req.log.error({ err: itemsErr || recibosErr, requestId }, "academia recibos list failed");
+    const { lista, periodoInforme, error } = await fetchListadoDelEnvio(admin, auth.tenant.id, { mes, anio }, {
+      logWarn: (obj, msg) => req.log.warn({ ...obj, requestId }, msg),
+    });
+    if (error) {
+      req.log.error({ err: error, requestId }, "academia recibos list failed");
       return fail(reply, 500, "recibos_fetch_failed", "Failed to fetch recibos", requestId);
     }
-
-    const todosLosAlumnoIds = items.flatMap((item) => item.alumnosActivos.map((a) => a.id));
-    const [
-      { conSesiones, error: sesionesErr },
-      { porAlumno: informesEnviados, error: informesErr },
-    ] = await Promise.all([
-      fetchAlumnosConSesionesMes(admin, auth.tenant.id, todosLosAlumnoIds, { mes, anio }),
-      fetchInformesEnviadosMes(admin, auth.tenant.id, todosLosAlumnoIds, { mes, anio }),
-    ]);
-    if (sesionesErr || informesErr) {
-      req.log.error({ err: sesionesErr || informesErr, requestId }, "academia recibos list: sesiones/informes fetch failed");
-      return fail(reply, 500, "recibos_fetch_failed", "Failed to fetch recibos", requestId);
-    }
-
-    // El estado de entrega es información de adorno: si falla, la pantalla
-    // sigue pudiendo enviar. Un centro no se queda sin mandar sus recibos
-    // porque esta consulta se caiga, así que el error solo va al log.
-    const { porFamilia: enviosPorFamilia, error: enviosErr } = await fetchUltimoEnvioPorFamilia(
-      admin, auth.tenant.id, items.map((item) => item.familia.id)
-    );
-    if (enviosErr) req.log.warn({ err: enviosErr, requestId }, "estado de entrega no disponible");
-
-    const lista = items.map((item) =>
-      buildListItem({
-        ...item,
-        recibo: porFamilia[item.familia.id] || null,
-        conSesiones,
-        informesEnviados,
-        ultimoEnvio: enviosPorFamilia[item.familia.id] || null,
-      })
-    );
-    return ok(reply, { recibos: lista }, requestId);
+    return ok(reply, { recibos: lista, periodo_informe: periodoInforme }, requestId);
   });
 
   // GET /api/v1/academia/recibos/meses-enviados?anio= — para marcar en el

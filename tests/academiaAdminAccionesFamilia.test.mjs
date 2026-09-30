@@ -117,4 +117,25 @@ export async function run({ test, assert }) {
     assert.equal(fakes.llamadas.enviarFamilia.length, 0, "informe_alumno no debe llamar al endpoint de familia");
     assert.deepEqual(fakes.llamadas.enviarInforme, [{ alumno_id: "a1", mes: 7, anio: 2026, confirmar: false }]);
   });
+  // Envío de octubre con el informe de septiembre (modo "informe del mes
+  // anterior", ver assets/shared/js/periodosDeEnvio.js): el recibo pide
+  // octubre y los informes, septiembre.
+  test("con periodoInforme: el recibo va con el mes del envío y los informes con el suyo", async () => {
+    const fakes = fakesRegenerarOk();
+    await regenerarFamilia({ tipo: "completo" }, {
+      item: itemFixture({ reciboId: null }), mes: 10, anio: 2026, periodoInforme: { mes: 9, anio: 2026 }, ...fakes,
+    });
+    assert.deepEqual(fakes.llamadas.generarReciboFamilia.map((l) => l.mes), [10]);
+    assert.deepEqual(fakes.llamadas.generarInforme.map((l) => l.mes), [9, 9]);
+
+    const envio = fakesEnviarOk();
+    await enviarFamiliaAccion({ tipo: "informe_alumno", alumnoId: "a1", alumnoNombre: "Ana" }, {
+      item: itemFixture(), mes: 10, anio: 2026, periodoInforme: { mes: 9, anio: 2026 }, ...envio,
+    });
+    assert.equal(envio.llamadas.enviarInforme[0].mes, 9);
+    await enviarFamiliaAccion({ tipo: "completo" }, {
+      item: itemFixture(), mes: 10, anio: 2026, periodoInforme: { mes: 9, anio: 2026 }, ...envio,
+    });
+    assert.equal(envio.llamadas.enviarFamilia[0].mes, 10, "el envío de familia se pide por el mes del recibo; el servidor deduce el del informe");
+  });
 }

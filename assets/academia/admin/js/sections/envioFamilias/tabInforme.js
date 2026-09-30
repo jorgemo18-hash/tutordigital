@@ -7,7 +7,10 @@ import { buildInformeCard } from "./informeCard.js";
 // card, solo que en modo "sin actividad" en vez de "generar informe" (ver
 // informeCard.js). Filtrar la lista escondía cards enteras y generaba
 // falsas alarmas de "esto no funciona" durante las pruebas.
-export function buildTabInforme(item, { mes, anio, api }) {
+// `periodoInforme`: el mes del informe, que puede no ser el del envío (ver
+// assets/shared/js/periodosDeEnvio.js). Sin él, el del envío.
+export function buildTabInforme(item, { mes, anio, periodoInforme, api }) {
+  const informe = periodoInforme || { mes, anio };
   const wrap = document.createElement("div");
   wrap.className = "ef-tab-body";
 
@@ -20,7 +23,7 @@ export function buildTabInforme(item, { mes, anio, api }) {
   }
 
   for (const alumno of item.alumnos_activos) {
-    wrap.appendChild(buildInformeCard(alumno, { mes, anio, api }));
+    wrap.appendChild(buildInformeCard(alumno, { mes: informe.mes, anio: informe.anio, api }));
   }
   return wrap;
 }

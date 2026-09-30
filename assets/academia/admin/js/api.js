@@ -202,9 +202,13 @@ export async function fetchImpactoHorario({ franja_inicio, franja_fin, franja_in
   return data.huerfanos;
 }
 
+// `periodoInforme`: el mes del informe que va con el recibo de {mes, anio},
+// según el modo del centro (ver assets/shared/js/periodosDeEnvio.js). Lo
+// decide el servidor y el panel lo usa tal cual, para que la pantalla y el
+// correo nunca hablen de meses distintos.
 export async function fetchRecibos({ mes, anio }) {
   const data = await callJson(`/api/v1/academia/recibos?mes=${mes}&anio=${anio}`);
-  return data.recibos || [];
+  return { recibos: data.recibos || [], periodoInforme: data.periodo_informe || { mes, anio } };
 }
 
 export async function generarRecibos({ mes, anio }) {

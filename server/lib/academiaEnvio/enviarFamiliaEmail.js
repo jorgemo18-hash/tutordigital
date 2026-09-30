@@ -15,6 +15,7 @@ import { buildCuerpoHtml, capitaliza } from "./cuerpoEmail.js";
 import { evaluarConfirmacionEnvioFamilia } from "./confirmacionEnvioFamilia.js";
 import { estadoTrasEnvio } from "../academiaRecibos/estadoEnvio.js";
 import { buildRemitente } from "./remitente.js";
+import { periodoDelInforme } from "../../../assets/shared/js/periodosDeEnvio.js";
 
 const TEXTO_POR_TIPO = {
   completo: { campo: "email_texto_completo", fallback: DEFAULT_TEXTO_COMPLETO },
@@ -55,6 +56,12 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   if (!familia) return { ok: false, code: "not_found", motivo: "Familia no encontrada." };
   if (!familia.email) return { ok: false, code: "sin_email", motivo: "La familia no tiene email configurado.", familiaNombre: familia.nombre };
 
+  // La config va primero: su `modo_envio` decide de qué mes es el informe
+  // que acompaña a este recibo (ver periodosDeEnvio.js). `mes`/`anio` son
+  // SIEMPRE los del recibo, que es el mes del envío.
+  const config = await fetchConfigEnvio(admin, tenantId);
+  const periodoInforme = periodoDelInforme({ mes, anio }, config.modo_envio);
+
   let recibo = null;
   if (incluyeRecibo) {
     const { reciboId, error: reciboIdErr } = await fetchReciboIdDeFamiliaDelMes(admin, tenantId, familiaId, { mes, anio });
@@ -73,10 +80,10 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   const informesElegibles = [];
   if (incluyeInformes) {
     for (const alumno of alumnosActivos) {
-      const { informe, error: informeErr } = await fetchInformeExistente(admin, tenantId, alumno.id, { mes, anio });
+      const { informe: existente, error: informeErr } = await fetchInformeExistente(admin, tenantId, alumno.id, periodoInforme);
       if (informeErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo comprobar los informes." };
-      if (!informe?.comentario) continue;
-      informesElegibles.push({ alumno, informe });
+      if (!existente?.comentario) continue;
+      informesElegibles.push({ alumno, informe: existente });
     }
   }
 
@@ -90,8 +97,7 @@ export async function enviarReciboYInformesDeFamilia(admin, {
     return { ok: false, code: "requiere_confirmacion", motivo: "Hay documentos de este envío ya enviados.", afectados, familiaNombre: familia.nombre };
   }
 
-  const [config, textosLopd, textosExencion] = await Promise.all([
-    fetchConfigEnvio(admin, tenantId),
+  const [textosLopd, textosExencion] = await Promise.all([
     fetchTextosLegalesActivosPorTipo(admin, tenantId, "email"),
     fetchTextosLegalesActivosPorTipo(admin, tenantId, "recibos"),
   ]);
@@ -119,14 +125,14 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   }
 
   const informesAdjuntados = [];
-  for (const { alumno, informe } of informesElegibles) {
-    const { dias, error: diasErr } = await fetchDiasMesYSesiones(admin, tenantId, alumno.id, { mes, anio });
+  for (const { alumno, informe: existente } of informesElegibles) {
+    const { dias, error: diasErr } = await fetchDiasMesYSesiones(admin, tenantId, alumno.id, periodoInforme);
     if (diasErr) continue;
     const resultado = await generarInformePdfFn({
       tenantId, alumnoId: alumno.id, pdfServiceUrl,
-      payload: buildInformePdfPayload({ alumno, mes, anio, dias, comentario: informe.comentario, academiaPayload }),
+      payload: buildInformePdfPayload({ alumno, mes: periodoInforme.mes, anio: periodoInforme.anio, dias, comentario: existente.comentario, academiaPayload }),
     });
-    if (resultado.ok) informesAdjuntados.push({ alumnoId: alumno.id, informeId: informe.id, nombre: alumno.nombre, buffer: resultado.buffer });
+    if (resultado.ok) informesAdjuntados.push({ alumnoId: alumno.id, informeId: existente.id, nombre: alumno.nombre, buffer: resultado.buffer });
   }
 
   if (!reciboBuffer && !informesAdjuntados.length) {
@@ -135,12 +141,12 @@ export async function enviarReciboYInformesDeFamilia(admin, {
 
   const { campo, fallback } = TEXTO_POR_TIPO[tipoEnvio];
   const total = recibo ? recibo.total_neto : undefined;
-  const cuerpo = sustituirVariables(config[campo], { mes, anio, total, familia: familia.nombre }, fallback);
+  const cuerpo = sustituirVariables(config[campo], { mes, anio, total, familia: familia.nombre, mesInforme: periodoInforme.mes }, fallback);
   const html = buildCuerpoHtml(cuerpo, textosLopd);
 
   const attachments = [];
   if (reciboBuffer) attachments.push({ filename: nombreArchivoRecibo(familia.nombre, mes, anio), content: reciboBuffer });
-  for (const inf of informesAdjuntados) attachments.push({ filename: nombreArchivoInforme(inf.nombre, mes, anio), content: inf.buffer });
+  for (const inf of informesAdjuntados) attachments.push({ filename: nombreArchivoInforme(inf.nombre, periodoInforme.mes, periodoInforme.anio), content: inf.buffer });
 
   const asunto = `${tenantNombre} · ${capitaliza(MESES[mes])} ${anio}`;
   let enviado;

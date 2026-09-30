@@ -191,6 +191,10 @@ select.ac-legal-tipo-select { width: auto; flex-shrink: 0; font-size: 11px; padd
 
 /* ============ ENVÍO A FAMILIAS ============ */
 .ef-head-acciones { display: flex; align-items: center; gap: 10px; }
+/* "Recibo de octubre · informe de septiembre", bajo el título (ver
+   envioFamilias/cabecera.js y shared/js/periodosDeEnvio.js). */
+.ef-que-se-envia { margin: 6px 0 0; font-size: 13px; color: rgba(242, 237, 229, 0.7); }
+.ac-claro .ef-que-se-envia { color: #6b5d4f; }
 .ef-periodo-selector { display: flex; align-items: center; gap: 12px; }
 /* select.* (no solo .clase) por el mismo motivo que select.ac-legal-tipo-select
    arriba: .ac-select pone width:100% y gana el empate de especificidad por

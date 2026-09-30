@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MODOS_ENVIO, MODO_ENVIO_POR_DEFECTO } from "../../../assets/shared/js/periodosDeEnvio.js";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, fail } from "../../lib/http.js";
 import { requireRole } from "../../lib/middleware.js";
@@ -37,7 +38,7 @@ export const CONFIG_COLUMNS =
   "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
   "concepto_recibo_plantilla, logo_url, bg_url, enviar_recibo_al_pagar, desglose_iva, " +
   "inscripcion_config, email_texto_completo, email_texto_solo_recibo, email_texto_solo_informe, " +
-  "control_horario_activo, acceso_tutor_activo, max_alumnos_por_franja, admin_imparte_clases, precios_publicos, horario_reservas";
+  "control_horario_activo, acceso_tutor_activo, max_alumnos_por_franja, admin_imparte_clases, precios_publicos, horario_reservas, modo_envio";
 
 const DEFAULTS = {
   franja_inicio: "09:00",
@@ -49,6 +50,7 @@ const DEFAULTS = {
   bg_url: null,
   enviar_recibo_al_pagar: false,
   desglose_iva: false,
+  modo_envio: MODO_ENVIO_POR_DEFECTO,
   inscripcion_config: INSCRIPCION_CONFIG_DEFAULTS,
   email_texto_completo: DEFAULT_TEXTO_COMPLETO,
   email_texto_solo_recibo: DEFAULT_TEXTO_SOLO_RECIBO,
@@ -166,6 +168,9 @@ export const UpdateConfigSchema = z.object({
   iban: z.string().trim().optional(),
   enviar_recibo_al_pagar: z.boolean().optional(),
   desglose_iva: z.boolean().optional(),
+  // Qué mes va en el recibo y qué mes en el informe del envío mensual
+  // (migración 145, ver assets/shared/js/periodosDeEnvio.js).
+  modo_envio: z.enum(MODOS_ENVIO).optional(),
   inscripcion_config: InscripcionConfigSchema.optional(),
   email_texto_completo: z.string().trim().optional(),
   email_texto_solo_recibo: z.string().trim().optional(),

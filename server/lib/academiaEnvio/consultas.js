@@ -1,3 +1,4 @@
+import { periodoDelInforme } from "../../../assets/shared/js/periodosDeEnvio.js";
 // Consultas propias del envío combinado (familia + informes) — no
 // encajan en academiaRecibos ni academiaInformes en solitario porque
 // cruzan ambos dominios.
@@ -10,11 +11,23 @@ export async function fetchConfigEnvio(admin, tenantId) {
     .from("academia_config")
     .select(
       "nombre_emisor, dni_emisor, direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, " +
-        "email_emisor, logo_url, email_texto_completo, email_texto_solo_recibo, email_texto_solo_informe"
+        "email_emisor, logo_url, email_texto_completo, email_texto_solo_recibo, email_texto_solo_informe, modo_envio"
     )
     .eq("tenant_id", tenantId)
     .maybeSingle();
   return data || {};
+}
+
+// El período del informe que acompaña al recibo de `periodo` (ver
+// assets/shared/js/periodosDeEnvio.js). Si la config no se puede leer se
+// usa el modo por defecto: un listado no se queda en blanco por esto.
+export async function fetchPeriodoDelInforme(admin, tenantId, periodo) {
+  const { data } = await admin
+    .from("academia_config")
+    .select("modo_envio")
+    .eq("tenant_id", tenantId)
+    .maybeSingle();
+  return periodoDelInforme(periodo, data?.modo_envio);
 }
 
 export async function fetchFamiliaConAlumnosActivos(admin, tenantId, familiaId) {

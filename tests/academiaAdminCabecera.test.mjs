@@ -78,4 +78,10 @@ export async function run({ test, assert }) {
     assert.equal(enviarBtn.disabled, true);
     assert.equal(regenerarBtn.disabled, false);
   });
+  test("dice con palabras qué va en el correo: recibo de octubre · informe de septiembre", () => {
+    const head = buildCabecera(baseProps({ mes: 10, anio: 2026, periodoInforme: { mes: 9, anio: 2026 } }));
+    assert.equal(head.querySelector(".ef-que-se-envia").textContent, "Recibo de octubre · informe de septiembre");
+    const enero = buildCabecera(baseProps({ mes: 1, anio: 2027, periodoInforme: { mes: 12, anio: 2026 } }));
+    assert.equal(enero.querySelector(".ef-que-se-envia").textContent, "Recibo de enero · informe de diciembre de 2026");
+  });
 }

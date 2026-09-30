@@ -8,6 +8,10 @@ function fixture({
   reciboEstado = "borrador",
   informesDeAlumnos = { a1: "Comentario de Ana" },
   informesEnviadosAt = {},
+  // Los tests de siempre son del modo "mismo mes" (recibo e informe de
+  // julio). El modo del informe del mes anterior tiene los suyos al final.
+  modoEnvio = "mismo_mes",
+  mesInformes = 7,
 } = {}) {
   const alumnos = [
     { id: "a1", tenant_id: TENANT_ID, familia_id: FAMILIA_ID, nombre: "Ana García", curso: "1º ESO", activo: true },
@@ -25,6 +29,7 @@ function fixture({
       email_texto_completo: "Hola {familia}, os adjuntamos el recibo de {mes} ({total}) y el informe.",
       email_texto_solo_recibo: "Hola {familia}, SOLO el recibo de {mes} ({total}).",
       email_texto_solo_informe: "Hola {familia}, SOLO el informe.",
+      modo_envio: modoEnvio,
     }],
     academia_textos_legales: [
       { tenant_id: TENANT_ID, tipo: "email", contenido: "Texto LOPD de Marca y textos.", activo: true },
@@ -45,7 +50,7 @@ function fixture({
       { id: "l2", recibo_id: "r1", alumno_id: "a2", nombre_alumno: "Luis García", curso_alumno: "3º ESO", precio_bruto: 100, descripcion: "Julio 2026", descuentos_recurrentes: [] },
     ],
     academia_informes: alumnosConInforme.map((alumnoId, i) => ({
-      id: `inf${i + 1}`, tenant_id: TENANT_ID, alumno_id: alumnoId, mes: 7, anio: 2026,
+      id: `inf${i + 1}`, tenant_id: TENANT_ID, alumno_id: alumnoId, mes: mesInformes, anio: 2026,
       comentario: informesDeAlumnos[alumnoId], enviado_at: informesEnviadosAt[alumnoId] || null,
     })),
     academia_sesiones: [],
@@ -363,5 +368,52 @@ export async function run({ test, assert }) {
     const [email] = fakes.llamadas.email;
     assert.equal(email.from, '"Academia Lyceo" <noreply@tutordigital.app>');
     assert.equal(email.replyTo, "info@lyceoacademia.es");
+  });
+  // RECIBO DEL MES QUE EMPIEZA + INFORME DEL QUE ACABA (Jorge, 30/09/2026:
+  // "el 5 de octubre mandaré el informe de septiembre y la factura de
+  // octubre"). Aquí: envío de julio = recibo de julio + informe de junio.
+  test("modo informe del mes anterior: recibo de julio + informe de JUNIO en el mismo correo", async () => {
+    const admin = fixture({ modoEnvio: "informe_mes_anterior", mesInformes: 6 });
+    const fakes = fakesOk();
+    const resultado = await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test", ...fakes,
+    });
+    assert.equal(resultado.ok, true, resultado.motivo);
+    assert.equal(resultado.reciboAdjuntado, true);
+    assert.equal(resultado.informesAdjuntados, 1);
+    const nombres = fakes.llamadas.email[0].attachments.map((a) => a.filename);
+    assert.ok(nombres.some((n) => n.startsWith("recibo") && n.includes("julio")), nombres.join(", "));
+    assert.ok(nombres.some((n) => n.startsWith("informe") && n.includes("junio")), nombres.join(", "));
+    assert.equal(fakes.llamadas.informe[0].payload.mes, 6, "el PDF del informe es el de junio");
+    assert.ok(admin._state.tables.academia_informes.find((i) => i.id === "inf1").enviado_at, "el informe de junio queda enviado");
+  });
+
+  test("modo informe del mes anterior: un informe del MISMO mes que el recibo no se adjunta", async () => {
+    const admin = fixture({ modoEnvio: "informe_mes_anterior", mesInformes: 7 });
+    const fakes = fakesOk();
+    const resultado = await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test", ...fakes,
+    });
+    assert.equal(resultado.ok, true, resultado.motivo);
+    assert.equal(resultado.informesAdjuntados, 0);
+    assert.equal(fakes.llamadas.informe.length, 0);
+  });
+
+  test("modo informe del mes anterior: {mes} es el del recibo y {mes_informe} el del informe", async () => {
+    const admin = fixture({ modoEnvio: "informe_mes_anterior", mesInformes: 6 });
+    admin._state.tables.academia_config[0].email_texto_completo = "Recibo de {mes}, trabajo de {mes_informe}.";
+    const fakes = fakesOk();
+    await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test", ...fakes,
+    });
+    assert.match(fakes.llamadas.email[0].html, /Recibo de julio, trabajo de junio\./);
+  });
+
+  test("modo informe del mes anterior en enero: el informe es el de diciembre del año anterior", async () => {
+    const { periodoDelInforme } = await import("../../assets/shared/js/periodosDeEnvio.js");
+    assert.deepEqual(periodoDelInforme({ mes: 1, anio: 2027 }, "informe_mes_anterior"), { mes: 12, anio: 2026 });
+    assert.deepEqual(periodoDelInforme({ mes: 10, anio: 2026 }, "informe_mes_anterior"), { mes: 9, anio: 2026 });
+    assert.deepEqual(periodoDelInforme({ mes: 10, anio: 2026 }, "mismo_mes"), { mes: 10, anio: 2026 });
+    assert.deepEqual(periodoDelInforme({ mes: 10, anio: 2026 }, "otra cosa"), { mes: 9, anio: 2026 }, "un valor raro cae al modo por defecto");
   });
 }
