@@ -1,13 +1,18 @@
 import { z } from "zod";
 import { comprueba } from "../verificador/comprobaciones.js";
 import { lee, evalua } from "../verificador/expresionDeTexto.js";
+import { solucionDeApartados, unaComprobacionPorApartado, sinApartados } from "./solucionDeApartados.js";
 
 // UN EJERCICIO ESCRITO POR LA IA, ANTES DE LLEGAR A LA HOJA:
 //   1. tiene la forma que se pidió (si no, fuera);
 //   2. su saber es de los del tema (si no, fuera: no se sale del currículo);
 //   3. no es una copia de un ejercicio de referencia (si lo es, fuera);
-//   4. cada `comprobar` cuadra (si uno no cuadra, fuera: una solución mal es
-//      peor que un ejercicio menos) y la solución escrita dice lo mismo;
+//   4. cada `comprobar` cuadra. En un ejercicio de técnica con una
+//      comprobación por apartado, el apartado que no cuadra (o que repite una
+//      cuenta de referencia) se QUITA y la solución la escribe el código
+//      (solucionDeApartados.js); si no queda ninguno, fuera. En lo demás
+//      (problemas…), uno que no cuadra tira el ejercicio, y la solución
+//      escrita por la IA tiene que decir lo que sale;
 //   5. si no trae `comprobar`, pasa como "sin_verificar", y se dice.
 // Devuelve { ejercicio } o { descarte: motivo }.
 const EjercicioIA = z.object({
@@ -55,8 +60,22 @@ export function verificaEjercicioIA(bruto, { saberesDelTema, huellas }) {
   const e = p.data;
   if (!saberesDelTema.includes(e.saber)) return { descarte: `saber ${e.saber} fuera del tema` };
   if (huellas.textos.has(plano(e.enunciado + (e.apartados || []).join("")))) return { descarte: "copia de un ejercicio de referencia" };
-  const cuentas = (e.comprobar || []).flatMap((c) => [c.ecuacion, c.expresion, ...(c.ecuaciones || [])]).filter(Boolean);
-  if (cuentas.some((x) => huellas.cuentas.has(plano(x)))) return { descarte: "repite una cuenta de un ejercicio de referencia" };
+  const repetida = (c) => [c.ecuacion, c.expresion, ...(c.ecuaciones || [])].filter(Boolean).some((x) => huellas.cuentas.has(plano(x)));
+  if (unaComprobacionPorApartado(e)) {
+    const malos = new Set();
+    const motivos = [];
+    e.comprobar.forEach((c, i) => {
+      const r = repetida(c) ? { ok: false, motivo: "repite una cuenta de referencia" } : comprueba(c);
+      if (!r.ok) { malos.add(i); motivos.push(`${c.apartado}) ${r.motivo}`); }
+    });
+    if (malos.size === e.apartados.length) return { descarte: `ningún apartado cuadra: ${motivos.join("; ")}` };
+    const limpio = malos.size ? sinApartados(e, malos) : e;
+    return {
+      ejercicio: { ...limpio, solucion: solucionDeApartados(limpio.comprobar), verificacion: "comprobada" },
+      apartadosQuitados: motivos,
+    };
+  }
+  if ((e.comprobar || []).some(repetida)) return { descarte: "repite una cuenta de un ejercicio de referencia" };
   for (const c of e.comprobar || []) {
     const r = comprueba(c);
     if (!r.ok) return { descarte: `comprobación ${c.apartado || ""} no cuadra: ${r.motivo}` };

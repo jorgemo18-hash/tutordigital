@@ -62,13 +62,13 @@ export function promptDeHojaIA({ materia, curso, tema }) {
     "- Mezcla técnica y problemas de contexto real y cercano; varía los tipos; de menos a más difícil.",
     "- Números amables para hacer a mano (sin calculadora, salvo que el tema la pida); soluciones limpias salvo que el tipo de ejercicio pida otra cosa.",
     "- Matemáticas en LaTeX entre $…$; decimales con coma ({,} en LaTeX); en español de España.",
-    "- En cada apartado que se pueda calcular, su `comprobar` con la respuesta: el servidor la resuelve y si no cuadra el ejercicio se tira. En los problemas, el `comprobar` es la ecuación del planteamiento.",
+    "- En cada apartado que se pueda calcular, su `comprobar` con la respuesta: el servidor la resuelve y si no cuadra, ese apartado se quita (y en un problema, el ejercicio entero). En los problemas, el `comprobar` es la ecuación del planteamiento.",
     "- La `solucion` tiene que decir los mismos resultados que el `comprobar`.",
     "- Nada de dibujos: si un ejercicio necesita una figura, descríbela con datos (coordenadas, medidas) o elige otro.",
   ].join("\n");
 }
 
-export function mensajeDeHojaIA({ saberes, referencias, cuantos, dificultad }) {
+export function mensajeDeHojaIA({ saberes, referencias, cuantos, dificultad, yaHay = [] }) {
   const lineasSaberes = saberes.map((s) => `${s.codigo} ${s.nombre}: ${s.textos.join(" / ")}`);
   const lineasRef = referencias.map((r, i) => `${i + 1}. [${r.tipo}, dificultad ${r.dificultad}, ${r.saberes.join(", ")}] ${r.enunciado}\n   Solución: ${r.solucion}`);
   const nivel = dificultad ? `Dificultad: sobre todo ${dificultad} (de 1 a 3).` : "Dificultad: variada, de 1 a 3.";
@@ -76,5 +76,6 @@ export function mensajeDeHojaIA({ saberes, referencias, cuantos, dificultad }) {
     `SABERES BÁSICOS DEL TEMA (currículo de Aragón, literal):\n${lineasSaberes.join("\n")}`,
     `EJERCICIOS DE REFERENCIA (nivel y tipos; no los copies):\n${lineasRef.join("\n")}`,
     `ESCRIBE ${cuantos} ejercicios. ${nivel} Cada ejercicio con 1 a 6 apartados.`,
+    ...(yaHay.length ? [`La hoja ya tiene ejercicios de estos tipos; escribe de otros: ${yaHay.join("; ")}.`] : []),
   ].join("\n\n");
 }

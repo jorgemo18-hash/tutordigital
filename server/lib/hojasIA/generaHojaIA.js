@@ -11,27 +11,50 @@ import { verificaEjercicioIA, huellasDeReferencias } from "./verificaEjercicioIA
 // una hoja con dos menos de los pedidos se nota más que dos de sobra.
 export const DE_MAS = 2;
 
-export async function generaHojaIA({ client, model, etapa, materia, curso, tema, cuantos = 6, dificultad = null }) {
-  const ctx = contextoDelTema({ etapa, materia, curso, tema });
-  if (!ctx) return null;
+// Una llamada a la IA y la verificación de lo que devuelve.
+async function unaRonda({ client, model, ctx, pide, dificultad, yaHay, verifica }) {
   const respuesta = await client.messages.create({
     model,
     max_tokens: 8000,
     system: promptDeHojaIA(ctx),
     tools: [{ name: HERRAMIENTA, description: "Escribe los ejercicios de la hoja.", input_schema: ESQUEMA }],
     tool_choice: { type: "tool", name: HERRAMIENTA },
-    messages: [{ role: "user", content: mensajeDeHojaIA({ ...ctx, cuantos: cuantos + DE_MAS, dificultad }) }],
+    messages: [{ role: "user", content: mensajeDeHojaIA({ ...ctx, cuantos: pide, dificultad, yaHay }) }],
   });
   const bloque = (respuesta.content || []).find((b) => b.type === "tool_use" && b.name === HERRAMIENTA);
   const brutos = Array.isArray(bloque?.input?.ejercicios) ? bloque.input.ejercicios : [];
-  const huellas = huellasDeReferencias(ctx.todasLasReferencias);
-  const saberesDelTema = ctx.saberes.map((s) => s.codigo);
   const buenos = [];
   const descartes = [];
   for (const b of brutos) {
-    const r = verificaEjercicioIA(b, { saberesDelTema, huellas });
+    const r = verifica(b);
+    const enunciado = String(b?.enunciado || "").slice(0, 120);
     if (r.ejercicio) buenos.push(r.ejercicio);
-    else descartes.push({ enunciado: String(b?.enunciado || "").slice(0, 120), motivo: r.descarte });
+    else descartes.push({ enunciado, motivo: r.descarte });
+    for (const q of r.apartadosQuitados || []) descartes.push({ enunciado, motivo: `apartado quitado: ${q}`, soloApartado: true });
+  }
+  return { buenos, descartes, usage: respuesta.usage || {} };
+}
+
+const suma = (a, b) => ({ input_tokens: (a.input_tokens || 0) + (b.input_tokens || 0), output_tokens: (a.output_tokens || 0) + (b.output_tokens || 0) });
+
+// Si tras la primera llamada faltan ejercicios, UNA segunda llamada pide los
+// que faltan (más DE_MAS), diciendo qué tipos ya hay para que no los repita.
+// Solo una: si la segunda también falla, mejor una hoja más corta que un
+// bucle que gasta sin límite.
+export async function generaHojaIA({ client, model, etapa, materia, curso, tema, cuantos = 6, dificultad = null }) {
+  const ctx = contextoDelTema({ etapa, materia, curso, tema });
+  if (!ctx) return null;
+  const huellas = huellasDeReferencias(ctx.todasLasReferencias);
+  const saberesDelTema = ctx.saberes.map((s) => s.codigo);
+  const verifica = (b) => verificaEjercicioIA(b, { saberesDelTema, huellas });
+  const r1 = await unaRonda({ client, model, ctx, pide: cuantos + DE_MAS, dificultad, yaHay: [], verifica });
+  let { buenos, descartes, usage } = r1;
+  const faltan = cuantos - buenos.length;
+  if (faltan > 0) {
+    const r2 = await unaRonda({ client, model, ctx, pide: faltan + DE_MAS, dificultad, yaHay: buenos.map((e) => e.subtipo), verifica });
+    buenos = [...buenos, ...r2.buenos];
+    descartes = [...descartes, ...r2.descartes];
+    usage = suma(usage, r2.usage);
   }
   // Los comprobados primero al elegir (a igualdad, el orden de la IA), y
   // luego de menos a más difícil, como pide una hoja.
@@ -65,6 +88,6 @@ export async function generaHojaIA({ client, model, etapa, materia, curso, tema,
       comprobar: e.comprobar || [],
     })),
     descartes,
-    usage: respuesta.usage,
+    usage,
   };
 }

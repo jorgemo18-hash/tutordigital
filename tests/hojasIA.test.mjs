@@ -78,7 +78,7 @@ export async function run({ test }) {
       bueno({ apartados: ["$5x = 20$"], dificultad: 1, comprobar: [{ tipo: "ecuacion", ecuacion: "5*x = 20", respuesta: ["5"] }], solucion: "$x = 5$" }), // mal: es 4
       bueno({ apartados: ["$x = 2$"], saber: "E.1", comprobar: [{ tipo: "ecuacion", ecuacion: "x = 2", respuesta: ["2"] }], solucion: "2" }), // saber de otro tema
       bueno({ apartados: ["$2x - 5 = 4x - 7$"], comprobar: [{ tipo: "ecuacion", ecuacion: "2*x-5 = 4*x-7", respuesta: ["1"] }], solucion: "$x = 1$" }), // cuenta de una referencia (Marea Verde, cap. 10, ej. 13a)
-      bueno({ solucion: "$x = 8$" }), // la solución escrita no dice 7
+      bueno({ tipo: "problema", apartados: undefined, enunciado: "El triple de un número menos 3 es su doble más 4. ¿Qué número es?", comprobar: [{ tipo: "ecuacion", ecuacion: "3*(x-1) = 2*x+4", respuesta: ["7"] }], solucion: "El número es 8" }), // un problema: la solución escrita no dice 7
       { tipo: "problema", subtipo: "problema de edades", dificultad: 3, saber: "D.2", enunciado: "Inventa un problema que se resuelva con $x + 3 = 10$.", solucion: "Abierto" }, // sin comprobar
       bueno({ dificultad: 1, apartados: ["$4x - 1 = 11$"], comprobar: [{ tipo: "ecuacion", ecuacion: "4*x-1 = 11", respuesta: ["3"] }], solucion: "$x = 3$" }),
     ]);
@@ -98,6 +98,57 @@ export async function run({ test }) {
     assert.match(p.messages[0].content, /EJERCICIOS DE REFERENCIA/);
     assert.match(p.messages[0].content, new RegExp(`ESCRIBE ${3 + DE_MAS} ejercicios`));
     assert.match(p.system, /Matemáticas de 2\.º ESO/);
+  });
+
+  const { solucionDeApartados, latexDeTexto } = await import("../server/lib/hojasIA/solucionDeApartados.js");
+  const tresApartados = (respuestaB) => bueno({
+    apartados: ["$2x = 6$", "$x + 5 = 9$", "$3x - 3 = 12$"],
+    solucion: "a) 3; b) 4; c) 5",
+    comprobar: [
+      { tipo: "ecuacion", apartado: "a", ecuacion: "2*x = 6", respuesta: ["3"] },
+      { tipo: "ecuacion", apartado: "b", ecuacion: "x+5 = 9", respuesta: [respuestaB] },
+      { tipo: "ecuacion", apartado: "c", ecuacion: "3*x-3 = 12", respuesta: ["5"] },
+    ],
+  });
+
+  test("UN APARTADO MAL NO TIRA EL EJERCICIO: se quita ese apartado y la solución la escribe el código", async () => {
+    // Prueba real del 30/9: 3 de 8 ejercicios tirados enteros por un apartado cada uno.
+    const ia = iaQueDevuelve([tresApartados("8")]); // b) es 4, no 8
+    const r = await generaHojaIA({ client: ia, model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 1 });
+    assert.equal(r.hoja.actividades.length, 1, "el ejercicio sigue");
+    assert.deepEqual(r.hoja.actividades[0].apartados, ["$2x = 6$", "$3x - 3 = 12$"], "sin el apartado malo");
+    assert.deepEqual(r.huecos[0].comprobar.map((c) => c.apartado), ["a", "b"], "las letras se vuelven a poner");
+    assert.equal(r.huecos[0].solucion, "a) $x = 3$; b) $x = 5$", "la solución sale de lo comprobado, no de la IA");
+    assert.match(r.descartes.map((d) => d.motivo).join(), /apartado quitado: b\)/, "y se dice qué se quitó");
+  });
+
+  test("…pero si no cuadra ninguno, fuera; y la solución de la IA que contradice lo comprobado no llega", async () => {
+    const todoMal = bueno({ apartados: ["$2x = 6$"], comprobar: [{ tipo: "ecuacion", apartado: "a", ecuacion: "2*x = 6", respuesta: ["4"] }] });
+    const r = await generaHojaIA({ client: iaQueDevuelve([todoMal, tresApartados("4")]), model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 1 });
+    assert.match(r.descartes[0].motivo, /ningún apartado cuadra/);
+    assert.equal(r.huecos[0].solucion, "a) $x = 3$; b) $x = 4$; c) $x = 5$", "la «a) 3; b) 4; c) 5» de la IA se sustituye");
+  });
+
+  test("SI FALTAN EJERCICIOS, UNA segunda llamada pide los que faltan (y no más de una)", async () => {
+    const llamadas = [];
+    const rondas = [[bueno(), bueno({ saber: "Z.9" })], [tresApartados("4")], [bueno()]];
+    const ia = { messages: { create: async (p) => { llamadas.push(p); return { content: [{ type: "tool_use", name: "escribir_hoja", input: { ejercicios: rondas[llamadas.length - 1] } }], usage: { input_tokens: 10, output_tokens: 5 } }; } } };
+    const r = await generaHojaIA({ client: ia, model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 4 });
+    assert.equal(llamadas.length, 2, "dos llamadas, no tres aunque sigan faltando");
+    assert.match(llamadas[1].messages[0].content, new RegExp(`ESCRIBE ${3 + DE_MAS} ejercicios`), "pide los 3 que faltan y los de más");
+    assert.match(llamadas[1].messages[0].content, /ya tiene ejercicios de estos tipos; escribe de otros: ecuaciones con paréntesis/);
+    assert.equal(r.hoja.actividades.length, 2, "una hoja más corta antes que un bucle");
+    assert.deepEqual(r.usage, { input_tokens: 20, output_tokens: 10 }, "los tokens de las dos llamadas");
+  });
+
+  test("la solución escrita por el código: fracciones, potencias, raíces y coma decimal", () => {
+    assert.equal(latexDeTexto("9/11"), "\\frac{9}{11}");
+    assert.equal(latexDeTexto("-9/11"), "-\\frac{9}{11}");
+    assert.equal(latexDeTexto("3*x^2-2"), "3x^{2}-2");
+    assert.equal(latexDeTexto("sqrt(5)"), "\\sqrt{5}");
+    assert.equal(latexDeTexto("0.5"), "0{,}5");
+    assert.equal(solucionDeApartados([{ tipo: "sistema", apartado: "a", respuesta: { x: "6", y: "4" } }, { tipo: "ecuacion", apartado: "b", respuesta: "sin solución" }]), "a) $x = 6$, $y = 4$; b) sin solución");
+    assert.equal(solucionDeApartados([{ tipo: "igualdad", expresion: "2*(x+1)", respuesta: "2*x+2" }]), "$2x+2$");
   });
 
   test("un tema sin referencias no se genera", async () => {

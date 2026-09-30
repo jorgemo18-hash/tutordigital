@@ -71,7 +71,7 @@ export function crearRutasDeHojasIA({ roles, clientFn = createAnthropicClient, a
         recordTokenUsage({ admin: adminFn(), tenantId: auth.tenant.id, source: SOURCE, model: SONNET_MODEL, usage: r.usage }).catch(() => {});
         if (r.descartes.length) req.log.info({ requestId, descartes: r.descartes }, "hojas IA: ejercicios descartados por la comprobación");
         if (!r.hoja.actividades.length) return fail(reply, 502, "ia_sin_ejercicios", "La IA no ha escrito ningún ejercicio que pase la comprobación. Prueba otra vez.", requestId);
-        return ok(reply, { hoja: r.hoja, huecos: r.huecos, descartados: r.descartes.length }, requestId);
+        return ok(reply, { hoja: r.hoja, huecos: r.huecos, descartados: r.descartes.filter((d) => !d.soloApartado).length }, requestId);
       } catch (err) {
         req.log.error({ err, requestId }, "hojas IA: fallo al generar");
         return fail(reply, 502, "ia_fallo", "La IA no ha respondido. Prueba otra vez.", requestId);

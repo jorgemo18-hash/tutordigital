@@ -46,6 +46,6 @@ r.hoja.actividades.forEach((a, i) => {
   for (const ap of a.apartados || []) console.log(`     - ${ap}`);
   console.log(`   Solución: ${h.solucion}\n`);
 });
-console.log(`Descartados por la comprobación: ${r.descartes.length}`);
+console.log(`Descartados por la comprobación: ${r.descartes.filter((d) => !d.soloApartado).length} ejercicios, ${r.descartes.filter((d) => d.soloApartado).length} apartados sueltos`);
 for (const d of r.descartes) console.log(`  - ${d.motivo} :: ${d.enunciado}`);
 console.log(`\nTokens: ${r.usage?.input_tokens ?? "?"} de entrada, ${r.usage?.output_tokens ?? "?"} de salida.`);
