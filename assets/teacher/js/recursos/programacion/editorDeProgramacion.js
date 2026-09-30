@@ -1,6 +1,7 @@
 import { el, boton } from "../elementos.js";
 import { variantesDe, deLaVariante, cobertura, sumaDePesos } from "../../../../shared/programacion/estructuraDeLaProgramacion.js";
-import { APARTADOS_DE_TEXTO } from "../../../../shared/programacion/apartadosLegales.js";
+import { apartadosDeTextoDe } from "../../../../shared/programacion/apartadosLegales.js";
+import { nombreDelCurso } from "../../../../shared/curriculo/etapas.js";
 import { crearGuardadoAutomatico } from "./guardadoAutomatico.js";
 import { pintarPasoDatos, sesionesDelCurso, SEMANAS_POR_DEFECTO } from "./pasoDatos.js";
 import { pintarPasoUnidades } from "./pasoUnidades.js";
@@ -12,8 +13,8 @@ import { abrirPdf } from "../../../../shared/generador/abrirPdf.js";
 // EL EDITOR DE UNA PROGRAMACIÓN: cinco pasos en pestañas (no un asistente
 // obligatorio: se vuelve a cualquiera cuando se quiera) y guardado solo.
 //
-//   1 Datos · 2 Unidades (b) · 3 Evaluación (c, d, e) · 4 Resto (f–ñ) ·
-//   5 Documento (a–ñ para imprimir)
+//   1 Datos · 2 Unidades (b) · 3 Evaluación (c, d, e) · 4 Resto (f hasta
+//   la última letra de su etapa) · 5 Documento (todo, para imprimir)
 //
 // Cada pestaña lleva una marca de si está completa, para saber de un
 // vistazo qué queda.
@@ -25,15 +26,18 @@ export const PASOS = [
   ["documento", "Documento"],
 ];
 
-const LETRAS_RESTO = APARTADOS_DE_TEXTO.map((a) => a.letra).filter((l) => l !== "c" && l !== "e");
+// Los apartados de texto que no van en "Evaluación" (c y e).
+export function letrasDelResto(materiaSlug) {
+  return apartadosDeTextoDe(materiaSlug).map((a) => a.letra).filter((l) => l !== "c" && l !== "e");
+}
 
-export function estadoDeLosPasos(curriculo, datos) {
+export function estadoDeLosPasos(curriculo, datos, materiaSlug) {
   const lleno = (l) => Boolean(String(datos.textos?.[l] || "").trim());
   return {
     datos: Boolean(datos.sesionesSemanales),
     unidades: (datos.unidades || []).length > 0 && cobertura(curriculo, datos.unidades).completa,
     evaluacion: lleno("c") && lleno("e") && Math.round(sumaDePesos(datos.pesos) * 10) / 10 === 100,
-    resto: LETRAS_RESTO.every(lleno),
+    resto: letrasDelResto(materiaSlug).every(lleno),
     documento: null,
   };
 }
@@ -82,7 +86,7 @@ export async function abrirEditorDeProgramacion({ raiz, api, id, centro = "", on
   const cab = el(doc, "div", "rc-head");
   const tit = el(doc, "div");
   const h1 = el(doc, "h1", "rc-h1", cabecera.titulo || "Programación sin título");
-  tit.append(el(doc, "div", "rc-crumb", `Recursos · Programación · ${completo.materia}${cabecera.curso ? ` ${cabecera.curso}.º` : ""}`), h1);
+  tit.append(el(doc, "div", "rc-crumb", `Recursos · Programación · ${completo.materia}${cabecera.curso ? ` ${nombreDelCurso(cabecera.materia_slug, cabecera.curso)}` : ""}`), h1);
   const volver = boton(doc, "← Mis programaciones", {
     clase: "rc-btn--gh",
     onClick: async () => { await guardado.guardarYa(); abierto = false; onVolver(); },
@@ -96,7 +100,7 @@ export async function abrirEditorDeProgramacion({ raiz, api, id, centro = "", on
   let actual = "datos";
 
   function marcas() {
-    const e = estadoDeLosPasos(curriculoActual(), datos);
+    const e = estadoDeLosPasos(curriculoActual(), datos, cabecera.materia_slug);
     PASOS.forEach(([clave, texto], i) => {
       botones[clave].textContent = `${i + 1}. ${texto}${e[clave] === true ? " ✓" : ""}`;
       botones[clave].classList.toggle("is-on", clave === actual);
@@ -109,6 +113,7 @@ export async function abrirEditorDeProgramacion({ raiz, api, id, centro = "", on
     actual = clave;
     const curriculo = curriculoActual();
     const comun = { contenedor: cuerpo, datos, onCambio, doc };
+    const materiaSlug = cabecera.materia_slug;
     if (clave === "datos") {
       pintarPasoDatos({
         ...comun, cabecera, variantes, sesionesOficiales: completo.sesionesSemanales,
@@ -117,9 +122,9 @@ export async function abrirEditorDeProgramacion({ raiz, api, id, centro = "", on
     } else if (clave === "unidades") {
       pintarPasoUnidades({ ...comun, curriculo, sesionesTotales: sesionesDelCurso(datos), abiertas, ia });
     } else if (clave === "evaluacion") {
-      pintarPasoEvaluacion({ ...comun, curriculo, ia });
+      pintarPasoEvaluacion({ ...comun, curriculo, materiaSlug, ia });
     } else if (clave === "resto") {
-      pintarPasoTextos({ ...comun, letras: LETRAS_RESTO, ia });
+      pintarPasoTextos({ ...comun, letras: letrasDelResto(materiaSlug), materiaSlug, ia });
     } else {
       pintarDocumento({
         contenedor: cuerpo, curriculo, datos, cabecera, centro, doc,

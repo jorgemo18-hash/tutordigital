@@ -1,0 +1,184 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "30 Historia de la Filosofía.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.HF.1",
+   "texto": "Buscar, analizar, interpretar, producir y transmitir información relativa a hechos histórico-filosóficos, a partir del uso crítico y seguro de fuentes y el dominio de técnicas básicas de investigación, para generar conocimientos y producciones propias acerca de la historia de los problemas e ideas filosóficos."
+  },
+  {
+   "codigo": "CE.HF.2",
+   "texto": "Reconocer las normas y pautas de la argumentación y el diálogo filosóficos, mediante la identificación y análisis de las mismas en distintos soportes y a través de diversas actividades, para aplicarlas con rigor en la construcción y exposición de argumentos y en el ejercicio del diálogo con los demás."
+  },
+  {
+   "codigo": "CE.HF.3",
+   "texto": "Comprender y expresar diferentes concepciones filosóficas históricamente dadas, mediante el acercamiento a sus fuentes y el trabajo crítico sobre las mismas, para desarrollar el conocimiento de un acervo que constituye parte esencial del patrimonio cultural común."
+  },
+  {
+   "codigo": "CE.HF.4",
+   "texto": "Reconocer la naturaleza esencialmente plural y diversa de las concepciones filosóficas históricamente dadas, mediante su puesta en relación dialéctica, de confrontación y complementariedad, para generar una concepción compleja y dinámica de la historia del pensamiento, y promover una actitud tolerante y comprometida con la resolución racional y dialogada de los conflictos."
+  },
+  {
+   "codigo": "CE.HF.5",
+   "texto": "Reconocer el modo en que se han planteado sucesivamente, a través de distintas épocas y concepciones filosóficas, los mismos problemas filosóficos, mediante el análisis e interpretación de textos y otros modos de 29671 10021802202AOB :vsc Núm. 157 Boletín Oficial de Aragón 12/08/2022 expresión filosófica o más ampliamente cultural históricamente dados, para afrontar tales problemas a partir de la reflexión crítica sobre el conocimiento de lo aportado por la tradición."
+  },
+  {
+   "codigo": "CE.HF.6",
+   "texto": "Reconocer las formas diversas en que los interrogantes filosóficos y sus intentos de respuesta se han presentado históricamente en otros ámbitos de la cultura, mediante el análisis interpretativo de textos y otras manifestaciones pertenecientes a esos ámbitos, para promover una concepción sistemática, relacional y compleja de la historia de la cultura occidental y del papel de las ideas filosóficas en ella."
+  },
+  {
+   "codigo": "CE.HF.7",
+   "texto": "Analizar problemas fundamentales y de actualidad mediante la exposición histórica y crítica de distintas posiciones filosóficas relevantes para su comprensión y discusión, cara a desarrollar la autonomía de juicio y promover actitudes y acciones cívica y éticamente consecuentes."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.HF.1",
+   "columna": null,
+   "texto": "Generar un conocimiento riguroso de fuentes y documentos filosóficamente relevantes, aplicando técnicas de búsqueda, organización, análisis, comparación e interpretación de los mismos, y relacionándolos correctamente con contextos históricos, problemas, tesis, autores y autoras, así como con elementos pertenecientes a otros ámbitos culturales.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.HF.1",
+   "columna": null,
+   "texto": "Construir juicios propios acerca de problemas histórico-filosóficos, a través de la elaboración y presentación de documentos y trabajos de investigación sobre los mismos con precisión y aplicando los protocolos al uso, tanto de forma individual como grupal y cooperativa.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.HF.2",
+   "columna": null,
+   "texto": "Emplear argumentos de modo riguroso, reconociendo y aplicando normas, técnicas y pautas lógicas, retóricas y argumentativas, y evitando modos dogmáticos, falaces y sesgados de sostener opiniones e hipótesis.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.HF.2",
+   "columna": null,
+   "texto": "Sostener el hábito del diálogo argumentativo, empático, abierto y constructivamente comprometido con la búsqueda del conocimiento, a través de la participación activa, respetuosa y colaborativa en cuantas actividades se propongan.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.HF.3",
+   "columna": null,
+   "texto": "Adquirir y expresar un conocimiento significativo de las más importantes propuestas filosóficas que se han sucedido a lo largo de la historia, a través de la indagación sobre ellas y la identificación de las cuestiones a las que responden.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.HF.3",
+   "columna": null,
+   "texto": "Identificar, comprender y debatir sobre los principales problemas, ideas, tesis y controversias filosóficas de la historia del pensamiento, a través del análisis y comentario crítico de textos y documentos filosóficos o relevantes para la filosofía.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.HF.4",
+   "columna": null,
+   "texto": "Generar una concepción plural, dialéctica, abierta y crítica de la historia del pensamiento, a través de la comprensión y expresión de las relaciones de oposición y complementariedad entre tesis, escuelas, filósofos y filósofas de una misma época o tradición o de distintas épocas y tradiciones, en la forma de actividades de análisis, comparación y síntesis.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.HF.5",
+   "columna": null,
+   "texto": "Afrontar los grandes problemas filosóficos en su dimensión temporal y espacial, comprendiendo su doble aspecto histórico y universal, a través del análisis y exposición crítica de las condiciones culturales que han permitido la aparición y evolución de aquellos en distintos momentos de la historia.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.HF.5",
+   "columna": null,
+   "texto": "Comprender la dimensión temporal y universal de los problemas filosóficos más importantes, comparando mediante esquemas u otros documentos o actividades el tratamiento filosófico que se hace de ellos en distintas épocas, escuelas, tradiciones, autores y autoras.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.HF.6",
+   "columna": null,
+   "texto": "Adquirir una concepción sistémica y relacional de la historia de la cultura occidental, y del papel de las ideas filosóficas en ella, mediante el análisis y el comentario comparativo de textos o documentos literarios, historiográficos, periodísticos, científicos o religiosos, así como de cualquier otra manifestación cultural, en los que se expresen problemas y concepciones filosóficamente relevantes.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.HF.7",
+   "columna": null,
+   "texto": "Desarrollar la autonomía de juicio y promover planteamientos, actitudes y acciones ética y cívicamente consecuentes con respecto a problemas fundamentales de la actualidad, a partir de la comprensión de ideas, teorías y controversias histórico-filosóficas que puedan contribuir a clarificar tales problemas y de la elaboración de propuestas de carácter crítico y personal con respecto a los mismos.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Historicidad y universalidad de los problemas y concepciones filosóficas. Métodos de trabajo en Historia de la Filosofía.",
+        "El surgimiento de la filosofía occidental en Grecia. Cosmovisión mítica como núcleo de la teorización filosófica. La filosofía en otras tradiciones culturales.",
+        "El problema de la realidad en los presocráticos.",
+        "Filosofía y ciudadanía en la Ilustración griega: los sofistas y Sócrates. Aspasia de Mileto y el papel de la mujer en la cultura y la filosofía griega.",
+        "Idea y naturaleza: conocimiento y realidad en Platón y Aristóteles.",
+        "La antropología en la Grecia clásica: Sócrates y el conocimiento de sí; la psique en Platón y Aristóteles.",
+        "La discusión ética: el intelectualismo socráticoplatónico; la teoría de las virtudes en Platón y Aristóteles; el concepto de eudaimonía.",
+        "El debate político: las propuestas platónica y aristotélica en torno al mejor orden de la polis.",
+        "De las polis al imperio. Filosofía, ciencia y cultura en el helenismo. Estoicismo y epicureísmo. La figura de Hipatia de Alejandría."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. De la Edad Media a la Modernidad europea.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La asimilación de la filosofía griega por la teología medieval. El problema de la relación entre fe y razón.",
+        "Etapas, métodos y cuestiones fundamentales en la filosofía medieval. Agustín de Hipona, Tomas de Aquino y Guillermo de Ockham. La personalidad polifacética de Hildegard von Bingen. La filosofía árabe y judía.",
+        "El nacimiento de la modernidad europea. El Renacimiento. El protestantismo. La revolución científica.",
+        "Racionalismo y empirismo: René Descartes y David Hume.",
+        "El debate metafísico moderno. La teoría cartesiana de las sustancias. El materialismo desde Thomas Hobbes a la Ilustración.",
+        "La cuestión del origen y fundamento de la sociedad y el poder: del pensamiento político medieval a la teoría del contrato social según Thomas Hobbes, John Locke y Jean-Jacques Rousseau."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. De la Modernidad a la Postmodernidad.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El proyecto ilustrado: potencia y límites de la razón. Los Derechos del Hombre. La primera ola feminista: Mary Wollstonecraft y Olympe de Gouges.",
+        "Éticas de la felicidad y éticas del deber. La ética kantiana frente al utilitarismo.",
+        "La filosofía crítica de Immanuel Kant y los giros hacia el idealismo y hacia el lenguaje.",
+        "La crítica del capitalismo: del pensamiento revolucionario de Karl Marx a la dialéctica de la Ilustración en la Escuela de Fráncfort. El análisis del totalitarismo de Hannah Arendt.",
+        "La deconstrucción de la tradición occidental en Friedrich Nietzsche y la herencia posmoderna.",
+        "Los problemas filosóficos a la luz del análisis del lenguaje: Ludwig Wittgenstein y la filosofía analítica.",
+        "El existencialismo: Martin Heidegger y Jean Paul Sartre. La razón vital y la razón poética: José Ortega y Gasset y María Zambrano.",
+        "El desarrollo contemporáneo del feminismo: Simone de Beauvoir."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 97.6,
+  "no_encontrados": [
+   "saber : El debate metafísico moderno. La teoría cartesiana de las sustancias. El materialismo desde Thomas Hobbes a la Ilustraci"
+  ]
+ },
+ "materia": "Historia de la Filosofía"
+}

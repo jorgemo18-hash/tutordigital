@@ -1,0 +1,221 @@
+{
+ "_fuente": "ORDEN ECD/1112/2022, anexo III: horario semanal en MINUTOS por áreas y cursos (no lo cambia la ECD/866/2024). Copiado a mano del PDF el 30/9/2026. Aquí va en SESIONES DE 45 MINUTOS, redondeadas: el total del anexo (1350 minutos) son 30 sesiones de 45, 6 al día. Los minutos exactos están en _minutos. Las lenguas extranjeras llevan los de la Primera Lengua Extranjera (150); como segunda lengua en el tercer ciclo son 90. Las lenguas propias, en centros autorizados.",
+ "_minutos": {
+  "ciencias-de-la-naturaleza": {
+   "1": 90,
+   "2": 90,
+   "3": 90,
+   "4": 90,
+   "5": 90,
+   "6": 90
+  },
+  "ciencias-sociales": {
+   "1": 90,
+   "2": 90,
+   "3": 90,
+   "4": 90,
+   "5": 90,
+   "6": 90
+  },
+  "lengua-castellana-y-literatura": {
+   "1": 240,
+   "2": 240,
+   "3": 240,
+   "4": 240,
+   "5": 240,
+   "6": 240
+  },
+  "educacion-plastica-y-visual": {
+   "1": 60,
+   "2": 60,
+   "3": 60,
+   "4": 60,
+   "5": 60,
+   "6": 60
+  },
+  "musica-y-danza": {
+   "1": 60,
+   "2": 60,
+   "3": 60,
+   "4": 60,
+   "5": 60,
+   "6": 60
+  },
+  "lengua-extranjera-ingles": {
+   "1": 150,
+   "2": 150,
+   "3": 150,
+   "4": 150,
+   "5": 150,
+   "6": 150
+  },
+  "lengua-extranjera-frances": {
+   "1": 150,
+   "2": 150,
+   "3": 150,
+   "4": 150,
+   "5": 150,
+   "6": 150
+  },
+  "lengua-extranjera-aleman": {
+   "1": 150,
+   "2": 150,
+   "3": 150,
+   "4": 150,
+   "5": 150,
+   "6": 150
+  },
+  "matematicas": {
+   "1": 225,
+   "2": 225,
+   "3": 225,
+   "4": 225,
+   "5": 225,
+   "6": 225
+  },
+  "atencion-educativa": {
+   "1": 60,
+   "2": 60,
+   "3": 60,
+   "4": 60,
+   "5": 60,
+   "6": 60
+  },
+  "educacion-fisica": {
+   "1": 180,
+   "2": 180,
+   "3": 180,
+   "4": 180,
+   "5": 135,
+   "6": 135
+  },
+  "educacion-en-valores-civicos-y-eticos": {
+   "5": 45,
+   "6": 45
+  },
+  "lengua-propia-aragones": {
+   "1": 90,
+   "2": 90,
+   "3": 90,
+   "4": 90,
+   "5": 90,
+   "6": 90
+  },
+  "lengua-propia-catalan": {
+   "1": 90,
+   "2": 90,
+   "3": 90,
+   "4": 90,
+   "5": 90,
+   "6": 90
+  }
+ },
+ "ciencias-de-la-naturaleza": {
+  "1": 2,
+  "2": 2,
+  "3": 2,
+  "4": 2,
+  "5": 2,
+  "6": 2
+ },
+ "ciencias-sociales": {
+  "1": 2,
+  "2": 2,
+  "3": 2,
+  "4": 2,
+  "5": 2,
+  "6": 2
+ },
+ "lengua-castellana-y-literatura": {
+  "1": 5,
+  "2": 5,
+  "3": 5,
+  "4": 5,
+  "5": 5,
+  "6": 5
+ },
+ "educacion-plastica-y-visual": {
+  "1": 1,
+  "2": 1,
+  "3": 1,
+  "4": 1,
+  "5": 1,
+  "6": 1
+ },
+ "musica-y-danza": {
+  "1": 1,
+  "2": 1,
+  "3": 1,
+  "4": 1,
+  "5": 1,
+  "6": 1
+ },
+ "lengua-extranjera-ingles": {
+  "1": 3,
+  "2": 3,
+  "3": 3,
+  "4": 3,
+  "5": 3,
+  "6": 3
+ },
+ "lengua-extranjera-frances": {
+  "1": 3,
+  "2": 3,
+  "3": 3,
+  "4": 3,
+  "5": 3,
+  "6": 3
+ },
+ "lengua-extranjera-aleman": {
+  "1": 3,
+  "2": 3,
+  "3": 3,
+  "4": 3,
+  "5": 3,
+  "6": 3
+ },
+ "matematicas": {
+  "1": 5,
+  "2": 5,
+  "3": 5,
+  "4": 5,
+  "5": 5,
+  "6": 5
+ },
+ "atencion-educativa": {
+  "1": 1,
+  "2": 1,
+  "3": 1,
+  "4": 1,
+  "5": 1,
+  "6": 1
+ },
+ "educacion-fisica": {
+  "1": 4,
+  "2": 4,
+  "3": 4,
+  "4": 4,
+  "5": 3,
+  "6": 3
+ },
+ "educacion-en-valores-civicos-y-eticos": {
+  "5": 1,
+  "6": 1
+ },
+ "lengua-propia-aragones": {
+  "1": 2,
+  "2": 2,
+  "3": 2,
+  "4": 2,
+  "5": 2,
+  "6": 2
+ },
+ "lengua-propia-catalan": {
+  "1": 2,
+  "2": 2,
+  "3": 2,
+  "4": 2,
+  "5": 2,
+  "6": 2
+ }
+}

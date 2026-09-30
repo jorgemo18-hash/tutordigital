@@ -1,0 +1,254 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "23 Física y Química.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.FQ.1",
+   "texto": "Resolver problemas y situaciones relacionados con la Física y la Química, aplicando las leyes y teorías científicas adecuadas, para comprender y explicar los fenómenos naturales y evidenciar el papel de estas ciencias en la mejora del bienestar común y en la realidad cotidiana."
+  },
+  {
+   "codigo": "CE.FQ.2",
+   "texto": "Razonar, usando el pensamiento científico y las destrezas relacionadas con el trabajo de la ciencia con solvencia, para aplicarlo a la observación de la naturaleza y el entorno, a la formulación de preguntas e hipótesis y a la validación de las mismas a través de la experimentación, la indagación y la búsqueda de evidencias."
+  },
+  {
+   "codigo": "CE.FQ.3",
+   "texto": "Manejar con propiedad y solvencia el flujo de información en los diferentes registros de comunicación de la ciencia como la nomenclatura de compuestos químicos, el uso del lenguaje matemático, el uso correcto de las unidades de medida, la seguridad en el trabajo experimental, para la producción e interpretación de información en diferentes formatos y a partir de fuentes diversas."
+  },
+  {
+   "codigo": "CE.FQ.4",
+   "texto": "Utilizar de forma autónoma, crítica y eficiente plataformas digitales y recursos variados, tanto para el trabajo individual como en equipo, consultando y seleccionando información científica veraz, creando materiales en diversos formatos y comunicando de manera efectiva en diferentes entornos de aprendizaje, para fomentar la creatividad, el desarrollo personal y el aprendizaje individual y social."
+  },
+  {
+   "codigo": "CE.FQ.5",
+   "texto": "Trabajar de forma colaborativa en equipos diversos, aplicando habilidades de coordinación, comunicación, emprendimiento y reparto equilibrado de responsabilidades, para predecir las consecuencias de los avances científicos y su influencia sobre la salud propia y comunitaria y sobre el desarrollo medioambiental sostenible."
+  },
+  {
+   "codigo": "CE.FQ.6",
+   "texto": "Participar de forma activa en la construcción colectiva y evolutiva del conocimiento científico, en su entorno cotidiano y cercano, para convertirse en agentes activos de la difusión del pensamiento científico, la aproximación escéptica a la información científica y tecnológica y la puesta en valor de la preservación del medioambiente y la salud pública, el desarrollo económico y la búsqueda de una sociedad igualitaria."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.FQ.1",
+   "columna": null,
+   "texto": "Aplicar las leyes y teorías científicas en el análisis de fenómenos fisicoquímicos cotidianos, comprendiendo las causas que los producen y explicándolas utilizando diversidad de soportes y medios de comunicación.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.FQ.1",
+   "columna": null,
+   "texto": "Resolver problemas fisicoquímicos planteados a partir de situaciones cotidianas, aplicando las leyes y teorías científicas para encontrar y argumentar las soluciones, expresando adecuadamente los resultados.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.FQ.1",
+   "columna": null,
+   "texto": "Identificar situaciones problemáticas en el entorno cotidiano, emprender iniciativas y buscar soluciones sostenibles desde la Física y la Química, analizando críticamente el impacto producido en la sociedad y el medioambiente.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.FQ.2",
+   "columna": null,
+   "texto": "Formular y verificar hipótesis como respuestas a diferentes problemas y observaciones, manejando con soltura el trabajo experimental, la indagación, la búsqueda de evidencias y el razonamiento lógico-matemático.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.FQ.2",
+   "columna": null,
+   "texto": "Utilizar diferentes métodos para encontrar la respuesta a una sola cuestión u observación, cotejando los resultados obtenidos por diferentes métodos, asegurándose así de su coherencia y fiabilidad.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.FQ.2",
+   "columna": null,
+   "texto": "Integrar las leyes y teorías científicas conocidas en el desarrollo del procedimiento de la validación de las hipótesis formuladas, aplicando relaciones cualitativas y cuantitativas entre las diferentes variables, de manera que el proceso sea más fiable y coherente con el conocimiento científico adquirido.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.FQ.3",
+   "columna": null,
+   "texto": "Utilizar y relacionar de manera rigurosa diferentes sistemas de unidades, empleando correctamente su notación y sus equivalencias, haciendo posible una comunicación efectiva con toda la comunidad científica.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.FQ.3",
+   "columna": null,
+   "texto": "Nombrar y formular correctamente sustancias simples, iones y compuestos químicos inorgánicos y orgánicos utilizando las normas de la IUPAC, como parte de un lenguaje integrador y universal para toda la comunidad científica.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.FQ.3",
+   "columna": null,
+   "texto": "Emplear diferentes formatos para interpretar y expresar información relativa a un proceso fisicoquímico concreto, relacionando entre sí la información que cada uno de ellos contiene y extrayendo de él lo más relevante durante la resolución de un problema.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.FQ.3",
+   "columna": null,
+   "texto": "Poner en práctica los conocimientos adquiridos en la experimentación científica en laboratorio o campo, incluyendo el conocimiento de sus materiales y su normativa básica de uso, así como de las normas de seguridad propias de estos espacios, y comprendiendo la importancia en el progreso científico y emprendedor de que la experimentación sea segura, sin comprometer la integridad Física propia y colectiva.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.FQ.4",
+   "columna": null,
+   "texto": "Interactuar con otros miembros de la comunidad educativa a través de diferentes entornos de aprendizaje, reales y virtuales, utilizando de forma autónoma y eficiente recursos variados, tradicionales y digitales, de forma rigurosa y respetuosa y analizando críticamente las aportaciones de todo el mundo.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.FQ.4",
+   "columna": null,
+   "texto": "Trabajar de forma autónoma y versátil, individualmente y en grupo, en la consulta de información y la creación de contenidos, utilizando con criterio las fuentes y herramientas más fiables, y desechando las menos adecuadas, mejorando así el aprendizaje propio y colectivo.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.FQ.5",
+   "columna": null,
+   "texto": "Participar de manera activa en la construcción del conocimiento científico, evidenciando la presencia de la interacción, la cooperación y la evaluación entre iguales, mejorando la capacidad de cuestionamiento, la reflexión y el debate al alcanzar el consenso en la resolución de un problema o situación de aprendizaje.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.FQ.5",
+   "columna": null,
+   "texto": "Construir y producir conocimientos a través del trabajo colectivo, además de explorar alternativas para superar la asimilación de conocimientos ya elaborados y encontrando momentos para el análisis, la discusión y la síntesis, obteniendo como resultado la elaboración de productos representados en informes, pósteres, presentaciones, artículos, etc.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.FQ.5",
+   "columna": null,
+   "texto": "Debatir, de forma informada y argumentada, sobre las diferentes cuestiones medioambientales, sociales y éticas relacionadas con el desarrollo de las ciencias, alcanzando un consenso sobre las consecuencias de estos avances y proponiendo soluciones creativas en común a las cuestiones planteadas.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.FQ.6",
+   "columna": null,
+   "texto": "Identificar y argumentar científicamente las repercusiones de las acciones que el alumno o la alumna acometen en su vida cotidiana, analizando cómo mejorarlas como forma de participar activamente en la construcción de una sociedad mejor.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.FQ.6",
+   "columna": null,
+   "texto": "Detectar las necesidades de la sociedad sobre las que aplicar los conocimientos científicos adecuados que ayuden a mejorarla, incidiendo especialmente en aspectos importantes como el desarrollo sostenible y la preservación de la salud.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Desarrollo de la tabla periódica: contribuciones históricas a su elaboración actual e importancia como herramienta predictiva de las propiedades de los elementos.",
+        "Estructura electrónica de los átomos tras el análisis de su interacción con la radiación electromagnética: explicación de la posición de un elemento en la tabla periódica y de la similitud en las propiedades de los elementos químicos de cada grupo.",
+        "Teorías sobre la estabilidad de los átomos e iones: predicción de la formación de enlaces entre los elementos, representación de estos y deducción de cuáles son las propiedades de las sustancias Químicas. Comprobación a través de la observación y la experimentación.",
+        "Nomenclatura de sustancias simples, iones y compuestos químicos inorgánicos: composición y las aplicaciones que tienen en la vida cotidiana."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Reacciones Químicas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Leyes fundamentales de la Química: relaciones estequiométricas en las reacciones Químicas y en la composición de los compuestos. Resolución de cuestiones cuantitativas relacionadas con la Química en la vida cotidiana.",
+        "Clasificación de las reacciones Químicas: relaciones que existen entre la Química y aspectos importantes de la sociedad actual como, por ejemplo, la conservación del medioambiente o el desarrollo de fármacos.",
+        "Cálculo de cantidades de materia en sistemas fisicoquímicos concretos, como gases ideales o disoluciones y sus propiedades: variables mesurables propias del estado de los mismos en situaciones de la vida cotidiana.",
+        "Estequiometría de las reacciones Químicas: aplicaciones en los procesos industriales más significativos de la ingeniería Química."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Química orgánica",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Propiedades físicas y químicas generales de los compuestos orgánicos a partir de las estructuras químicas de sus grupos funcionales: generalidades en las diferentes series homólogas y aplicaciones en el mundo real.",
+        "Reglas de la IUPAC para formular y nombrar correctamente algunos compuestos orgánicos mono- y polifuncionales (hidrocarburos, compuestos oxigenados y compuestos nitrogenados).",
+        "Isomería. Fórmulas moleculares y desarrolladas de compuestos orgánicos. Diferentes tipos de isomería estructural. Modelos moleculares o técnicas de representación 3D de moléculas. Isómeros espaciales de un compuesto y sus propiedades.",
+        "Reactividad orgánica. Principales propiedades químicas de las distintas funciones orgánicas. Comportamiento en disolución o en reacciones químicas. Principales tipos de reacciones orgánicas. Productos de la reacción entre compuestos orgánicos y las correspondientes ecuaciones químicas.",
+        "Polímeros. Proceso de formación de los polímeros a partir de sus correspondientes monómeros. Estructura y propiedades. Clasificación de los polímeros según su naturaleza, estructura y composición. Aplicaciones, propiedades y riesgos medioambientales asociados."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Cinemática",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Variables cinemáticas en función del tiempo en los distintos movimientos que puede tener un objeto, con o sin fuerzas externas: resolución de situaciones reales relacionadas con la Física y el entorno cotidiano.",
+        "Variables que influyen en un movimiento rectilíneo y circular: magnitudes y unidades empleadas. Movimientos cotidianos que presentan estos tipos de trayectoria.",
+        "Relación de la trayectoria de un movimiento compuesto con las magnitudes que lo describen."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Estática y dinámica",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Predicción, a partir de la composición vectorial, del comportamiento estático o dinámico de una partícula o un sólido rígido.",
+        "Relación de la mecánica vectorial aplicada sobre una partícula o un sólido rígido con su estado de reposo o de movimiento: aplicaciones estáticas o dinámicas de la Física en otros campos, como la ingeniería o el deporte.",
+        "Interpretación de las leyes de la Dinámica en términos de magnitudes como la cantidad de movimiento y el impulso mecánico: aplicaciones en el mundo real."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Energía",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Conceptos de trabajo y potencia: elaboración de hipótesis sobre el consumo energético de sistemas mecánicos o eléctricos del entorno cotidiano y su rendimiento.",
+        "Energía potencial y energía cinética de un sistema sencillo: aplicación a la conservación de la energía mecánica en sistemas conservativos y no conservativos y al estudio de las causas que producen el movimiento de los objetos en el mundo real.",
+        "Variables termodinámicas de un sistema en función de las condiciones: determinación de las variaciones de temperatura que experimenta y las transferencias de energía que se producen con su entorno."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 97.8,
+  "no_encontrados": [
+   "saber : Teorías sobre la estabilidad de los átomos e iones: predicción de la formación de enlaces entre los elementos, represent"
+  ]
+ },
+ "materia": "Física y Química"
+}

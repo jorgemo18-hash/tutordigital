@@ -1,0 +1,691 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "47 Matemáticas Aplicadas a las Ciencias Sociales.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.MCS.1",
+   "texto": "Modelizar y resolver problemas de la vida cotidiana y de las Ciencias Sociales aplicando diferentes estrategias y formas de razonamiento para obtener posibles soluciones."
+  },
+  {
+   "codigo": "CE.MCS.2",
+   "texto": "Verificar la validez de las posibles soluciones de un problema empleando el razonamiento y la argumentación para contrastar su idoneidad."
+  },
+  {
+   "codigo": "CE.MCS.3",
+   "texto": "Formular o investigar conjeturas o problemas, utilizando el razonamiento, la argumentación, la creatividad y el uso de herramientas tecnológicas, para generar nuevo conocimiento matemático."
+  },
+  {
+   "codigo": "CE.MCS.4",
+   "texto": "Utilizar el pensamiento computacional de forma eficaz, modificando, creando y generalizando algoritmos que resuelvan problemas mediante el uso de las matemáticas, para modelizar y resolver situaciones de la vida cotidiana y del ámbito de las ciencias sociales."
+  },
+  {
+   "codigo": "CE.MCS.5",
+   "texto": "Establecer, investigar y utilizar conexiones entre las diferentes ideas matemáticas estableciendo vínculos entre conceptos, procedimientos, argumentos y modelos para dar significado y estructurar el aprendizaje matemático.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.MCS.6",
+   "texto": "Descubrir los vínculos de las matemáticas con otras materias y profundizar en sus conexiones, interrelacionando conceptos y procedimientos, para modelizar, resolver problemas y desarrollar la capacidad crítica, creativa e innovadora en situaciones diversas."
+  },
+  {
+   "codigo": "CE.MCS.7",
+   "texto": "Representar conceptos, procedimientos e información matemáticos seleccionando diferentes tecnologías, para visualizar ideas y estructurar razonamientos matemáticos."
+  },
+  {
+   "codigo": "CE.MCS.8",
+   "texto": "Comunicar las ideas matemáticas, de forma individual y colectiva, empleando el soporte, la terminología y el rigor apropiados, para organizar y consolidar el pensamiento matemático."
+  },
+  {
+   "codigo": "CE.MCS.9",
+   "texto": "Utilizar destrezas personales y sociales, identificando y gestionando las propias emociones, respetando las de los demás y organizando activamente el trabajo en equipos heterogéneos, aprendiendo del error como parte del proceso de aprendizaje y afrontando situaciones de incertidumbre, para perseverar en la consecución de objetivos en el aprendizaje de las matemáticas."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.MCS.1",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Emplear algunas estrategias y herramientas, incluidas las digitales, para resolver problemas de la vida cotidiana y de las Ciencias Sociales, valorando su eficiencia en cada caso.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.MCS.1",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Obtener todas las posibles soluciones matemáticas de problemas de la vida cotidiana y de las ciencias sociales, describiendo el procedimiento realizado.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.MCS.1",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Emplear diferentes estrategias y herramientas, incluidas las digitales que resuelvan problemas de la vida cotidiana y de las Ciencias Sociales, seleccionando la más adecuada según su eficiencia.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.MCS.1",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Obtener todas las posibles soluciones matemáticas de problemas de la vida cotidiana y de las Ciencias Sociales, describiendo el procedimiento realizado.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.MCS.2",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Comprobar la validez matemática de las posibles soluciones de un problema utilizando el razonamiento y la argumentación.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.MCS.2",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Seleccionar la solución más adecuada de un problema en función del contexto (de sostenibilidad, de consumo responsable, equidad...) usando el razonamiento y la argumentación.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.MCS.2",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Demostrar la validez matemática de las posibles soluciones de un problema utilizando el razonamiento y la argumentación.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.MCS.2",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Seleccionar la solución más adecuada de un problema en función del contexto (de sostenibilidad, de consumo responsable, equidad...) usando el razonamiento y la argumentación.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.MCS.3",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Adquirir nuevo conocimiento matemático mediante la formulación de conjeturas y problemas de forma guiada.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.MCS.3",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Emplear herramientas tecnológicas adecuadas en la formulación o investigación de conjeturas o problemas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.MCS.3",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Adquirir nuevo conocimiento matemático mediante la formulación, razonamiento y justificación de conjeturas y problemas de forma autónoma.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.MCS.3",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Integrar el uso de herramientas tecnológicas en la formulación o investigación de conjeturas y problemas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.MCS.4",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Interpretar, modelizar y resolver situaciones problematizadas de la vida cotidiana y de las Ciencias Sociales, utilizando el pensamiento computacional, modificando o creando algoritmos.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.MCS.4",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Interpretar, modelizar y resolver situaciones problematizadas de la vida cotidiana y las Ciencias Sociales utilizando el pensamiento computacional, modificando, creando y generalizando algoritmos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.MCS.5",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Manifestar una visión matemática integrada, investigando y conectando las diferentes ideas matemáticas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.MCS.5",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Resolver problemas estableciendo y aplicando conexiones entre las diferentes ideas matemáticas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.MCS.5",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Manifestar una visión matemática integrada, investigando y conectando las diferentes ideas matemáticas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.MCS.5",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Resolver problemas estableciendo y aplicando conexiones entre las diferentes ideas matemáticas",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.MCS.6",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Resolver problemas en situaciones diversas utilizando procesos matemáticos, estableciendo y aplicando conexiones entre el mundo real, otras materias y las Matemáticas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.MCS.6",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Analizar la aportación de las Matemáticas al progreso de la humanidad reflexionando sobre su contribución en la propuesta de soluciones a situaciones complejas y a los retos en las Ciencias Sociales que se plantean.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.MCS.6",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Resolver problemas en situaciones diversas utilizando procesos matemáticos, reflexionando, estableciendo y aplicando conexiones entre el mundo real, otras materias y las Matemáticas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.MCS.6",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Analizar la aportación de las Matemáticas al progreso de la humanidad valorando su contribución en la propuesta de soluciones a situaciones complejas y a los retos que se plantean en las Ciencias Sociales.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.MCS.7",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Representar ideas matemáticas, estructurando diferentes razonamientos matemáticos y seleccionando las tecnologías más adecuadas para la resolución de problemas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.MCS.7",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Seleccionar y utilizar diversas formas de representación, valorando su utilidad para compartir información.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.MCS.7",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Representar y visualizar ideas matemáticas estructurando diferentes procesos matemáticos y seleccionando las tecnologías más adecuadas para la resolución de problemas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.MCS.7",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Seleccionar y utilizar diversas formas de representación valorando su utilidad para compartir información.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.MCS.8",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Mostrar organización al comunicar las ideas matemáticas empleando el soporte, la terminología y el rigor apropiados.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.MCS.8",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Reconocer y emplear el lenguaje matemático en diferentes contextos, comunicando la información con precisión y rigor.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.MCS.8",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Mostrar organización al comunicar las ideas matemáticas empleando el soporte, la terminología y el rigor apropiados.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.MCS.8",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Reconocer y emplear el lenguaje matemático en diferentes contextos, comunicando la información con precisión y rigor.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.MCS.9",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Afrontar las situaciones de incertidumbre, identificando y gestionando emociones y aceptando y aprendiendo del error como parte del proceso de aprendizaje de las matemáticas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.MCS.9",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Mostrar una actitud positiva y perseverante, aceptando y aprendiendo de la crítica razonada al hacer frente a las diferentes situaciones de aprendizaje de las matemáticas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "9.3",
+   "competencia": "CE.MCS.9",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "texto": "Participar en tareas matemáticas de forma activa en equipos heterogéneos, respetando las emociones y experiencias de los demás, escuchando su razonamiento, identificando las habilidades sociales más propicias y fomentando el bienestar grupal y las relaciones saludables.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.MCS.9",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Afrontar las situaciones de incertidumbre y tomar decisiones evaluando distintas opciones, identificando y gestionando emociones y aceptando y aprendiendo del error como parte del proceso de aprendizaje de las matemáticas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.MCS.9",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Mostrar perseverancia y una motivación positiva, aceptando y aprendiendo de la crítica razonada al hacer frente a las diferentes situaciones de aprendizaje de las matemáticas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "9.3",
+   "competencia": "CE.MCS.9",
+   "columna": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "texto": "Trabajar en tareas matemáticas de forma activa en equipos heterogéneos, respetando las emociones y experiencias de los demás, escuchando su razonamiento, aplicando las habilidades sociales más propicias y fomentando el bienestar del equipo y las relaciones saludables.",
+   "cursos": [
+    2
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Matemáticas aplicadas a las Ciencias Sociales I",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Sentido numérico",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Conteo",
+       "saberes": [
+        "Estrategias y técnicas de recuento sistemático (diagramas de árbol, técnicas de combinatoria.)."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Cantidad",
+       "saberes": [
+        "Números reales (racionales e irracionales): comparación, ordenación, clasificación y contraste de sus propiedades."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Sentido de las operaciones",
+       "saberes": [
+        "Potencias, raíces y logaritmos: comprensión y utilización de sus relaciones para simplificar y resolver problemas."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Educación financiera",
+       "saberes": [
+        "Resolución de problemas relacionados con la educación financiera (cuotas, amortización, intereses, préstamos…) con herramientas tecnológicas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sentido de la medida",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Cambio",
+       "saberes": [
+        "Límites: estimación y cálculo a partir de una tabla, un gráfico o una expresión algebraica.",
+        "Continuidad de funciones: aplicación de límites en el estudio de la continuidad.",
+        "Derivada de una función: definición a partir del estudio del cambio en contextos de las Ciencias Sociales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Sentido algebraico",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Patrones",
+       "saberes": [
+        "Generalización de patrones en situaciones sencillas."
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Modelo matemático",
+       "saberes": [
+        "Relaciones cuantitativas esenciales en situaciones sencillas: estrategias de identificación y determinación de la clase o clases de funciones que pueden modelizarlas.",
+        "Ecuaciones, inecuaciones y sistemas: modelización de situaciones de las Ciencias Sociales y de la vida real."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Igualdad y desigualdad",
+       "saberes": [
+        "Resolución de ecuaciones, inecuaciones y sistemas de ecuaciones e inecuaciones no lineales en diferentes contextos."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "Relaciones y funciones",
+       "saberes": [
+        "Representación gráfica de funciones utilizando la expresión más adecuada.",
+        "Propiedades de las distintas clases de funciones, incluyendo, polinómica, exponencial, racional sencilla, irracional, logarítmica, periódica y a trozos: comprensión y comparación.",
+        "Álgebra simbólica en la representación y explicación de relaciones matemáticas de las Ciencias Sociales."
+       ]
+      },
+      {
+       "codigo": "C.5",
+       "nombre": "Pensamiento computacional",
+       "saberes": [
+        "Formulación, resolución y análisis de problemas de la vida cotidiana y de las Ciencias Sociales utilizando programas y herramientas adecuadas.",
+        "Comparación de algoritmos alternativos para el mismo problema mediante el razonamiento lógico."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Sentido estocástico",
+     "apartados": [
+      {
+       "codigo": "D.1",
+       "nombre": "Organización y análisis de datos",
+       "saberes": [
+        "Organización de los datos procedentes de variables bidimensionales: distribución conjunta y distribuciones marginales y condicionadas. Análisis de la dependencia estadística.",
+        "Estudio de la relación entre dos variables mediante la regresión lineal y cuadrática: valoración gráfica de la pertinencia del ajuste.",
+        "Coeficientes de correlación lineal y de determinación: cuantificación de la relación lineal, predicción y valoración de su fiabilidad en contextos de las Ciencias Sociales.",
+        "Calculadora, hoja de cálculo o software específico en el análisis de datos estadísticos."
+       ]
+      },
+      {
+       "codigo": "D.2",
+       "nombre": "Incertidumbre",
+       "saberes": [
+        "La probabilidad como medida de la incertidumbre asociada a fenómenos aleatorios.",
+        "Cálculo de la probabilidad a partir del concepto de frecuencia relativa.",
+        "Cálculo de probabilidades en experimentos simples: la regla de Laplace en situaciones de equiprobabilidad y en combinación con diferentes técnicas de recuento."
+       ]
+      },
+      {
+       "codigo": "D.3",
+       "nombre": "Distribuciones de probabilidad",
+       "saberes": [
+        "Variables aleatorias discretas y continuas. Parámetros de la distribución.",
+        "Modelización de fenómenos estocásticos mediante las distribuciones de probabilidad binomial y normal. Cálculo de probabilidades asociadas mediante herramientas tecnológicas.",
+        "Estimación de probabilidades mediante la aproximación de la binomial por la normal."
+       ]
+      },
+      {
+       "codigo": "D.4",
+       "nombre": "Inferencia",
+       "saberes": [
+        "Diseño de estudios estadísticos relacionados con las Ciencias Sociales utilizando herramientas digitales. Técnicas de muestreo sencillas.",
+        "Análisis de muestras unidimensionales y bidimensionales con herramientas tecnológicas con el fin de emitir juicios y tomar decisiones: estimación puntual."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Sentido socioafectivo",
+     "apartados": [
+      {
+       "codigo": "E.1",
+       "nombre": "Creencias, actitudes y emociones",
+       "saberes": [
+        "Destrezas de autoconciencia encaminadas a reconocer emociones propias, afrontando eventuales situaciones de estrés y ansiedad en el aprendizaje de las matemáticas.",
+        "Tratamiento del error, individual y colectivo como elemento movilizador de saberes previos adquiridos y generador de oportunidades de aprendizaje en el aula de matemáticas."
+       ]
+      },
+      {
+       "codigo": "E.2",
+       "nombre": "Trabajo en equipo, toma de decisiones, inclusión, respeto y diversidad",
+       "saberes": [
+        "Reconocimiento y aceptación de diversos planteamientos en la resolución de problemas, transformando los enfoques de los demás en nuevas y mejoradas estrategias propias, mostrando empatía y respeto en el proceso.",
+        "Técnicas y estrategias de trabajo en equipo para la resolución de problemas y tareas matemáticas, en grupos heterogéneos.",
+        "Destrezas para desarrollar una comunicación efectiva: la escucha activa, la formulación de preguntas o solicitud y prestación de ayuda cuando sea necesario.",
+        "Valoración de la contribución de las Matemáticas y el papel de matemáticos y matemáticas a lo largo de la historia en el avance de las Ciencias Sociales."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Matemáticas aplicadas a las Ciencias Sociales II",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Sentido numérico",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Sentido de las operaciones",
+       "saberes": [
+        "Adición y producto de matrices: interpretación, comprensión y aplicación adecuada de las propiedades.",
+        "Estrategias para operar con números reales y matrices: cálculo mental o escrito en los casos sencillos y con herramientas tecnológicas en los casos más complicados."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Relaciones",
+       "saberes": [
+        "Conjuntos de matrices: estructura, comprensión y propiedades."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sentido de la medida",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Medición",
+       "saberes": [
+        "Interpretación de la integral definida como el área bajo una curva.",
+        "Técnicas elementales para el cálculo de primitivas. Aplicación al cálculo de áreas."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Cambio",
+       "saberes": [
+        "La derivada como razón de cambio en resolución de problemas de optimización en contextos diversos.",
+        "Aplicación de los conceptos de límite y derivada a la representación y al estudio de situaciones susceptibles de ser modelizadas mediante funciones."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Sentido algebraico",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Patrones",
+       "saberes": [
+        "Generalización de patrones en situaciones diversas. (a) (b) (c)"
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Modelo matemático",
+       "saberes": [
+        "Relaciones cuantitativas en situaciones complejas: estrategias de identificación y determinación de la clase o clases de funciones que pueden modelizarlas.",
+        "Sistemas de ecuaciones: modelización de situaciones en diversos contextos.",
+        "Técnicas y uso de matrices para, al menos, modelizar situaciones en las que aparezcan sistemas de ecuaciones lineales o grafos.",
+        "Programación lineal: modelización de problemas reales y resolución mediante herramientas digitales."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Igualdad y desigualdad",
+       "saberes": [
+        "Formas equivalentes de expresiones algebraicas en la resolución de sistemas de ecuaciones e inecuaciones, mediante cálculo mental, algoritmos de lápiz y papel, y con herramientas digitales.",
+        "Resolución de sistemas de ecuaciones e inecuaciones en diferentes contextos."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "Relaciones y funciones",
+       "saberes": [
+        "Representación, análisis e interpretación de funciones con herramientas digitales.",
+        "Propiedades de las distintas clases de funciones: comprensión y comparación."
+       ]
+      },
+      {
+       "codigo": "C.5",
+       "nombre": "Pensamiento computacional",
+       "saberes": [
+        "Formulación, resolución y análisis de problemas de la vida cotidiana y de las Ciencias Sociales empleando las herramientas o los programas más adecuados.",
+        "Análisis algorítmico de las propiedades de las operaciones con matrices y la resolución de sistemas de ecuaciones lineales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Sentido estocástico",
+     "apartados": [
+      {
+       "codigo": "D.1",
+       "nombre": "Incertidumbre",
+       "saberes": [
+        "La probabilidad como medida de incertidumbre asociada a fenómenos aleatorios: interpretaciones subjetivas, clásica y frecuentista.",
+        "Cálculo de probabilidades en experimentos compuestos. Probabilidad condicionada e independencia entre sucesos aleatorios. Diagramas de árbol y tablas de contingencia.",
+        "Teoremas de la probabilidad total y de Bayes: resolución de problemas e interpretación del teorema de Bayes para actualizar la probabilidad a partir de la observación y la experimentación y la toma de decisiones en condiciones de incertidumbre."
+       ]
+      },
+      {
+       "codigo": "D.2",
+       "nombre": "Distribuciones de probabilidad",
+       "saberes": [
+        "Variables aleatorias discretas y continuas. Parámetros de la distribución. Distribuciones binomial y normal.",
+        "Modelización de fenómenos estocásticos mediante las distribuciones de probabilidad binomial y normal. Cálculo de probabilidades asociadas mediante herramientas tecnológicas.",
+        "Aproximación de la distribución binomial por la distribución normal."
+       ]
+      },
+      {
+       "codigo": "D.3",
+       "nombre": "Inferencia",
+       "saberes": [
+        "Selección de muestras representativas. Técnicas de muestreo.",
+        "Estimación de la media, la proporción y la desviación típica. Aproximación de la distribución de la media y de la proporción muestrales por la normal.",
+        "Intervalos de confianza basados en la distribución normal: construcción, análisis y toma de decisiones en situaciones contextualizadas.",
+        "Herramientas digitales en la realización de estudios estadísticos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Sentido socioafectivo",
+     "apartados": [
+      {
+       "codigo": "E.1",
+       "nombre": "Creencias, actitudes y emociones",
+       "saberes": [
+        "Destrezas de autogestión encaminadas a reconocer las emociones propias, afrontando eventuales situaciones de estrés y ansiedad en el aprendizaje de las matemáticas.",
+        "Tratamiento y análisis del error, individual y colectivo como elemento movilizador de saberes previos adquiridos y generador de oportunidades de aprendizaje en el aula de matemáticas."
+       ]
+      },
+      {
+       "codigo": "E.2",
+       "nombre": "Toma de decisiones, inclusión, respeto y diversidad",
+       "saberes": [
+        "Destrezas para evaluar diferentes opciones y tomar decisiones en la resolución de problemas.",
+        "Destrezas sociales y de comunicación efectivas para el éxito en el aprendizaje de las matemáticas.",
+        "Valoración de la contribución de las Matemáticas y el papel de matemáticos y matemáticas a lo largo de la historia el avance de las Ciencias Sociales."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 99.1,
+  "no_encontrados": [
+   "saber C.1: Generalización de patrones en situaciones diversas. (a) (b) (c)"
+  ]
+ },
+ "materia": "Matemáticas Aplicadas a las Ciencias Sociales"
+}

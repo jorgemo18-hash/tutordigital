@@ -1,0 +1,433 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "33 Historia del Mundo Contemporáneo.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.HMC.1",
+   "texto": "Reconocer los movimientos, acciones y transformaciones históricas que han contribuido al afianzamiento de la libertad en el mundo contemporáneo, a través del estudio comparado de casos y el uso correcto de términos y conceptos históricos, para valorar los logros que suponen los sistemas democráticos como principal garantía para la convivencia y el ejercicio de los derechos fundamentales."
+  },
+  {
+   "codigo": "CE.HMC.2",
+   "texto": "Tomar conciencia del grado de violencia, barbarie y destrucción alcanzado por los conflictos ocurridos en la era contemporánea, a través del empleo de fuentes históricas fiables, la lectura de textos historiográficos y la elaboración de argumentos propios que prevengan la manipulación de la información, para afrontar acontecimientos traumáticos de nuestro pasado reciente, evitar la repetición de hechos semejantes, reconocer a las víctimas y defender la aplicación del principio de Justicia Universal."
+  },
+  {
+   "codigo": "CE.HMC.3",
+   "texto": "Identificar la desigualdad como uno de los principales problemas de las sociedades contemporáneas, reconociendo las experiencias históricas de determinados colectivos, empleando el análisis multicausal y valorando el papel transformador del sujeto en la historia, para comprender cómo se han formado las actuales sociedades complejas, apreciar la riqueza de la diversidad social, valorar los logros alcanzados y asumir los retos que plantea la consecución de comunidades más justas y cohesionadas."
+  },
+  {
+   "codigo": "CE.HMC.4",
+   "texto": "Comprender la importancia de las identidades colectivas en la configuración social, política y cultural del mundo contemporáneo, utilizando el pensamiento histórico, sus conceptos y métodos, para analizar críticamente cómo se han ido construyendo y conformando a través del tiempo, elaborar argumentos propios con los que contribuir a un diálogo constructivo, respetar los sentimientos de pertenencia y valorar la riqueza patrimonial y el legado histórico y cultural que han producido."
+  },
+  {
+   "codigo": "CE.HMC.5",
+   "texto": "Identificar y reconocer los principales retos del siglo XXI a través de procesos avanzados de búsqueda, selección y tratamiento de la información, el contraste y la lectura crítica de fuentes, para entender el fenómeno histórico de la globalización, su repercusión en el ámbito local y planetario y en la vida cotidiana de las personas, y mostrar la necesidad de adoptar compromisos ecosociales para afrontar los Objetivos de Desarrollo Sostenible."
+  },
+  {
+   "codigo": "CE.HMC.6",
+   "texto": "Valorar el significado histórico de la idea de progreso y sus repercusiones sociales, ambientales y territoriales en el mundo contemporáneo, a través del uso de métodos cuantitativos y del análisis multifactorial del desarrollo económico, los ritmos de crecimiento y la existencia de distintos modelos y sistemas, para tomar conciencia de las relaciones de subordinación y dependencia, y adoptar un compromiso activo con la sostenibilidad, la defensa de los derechos sociales y el acceso universal a recursos básicos.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.HMC.7",
+   "texto": "Interpretar la función que han desempeñado el pensamiento y las ideologías en la transformación de la realidad desde los orígenes de la era contemporánea hasta la actualidad, a través de la aproximación a la historiografía y a los debates sobre temas claves de la historia, para valorar críticamente los distintos proyectos sociales, políticos y culturales generados, las acciones llevadas a cabo y las experiencias vividas, desde la perspectiva ética contenida en la Declaración Universal de los Derechos Humanos."
+  },
+  {
+   "codigo": "CE.HMC.8",
+   "texto": "Describir y analizar los cambios y permanencias que se han producido en la sociedad contemporánea, los comportamientos demográficos, los modos de vida y el ciclo vital, prestando especial interés a la situación de la mujer, a los roles de género y edad, a los mecanismos de control, dominio y sumisión y a la lucha por la dignidad y contra la discriminación, realizando proyectos de investigación y aplicando el pensamiento histórico para reconocer el valor e importancia de los personajes anónimos de la historia.",
+   "de": "tabla de criterios"
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.HMC.1",
+   "columna": null,
+   "texto": "Identificar y reconocer los logros que suponen los actuales sistemas democráticos como el resultado no lineal en el tiempo de los movimientos y acciones que han contribuido al afianzamiento y articulación del principio de libertad, a través del análisis de los principales procesos históricos que se han desarrollado, la comprensión de los textos políticos y constitucionales fundamentales y el uso adecuado de términos y conceptos históricos.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.HMC.1",
+   "columna": null,
+   "texto": "Comprender los conceptos de revolución y cambio en el mundo contemporáneo y los elementos y factores que los causan y condicionan, a través del estudio de casos significativos de las revoluciones burguesas y socialistas que han ocurrido a lo largo de la historia contemporánea, así como los movimientos de acción y reacción que han generado.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.HMC.1",
+   "columna": null,
+   "texto": "Entender el significado histórico de las transiciones políticas y de los procesos de democratización de la era contemporánea como fundamento y garantía para la convivencia y el ejercicio de los derechos fundamentales, valorando las implicaciones que suponen el ejercicio de la ciudadanía activa y el respeto al ordenamiento constitucional, y generando juicios propios con respecto al cumplimiento de aspiraciones y expectativas, así como a las amenazas y riesgos de la vida en democracia.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.HMC.2",
+   "columna": null,
+   "texto": "Tomar conciencia del grado de violencia, barbarie y destrucción alcanzado por los conflictos ocurridos en el mundo contemporáneo, las causas de las conflagraciones bélicas y las múltiples transformaciones que se producen en los contendientes, a través del empleo de fuentes históricas fiables y del uso de datos contrastados, valorando el impacto social y emocional que supone el uso de la violencia y el papel de las instituciones internacionales que velan por la paz y la mediación.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.HMC.2",
+   "columna": null,
+   "texto": "Analizar los principales conflictos civiles que se han producido en la Era Contemporánea, a través del empleo de textos historiográficos y la elaboración de juicios argumentados, comprendiendo la importancia de la memoria histórica y del reconocimiento de las víctimas, del principio de Justicia Universal y del derecho a la verdad, la reparación y la garantía de no repetición.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.HMC.3",
+   "columna": null,
+   "texto": "Describir la evolución de los conceptos de igualdad y de ciudadanía en la historia contemporánea y sus derivaciones sociales y políticas, a través del análisis multicausal de los principales sistemas políticos y sociales de los siglos XIX y XX, identificando las desigualdades y la concentración del poder en determinados grupos sociales.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.HMC.3",
+   "columna": null,
+   "texto": "Analizar las condiciones de vida, el mundo del trabajo, las relaciones laborales y su conflictividad a través del estudio multidisciplinar de los movimientos sociales, particularmente los relacionados con el obrerismo, valorando el papel que representan la acción colectiva y del sujeto en la historia para el reconocimiento de los derechos sociales y el bienestar colectivo.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.HMC.3",
+   "columna": null,
+   "texto": "Deducir a través del estudio crítico de noticias y datos estadísticos la evolución del estado social, identificando los logros y retrocesos experimentados y las medidas adoptadas por los diferentes estados contemporáneos, así como los límites y retos de futuro, desde una perspectiva solidaria en favor de los colectivos más vulnerables.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.HMC.4",
+   "columna": null,
+   "texto": "Analizar críticamente cómo se han ido construyendo en el tiempo las identidades colectivas, empleando los conceptos y métodos del pensamiento histórico, respetando la pluralidad y los sentimientos identitarios y valorando el legado histórico y cultural de las mismas.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.HMC.4",
+   "columna": null,
+   "texto": "Comprender la importancia de las identidades colectivas en la configuración social, política y cultural del mundo contemporáneo, identificando las múltiples valencias de las mismas, mediante el análisis crítico de textos históricos e historiográficos y de fuentes de información actual, elaborando argumentos propios que contribuyan a un diálogo constructivo al respecto.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.HMC.5",
+   "columna": null,
+   "texto": "Analizar críticamente el fenómeno histórico de la globalización y su repercusión en el ámbito local y planetario, valiéndose del manejo de distintas fuentes de información y la adecuada selección, validación, contraste y tratamiento de las mismas, previniendo la desinformación y considerando el emprendimiento, la innovación y el aprendizaje permanente como formas de afrontar los retos de un entorno económico, social y cultural en constante cambio.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.HMC.5",
+   "columna": null,
+   "texto": "Identificar los principales retos del siglo XXI y el origen histórico de los mismos, a través de la interconexión de diversos procesos políticos, económicos, sociales y culturales en un contexto global, argumentando la necesidad de adoptar comportamientos ecosocialmente responsables y orientados a la sostenibilidad del planeta, la defensa de las instituciones democráticas, la mejora del bienestar colectivo y la solidaridad entre las generaciones presentes y futuras.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.HMC.6",
+   "columna": null,
+   "texto": "Valorar el significado histórico de la idea de progreso y sus múltiples consecuencias sociales, territoriales y ambientales, a través del tratamiento de datos numéricos, la interpretación de gráficos y la comprensión multifactorial de los ritmos y ciclos de crecimiento, argumentando la necesidad de adoptar comportamientos ecosociales que garanticen la sostenibilidad del planeta.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.HMC.6",
+   "columna": null,
+   "texto": "Comparar los distintos sistemas económicos que se han desarrollado en el mundo contemporáneo, a través del análisis multidisciplinar de los mismos y de las doctrinas y teorías de las que derivan, identificando las relaciones de subordinación y de dependencia y los conflictos que generan, tanto en el ámbito nacional como internacional, y justificando la necesidad del acceso universal a recursos básicos.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.HMC.7",
+   "columna": null,
+   "texto": "Generar opiniones argumentadas, debatir y transferir ideas y conocimientos sobre la función que han desempeñado el pensamiento y las ideologías en la transformación de la realidad, desde los orígenes de la era contemporánea hasta la actualidad, comprendiendo y contextualizando dichos fenómenos a través del trabajo sobre textos históricos e historiográficos y de fuentes literarias, del cine y otros documentos audiovisuales.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.HMC.7",
+   "columna": null,
+   "texto": "Abordar críticamente los principales temas clave de la historia y de la actualidad, a través de la aproximación a las principales corrientes historiográficas y a los usos que se hacen de la historia, valorando críticamente los principales proyectos sociales, políticos y culturales que han tenido lugar en la historia contemporánea desde la perspectiva ética contenida en la Declaración Universal de los Derechos Humanos.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.HMC.8",
+   "columna": null,
+   "texto": "Analizar los cambios y permanencias en la historia, atendiendo a procesos de más larga duración, como los comportamientos demográficos, ciclos vitales y modos de vida en la sociedad contemporánea, a través del acercamiento al pensamiento histórico y la realización de proyectos de investigación, identificando los mecanismos de control, dominio y sumisión, los roles de género y edad asignados, así como los escenarios de lucha por la dignidad y contra la discriminación de diversos colectivos.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.HMC.8",
+   "columna": null,
+   "texto": "Contrastar el papel relegado de la mujer en la historia contemporánea, identificando y valorando la importancia de las figuras individuales y colectivas como protagonistas anónimas de la historia contemporánea, así como el papel de los movimientos feministas en el reconocimiento de sus derechos y la igualdad efectiva de mujeres y hombres.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "El trabajo del historiador",
+       "saberes": [
+        "fuentes históricas, historiografía y narrativas del pasado. Argumentación histórica. Relevancia, causas y consecuencias, cambio y continuidad. Perspectiva histórica en las narrativas sobre el pasado."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "La lucha por la libertad",
+       "saberes": [
+        "cambio y revolución en la época contemporánea: de las revoluciones burguesas a las revoluciones socialistas. El uso de la violencia y de la protesta social en los siglos XIX y XX. Revolución y reacción."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "La nueva sociedad liberal",
+       "saberes": [
+        "origen y funcionamiento de los sistemas parlamentarios."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "El significado histórico y político de los nacionalismos en el mundo contemporáneo",
+       "saberes": [
+        "De la servidumbre a la ciudadanía. Abolicionismo, derechos civiles y derechos sociales en la edad contemporánea. Imperios y cuestión nacional: de los movimientos de liberación a la descolonización."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Ritmos y modelos de crecimiento económico en el mundo",
+       "saberes": [
+        "las relaciones de dependencia. Ciclos y crisis de los sistemas económicos contemporáneos. Factores del desarrollo económico y sus implicaciones sociales, políticas y ambientales: de la industrialización a la era postindustrial."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Niveles, condiciones y modos de vida en las sociedades contemporáneas",
+       "saberes": [
+        "grupos, clases sociales y desigualdad social. Clases medias y estado del bienestar en las sociedades avanzadas."
+       ]
+      },
+      {
+       "codigo": "A.7",
+       "nombre": "Evolución de la población, ciclos demográficos y modos de vida",
+       "saberes": [
+        "Cambios y permanencias en los ciclos vitales y en la organización social del mundo contemporáneo. Grupos vulnerables y marginados. El papel del sujeto colectivo en la historia contemporánea."
+       ]
+      },
+      {
+       "codigo": "A.8",
+       "nombre": "Las utopías revolucionarias y los proyectos de transformación social",
+       "saberes": [
+        "los movimientos democráticos, republicanos y socialistas. El papel de los refugiados."
+       ]
+      },
+      {
+       "codigo": "A.9",
+       "nombre": "La evolución histórica de la clase trabajadora y de las organizaciones obreras",
+       "saberes": [
+        "experiencias y conflictos en defensa de los derechos laborales y la mejora de las condiciones de vida."
+       ]
+      },
+      {
+       "codigo": "A.10",
+       "nombre": "Acción colectiva, movimiento de masas y liderazgo político en el siglo XX",
+       "saberes": [
+        "nacimiento y funcionamiento de los regímenes democráticos y totalitarios. Fascismo, nazismo y otros movimientos autoritarios en los siglos XX y XXI."
+       ]
+      },
+      {
+       "codigo": "A.11",
+       "nombre": "Militarización y carrera armamentística. Diplomacia de la amenaza y de la disuasión",
+       "saberes": [
+        "ententes, alianzas y bloques. El mundo en guerra: las guerras mundiales y los grandes conflictos internacionales. El Holocausto y otros genocidios en la historia contemporánea."
+       ]
+      },
+      {
+       "codigo": "A.12",
+       "nombre": "Organismos e instituciones para la paz",
+       "saberes": [
+        "de la Sociedad de Naciones a la Organización de las Naciones Unidas. La injerencia humanitaria y la Justicia Universal."
+       ]
+      },
+      {
+       "codigo": "A.13",
+       "nombre": "Los conflictos fratricidas en el mundo contemporáneo",
+       "saberes": [
+        "pasados traumáticos y memoria colectiva. Reconocimiento, reparación y dignificación de las víctimas de la violencia."
+       ]
+      },
+      {
+       "codigo": "A.14",
+       "nombre": "Transiciones políticas y procesos de democratización en los siglos XX y XXI.",
+       "saberes": []
+      },
+      {
+       "codigo": "A.15",
+       "nombre": "La evolución de la situación de la mujer en la sociedad contemporánea",
+       "saberes": [
+        "mecanismos de dominación y sumisión y cambios socioculturales. El movimiento por la emancipación de la mujer y la lucha por la igualdad: origen y desarrollo de los movimientos feministas."
+       ]
+      },
+      {
+       "codigo": "A.16",
+       "nombre": "Movimientos sociales en favor de la igualdad de derechos, del reconocimiento de las minorías y contra la discriminación.",
+       "saberes": []
+      }
+     ]
+    },
+    {
+     "bloque": "B. Retos del mundo actual.",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "El proceso de globalización en el mundo contemporáneo y sus implicaciones en la sociedad actual.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "El desarrollo tecnológico y digital y los nuevos retos del futuro económico, social y laboral.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Los nacionalismos como factor de conflicto y enfrentamiento entre pueblos y estados",
+       "saberes": [
+        "Los nacionalismos unificadores como factor de construcción de la paz, Unión Europea."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "El nuevo orden mundial multipolar",
+       "saberes": [
+        "choques y alianzas entre civilizaciones."
+       ]
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "Amenazas regionales y planetarias",
+       "saberes": [
+        "terrorismo, crimen organizado, radicalismos, ciber-amenazas y armas de destrucción masiva."
+       ]
+      },
+      {
+       "codigo": "B.6",
+       "nombre": "Desarrollo económico y sostenibilidad",
+       "saberes": [
+        "de la idea del progreso ilimitado del liberalismo clásico a los Objetivos de Desarrollo Sostenible."
+       ]
+      },
+      {
+       "codigo": "B.7",
+       "nombre": "Procesos de integración regional en el mundo",
+       "saberes": [
+        "La construcción de la Unión Europea, situación presente y desafíos de futuro. Alianzas internacionales para el logro de los Objetivos de Desarrollo Sostenible."
+       ]
+      },
+      {
+       "codigo": "B.8",
+       "nombre": "Éxodos masivos de población",
+       "saberes": [
+        "migraciones económicas, climáticas y políticas. Nuevo concepto de refugiado."
+       ]
+      },
+      {
+       "codigo": "B.9",
+       "nombre": "La emergencia climática y sus desafíos en el presente y en el futuro.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.10",
+       "nombre": "Crisis de las ideologías y «Fin de la historia»",
+       "saberes": [
+        "la era del escepticismo y de los nuevos populismos."
+       ]
+      },
+      {
+       "codigo": "B.11",
+       "nombre": "Los retos de las democracias actuales",
+       "saberes": [
+        "corrupción, crisis institucional y de los sistemas de partidos, tendencias autoritarias y movimientos antisistema."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Compromiso cívico.",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Conciencia democrática",
+       "saberes": [
+        "conocimiento de los principios y normas constitucionales, ejercicio de los valores cívicos y participación ciudadana."
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Identidad y sentimientos de pertenencia",
+       "saberes": [
+        "reconocimiento de la diversidad identitaria, tolerancia y respeto ante las manifestaciones ideológicas y culturales y reconocimiento y defensa de la riqueza patrimonial."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Igualdad de género",
+       "saberes": [
+        "situación de la mujer en el mundo y actitudes frente a la discriminación y en favor de la igualdad efectiva entre mujeres y hombres."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "Comportamiento ecosocial",
+       "saberes": [
+        "movimientos en defensa del medio ambiente y ante la emergencia climática. Compromiso con los Objetivos de Desarrollo Sostenible."
+       ]
+      },
+      {
+       "codigo": "C.5",
+       "nombre": "Valoración y respeto a la diversidad social, étnica y cultural",
+       "saberes": [
+        "tolerancia e intolerancia en la historia del mundo contemporáneo. Defensa de los derechos de las minorías."
+       ]
+      },
+      {
+       "codigo": "C.6",
+       "nombre": "Ciudadanía ética digital",
+       "saberes": [
+        "respeto a la propiedad intelectual. Participación y ejercicio de la ciudadanía global a través de las tecnologías digitales. Prevención y defensa ante la desinformación y la manipulación."
+       ]
+      },
+      {
+       "codigo": "C.7",
+       "nombre": "Solidaridad y cooperación",
+       "saberes": [
+        "los grandes desafíos que afectan al mundo y conductas tendentes al compromiso social, el asociacionismo y el voluntariado."
+       ]
+      },
+      {
+       "codigo": "C.8",
+       "nombre": "Conservación y difusión del patrimonio histórico",
+       "saberes": [
+        "el valor patrimonial, social y cultural de la memoria colectiva. Archivos, museos y centros de divulgación e interpretación histórica."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 98.2,
+  "no_encontrados": [
+   "saber C.2: reconocimiento de la diversidad identitaria, tolerancia y respeto ante las manifestaciones ideológicas y culturales y re"
+  ]
+ },
+ "materia": "Historia del Mundo Contemporáneo"
+}

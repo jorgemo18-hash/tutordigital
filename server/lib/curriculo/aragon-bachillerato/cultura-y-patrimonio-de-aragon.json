@@ -1,0 +1,309 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "10 Cultura y Patrimonio de Aragón.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.CPA.1",
+   "texto": "Indagar, argumentar y elaborar productos originales en diversos formatos y soportes de forma creativa, utilizando herramientas digitales o analógicas diversas y buscando fuentes fiables valorando su procedencia, contrastando su veracidad y haciendo un análisis crítico sobre las mismas para desarrollar un pensamiento crítico, respetuoso con las diferencias, que contribuya a la construcción de la propia identidad."
+  },
+  {
+   "codigo": "CE.CPA.2",
+   "texto": "Identificar y analizar las raíces de la nacionalidad histórica de Aragón y de la identidad aragonesa, con perspectiva histórica, identificando y conociendo la evolución, de las instituciones, los símbolos, el derecho foral y la cultura y las lenguas propias de Aragón (Aragonés y Catalán), así como sus modalidades lingüísticas, para construir una conciencia cívica y ciudadana que fortalezca los lazos de pertenencia y la cohesión social."
+  },
+  {
+   "codigo": "CE.CPA.3",
+   "texto": "Conocer y analizar la complejidad del espacio geográfico aragonés, explicando los desequilibrios territoriales de Aragón, su estructura sociolaboral y demográfica, evaluando las consecuencias del desarrollo demográfico y económico, para impulsar el pensamiento crítico, promover el respeto hacia los derechos humanos y fomentar acciones y actitudes tendentes a defender un desarrollo sostenible."
+  },
+  {
+   "codigo": "CE.CPA.4",
+   "texto": "Incorporar la perspectiva de género en el análisis de Aragón a través de la contextualización de la investigación y el análisis de fuentes diversas, especialmente literarias, artísticas y orales, para promover actitudes en defensa de la igualdad efectiva entre mujeres y hombres."
+  },
+  {
+   "codigo": "CE.CPA.5",
+   "texto": "Conocer y comprender el desarrollo diacrónico del arte y la literatura aragonesa, analizando-en castellano, aragonés y/o catalán-analizando sus peculiaridades y sus conexiones con el desarrollo artístico y literario hispánico e internacional para fomentar en el respeto hacia la diversidad cultural."
+  },
+  {
+   "codigo": "CE.CPA.6",
+   "texto": "Conocer e identificar el patrimonio material e inmaterial de Aragón, analizando su riqueza y variedad, sus peculiaridades y sus conexiones con el patrimonio hispánico e internacional, fomentando actitudes de respeto y conservación, para desarrollar de una sensibilidad comprometida y responsable con el patrimonio, y de rechazo ante actitudes incívicas.",
+   "de": "tabla de criterios"
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.CPA.1",
+   "columna": null,
+   "texto": "Elaborar, expresar y presentar contenidos propios en diversos formatos y soportes, mediante el desarrollo de estrategias de búsqueda, selección y tratamiento de la información relativas procesos y acontecimientos relevantes relacionados con la cultura, el patrimonio, la historia y la geografía de Aragón.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.CPA.1",
+   "columna": null,
+   "texto": "Contrastar y argumentar sobre temas y acontecimientos de la Cultura, el patrimonio, la Historia y la geografía de Aragón, localizando y analizando de forma crítica fuentes primarias y secundarias como evidencias del proceso histórico.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.CPA.2",
+   "columna": null,
+   "texto": "Señalar y explicar aquellas experiencias de la historia de Aragón más relevantes, apreciando la historia como un proceso con avances y retrocesos, identificando los motores económicos, políticos, sociales, religiosos o ideológicos que hay detrás de los acontecimientos.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.CPA.2",
+   "columna": null,
+   "texto": "Conocer las raíces históricas y culturales de nuestro presente, reconociendo los símbolos, las instituciones o el legado material e inmaterial, considerando esos elementos culturales e identitarios propios y distintivos de la identidad aragonesa.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.CPA.2",
+   "columna": null,
+   "texto": "Identificar la lengua aragonesa y la lengua catalana como lenguas propias de Aragón, conociendo la variedad y riqueza lingüística del resto del territorio español, respetando tanto las identidades múltiples como los símbolos y normas comunes que conforman el marco actual de convivencia.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.CPA.3",
+   "columna": null,
+   "texto": "Conocer e interpretar los acontecimientos geográficos más relevantes de la población de Aragón, analizando los cambios que ha experimentado y sus ciclos, identificando los principales retos y problemas que se experimentaron.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.CPA.3",
+   "columna": null,
+   "texto": "Relacionar los cambios producidos la geografía humana con las transformaciones sociales, demográficas y económicas experimentados en los territorios aragoneses especificando las circunstancias particulares del Aragón urbano y el Aragón rural y conociendo las principales redes de comunicación que vertebraban el territorio.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.CPA.3",
+   "columna": null,
+   "texto": "Relacionar los cambios en los estilos de vida tradicional y contrastarlos con los que hoy se consideran saludables y sostenibles en el entorno, a través de comportamientos respetuosos con la salud propia, con la de los demás y con otros seres vivos, tomando conciencia de la importancia de promover el propio desarrollo personal.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.CPA.4",
+   "columna": null,
+   "texto": "Introducir la perspectiva de género, identificando los mecanismos de dominación que han posibilitado y mantenido la desigualdad entre hombres y mujeres, poniendo en valor el papel de la mujer aragonesa como protagonista de la historia y de la cultura e identificando los roles asignados y los espacios de actividad ocupados por la mujer.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.CPA.4",
+   "columna": null,
+   "texto": "Conocer obras artísticas, literarias o de otra índole producidas por mujeres aragonesas, manteniendo una actitud crítica y reflexionando sobre conceptos clave como igualdad o cambio y futuro",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.CPA.5",
+   "columna": null,
+   "texto": "Reconocer la importancia del arte y la literatura aragonesa en cualquiera de sus lenguas, analizando sus principales manifestaciones y ubicándolas en su contexto histórico y geográfico.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.CPA.5",
+   "columna": null,
+   "texto": "Conocer el arte y la literatura aragonesa en cualquiera de sus lenguas e identificarlos como elementos identitarios y de cohesión social, detectando en ellos los rasgos que los vinculan con las corrientes hispánicas e internacionales.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.CPA.6",
+   "columna": null,
+   "texto": "Conocer y valorar el patrimonio aragonés, material e inmaterial, como una parte esencial de la identidad aragonesa, desarrollando actitudes de respeto y conservación y promoviendo un uso responsable hacia el mismo.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.CPA.6",
+   "columna": null,
+   "texto": "Comprender la importancia de la conservación y promoción del patrimonio material e inmaterial aragonés, en sus distintos formatos y soportes, investigando sobre los procesos de adquisición, conservación y uso sostenible y reflexionando sobre el impacto positivo o negativo de las acciones humanas.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.CPA.6",
+   "columna": null,
+   "texto": "Reconocer las lenguas aragonesa y catalana como parte indisoluble del patrimonio inmaterial aragonés, reflexionando sobre la necesidad de protegerlo, difundirlo y defenderlo para evitar su desaparición.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.4",
+   "competencia": "CE.CPA.6",
+   "columna": null,
+   "texto": "Profundizar en el análisis del patrimonio inmaterial más cercano implicando en su aprendizaje a distintos miembros de su contexto familiar y social.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "El trabajo del historiador, la historiografía y la metodología histórica",
+       "saberes": [
+        "Conciencia histórica y conexión entre el pasado y el presente. Usos públicos de la historia."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Fueros e Instituciones",
+       "saberes": [
+        "Evolución histórica de las Cortes, Diputación, Justicia y justiciazgo, instituciones propias del reino de Aragón. La decadencia foral y los Decretos de Nueva Planta. Fueros y Estatuto de Autonomía en el marco legislativo de España, Lenguas Propias de Aragón (aragonés y catalán)."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Reformas y cambios sociales",
+       "saberes": [
+        "La Ilustración en Aragón. La Guerra de la Independencia. Del Estado liberal a la democracia."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "El proceso de industrialización en Aragón y su impacto social, económico y medioambiental",
+       "saberes": [
+        "El modelo de desarrollo económico aragonés hasta la actualidad, ritmos y ciclos de crisis y de crecimiento."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "La sociedad aragonesa",
+       "saberes": [
+        "Cambios sociales y laborales. La lucha por la justicia y la igualdad social. Movimientos sociales, políticos y culturales. El impacto del asociacionismo obrero en Aragón."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Mundo rural y mundo urbano en Aragón",
+       "saberes": [
+        "Relaciones de interdependencia y de reciprocidad entre el campo y la ciudad desde una perspectiva histórica. De la sociedad agraria al éxodo rural."
+       ]
+      },
+      {
+       "codigo": "A.7",
+       "nombre": "De la República a la Democracia",
+       "saberes": [
+        "Segunda República, Guerra Civil, Franquismo y Transición democrática."
+       ]
+      },
+      {
+       "codigo": "A.8",
+       "nombre": "Mujeres aragonesas",
+       "saberes": [
+        "Protagonistas femeninas, individuales y colectivas en la historia y cultura de Aragón desde el siglo XVIII hasta la actualidad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B.",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "El territorio de Aragón",
+       "saberes": [
+        "El espacio ocupado por Aragón a lo largo del tiempo."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "El Estatuto de Autonomía",
+       "saberes": [
+        "principios, normas y principales instituciones aragonesas. Evolución del Estatuto."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Población y territorio",
+       "saberes": [
+        "Aragón urbano. Principales ciudades y poblaciones. Aragón rural. El reto demográfico. Datos lingüísticos históricos y actuales de las lenguas propias de Aragón (aragonés y catalán). Distribución y evolución."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "La economía aragonesa",
+       "saberes": [
+        "Los sectores económicos, la revolución energética y la Agenda 2030 de desarrollo sostenible."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Patrimonio artístico y cultural de Aragón",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Los símbolos comunes como elementos conformadores de la identidad colectiva.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Arte aragonés",
+       "saberes": [
+        "Las manifestaciones artísticas como objeto de disfrute estético y como elemento configurador de la identidad desde el siglo XVIII hasta la actualidad."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Literatura",
+       "saberes": [
+        "Aproximación a la variedad lingüística aragonesa. Estudio de las obras literarias relevantes del patrimonio aragonés como objeto de disfrute estético y como elemento configurador de la identidad desde el siglo XVIII hasta la actualidad. Aproximación al estudio de las obras literarias más relevantes del patrimonio aragonés escritas en las Lenguas Propias de Aragón (aragonés y catalán)."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "El patrimonio inmaterial aragonés",
+       "saberes": [
+        "Música tradicional aragonesa, dances, danzas y costumbres propias de cada espacio y Lenguas Propias de Aragón (aragonés y catalán)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Compromiso cívico",
+     "apartados": [
+      {
+       "codigo": "D.1",
+       "nombre": "Conciencia democrática",
+       "saberes": [
+        "conocimiento de los principios y normas del Estatuto de Autonomía de Aragón y el ejercicio de los valores cívicos y participación ciudadana."
+       ]
+      },
+      {
+       "codigo": "D.2",
+       "nombre": "Identidad y sentimientos de pertenencia",
+       "saberes": [
+        "reconocimiento de las identidades múltiples y de los símbolos y normas comunes de Aragón."
+       ]
+      },
+      {
+       "codigo": "D.3",
+       "nombre": "Comportamiento ecosocial",
+       "saberes": [
+        "compromiso con el cumplimiento de los Objetivos de Desarrollo Sostenible."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Cultura y Patrimonio de Aragón"
+}

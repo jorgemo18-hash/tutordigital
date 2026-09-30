@@ -39,13 +39,17 @@ export function filtraCurriculo(c, busqueda) {
 
 // La materia del currículo que corresponde a la asignatura del profesor
 // ("Matemáticas" → "matematicas"; "Inglés" → "Lengua Extranjera Inglés").
+// Con Primaria y Bachillerato hay tres "Matemáticas": gana la de ESO, que
+// es donde estaba el currículo hasta ahora (luego el profesor elige otra).
 export function materiaDeLaAsignatura(materias, asignatura) {
   const a = normal(asignatura).trim();
   if (!a) return null;
-  const exacta = materias.find((m) => normal(m.materia) === a);
+  const esoPrimero = [...materias].sort((x, y) => (x.etapa !== "ESO") - (y.etapa !== "ESO"));
+  const exacta = esoPrimero.find((m) => normal(m.materia) === a);
   if (exacta) return exacta.slug;
-  const contiene = materias.filter((m) => normal(m.materia).includes(a) || a.includes(normal(m.materia)));
-  // La más corta: "Matemáticas" antes que "Matemáticas para la toma de decisiones".
+  const contiene = esoPrimero.filter((m) => normal(m.materia).includes(a) || a.includes(normal(m.materia)));
+  // La más corta: "Matemáticas" antes que "Matemáticas para la toma de
+  // decisiones" (sort es estable: a igual largo, sigue ganando ESO).
   contiene.sort((x, y) => x.materia.length - y.materia.length);
   return contiene[0]?.slug || null;
 }

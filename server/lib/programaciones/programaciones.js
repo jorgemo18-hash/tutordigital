@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { SIGLAS } from "../../../assets/shared/programacion/detalleDeCriterios.js";
+import { etapaDelSlug, cursoValido, ETAPAS } from "../../../assets/shared/curriculo/etapas.js";
 
 // LAS PROGRAMACIONES GUARDADAS (migración 130): la forma de `datos`, y
 // listar, crear, leer, guardar y borrar las de un profesor.
@@ -37,11 +38,22 @@ export const DatosSchema = z.object({
   }).strict().optional(),
 }).strict();
 
-export const CabeceraSchema = z.object({
+// El curso, dentro de los de la etapa de la materia (el slug la dice, ver
+// assets/shared/curriculo/etapas.js): 1-6 en Primaria, 1-4 en ESO, 1-2 en
+// Bachillerato. Se usa con superRefine en la cabecera y en las rutas de IA.
+export function CursoDeLaMateria(d, ctx) {
+  const etapa = etapaDelSlug(d.materia_slug);
+  if (d.curso != null && !cursoValido(etapa, d.curso)) {
+    ctx.addIssue({ code: "custom", path: ["curso"], message: `${ETAPAS[etapa].nombre} no tiene ${d.curso}.º` });
+  }
+}
+
+export const CabeceraBase = z.object({
   materia_slug: z.string().regex(/^[a-z0-9-]+$/).max(80),
-  curso: z.number().int().min(1).max(4).nullable(),
+  curso: z.number().int().min(1).max(6).nullable(),
   titulo: z.string().max(200),
 });
+export const CabeceraSchema = CabeceraBase.superRefine(CursoDeLaMateria);
 
 export const MAX_BYTES = 400 * 1024;
 

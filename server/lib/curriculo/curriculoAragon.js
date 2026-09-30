@@ -1,48 +1,67 @@
 import { readFileSync } from "node:fs";
+import { ETAPAS, etapaDelSlug, slugSinEtapa, slugConEtapa } from "../../../assets/shared/curriculo/etapas.js";
 
-// EL CURRÍCULO OFICIAL DE ESO DE ARAGÓN (ORDEN ECD/1172/2022, anexo II),
-// materia a materia: competencias específicas, criterios de evaluación y
-// saberes básicos por curso.
+// EL CURRÍCULO OFICIAL DE ARAGÓN, materia a materia: competencias
+// específicas, criterios de evaluación y saberes básicos por curso.
+//   - ESO: ORDEN ECD/1172/2022, anexo II (aragon-eso/, 24/9/2026).
+//   - Primaria: ORDEN ECD/1112/2022, anexo II, con la ECD/866/2024
+//     (aragon-primaria/, 30/9/2026). Criterios y saberes van por CICLO:
+//     1.º y 2.º comparten los del primer ciclo, etc.
+//   - Bachillerato: ORDEN ECD/1173/2022, anexo II, con las ECD/886/2024 y
+//     ECD/739/2025 (aragon-bachillerato/, 30/9/2026). Casi todas son de un
+//     solo curso ("Matemáticas I", "Matemáticas II"): el curso lo da el
+//     horario.
 //
 // Los datos se sacaron de los PDF oficiales con
-// tools/curriculo/extrae_curriculo.py (24/9/2026) y están en
-// aragon-eso/*.json. Son la base de Recursos → Currículo y, después, del
-// generador de programaciones. Cada materia lleva su `calidad`: qué % de
-// lo extraído está literal en el PDF y qué no, para revisarlo a mano.
+// tools/curriculo/extrae_curriculo.py. Son la base de Recursos → Currículo
+// y del generador de programaciones. Cada materia lleva su `calidad`: qué %
+// de lo extraído está literal en el PDF y qué no, para revisarlo a mano.
 //
-// Se leen del disco la primera vez que se piden y se quedan en memoria:
-// 1,3 MB en total, y la mayoría de peticiones piden una o dos materias.
-const CARPETA = new URL("./aragon-eso/", import.meta.url);
+// El slug lleva la etapa (ver assets/shared/curriculo/etapas.js). Se leen
+// del disco la primera vez que se piden y se quedan en memoria.
+const CARPETAS = {
+  eso: new URL("./aragon-eso/", import.meta.url),
+  primaria: new URL("./aragon-primaria/", import.meta.url),
+  bachillerato: new URL("./aragon-bachillerato/", import.meta.url),
+};
 const cache = new Map();
 
-function lee(nombre) {
-  if (!cache.has(nombre)) cache.set(nombre, JSON.parse(readFileSync(new URL(`${nombre}.json`, CARPETA), "utf8")));
-  return cache.get(nombre);
+function lee(etapa, nombre) {
+  const clave = `${etapa}/${nombre}`;
+  if (!cache.has(clave)) cache.set(clave, JSON.parse(readFileSync(new URL(`${nombre}.json`, CARPETAS[etapa]), "utf8")));
+  return cache.get(clave);
 }
 
-// EL HORARIO SEMANAL MÍNIMO (anexo III), copiado a mano: periodos por
-// semana de cada materia en cada curso. Sirve para dos cosas: dar el curso
-// de las materias de un solo curso (el anexo II no lo dice) y proponer las
-// sesiones de una programación.
-export function horario() {
-  return lee("_horario");
+// EL HORARIO SEMANAL (anexo III de cada orden), copiado a mano: por materia
+// y curso. En ESO y Bachillerato son periodos lectivos; en Primaria el anexo
+// da MINUTOS y aquí se guardan ya pasados a sesiones (ver su `_fuente`).
+// Sirve para dos cosas: dar el curso de las materias de un solo curso (el
+// anexo II no lo dice) y proponer las sesiones de una programación.
+export function horario(etapa = "eso") {
+  return lee(etapa, "_horario");
 }
 
 export function sesionesSemanales(slug, curso) {
-  return horario()[slug]?.[String(curso)] ?? null;
+  return horario(etapaDelSlug(slug))[slugSinEtapa(slug)]?.[String(curso)] ?? null;
 }
 
 export function listaDeMaterias() {
-  const h = horario();
-  return lee("_indice").map((m) => (m.cursos.length || !h[m.slug]
-    ? m
-    : { ...m, cursos: Object.keys(h[m.slug]).map(Number) }));
+  return Object.keys(ETAPAS).flatMap((etapa) => {
+    const h = horario(etapa);
+    return lee(etapa, "_indice").map((m) => ({
+      ...m,
+      slug: slugConEtapa(etapa, m.slug),
+      cursos: m.cursos.length || !h[m.slug] ? m.cursos : Object.keys(h[m.slug]).map(Number),
+    }));
+  });
 }
 
 export function materiaPorSlug(slug) {
   if (!/^[a-z0-9-]+$/.test(String(slug || ""))) return null;
-  if (!lee("_indice").some((m) => m.slug === slug)) return null;
-  return lee(slug);
+  const etapa = etapaDelSlug(slug);
+  const propio = slugSinEtapa(slug);
+  if (!lee(etapa, "_indice").some((m) => m.slug === propio)) return null;
+  return lee(etapa, propio);
 }
 
 // Una materia para un curso. `cursos: []` en el anexo quiere decir que no
@@ -66,6 +85,7 @@ export function curriculoDeCurso(slug, curso = null) {
     .map(({ etiqueta, cursos, bloques }) => ({ etiqueta, cursos, bloques }));
   return {
     materia: m.materia,
+    etapa: etapaDelSlug(slug),
     curso,
     fuente: m.fuente,
     competencias,

@@ -64,12 +64,12 @@ export async function run({ test, assert }) {
     ] }],
   };
 
-  function montar({ lista = [] } = {}) {
+  function montar({ lista = [], materias = MATERIAS } = {}) {
     const reloj = relojFalso();
     const llamadas = { crear: [], guardar: [], borrar: [] };
     const guardadas = new Map();
     const api = {
-      materiasDelCurriculo: async () => ({ materias: MATERIAS }),
+      materiasDelCurriculo: async () => ({ materias }),
       programaciones: async () => ({ programaciones: lista }),
       creaProgramacion: async (cuerpo) => {
         llamadas.crear.push(cuerpo);
@@ -230,6 +230,39 @@ export async function run({ test, assert }) {
     assert.match(texto, /Refuerzo en grupos flexibles/);
     assert.match(texto, /IES de prueba/);
     assert.match(m.raiz.textContent, /Faltan por redactar: c\), e\), g\)/);
+  });
+
+  test("PRIMARIA Y BACHILLERATO (30/9): se programan con sus cursos, su título y los apartados de SU orden", async () => {
+    const m = montar({ materias: [
+      { slug: "primaria-matematicas", materia: "Matemáticas", cursos: [1, 2, 3, 4, 5, 6], etapa: "Primaria" },
+      ...MATERIAS,
+      { slug: "bachillerato-fisica", materia: "Física", cursos: [2], etapa: "Bachillerato" },
+      { slug: "ambito-de-ciencias-aplicadas", materia: "Ámbito de Ciencias Aplicadas", cursos: [1, 2], etapa: "FP Básica" },
+    ] });
+    await m.pantalla.render(m.raiz);
+    const [materia, curso] = m.raiz.querySelectorAll(".rc-pg__nueva select");
+    assert.deepEqual([...materia.querySelectorAll("optgroup")].map((g) => g.label), ["Primaria", "ESO", "Bachillerato"], "FP Básica no");
+    assert.equal(materia.value, "matematicas", "con tres «Matemáticas», la de ESO");
+    materia.value = "bachillerato-fisica";
+    materia.dispatchEvent(new window.Event("change"));
+    assert.deepEqual([...curso.options].map((o) => o.textContent), ["2.º de Bachillerato"]);
+    materia.value = "primaria-matematicas";
+    materia.dispatchEvent(new window.Event("change"));
+    assert.equal(curso.options.length, 6);
+    curso.value = "3";
+    botonCon(m.raiz, "Crear programación").click();
+    await tick(); await tick(); await tick();
+    assert.deepEqual(m.llamadas.crear[0], { materia_slug: "primaria-matematicas", curso: 3, titulo: "Matemáticas 3.º de Primaria" });
+    paso(m.raiz, "resto").click();
+    const letras = [...m.raiz.querySelectorAll("textarea[data-letra]")].map((t) => t.dataset.letra);
+    assert.deepEqual(letras, ["f", "g", "h", "i", "j", "k", "l", "m", "n"]);
+    // La h) de Primaria es la metodología (en ESO sería la materia pendiente).
+    assert.match(m.raiz.querySelector('textarea[data-letra="h"]').placeholder, /organiza el aula/);
+    paso(m.raiz, "documento").click();
+    const h2 = [...m.raiz.querySelectorAll(".rc-doc__h2")].map((h) => h.textContent.split(")")[0]);
+    assert.deepEqual(h2.join(""), "abcdefghijklmn");
+    assert.match(m.raiz.querySelector(".rc-doc").textContent, /Artículo 42\.3 de la ORDEN ECD\/1112\/2022/);
+    assert.match(m.raiz.querySelector(".rc-doc__materia").textContent, /3\.º de Primaria/);
   });
 
   test("REGRESIÓN (Safari, 24/9): el documento se imprime como PDF del servidor, guardando antes", async () => {

@@ -1,0 +1,566 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "42 Lenguas Propias de Aragón: Aragonés.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.LPA.1",
+   "texto": "Comprender e interpretar las ideas principales y las líneas argumentales básicas de textos expresados en Lengua Aragonesa, buscando fuentes fiables y haciendo uso de estrategias de inferencia y comprobación de significados, para responder a las necesidades comunicativas planteadas."
+  },
+  {
+   "codigo": "CE.LPA.2",
+   "texto": "Producir textos originales de creciente extensión, claros, bien organizados y detallados, usando estrategias tales como la planificación, la síntesis, la compensación o la autorreparación, para expresar ideas y argumentos de forma creativa, adecuada y coherente, y adecuados al registro, de acuerdo con propósitos comunicativos concretos y participar en interacciones orales con actitud cooperativa y respetuosa, tanto para construir conocimiento y establecer vínculos personales, como para intervenir de manera activa e informada en diferentes contextos sociales."
+  },
+  {
+   "codigo": "CE.LPA.3",
+   "texto": "Leer, interpretar y valorar obras relevantes de la literatura en Aragonés, como fuente de placer y conocimiento, configurando un itinerario lector que se enriquezca progresivamente en cuanto a diversidad, complejidad y calidad de las obras, y compartir experiencias lectoras para construir la propia identidad lectora y disfrutar de la dimensión social de la lectura."
+  },
+  {
+   "codigo": "CE.LPA.4",
+   "texto": "Interactuar activamente con otras personas, con suficiente fluidez y precisión y con espontaneidad, usando estrategias de cooperación y empleando recursos analógicos y digitales, para responder a propósitos comunicativos en intercambios respetuosos con las normas de cortesía."
+  },
+  {
+   "codigo": "CE.LPA.5",
+   "texto": "Mediar entre distintas lenguas o variedades, o entre las modalidades o registros de una misma lengua, usando estrategias y conocimientos eficaces orientados a explicar conceptos y opiniones o simplificar mensajes, para transmitir información de manera eficaz, clara y responsable, y crear una atmósfera positiva que facilite la comunicación."
+  },
+  {
+   "codigo": "CE.LPA.6",
+   "texto": "Ampliar y usar los repertorios lingüísticos personales entre distintas lenguas y variedades, reflexionando de forma crítica sobre su funcionamiento, y haciendo explícitos y compartiendo las estrategias y los conocimientos propios, para mejorar la respuesta a sus necesidades comunicativas."
+  },
+  {
+   "codigo": "CE.LPA.7",
+   "texto": "Valorar críticamente y adecuarse a la diversidad lingüística, cultural y artística a partir de la Lengua Aragonesa, reflexionando y compartiendo las semejanzas y las diferencias entre variantes, lenguas y culturas, para actuar de forma empática, respetuosa y eficaz, y fomentar la comprensión mutua en situaciones interculturales."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.LPA.1",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Extraer y analizar las ideas principales, la información relevante y las implicaciones generales de textos de cierta longitud, bien organizados y de cierta complejidad, orales, escritos y multimodales, sobre temas de relevancia personal o de interés público, tanto concretos como abstractos, expresados de forma clara en Lengua Aragonesa, incluso en entornos moderadamente ruidosos, a través de diversos soportes.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.LPA.1",
+   "columna": "Lenguas Propia de Aragón: Aragonés II",
+   "texto": "Extraer y analizar las ideas principales, la información detallada y las implicaciones generales de textos de cierta longitud, bien organizados y complejos, orales, escritos y multimodales, tanto en registro formal como informal, sobre temas de relevancia personal o de interés público, tanto concretos como abstractos, expresados de forma clara y en la lengua estándar o en variedades frecuentes, incluso en entornos moderadamente ruidosos, a través de diversos soportes.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.LPA.1",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Interpretar y valorar de manera crítica el contenido, la intención y los rasgos discursivos de textos de cierta longitud y complejidad, con especial énfasis en los textos académicos y de los medios de comunicación, así como de textos de ficción, sobre temas generales o más específicos, de relevancia personal o de interés público.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.LPA.1",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Seleccionar, organizar y aplicar las estrategias y conocimientos adecuados para comprender la información global y específica, y distinguir la intención y las opiniones, tanto implícitas como explícitas (siempre que estén claramente señalizadas), de los textos; inferir significados e interpretar elementos no verbales; y buscar, seleccionar y contrastar información.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.LPA.1",
+   "columna": "Lenguas Propia de Aragón: Aragonés II",
+   "texto": "Interpretar y valorar de manera crítica el contenido, la intención, los rasgos discursivos y ciertos matices, como la ironía o el uso estético de la lengua, de textos de cierta longitud y complejidad, con especial énfasis en los textos académicos y de los medios de comunicación, así como de textos de ficción, sobre una amplia variedad de temas de relevancia personal o de interés público.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.LPA.1",
+   "columna": "Lenguas Propia de Aragón: Aragonés II",
+   "texto": "Seleccionar, organizar y aplicar las estrategias y conocimientos más adecuados en cada situación comunicativa para comprender el sentido general, la información esencial y los detalles más relevantes y para distinguir la intención y las opiniones, tanto implícitas como explícitas de los textos; inferir significados e interpretar elementos no verbales; y buscar, seleccionar y contrastar información veraz.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.LPA.2",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Expresar oralmente con suficiente fluidez y corrección textos claros, coherentes, bien organizados, adecuados a la situación comunicativa y en diferentes registros sobre asuntos de relevancia personal o de interés público conocidos por el alumnado, con el fin de describir, narrar, argumentar e informar, en diferentes soportes, utilizando recursos verbales y no verbales, así como estrategias de planificación, control, compensación y cooperación.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.LPA.2",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Redactar y difundir textos detallados de cierta extensión y complejidad y de estructura clara, adecuados a la situación comunicativa, a la tipología textual y a las herramientas analógicas y digitales utilizadas, evitando errores que dificulten o impidan la comprensión, reformulando y organizando de manera coherente información e ideas de diversas fuentes y justificando las propias opiniones, sobre asuntos de relevancia personal o de interés público conocidos por el alumnado, haciendo un uso ético del lenguaje, respetando la propiedad intelectual y evitando el plagio.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.LPA.2",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Seleccionar, organizar y aplicar conocimientos y estrategias de planificación, producción, revisión y cooperación, para componer textos de estructura clara y adecuados a las intenciones comunicativas, las características contextuales, los aspectos socioculturales y la tipología textual, usando los recursos físicos o digitales más adecuados en función de la tarea y de los interlocutores e interlocutoras reales o potenciales.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Elegir y leer de manera autónoma obras relevantes de la literatura contemporánea y dejar constancia del progreso del itinerario lector y cultural personal mediante la explicación argumentada de los criterios de selección de las lecturas, las formas de acceso a la cultura literaria y de la experiencia de lectura.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Compartir la experiencia lectora utilizando un metalenguaje específico y elaborar una interpretación personal estableciendo vínculos argumentados con otras obras y otras experiencias artísticas y culturales.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propia de Aragón: Aragonés II",
+   "texto": "Elegir y leer de manera autónoma obras relevantes que se relacionen con las propuestas de lectura guiada, incluyendo ensayo literario y obras actuales que establezcan conexiones con la tradición, y dejar constancia del progreso del propio itinerario lector y cultural mediante la explicación argumentada de los criterios de selección de las lecturas, las formas de acceso a la cultura literaria y de la experiencia de lectura.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Explicar y argumentar la interpretación de las obras leídas mediante el análisis de las relaciones internas de sus elementos constitutivos con el sentido de la obra y de las relaciones externas del texto con su contexto sociohistórico y con la tradición literaria, utilizando un metalenguaje específico e incorporando juicios de valor vinculados a la apreciación estética de las obras.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Desarrollar proyectos de investigación que se concreten en una exposición oral, un ensayo o una presentación multimodal, estableciendo vínculos argumentados entre los hitos de la literatura en Lengua Aragonesa objeto de lectura guiada, prestando especial atención al renacimiento literario a partir de los años 70 del siglo XX hasta la actualidad, y otros textos y manifestaciones artísticas clásicas o contemporáneas, en función de temas, tópicos, estructuras, lenguaje, recursos expresivos y valores éticos y estéticos, y explicitando la implicación y la respuesta personal del lector o de la lectora en la lectura.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Crear textos personales o colectivos con intención literaria y conciencia de estilo, en distintos soportes y con ayuda de otros lenguajes artísticos y audiovisuales, a partir de la lectura de obras o fragmentos significativos en los que se empleen las convenciones formales de los diversos géneros y estilos literarios.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propia de Aragón: Aragonés II",
+   "texto": "Compartir la experiencia lectora utilizando un metalenguaje específico y elaborar una interpretación personal estableciendo vínculos argumentados con otras obras y otras experiencias artísticas y culturales.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propia de Aragón: Aragonés II",
+   "texto": "Explicar y argumentar la interpretación de las obras leídas a partir del análisis de las relaciones internas de sus elementos constitutivos con el sentido de la obra y de las relaciones externas del texto con su contexto sociohistórico y con la tradición literaria, utilizando un metalenguaje específico e incorporando juicios de valor vinculados a la apreciación estética de las obras.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propia de Aragón: Aragonés II",
+   "texto": "Desarrollar proyectos de investigación que se concreten en una exposición oral, un ensayo o una presentación multimodal, estableciendo vínculos argumentados entre las obras de la literatura en Lengua Aragonesa, prestando especial atención al renacimiento literario a partir de los años 70 del siglo XX hasta la actualidad, objeto de lectura guiada y otros textos y manifestaciones artísticas de ayer y de hoy, en función de temas, tópicos, estructuras, lenguaje, recursos expresivos y valores éticos y estéticos, y explicitando la implicación y la respuesta personal del lector o de la lectora en la lectura.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propia de Aragón: Aragonés II",
+   "texto": "Crear textos personales o colectivos con intención literaria y conciencia de estilo, en distintos soportes y con ayuda de otros lenguajes artísticos y audiovisuales, a partir de la lectura de obras o fragmentos significativos en los que se empleen las convenciones formales de los diversos géneros y estilos literarios.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.LPA.4",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Planificar, participar y colaborar asertiva y activamente, a través de diversos soportes, en situaciones interactivas sobre temas de relevancia personal o de interés público conocidos por el alumnado, mostrando iniciativa, empatía y respeto por la cortesía lingüística y la etiqueta digital, así como por las diferentes necesidades, ideas, inquietudes, iniciativas y motivaciones de los interlocutores, y ofreciendo explicaciones, argumentos y comentarios.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.LPA.4",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Seleccionar, organizar y utilizar, de forma flexible y en diferentes entornos, estrategias adecuadas para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, solicitar y formular aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, resolver problemas y gestionar situaciones comprometidas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.LPA.4",
+   "columna": "Lenguas Propias de Aragón: Aragonés II",
+   "texto": "Planificar, participar y colaborar asertiva y activamente, a través de diversos soportes, en situaciones interactivas sobre temas cotidianos, de relevancia personal o de interés público cercanos a su experiencia, mostrando iniciativa, empatía y respeto por la cortesía lingüística y la etiqueta digital, así como por las diferentes necesidades, ideas, inquietudes, iniciativas y motivaciones de los interlocutores, expresando ideas y opiniones con precisión y argumentando de forma convincente.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.LPA.4",
+   "columna": "Lenguas Propias de Aragón: Aragonés II",
+   "texto": "Seleccionar, organizar y utilizar, de forma eficaz, espontánea y en diferentes entornos, estrategias adecuadas para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra con amabilidad, ajustar la propia contribución a la de los interlocutores percibiendo sus reacciones, solicitar y formular aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, resolver problemas y gestionar situaciones comprometidas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.LPA.5",
+   "columna": "Lengua Aragonesa I",
+   "texto": "Interpretar y explicar textos, conceptos y comunicaciones en situaciones en las que atender a la diversidad, mostrando respeto y aprecio por los interlocutores e interlocutoras y por las lenguas, variedades o registros empleados, y participando en la solución de problemas frecuentes de intercomprensión y de entendimiento, a partir de diversos recursos y soportes.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.LPA.5",
+   "columna": "Lengua Aragonesa II",
+   "texto": "Interpretar y explicar textos, conceptos y comunicaciones en situaciones en las que atender a la diversidad, mostrando respeto y aprecio por los interlocutores e interlocutoras y por las lenguas, variedades o registros empleados, y participando en la solución de problemas de intercomprensión y de entendimiento, a partir de diversos recursos y soportes.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.LPA.5",
+   "columna": "Lengua Aragonesa I",
+   "texto": "Aplicar estrategias que ayuden a crear puentes, faciliten la comunicación y sirvan para explicar y simplificar textos, conceptos y mensajes, y que sean adecuadas a las intenciones comunicativas, las características contextuales, los aspectos socioculturales y la tipología textual, usando recursos y apoyos físicos o digitales en función de la tarea y el conocimiento previo de los interlocutores e interlocutoras.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.LPA.5",
+   "columna": "Lengua Aragonesa II",
+   "texto": "Aplicar estrategias que ayuden a crear puentes, faciliten la comunicación y sirvan para explicar y simplificar textos, conceptos y mensajes, y que sean adecuadas a las intenciones comunicativas, las características contextuales, los aspectos socioculturales y la tipología textual, usando recursos y apoyos físicos o digitales en función de la tarea y del conocimiento previo y los intereses e ideas de los interlocutores e interlocutoras.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.LPA.6",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Comparar y argumentar las similitudes y diferencias entre distintas variedades de la Lengua Aragonesa y entre esta y otras lenguas reflexionando sobre su funcionamiento y estableciendo relaciones entre ellas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.LPA.6",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Utilizar con iniciativa y de forma creativa estrategias y conocimientos de mejora de su capacidad de comunicar y de aprender la Lengua Aragonesa con apoyo de otros interlocutores y de soportes analógicos y digitales.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.LPA.6",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Registrar y reflexionar sobre los progresos y dificultades de aprendizaje de la Lengua Aragonesa, seleccionando las estrategias más adecuadas y eficaces para superar esas dificultades y consolidar su aprendizaje, realizando actividades de planificación del propio aprendizaje, autoevaluación y coevaluación, como las propuestas en el Portfolio Europeo de las Lenguas (PEL) o en un diario de aprendizaje, haciendo esos progresos y dificultades explícitos y compartiéndolos.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.LPA.6",
+   "columna": "Lenguas Propias de Aragón: Aragonés II",
+   "texto": "Comparar y contrastar las similitudes y diferencias entre distintas variedades de la Lengua Aragonesa y entre esta y otras lenguas, reflexionando de forma sistemática sobre su funcionamiento y estableciendo relaciones entre ellas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.LPA.6",
+   "columna": "Lenguas Propias de Aragón: Aragonés II",
+   "texto": "Utilizar con iniciativa y de forma creativa estrategias y conocimientos de mejora de su capacidad de comunicar y de aprender la Lengua Aragonesa, con o sin apoyo de otros interlocutores y de soportes analógicos y digitales.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.LPA.6",
+   "columna": "Lenguas Propias de Aragón: Aragonés II",
+   "texto": "Registrar y reflexionar sobre los progresos y dificultades de aprendizaje de la Lengua Aragonesa seleccionando las estrategias más adecuadas y eficaces para superar esas dificultades y consolidar su aprendizaje, realizando actividades de planificación del propio aprendizaje, autoevaluación y coevaluación, como las propuestas en el Portfolio Europeo de las Lenguas (PEL) o en un diario de aprendizaje, haciendo esos progresos y dificultades explícitos y compartiéndolos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.LPA.7",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Actuar de forma adecuada, empática y respetuosa en situaciones interculturales construyendo vínculos entre los diferentes registros, variedades, lenguas y culturas, analizando y rechazando cualquier tipo de discriminación, prejuicio y estereotipo, y solucionando aquellos factores socioculturales que dificulten la comunicación.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.LPA.7",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Valorar críticamente la diversidad lingüística, cultural y artística propia y ajena, en relación con los derechos humanos, y adecuarse a ella, favoreciendo el desarrollo de una cultura compartida y una ciudadanía comprometida con la sostenibilidad y los valores democráticos.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.LPA.7",
+   "columna": "Lenguas Propias de Aragón: Aragonés I",
+   "texto": "Aplicar estrategias para defender y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores ecosociales y respetando los principios de justicia, equidad e igualdad.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.LPA.7",
+   "columna": "Lenguas Propias de Aragón: Aragonés II",
+   "texto": "Actuar de forma adecuada, empática y respetuosa en situaciones interculturales construyendo vínculos entre los diferentes registros, variedades, lenguas y culturas, rechazando y evaluando cualquier tipo de discriminación, prejuicio y estereotipo y solucionando aquellos factores socioculturales que dificulten la comunicación.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.LPA.7",
+   "columna": "Lenguas Propias de Aragón: Aragonés II",
+   "texto": "Valorar críticamente la diversidad lingüística, cultural y artística propia y ajena, teniendo en cuenta los derechos humanos, y adecuarse a ella favoreciendo y justificando el desarrollo de una cultura compartida y una ciudadanía comprometida con la sostenibilidad y los valores democráticos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.LPA.7",
+   "columna": "Lenguas Propias de Aragón: Aragonés II",
+   "texto": "Aplicar de forma sistemática estrategias para defender y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores ecosociales y respetando los principios de justicia, equidad e igualdad.",
+   "cursos": [
+    2
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Lengua Aragonesa I",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Autoconfianza, iniciativa y asertividad. Estrategias de autorreparación y autoevaluación como forma de progresar en el aprendizaje autónomo de la Lengua Aragonesa.",
+        "Estrategias para la planificación, ejecución, control y reparación de la comprensión, la producción y la coproducción de textos orales, escritos y multimodales.",
+        "Conocimientos, destrezas y actitudes que permiten llevar a cabo actividades de mediación en situaciones cotidianas.",
+        "Funciones comunicativas adecuadas al ámbito y al contexto comunicativo: describir fenómenos y acontecimientos; dar instrucciones y consejos; narrar acontecimientos pasados puntuales y habituales, describir estados y situaciones presentes y expresar sucesos futuros y predicciones a corto, medio y largo plazo; expresar emociones; expresar la opinión; expresar argumentaciones, y reformular, presentar las opiniones de otros, resumir.",
+        "Modelos contextuales y géneros discursivos de uso común en la comprensión, producción y coproducción de textos orales, escritos y multimodales, breves y sencillos, literarios y no literarios: características y reconocimiento del contexto (participantes y situación), expectativas generadas por el contexto, organización y estructuración según el género y la función textual.",
+        "Unidades lingüísticas y significados asociados a dichas unidades tales como la expresión de la entidad y sus propiedades, la cantidad y la cualidad, el espacio y las relaciones espaciales, el tiempo y las relaciones temporales, la afirmación, la negación, la interrogación y la exclamación, las relaciones lógicas.",
+        "Léxico común y especializado de interés para el alumnado relativo a: tiempo y espacio; estados, eventos y acontecimientos; actividades, procedimientos y procesos; relaciones personales, sociales, académicas y profesionales; educación, trabajo y emprendimiento; lengua y comunicación intercultural; ciencia y tecnología; historia y cultura; así como estrategias de enriquecimiento léxico (derivación, familias léxicas, polisemia, sinonimia, antonimia).",
+        "Patrones sonoros, acentuales, rítmicos y de entonación, y significados e intenciones comunicativas generales asociadas a dichos patrones. Alfabeto fonético básico.",
+        "Convenciones ortográficas y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Convenciones y estrategias conversacionales, en formato síncrono o asíncrono, para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, pedir y dar aclaraciones y explicaciones, reformular, comparar y contrastar, resumir y parafrasear, colaborar, negociar significados, detectar la ironía, etc.",
+        "Recursos para el aprendizaje y estrategias de búsqueda y selección de información y curación de contenidos: diccionarios, libros de consulta, bibliotecas, mediatecas, etiquetas en la red, recursos digitales e informáticos, etc.",
+        "Respeto de la propiedad intelectual y derechos de autor sobre las fuentes consultadas y contenidos utilizados: herramientas para el tratamiento de datos bibliográficos y recursos para evitar el plagio.",
+        "Herramientas analógicas y digitales para la comprensión, producción y coproducción oral, escrita y multimodal; y plataformas virtuales de interacción, colaboración y cooperación educativa (aulas virtuales, videoconferencias, herramientas digitales colaborativas) para el aprendizaje, la comunicación y el desarrollo de proyectos con hablantes o estudiantes de la Lengua Aragonesa."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Educación literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Conocimiento del hecho social y cultural de la literatura. La literatura en Lengua Aragonesa dentro de su momento histórico y contexto sociocultural determinado.",
+        "Conocimiento y valoración de la contigüidad de relaciones culturales, metaliterarias y artísticas en el hecho literario.",
+        "El proceso histórico y social de la literatura en Lengua Aragonesa en su conjunto.",
+        "Formación específica en sensibilidad estética. El placer de la lectura conlleva una doble interacción, la de la apreciación subjetiva y las aportaciones de conocimientos; el saber literario incluye la educación de la sensibilidad estética y el aprendizaje de ciertos datos y conocimientos externos. El placer de la lectura es, precisamente, la consecuencia resultante de la satisfacción de comprender e interpretar lo leído.",
+        "Profundización en su competencia lecto-literaria. La activación de los conocimientos propios de la competencia literaria: tipo de texto, género, estilo, intencionalidad, tipo de elaboración del uso literario de la lengua.",
+        "Interpretación de la obra literaria como exponente cultural condicionado en su creación y recepción por factores de la cultura en la que se inscribe.",
+        "Estrategias y técnicas para hacer del alumnado un lectorreceptor activo, que participa, coopera e interactúa con el texto.",
+        "La intertextualidad como consecuencia del alumnado autosuficiente, autónomo, que active y relacione sus conocimientos.",
+        "La literatura como uno de los espacios en los que las culturas se forman y se encuentran unas con otras.",
+        "El acto de lectura como un acto de formación, de nuevas experiencias artísticas y nuevos conocimientos.",
+        "Crear textos personales o colectivos con intención literaria y conciencia de estilo, en distintos soportes y con ayuda de otros lenguajes artísticos y audiovisuales, a partir de la lectura de obras o fragmentos significativos en los que se empleen las convenciones formales de los diversos géneros y estilos literarios."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Plurilingüismo",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias y técnicas para responder eficazmente y con un alto grado de autonomía, adecuación y corrección a una necesidad comunicativa concreta, superando las limitaciones derivadas del nivel de competencia en la Lengua Aragonesa y en las demás lenguas del repertorio lingüístico propio.",
+        "Estrategias para identificar, organizar, retener, recuperar y utilizar creativamente unidades lingüísticas (léxico, morfosintaxis, patrones sonoros, etc.) a partir de la comparación de las lenguas y variedades que conforman el repertorio lingüístico personal.",
+        "Estrategias y herramientas, analógicas y digitales, individuales y cooperativas para la autoevaluación, la coevaluación y la autorreparación.",
+        "Expresiones y léxico específico para reflexionar y compartir la reflexión sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje).",
+        "Comparación sistemática entre lenguas a partir de elementos de la Lengua Aragonesa y otras lenguas: origen y parentescos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Interculturalidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La Lengua Aragonesa como medio de comunicación y entendimiento entre pueblos, como facilitador del acceso a otras culturas y otras lenguas y como herramienta de participación social y de enriquecimiento personal.",
+        "Interés e iniciativa en la realización de intercambios comunicativos a través de diferentes medios con hablantes o estudiantes de Lengua Aragonesa, así como por conocer informaciones culturales de las comarcas donde se habla la Lengua Aragonesa.",
+        "Aspectos socioculturales y sociolingüísticos relativos a convenciones sociales, normas de cortesía y registros; instituciones, costumbres y rituales; valores, normas, creencias y actitudes; estereotipos y tabúes; lenguaje no verbal; historia, cultura y comunidades; relaciones interpersonales y procesos de globalización.",
+        "Estrategias para entender y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores ecosociales y democráticos.",
+        "Estrategias de prevención, detección, rechazo y actuación ante usos discriminatorios del lenguaje verbal y no verbal."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Lengua Aragonesa II",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Autoconfianza, iniciativa y asertividad. Estrategias de autorreparación y autoevaluación como forma de progresar en el aprendizaje autónomo de la Lengua Aragonesa.",
+        "Estrategias para la planificación, ejecución, control y reparación de la comprensión, la producción y la coproducción de textos orales, escritos y multimodales.",
+        "Conocimientos, destrezas y actitudes que permiten llevar a cabo actividades de mediación en situaciones cotidianas.",
+        "Funciones comunicativas adecuadas al ámbito y al contexto comunicativo: describir fenómenos y acontecimientos; dar instrucciones y consejos; narrar acontecimientos pasados puntuales y habituales, describir estados y situaciones presentes y expresar sucesos futuros y predicciones a corto, medio y largo plazo; expresar emociones; expresar la opinión; expresar argumentaciones; reformular, presentar las opiniones de otros, resumir.",
+        "Modelos contextuales y géneros discursivos de uso común en la comprensión, producción y coproducción de textos orales, escritos y multimodales, literarios y no literarios: características y reconocimiento del contexto (participantes y situación), expectativas generadas por el contexto, organización y estructuración según el género y la función textual.",
+        "Unidades lingüísticas y significados asociados a dichas unidades tales como la expresión de la entidad y sus propiedades, la cantidad y la cualidad, el espacio y las relaciones espaciales, el tiempo y las relaciones temporales, la afirmación, la negación, la interrogación y la exclamación, las relaciones lógicas.",
+        "Léxico común y especializado de interés para el alumnado relativo a tiempo y espacio; estados, eventos y acontecimiento; actividades, procedimientos y procesos; relaciones personales, sociales, académicas y profesionales; educación, trabajo y emprendimiento; lengua y comunicación intercultural; ciencia y tecnología; historia y cultura; así como estrategias de enriquecimiento léxico (derivación, familias léxicas, polisemia, sinonimia, antonimia).",
+        "Patrones sonoros, acentuales, rítmicos y de entonación, y significados e intenciones comunicativas generales asociadas a dichos patrones. Alfabeto fonético básico.",
+        "Convenciones ortográficas y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Convenciones y estrategias conversacionales, en formato síncrono o asíncrono, para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, pedir y dar aclaraciones y explicaciones, reformular, comparar y contrastar, resumir y parafrasear, colaborar, negociar significados, detectar la ironía, etc.",
+        "Recursos para el aprendizaje y estrategias de búsqueda y selección de información y curación de contenidos: diccionarios, libros de consulta, bibliotecas, mediatecas, etiquetas en la red, recursos digitales e informáticos, etc.",
+        "Respeto de la propiedad intelectual y derechos de autor sobre las fuentes consultadas y contenidos utilizados: herramientas para el tratamiento de datos bibliográficos y recursos para evitar el plagio.",
+        "Herramientas analógicas y digitales para la comprensión, producción y coproducción oral, escrita y multimodal; y plataformas virtuales de interacción, colaboración y cooperación educativa (aulas virtuales, videoconferencias, herramientas digitales colaborativas) para el aprendizaje, la comunicación y el desarrollo de proyectos con hablantes o estudiantes de Lengua Aragonesa."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Educación literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Conocimiento del hecho social y cultural de la literatura. La Literatura en Lengua Aragonesa dentro de su momento histórico y contexto sociocultural determinado.",
+        "Conocimiento y valoración de la contigüidad de relaciones culturales, metaliterarias y artísticas en el hecho literario.",
+        "El proceso histórico y social de la literatura en Lengua Aragonesa. El despertar literario de la década de los años 70 del siglo XX hasta la actualidad.",
+        "Formación específica en sensibilidad estética. El placer de la lectura conlleva una doble interacción, la de la apreciación subjetiva y las aportaciones de conocimientos: El saber literario incluye el aprendizaje de ciertos datos y conocimientos externos y la educación de la sensibilidad estética. El placer de la lectura es, precisamente, la consecuencia resultante de la satisfacción de comprender e interpretar lo leído.",
+        "Profundización en su competencia lecto-literaria. La activación de los conocimientos propios de la competencia literaria: tipo de texto, género, estilo, intencionalidad, tipo de elaboración del uso literario de la lengua.",
+        "Estrategias y técnicas para hacer del alumnado un lectorreceptor activo, que participa, coopera e interactúa con el texto.",
+        "Interpretación de la obra literaria como exponente cultural condicionado en su creación y recepción por factores de la cultura en la que se inscribe.",
+        "La intertextualidad como consecuencia del alumnado autosuficiente, autónomo, que active y relacione sus conocimientos.",
+        "La literatura como uno de los espacios en los que las culturas se forman y se encuentran unas con otras.",
+        "El acto de lectura como un acto de formación, de nuevas experiencias artísticas y nuevos conocimientos.",
+        "Crear textos personales o colectivos con intención literaria y conciencia de estilo, en distintos soportes y con ayuda de otros lenguajes artísticos y audiovisuales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Plurilingüismo",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias y técnicas para responder eficazmente y con un alto grado de autonomía, adecuación y corrección a una necesidad comunicativa concreta, superando las limitaciones derivadas del nivel de competencia en la Lengua Aragonesa y en las demás lenguas del repertorio lingüístico propio.",
+        "Estrategias para identificar, organizar, retener, recuperar y utilizar creativamente unidades lingüísticas (léxico, morfosintaxis, patrones sonoros, etc.) a partir de la comparación de las lenguas y variedades que conforman el repertorio lingüístico personal.",
+        "Estrategias y herramientas, analógicas y digitales, individuales y cooperativas para la autoevaluación, la coevaluación y la autorreparación.",
+        "Expresiones y léxico específico para reflexionar y compartir la reflexión sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje).",
+        "Comparación sistemática entre lenguas a partir de elementos de la Lengua Aragonesa y otras lenguas: origen y parentescos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Interculturalidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La Lengua Aragonesa como medio de comunicación y entendimiento entre pueblos, como facilitador del acceso a otras culturas y otras lenguas y como herramienta de participación social y de enriquecimiento personal.",
+        "Interés e iniciativa en la realización de intercambios comunicativos a través de diferentes medios con hablantes o estudiantes de la Lengua Aragonesa y de lenguas significativamente cercanas (asturiano, bearnés, catalán), así como por conocer informaciones culturales de las comarcas donde se habla Lengua Aragonesa y otras lenguas significativamente cercanas.",
+        "Aspectos socioculturales y sociolingüísticos relativos a convenciones sociales, normas de cortesía y registros; instituciones, costumbres y rituales; valores, normas, creencias y actitudes; estereotipos y tabúes; lenguaje no verbal; historia, cultura y comunidades, y relaciones interpersonales en comunidades de Lengua Aragonesa y lenguas significativamente cercanas.",
+        "Estrategias para entender y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores ecosociales y democráticos.",
+        "Estrategias de prevención, detección, rechazo y actuación ante usos discriminatorios del lenguaje verbal y no verbal."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Lenguas Propias de Aragón: Aragonés"
+}

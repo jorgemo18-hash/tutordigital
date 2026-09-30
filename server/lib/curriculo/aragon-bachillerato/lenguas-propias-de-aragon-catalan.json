@@ -1,0 +1,636 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "43 Lenguas Propias de Aragón: Catalán.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.LPC.1",
+   "texto": "Explicar y apreciar la diversidad lingüística de nuestra comunidad y ser consciente de la pertenencia a la comunidad lingüística del catalán, mostrando interés en el uso de la lengua y valorando las variedades dialectales del catalán de Aragón como elemento enriquecedor de nuestro patrimonio cultural, identificando y rechazando estereotipos y prejuicios lingüísticos."
+  },
+  {
+   "codigo": "CE.LPC.2",
+   "texto": "Comprender e interpretar textos orales y multimodales, expresados en la lengua estándar o en cualquiera de sus variedades dialectales, con especial atención a los textos académicos y de los medios de comunicación, recogiendo el sentido general y la información más relevante, identificando el punto de vista y la intención del emisor y valorando su fiabilidad, su forma y su contenido, para construir conocimiento, para formarse opinión y para ensanchar las posibilidades de disfrute y ocio."
+  },
+  {
+   "codigo": "CE.LPC.3",
+   "texto": "Producir textos orales y multimodales, expresados en la lengua estándar o en cualquiera de sus variedades dialectales, con atención preferente a textos de carácter académico, con rigor, fluidez, coherencia, cohesión y el registro adecuado, atendiendo a las convenciones propias de los diferentes géneros discursivos y participar en interacciones orales con actitud cooperativa y respetuosa, tanto para construir conocimiento y establecer vínculos personales, como para intervenir de manera activa e informada en diferentes contextos sociales."
+  },
+  {
+   "codigo": "CE.LPC.4",
+   "texto": "Comprender, interpretar y valorar, con sentido crítico y diferentes propósitos de lectura, textos escritos en la lengua estándar o en cualquiera de sus variedades dialectales, con especial atención a textos académicos y de los medios de comunicación, reconociendo el sentido global y las ideas principales y secundarias, integrando la información explícita y realizando las inferencias necesarias, identificando la intención del emisor, reflexionando sobre el contenido y la forma y evaluando su calidad y fiabilidad, para construir conocimiento y para dar respuesta a necesidades e intereses comunicativos diversos."
+  },
+  {
+   "codigo": "CE.LPC.5",
+   "texto": "Producir textos escritos y multimodales, en la lengua estándar o en cualquiera de sus variedades dialectales, coherentes, cohesionados, adecuados y correctos, con especial atención a los géneros discursivos del ámbito académico, para construir conocimiento y dar respuesta de manera informada, eficaz y creativa a demandas comunicativas concretas."
+  },
+  {
+   "codigo": "CE.LPC.6",
+   "texto": "Seleccionar y contrastar información procedente de diferentes fuentes, tanto en la lengua estándar como en cualquiera de sus variedades dialectales, evaluando su fiabilidad y pertinencia en función de los objetivos de lectura y evitando los riesgos de manipulación y desinformación, e integrarla y transformarla en conocimiento para comunicarla, adoptando un punto de vista crítico y personal a la par que respetuoso con la propiedad intelectual, especialmente en el marco de la realización de trabajos de investigación sobre temas del currículo o vinculados a las obras literarias leídas."
+  },
+  {
+   "codigo": "CE.LPC.7",
+   "texto": "Seleccionar y leer de manera autónoma obras relevantes de la literatura contemporánea catalana, especialmente la producida en Aragón o de autores aragoneses, como fuente de placer y conocimiento, configurando un itinerario lector que se enriquezca progresivamente en cuanto a diversidad, complejidad y calidad de las obras y compartir experiencias lectoras para construir la propia identidad lectora y disfrutar de la dimensión social de la lectura."
+  },
+  {
+   "codigo": "CE.LPC.8",
+   "texto": "Leer, interpretar y valorar obras de autores relevantes de la literatura en lengua catalana en general y, especialmente, la producida en Aragón o de autores aragoneses, utilizando un metalenguaje específico y movilizando la experiencia biográfica y los conocimientos literarios y culturales para establecer vínculos entre textos diversos, para conformar un mapa cultural, para ensanchar las posibilidades de disfrute de la literatura y para crear textos de intención literaria."
+  },
+  {
+   "codigo": "CE.LPC.9",
+   "texto": "Consolidar y profundizar en el conocimiento explícito y sistemático sobre la estructura y usos de la lengua estándar o cualquiera de sus variedades dialectales y reflexionar de manera autónoma sobre las elecciones lingüísticas y discursivas, con la terminología adecuada, para desarrollar la conciencia lingüística, para aumentar el repertorio 29960 10021802202AOB :vsc Núm. 157 Boletín Oficial de Aragón 12/08/2022 comunicativo y para mejorar las destrezas tanto de producción oral y escrita como de comprensión e interpretación crítica."
+  },
+  {
+   "codigo": "CE.LPC.10",
+   "texto": "Poner las prácticas comunicativas al servicio de la convivencia democrática, la resolución dialogada de los conflictos y la igualdad de derechos de todas las personas, utilizando un lenguaje no discriminatorio y desterrando los abusos de poder a través de la palabra, para favorecer un uso no solo eficaz sino también ético y democrático del lenguaje."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.LPC.1",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Reconocer y valorar la diversidad lingüística de nuestra comunidad y ser consciente de la pertenencia a la comunidad lingüística del catalán con especial atención a las variedades del catalán de Aragón, a partir de la explicación de su desarrollo histórico y sociolingüístico y de la situación actual.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.LPC.1",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Cuestionar y refutar prejuicios y estereotipos lingüísticos adoptando una actitud de respeto y valoración de la riqueza cultural trilingüe de Aragón, así como de interés en el uso de las Lenguas Propias de Aragón: catalán, a partir de la exploración y reflexión en torno a los fenómenos sociolingüísticos.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.LPC.1",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Reconocer y valorar la diversidad lingüística de nuestra comunidad y ser consciente de la pertenencia a la comunidad lingüística del catalán con especial atención a las variedades del catalán de Aragón, contrastando de manera explícita y con el metalenguaje apropiado aspectos históricos, sociolingüísticos y lingüísticos del catalán de Aragón.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.LPC.1",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Cuestionar y refutar prejuicios y estereotipos lingüísticos adoptando una actitud de respeto y valoración de la riqueza cultural trilingüe de Aragón y, en especial, del catalán de Aragón, atendiendo a la adecuación del uso del estándar y de las variedades lingüísticas en función del registro comunicativo que tenga lugar y valorando la relevancia actual de los medios de comunicación y las redes sociales en los procesos de normalización lingüística.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.LPC.2",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Identificar el sentido global, la estructura, la información relevante en función de las necesidades comunicativas y la intención del emisor en textos orales y multimodales complejos propios de diferentes ámbitos, analizando la interacción entre los diferentes códigos.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.LPC.2",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Identificar el sentido global, la estructura, la información relevante en función de las necesidades comunicativas y la intención del emisor en textos orales y multimodales especializados propios de diferentes ámbitos, analizando la interacción entre los diferentes códigos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.LPC.2",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Valorar la forma y el contenido de textos orales y multimodales complejos, evaluando su calidad, fiabilidad e idoneidad del canal utilizado, así como la eficacia de los procedimientos comunicativos empleados.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.LPC.2",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Valorar la forma y el contenido de textos orales y multimodales especializados, evaluando su calidad, fiabilidad e idoneidad del canal utilizado, así como la eficacia de los procedimientos comunicativos empleados.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.LPC.3",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Realizar exposiciones y argumentaciones orales formales con diferente grado de planificación sobre temas académicos y de los medios de comunicación, expresados en la lengua estándar o en cualquiera de sus variedades lingüísticas, con el registro adecuado, en diferentes soportes y utilizando de manera eficaz recursos verbales y no verbales.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.LPC.3",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Participar de manera activa y adecuada en interacciones orales (formales e informales) y en el trabajo en equipo con actitudes de escucha activa y estrategias de cooperación conversacional y cortesía lingüística.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.LPC.3",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Realizar exposiciones y argumentaciones orales formales con diferente grado de planificación sobre temas de interés científico y cultural y de relevancia académica y social, expresados en la lengua estándar o en cualquiera de sus variedades lingüísticas, ajustándose a las convenciones propias de cada género discursivo y hacerlo con fluidez, rigor, coherencia, cohesión y el registro adecuado en diferentes soportes, utilizando de manera eficaz recursos verbales y no verbales.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.LPC.3",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Participar de manera activa y adecuada en interacciones orales (formales e informales) y en el trabajo en equipo con actitudes de escucha activa y estrategias de cooperación conversacional y cortesía lingüística.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.LPC.4",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Identificar el sentido global, la estructura, la información relevante y la intención del emisor de textos escritos y multimodales especializados, con especial atención a textos académicos y de los medios de comunicación, realizando las inferencias necesarias y con diferentes propósitos de lectura.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.LPC.4",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Valorar la forma y el contenido de textos complejos evaluando su calidad, la fiabilidad e idoneidad del canal utilizado, así como la eficacia de los procedimientos comunicativos empleados.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.LPC.4",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Identificar el sentido global, la estructura, la información relevante y la intención del emisor de textos escritos y multimodales especializados, con especial atención a textos académicos y de los medios de comunicación, realizando las inferencias necesarias y con diferentes propósitos de lectura.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.LPC.4",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Valorar críticamente el contenido y la forma de textos especializados evaluando su calidad y fiabilidad, así como la eficacia de los procedimientos lingüísticos empleados.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.LPC.5",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Elaborar textos académicos coherentes, cohesionados y con el registro adecuado sobre temas curriculares o de interés social y cultural, precedidos de un proceso de planificación que atienda a la situación comunicativa, destinatario, propósito y canal y de redacción y revisión de borradores de manera individual o entre iguales, o mediante otros instrumentos de consulta.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.LPC.5",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Incorporar procedimientos para enriquecer los textos, atendiendo a aspectos discursivos, lingüísticos y de estilo, con precisión léxica y corrección ortográfica y gramatical.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.LPC.5",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Elaborar textos académicos coherentes, cohesionados y con el registro adecuado sobre temas curriculares o de interés social y cultural, precedidos de un proceso de planificación que atienda a la situación comunicativa, destinatario, propósito y canal, y de redacción y revisión de borradores de manera individual o entre iguales, o mediante otros instrumentos de consulta.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.LPC.5",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Incorporar procedimientos para enriquecer los textos, atendiendo a aspectos discursivos, lingüísticos y de estilo, con precisión léxica y corrección ortográfica y gramatical.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.LPC.6",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Elaborar trabajos de investigación de manera autónoma, en diferentes soportes, sobre temas curriculares de interés cultural que impliquen localizar, seleccionar y contrastar información procedente de diferentes fuentes; calibrar su fiabilidad y pertinencia en función de los objetivos de lectura; organizarla e integrarla en esquemas propios; y reelaborarla y comunicarla de manera creativa, adoptando un punto de vista crítico y respetuoso con la propiedad intelectual.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.LPC.6",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Evaluar la veracidad de noticias e informaciones, con especial atención a las redes sociales y otros entornos digitales, siguiendo pautas de análisis, contraste y verificación, haciendo uso de las herramientas adecuadas y manteniendo una actitud crítica frente a los posibles sesgos de la información.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.LPC.6",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Elaborar trabajos de investigación de manera autónoma, en diferentes soportes, sobre diversos temas de interés académico, personal o social que impliquen localizar, seleccionar y contrastar información procedente de diferentes fuentes, con especial atención a la gestión de su almacenamiento y recuperación, así como a la evaluación de su fiabilidad y pertinencia; organizarla e integrarla en esquemas propios; y reelaborarla y comunicarla de manera creativa, adoptando un punto de vista crítico y respetuoso con la propiedad intelectual.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.LPC.6",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Evaluar la veracidad de noticias e informaciones, con especial atención a las redes sociales y otros entornos digitales, siguiendo pautas de análisis, contraste y verificación, haciendo uso de las herramientas adecuadas y manteniendo una actitud crítica frente a los posibles sesgos de la información.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.LPC.7",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Elegir y leer de manera autónoma obras relevantes de la literatura contemporánea y dejar constancia del progreso del itinerario lector y cultural personal mediante la explicación argumentada de los criterios de selección de las lecturas, las formas de acceso a la cultura literaria y de la experiencia de lectura.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.LPC.7",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Compartir la experiencia lectora utilizando un metalenguaje específico y elaborar una interpretación personal estableciendo vínculos argumentados con otras obras y otras experiencias artísticas y culturales.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.LPC.7",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Elegir y leer de manera autónoma obras relevantes que se relacionen con las propuestas de lectura guiada, incluyendo ensayo literario y obras actuales que establezcan conexiones con la tradición y dejar constancia del progreso del propio itinerario lector y cultural mediante la explicación argumentada de los criterios de selección de las lecturas, las formas de acceso a la cultura literaria y de la experiencia de lectura.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.LPC.7",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Compartir la experiencia lectora utilizando un metalenguaje específico y elaborar una interpretación personal estableciendo vínculos argumentados con otras obras y otras experiencias artísticas y culturales.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.LPC.8",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Explicar y argumentar la interpretación de las obras leídas mediante el análisis de las relaciones internas de sus elementos constitutivos con el sentido de la obra y de las relaciones externas del texto con su contexto sociohistórico y con la tradición literaria, utilizando un metalenguaje específico e incorporando juicios de valor vinculados a la apreciación estética de las obras.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.LPC.8",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Desarrollar proyectos de investigación que se concreten en una exposición oral, un ensayo o una presentación multimodal, en función de temas, tópicos, estructuras, lenguaje, recursos expresivos y valores éticos y estéticos y explicitando la implicación y la respuesta personal del lector en la lectura.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "8.3",
+   "competencia": "CE.LPC.8",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Crear textos personales o colectivos con intención literaria y conciencia de estilo, en distintos soportes y con ayuda de otros lenguajes artísticos y audiovisuales, a partir de la lectura de obras o fragmentos significativos en los que se empleen las convenciones formales de los diversos géneros y estilos literarios.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.LPC.8",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Explicar y argumentar la interpretación de las obras leídas a partir del análisis de las relaciones internas de sus elementos constitutivos con el sentido de la obra y de las relaciones externas del texto con su contexto sociohistórico y con la tradición literaria, utilizando un metalenguaje específico e incorporando juicios de valor vinculados a la apreciación estética de las obras.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.LPC.8",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Desarrollar proyectos de investigación que se concreten en una exposición oral, un ensayo o una presentación multimodal, estableciendo vínculos argumentados con otros textos y manifestaciones artísticas clásicas o contemporáneas, en función de temas, tópicos, estructuras, lenguaje, recursos expresivos y valores éticos y estéticos y explicitando la implicación y la respuesta personal del lector en la lectura.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.LPC.9",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Revisar los propios textos y hacer propuestas de mejora argumentando los cambios a partir de la reflexión metalingüística e interlingüística y utilizando un metalenguaje específico, e identificar y subsanar problemas de comprensión lectora utilizando los conocimientos explícitos sobre la lengua y su uso.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.LPC.9",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Explicar y argumentar la interrelación entre el propósito comunicativo y las elecciones lingüísticas del emisor, así como sus efectos en el receptor, utilizando el conocimiento explícito de la lengua y un metalenguaje específico.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "9.3",
+   "competencia": "CE.LPC.9",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Elaborar y presentar los resultados de pequeños proyectos de investigación sobre aspectos relevantes del funcionamiento de la lengua, formulando hipótesis y estableciendo generalizaciones, utilizando los conceptos y la terminología lingüística adecuada y consultando de manera autónoma diccionarios, manuales y gramáticas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.LPC.9",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Revisar los propios textos y hacer propuestas de mejora argumentando los cambios a partir de la reflexión metalingüística e interlingüística y con un metalenguaje específico, e identificar y subsanar problemas de comprensión lectora utilizando los conocimientos explícitos sobre la lengua y su uso.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.LPC.9",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Explicar y argumentar la interrelación entre el propósito comunicativo y las elecciones lingüísticas del emisor, así como sus efectos en el receptor, utilizando el conocimiento explícito de la lengua y un metalenguaje específico.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "9.3",
+   "competencia": "CE.LPC.9",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Elaborar y presentar los resultados de pequeños proyectos de investigación sobre aspectos relevantes del funcionamiento de la lengua, formulando hipótesis y estableciendo generalizaciones, utilizando los conceptos y la terminología lingüística adecuada y consultando de manera autónoma diccionarios, manuales y gramáticas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "10.1",
+   "competencia": "CE.LPC.10",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Identificar y desterrar los usos discriminatorios de la lengua, los abusos de poder a través de la palabra y los usos manipuladores del lenguaje a partir de la reflexión y el análisis de los elementos lingüísticos, textuales y discursivos utilizados, así como de los elementos no verbales que rigen la comunicación entre las personas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "10.2",
+   "competencia": "CE.LPC.10",
+   "columna": "Lenguas Propias de Aragón: Catalán I",
+   "texto": "Utilizar estrategias para la resolución dialogada de los conflictos y la búsqueda de consensos tanto en el ámbito personal como educativo y social.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "10.1",
+   "competencia": "CE.LPC.10",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Identificar y desterrar los usos discriminatorios de la lengua, los abusos de poder a través de la palabra y los usos manipuladores del lenguaje a partir de la reflexión y el análisis de los elementos lingüísticos, textuales y discursivos utilizados, así como de los elementos no verbales que rigen la comunicación entre las personas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "10.2",
+   "competencia": "CE.LPC.10",
+   "columna": "Lenguas Propias de Aragón: Catalán II",
+   "texto": "Utilizar estrategias para la resolución dialogada de los conflictos y la búsqueda de consensos tanto en el ámbito personal como educativo y social.",
+   "cursos": [
+    2
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Lenguas Propias de Aragón: Catalán I",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias de producción, comprensión y análisis crítico de textos orales, escritos y multimodales de diferentes ámbitos con atención conjunta a los siguientes aspectos:",
+        "1. Contexto.",
+        "Componentes del hecho comunicativo: grado de formalidad de la situación y carácter público o privado; distancia social entre los interlocutores; propósitos comunicativos e interpretación de intenciones; canal de comunicación y elementos no verbales de la comunicación.",
+        "2. Géneros discursivos.",
+        "Propiedades textuales: coherencia, cohesión y adecuación.",
+        "Géneros discursivos propios del ámbito educativo. Los textos académicos.",
+        "Géneros discursivos propios del ámbito social. Las redes sociales y medios de comunicación.",
+        "3. Procesos.",
+        "Interacción oral y escrita de carácter formal. Tomar y dejar la palabra. Cooperación conversacional y cortesía lingüística.",
+        "Comprensión oral: sentido global del texto y relación entre sus partes, selección y retención de la información relevante. La intención del emisor. Detección de los usos discriminatorios del lenguaje verbal y no verbal. Valoración de la forma y contenido del texto.",
+        "Producción oral formal: planificación y búsqueda de información, textualización y revisión. Adecuación a la audiencia y al tiempo de exposición. Elementos no verbales. Rasgos discursivos y lingüísticos de la oralidad formal. La deliberación oral argumentada.",
+        "Comprensión lectora: sentido global del texto y relación entre sus partes. La intención del emisor. Detección de los usos discriminatorios del lenguaje verbal e icónico. Valoración de la forma y contenido del texto.",
+        "Producción escrita. Proceso de elaboración: planificación, redacción, revisión y edición en diferentes soportes.",
+        "Alfabetización informacional: Búsqueda autónoma y selección de la información con criterios de fiabilidad, calidad y pertinencia; análisis, valoración, reorganización y síntesis de la información en esquemas propios y transformación en conocimiento; comunicación y difusión de la información reelaborada de manera creativa y respetuosa con la propiedad intelectual. Noticias falsas y verificación de hechos. El ciberanzuelo.",
+        "4. Reconocimiento y uso discursivo de los elementos lingüísticos.",
+        "Formas lingüísticas para la expresión de la subjetividad y de la objetividad.",
+        "Recursos lingüísticos para adecuar el registro a la situación de comunicación.",
+        "Conectores, marcadores discursivos y otros procedimientos léxicosemánticos y gramaticales que contribuyen a la cohesión del texto.",
+        "Relaciones entre las formas verbales como procedimientos de cohesión del texto, con especial atención a la valoración y al uso de los tiempos verbales.",
+        "Corrección lingüística y revisión ortográfica, gramatical y tipográfica de los textos. Uso eficaz de diccionarios, manuales de consulta y de correctores ortográficos en soporte analógico o digital.",
+        "Los signos de puntuación como mecanismo organizador del texto escrito y su relación con el significado."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Plurilingüismo e interculturalidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias para entender y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores ecosociales y democráticos.",
+        "Estrategias de reflexión interlingüística. Comparación sistemática entre lenguas a partir de elementos de la lengua catalana y otras lenguas: origen y parentescos.",
+        "Detección de prejuicios y estereotipos lingüísticos con la finalidad de combatirlos.",
+        "Los fenómenos del contacto entre lenguas: bilingüismo, préstamos, interferencias. Diglosia lingüística y diglosia dialectal.",
+        "Derechos lingüísticos, su expresión en leyes y declaraciones institucionales. Modelos de convivencia entre lenguas, sus causas y consecuencias. Lenguas minoritarias y lenguas minorizadas. La sostenibilidad lingüística.",
+        "Expresiones y léxico específico para reflexionar y compartir la reflexión sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Educación Literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Lectura de autores de la literatura catalana desde los clásicos hasta la actualidad, con especial atención a los autores de la literatura catalana de Aragón, inscritos en itinerarios temáticos o de género, atendiendo a los siguientes saberes:",
+        "Construcción compartida de la interpretación de las obras a través de discusiones o conversaciones literarias.",
+        "Análisis de los elementos constitutivos del género literario y su relación con el sentido de la obra. Efectos en la recepción de sus recursos expresivos.",
+        "Utilización de la información sociohistórica, cultural y artística para interpretar las obras y comprender su lugar en la tradición literaria.",
+        "Vínculos intertextuales entre obras y otras manifestaciones artísticas en función de temas, tópicos, estructuras y lenguajes. Elementos de continuidad y ruptura.",
+        "Expresión argumentada de la interpretación de los textos, integrando los diferentes aspectos analizados y atendiendo a sus valores culturales, éticos y estéticos. Lectura con perspectiva de género.",
+        "Lectura expresiva, dramatización y recitado atendiendo a los procesos de comprensión, apropiación y oralización implicados.",
+        "Creación de textos de intención literaria a partir de las obras leídas.",
+        "Participación activa en el circuito literario y lector en contexto presencial y digital. Utilización autónoma de todo tipo de bibliotecas. Acceso a otras experiencias culturales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Reflexión sobre la lengua",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Elaboración de conclusiones propias sobre el funcionamiento del sistema lingüístico con un metalenguaje específico a partir de la observación, comparación y clasificación de unidades comunicativas y del contraste entre lenguas, atendiendo a los siguientes saberes:",
+        "Construcción compartida de la interpretación de las obras a través de discusiones o conversaciones literarias.",
+        "Análisis ortográfico, gramatical y morfología verbal.",
+        "Utilización progresiva de léxico específico de temas de actualidad, de la vida cotidiana y también de temas especializados cientificotécnicos, históricos, de cultura general, etc.",
+        "Diferencias relevantes e intersecciones entre lengua oral y lengua escrita, atendiendo a aspectos sintácticos, léxicos y pragmáticos.",
+        "La lengua como sistema interconectado con diferentes niveles: fonológico, morfológico, sintáctico y semántico.",
+        "Distinción entre la forma (categorías gramaticales) y la función de las palabras (funciones sintácticas de la oración simple y compuesta). Relación entre la estructura semántica (significados verbales y argumentos) y sintáctica (sujeto, predicado y complementos) de la oración simple y compuesta en función del propósito comunicativo.",
+        "Procedimientos de adquisición y formación de palabras y reflexión sobre los cambios en su significado. Las relaciones semánticas entre palabras. Valores denotativos y connotativos en función de su adecuación al contexto y el propósito comunicativo.",
+        "Uso autónomo de diccionarios, manuales de gramática y otras fuentes de consulta para obtener información gramatical de carácter general."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Lenguas Propias de Aragón: Catalán II",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias de producción, comprensión y análisis crítico de textos orales, escritos y multimodales de diferentes ámbitos con atención conjunta los siguientes aspectos:",
+        "1. Contexto: componentes del hecho comunicativo.",
+        "Componentes del hecho comunicativo: grado de formalidad de la situación y carácter público o privado; distancia social entre los interlocutores; propósitos comunicativos e interpretación de intenciones; canal de comunicación y elementos no verbales de la comunicación.",
+        "2. Géneros discursivos.",
+        "Propiedades textuales: coherencia, cohesión y adecuación.",
+        "Géneros discursivos propios del ámbito educativo. Los textos académicos.",
+        "Géneros discursivos propios del ámbito social. Las redes sociales y medios de comunicación.",
+        "3. Procesos.",
+        "Interacción oral y escrita de carácter formal. Tomar y ceder la palabra. Cooperación conversacional y cortesía lingüística.",
+        "Comprensión oral: sentido global del texto y relación entre sus partes, selección y retención de la información relevante. La intención del emisor. Detección de los usos discriminatorios del lenguaje verbal y no verbal. Valoración de la forma y el contenido del texto.",
+        "Producción oral formal: Planificación y búsqueda de información, textualización y revisión. Adecuación a la audiencia y al tiempo de exposición. Elementos no verbales. Rasgos discursivos y lingüísticos de la oralidad formal. La deliberación oral argumentada.",
+        "Comprensión lectora: sentido global del texto y relación entre sus partes. La intención del emisor. Detección de los usos discriminatorios del lenguaje verbal e icónico. Valoración de la forma y el contenido del texto.",
+        "Producción escrita. Proceso de elaboración: planificación, redacción, revisión y edición en diferentes soportes.",
+        "Alfabetización informacional: Búsqueda autónoma y selección de la información con criterios de fiabilidad, calidad y pertinencia; análisis, valoración, reorganización y síntesis de la información en esquemas propios y transformación en conocimiento; comunicación y difusión de la información reelaborada de manera creativa y respetuosa con la propiedad intelectual. La gestión de contenidos, el almacenamiento y la recuperación de la información relevante. Noticias falsas y verificación de hechos.",
+        "4. Reconocimiento y uso discursivo de los elementos lingüísticos.",
+        "Formas lingüísticas de expresión de la subjetividad y de la objetividad.",
+        "Recursos lingüísticos para adecuar el registro a la situación de comunicación.",
+        "Conectores, marcadores discursivos y otros procedimientos léxicosemánticos y gramaticales que contribuyen a la cohesión del texto.",
+        "Relaciones entre las formas verbales como procedimientos de cohesión del texto con especial atención a la valoración y al uso de los tiempos verbales.",
+        "Corrección lingüística y revisión ortográfica, gramatical y tipográfica de los textos. Uso eficaz de diccionarios, manuales de consulta y de correctores ortográficos en soporte analógico o digital.",
+        "Los signos de puntuación como mecanismo organizador del texto escrito y su relación con el significado."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Plurilingüismo e interculturalidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias para entender y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores ecosociales y democráticos.",
+        "Estrategias de reflexión interlingüística. Comparación sistemática entre lenguas a partir de elementos de la lengua catalana y otras lenguas: origen y parentescos.",
+        "Detección de prejuicios y estereotipos lingüísticos con la finalidad de combatirlos.",
+        "Los fenómenos del contacto entre lenguas: bilingüismo, préstamos, interferencias. Diglosia lingüística y diglosia dialectal.",
+        "Derechos lingüísticos, su expresión en leyes y declaraciones institucionales. Modelos de convivencia entre lenguas, sus causas y consecuencias. Lenguas minoritarias y lenguas minorizadas. La sostenibilidad lingüística.",
+        "Los medios de comunicación y las redes sociales en los procesos de normalización lingüística.",
+        "Expresiones y léxico específico para reflexionar y compartir la reflexión sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Educación Literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Lectura de autores de la literatura catalana del último cuarto del siglo XIX y de los siglos XX y XXI, con especial atención a los autores de la literatura catalana de Aragón, inscritos en itinerarios temáticos o de género, atendiendo a los siguientes saberes:",
+        "Construcción compartida de Ia interpretación de las obras a través de discusiones o conversaciones literarias.",
+        "Análisis de los elementos constitutivos del género literario y su relación con el sentido de la obra. Efectos en la recepción de sus recursos expresivos.",
+        "Utilización de la información sociohistórica, cultural y artística para interpretar las obras y comprender su lugar en la tradición literaria.",
+        "Vínculos intertextuales entre obras y otras manifestaciones artísticas en función de temas, tópicos, estructuras y lenguajes. Elementos de continuidad y ruptura.",
+        "Expresión argumentada de la interpretación de los textos, integrando los diferentes aspectos analizados y atendiendo a sus valores culturales, éticos y estéticos. Lectura con perspectiva de género.",
+        "Lectura expresiva, dramatización y recitado atendiendo a los procesos de comprensión, apropiación y oralización implicados.",
+        "Creación de textos de intención literaria a partir de las obras leídas.",
+        "Participación activa en el circuito literario y lector en contexto presencial y digital. Utilización autónoma de todo tipo de bibliotecas. Acceso a otras experiencias culturales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Reflexión sobre la lengua",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Elaboración de conclusiones propias sobre el funcionamiento del sistema lingüístico con un metalenguaje específico a partir de la observación, comparación y clasificación de unidades comunicativas y del contraste entre lenguas, atendiendo a los siguientes saberes:",
+        "Conocimiento progresivo y aplicación de las normas de escritura a nivel avanzado: ortográfica, gramatical y morfología verbal.",
+        "Utilización progresiva de léxico específico de temas de actualidad, de la vida cotidiana y también de temas especializados cientifico técnicos, históricos, de cultura general, etc. Diferencias relevantes e intersecciones entre lengua oral y lengua escrita atendiendo a aspectos sintácticos, léxicos y pragmáticos.",
+        "La lengua como sistema interconectado teniendo en cuenta los diferentes niveles: fonológico, morfológico, sintáctico y semántico.",
+        "Distinción entre la forma (categoría gramatical) y la función de las palabras (funciones sintácticas de la oración simple y compuesta).",
+        "Relación entre la estructura semántica (significados verbales y argumentos) y sintáctica (sujeto, predicado y complementos) de la oración simple y compuesta en función del propósito comunicativo.",
+        "Procedimientos de adquisición y formación de palabras y reflexión sobre los cambios en su significado. Las relaciones semánticas entre palabras. Valores denotativos y connotativos en función de su adecuación al contexto y al propósito comunicativo.",
+        "Uso autónomo de diccionarios, manuales de gramática y otras fuentes de consulta para obtener información gramatical de carácter general."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Lenguas Propias de Aragón: Catalán"
+}

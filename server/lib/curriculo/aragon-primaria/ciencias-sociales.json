@@ -1,0 +1,813 @@
+{
+ "fuente": "ORDEN ECD/1112/2022, anexo II, con las modificaciones de la ORDEN ECD/866/2024 (Aragón)",
+ "archivo": "02 Ciencias Sociales.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.CS.1",
+   "texto": "Identificar las características de los diferentes elementos o sistemas del medio social y cultural, analizando su organización y propiedades, y estableciendo relaciones entre los mismos, para reconocer el valor del patrimonio cultural, conservarlo, mejorarlo y emprender acciones para un uso responsable."
+  },
+  {
+   "codigo": "CE.CS.2",
+   "texto": "Analizar críticamente las causas y consecuencias de la intervención humana en el entorno, integrando los puntos de vista social, económico, cultural, tecnológico y ambiental, para favorecer la capacidad para afrontar problemas, buscar soluciones y actuar de manera individual y colaborativa en su resolución, poniendo en práctica hábitos de vida sostenibles y consecuentes con el respeto, cuidado y protección de las personas y del planeta."
+  },
+  {
+   "codigo": "CE.CS.3",
+   "texto": "Observar, comprender e interpretar continuidades y cambios del medio social y cultural, analizando relaciones de causalidad, simultaneidad y sucesión para explicar y valorar las relaciones entre diferentes elementos y acontecimientos."
+  },
+  {
+   "codigo": "CE.CS.4",
+   "texto": "Reconocer y valorar la diversidad y la igualdad de género, mostrando empatía y respeto por otras culturas y reflexionando sobre cuestiones éticas, para contribuir al bienestar individual y colectivo de una sociedad en continua transformación y al logro de los valores de la integración europea."
+  },
+  {
+   "codigo": "CE.CS.5",
+   "texto": "Participar en el entorno y la vida social de forma eficaz y constructiva desde el respeto a los valores democráticos, los derechos humanos y de la infancia y los principios y valores de la Constitución española y la Unión Europea, valorando la función del Estado y sus instituciones en el mantenimiento de la paz y la seguridad para generar interacciones respetuosas y equitativas y promover la resolución pacífica y dialogada de los conflictos."
+  },
+  {
+   "codigo": "CE.CS.6",
+   "texto": "Plantear y dar respuesta a cuestiones científicas sencillas, relacionadas con las Ciencias Sociales, utilizando diferentes fuentes, técnicas, instrumentos y habilidades propias del pensamiento científico, para interpretar y explicar hechos y fenómenos que ocurren en el medio natural, social y cultural."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.CS.1",
+   "columna": "Primer Ciclo",
+   "texto": "Iniciarse en el reconocimiento de las características, organización y propiedades de los elementos del medio social y cultural a través de la observación del entorno de forma pautada.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.CS.1",
+   "columna": "Primer Ciclo",
+   "texto": "Reconocer conexiones sencillas y directas entre diferentes elementos del medio social y cultural.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.CS.1",
+   "columna": "Primer Ciclo",
+   "texto": "Mostrar actitudes de respeto para el disfrute del patrimonio cultural material e inmaterial, reconociéndolo como un bien común.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.CS.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Identificar las características, organización y propiedades de los elementos del medio social y cultural a través de la observación del entorno y de otros recursos y utilizando las herramientas y procesos adecuados de forma pautada.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.CS.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Identificar conexiones sencillas entre diferentes elementos del medio social y cultural mostrando comprensión de las relaciones que se establecen.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.CS.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Valorar y proteger el patrimonio cultural material e inmaterial, considerándolo un bien común, adoptando conductas respetuosas para su disfrute y proponiendo acciones para su conservación y mejora.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.CS.1",
+   "columna": "Tercer ciclo",
+   "texto": "Identificar y analizar las características, organización y propiedades de los elementos del medio social y cultural a través de la observación del entorno y de otros recursos y utilizando las herramientas y procesos adecuados de forma pautada.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.CS.1",
+   "columna": "Tercer ciclo",
+   "texto": "Establecer conexiones sencillas entre diferentes elementos del medio social y cultural mostrando comprensión de las relaciones que se establecen.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.CS.1",
+   "columna": "Tercer ciclo",
+   "texto": "Valorar, proteger y mostrar actitudes de conservación y mejora del patrimonio cultural (material e inmaterial) a través de propuestas y acciones que reflejen compromisos y conductas en favor de la sostenibilidad.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.CS.2",
+   "columna": "Primer Ciclo",
+   "texto": "Mostrar estilos de vida sostenible y valorar la importancia del respeto, los cuidados, la corresponsabilidad y la protección de los elementos y seres del planeta, identificando la relación de la vida de las personas con sus acciones sobre los elementos y recursos del medio.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.CS.2",
+   "columna": "Primer Ciclo",
+   "texto": "Localizar espacios geográficos.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.CS.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Identificar problemas ecosociales, proponer posibles soluciones y poner en práctica estilos de vida sostenible, reconociendo comportamientos respetuosos de cuidado, corresponsabilidad y protección del entorno y uso sostenible de los recursos naturales, y expresando los cambios positivos y negativos causados en el medio por la acción humana.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.CS.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Localizar y analizar espacialmente, utilizando nociones básicas de cartografía y representación del espacio mediante mapas, proyecciones y modelos digitales.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.CS.2",
+   "columna": "Tercer ciclo",
+   "texto": "Adoptar estilos de vida sostenible y consecuentes con el respeto, los cuidados, la corresponsabilidad y la protección de los elementos y seres del planeta, a partir del análisis crítico de la intervención humana en el entorno.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.CS.2",
+   "columna": "Tercer ciclo",
+   "texto": "Adoptar una actitud emprendedora en la búsqueda, contraste y evaluación de propuestas para afrontar problemas ecosociales, buscar soluciones y actuar para su resolución, a partir del análisis de las causas y consecuencias de la intervención humana en el entorno.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.CS.2",
+   "columna": "Tercer ciclo",
+   "texto": "Localizar y analizar espacialmente lugares geográficos, utilizando nociones básicas de cartografía y representación del espacio mediante mapas, proyecciones y modelos digitales, y herramientas básicas para representar información en ellos como gráficos, imágenes o tablas interactivas.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.CS.2",
+   "columna": "Tercer ciclo",
+   "texto": "Identificar problemas ligados al desarrollo sostenible, analizarlos y extraer conclusiones.",
+   "competencia_en_tabla": "CE.CS.2",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.CS.3",
+   "columna": "Primer Ciclo",
+   "texto": "Ordenar temporalmente hechos del entorno personal, familiar y social y cultural cercano, empleando nociones de medida y sucesión básicas y representaciones gráficas adecuadas.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.CS.3",
+   "columna": "Primer Ciclo",
+   "texto": "Conocer personas y grupos sociales relevantes de la historia y formas de vida del pasado relacionados con la historia familiar, local y del entorno social y cultural, incorporando la perspectiva de género.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.CS.3",
+   "columna": "Primer Ciclo",
+   "texto": "Extraer información de fuentes históricas sencillas (testimonios orales de familiares, objetos personales) de diferente naturaleza.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.CS.3",
+   "columna": "Primer Ciclo",
+   "texto": "Localizar los hitos geográficos principales en su entorno inmediato (barrio, escuela).",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.CS.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Identificar hechos del entorno social y cultural y ordenarlos temporalmente empleando las nociones de causalidad, simultaneidad y sucesión y utilizando representaciones gráficas adecuadas.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.CS.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Conocer personas, grupos sociales relevantes y formas de vida de las sociedades históricas desde la Prehistoria hasta la actualidad, incorporando la perspectiva de género y ubicándolas en su etapa cronológica, distinguiendo simultaneidadsucesión y cambio-permanencia.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.CS.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Extraer información de fuentes históricas de diferente naturaleza",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.CS.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Localizar los hitos geográficos principales de su localidad y de Aragón, analizando sus fuentes de información, sus modelos y estructuras espaciales (de localización, distribución, extensión, relación…).",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.CS.3",
+   "columna": "Tercer ciclo",
+   "texto": "Analizar relaciones de causalidad, simultaneidad y sucesión entre diferentes elementos del medio social y cultural, situando cronológicamente los hechos u otras formas de representaciones gráficas temporales.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.CS.3",
+   "columna": "Tercer ciclo",
+   "texto": "Conocer personas, grupos sociales relevantes y formas de vida, acontecimientos y procesos relevantes de las sociedades históricas desde la Prehistoria hasta la actualidad, incorporando la perspectiva de género, situándolas cronológicamente e identificando rasgos significativos sociales en distintas épocas de la historia, distinguiendo simultaneidad-sucesión, cambiopermanencia y estableciendo relaciones de interrelación y de causa-consecuencia sencillas.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.CS.3",
+   "columna": "Tercer ciclo",
+   "texto": "Extraer información de fuentes históricas de diferente naturaleza comparándolas entre sí.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.CS.3",
+   "columna": "Tercer ciclo",
+   "texto": "Localizar los hitos geográficos principales de España y Europa, analizando sus fuentes de información, sus modelos y estructuras espaciales (de localización, distribución, extensión, relación…).",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.CS.4",
+   "columna": "Primer Ciclo",
+   "texto": "Recoger información acerca de manifestaciones culturales del propio entorno, mostrando respeto, identificando y valorando su diversidad y riqueza, y apreciándolas como fuente de aprendizaje.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.CS.4",
+   "columna": "Primer Ciclo",
+   "texto": "Reconocer modelos positivos en el entorno cercano mostrando actitudes que fomenten la igualdad de género y las conductas no sexistas.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.CS.4",
+   "columna": "Segundo Ciclo",
+   "texto": "Analizar la importancia demográfica, cultural y económica de las migraciones en la actualidad, valorando con respeto y empatía el aporte de la diversidad cultural al bienestar individual y colectivo.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.CS.4",
+   "columna": "Segundo Ciclo",
+   "texto": "Valorar positivamente las acciones que fomentan la igualdad de género y las conductas no sexistas reconociendo modelos positivos a lo largo de la historia.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.CS.4",
+   "columna": "Tercer ciclo",
+   "texto": "Analizar los procesos geográficos, históricos y culturales que han conformado la sociedad actual, valorando la diversidad etnocultural o afectivo-sexual y la cohesión social y mostrando empatía y respeto por otras culturas y la igualdad de género.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.CS.4",
+   "columna": "Tercer ciclo",
+   "texto": "Adoptar actitudes de igualdad de género y conductas no sexistas, analizando y contrastando diferentes modelos en nuestra sociedad.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.CS.5",
+   "columna": "Primer Ciclo",
+   "texto": "Establecer acuerdos de forma dialógica y democrática como parte de grupos próximos a su entorno, identificando las responsabilidades y empleando un lenguaje inclusivo y no violento.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.CS.5",
+   "columna": "Primer Ciclo",
+   "texto": "Identificar instituciones cercanas, señalando y valorando las funciones que realizan en pro de una buena convivencia.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.CS.5",
+   "columna": "Primer Ciclo",
+   "texto": "Conocer e interiorizar normas básicas para la convivencia en el uso de espacios públicos, especialmente como peatones o como usuarios de los medios de locomoción, tomando conciencia de la importancia de la movilidad segura, saludable y sostenible de tanto para las personas como para el planeta.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.CS.5",
+   "columna": "Segundo Ciclo",
+   "texto": "Realizar actividades en el contexto de la comunidad escolar, asumiendo responsabilidades y estableciendo acuerdos de forma dialogada y democrática y empleando un lenguaje inclusivo y no violento.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.CS.5",
+   "columna": "Segundo Ciclo",
+   "texto": "Conocer los principales órganos de gobierno y funciones de diversas administraciones y servicios públicos, valorando de forma crítica su funcionamiento y gestión para la seguridad integral ciudadana y la participación democrática.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.CS.5",
+   "columna": "Segundo Ciclo",
+   "texto": "Interiorizar las normas básicas para el uso de espacios públicos como peatones y usuarios de los medios de locomoción, identificando las principales señales de tráfico y tomando conciencia de la importancia de la movilidad segura, saludable y sostenible tanto para las personas como para el planeta.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.CS.5",
+   "columna": "Tercer ciclo",
+   "texto": "Resolver de forma pacífica y dialogada los conflictos, promoviendo una interacción respetuosa y equitativa a partir del lenguaje inclusivo y no violento, explicando y ejercitando principales normas, derechos, deberes y libertades que forman parte de la Constitución española, y de la de Unión Europea, y conociendo la función que el Estado y sus instituciones desempeñan en el mantenimiento de la paz y la seguridad integral ciudadana y el reconocimiento de las víctimas de violencia.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.CS.5",
+   "columna": "Tercer ciclo",
+   "texto": "Explicar el funcionamiento general de los órganos de gobierno del Municipio, de la Comarca, de las Comunidades Autónomas, del Estado español y de la Unión Europea, valorando sus funciones y la gestión de los servicios públicos para la ciudadanía.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.CS.5",
+   "columna": "Tercer ciclo",
+   "texto": "Conocer e interiorizar normas y sistemas de seguridad como peatones, usuarios de bicicletas, patinetes y de los medios de locomoción, conociendo las señales de tráfico y tomando conciencia de la importancia de la movilidad sostenible de las personas.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.CS.6",
+   "columna": "Primer Ciclo",
+   "texto": "Formular preguntas mostrando curiosidad por el entorno más próximo.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.CS.6",
+   "columna": "Primer Ciclo",
+   "texto": "Buscar información sencilla de forma guiada de diferentes fuentes seguras y fiables, utilizándola en trabajos relacionados con el medio natural, social y cultural.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.CS.6",
+   "columna": "Primer Ciclo",
+   "texto": "Utilizar fuentes de diferente naturaleza para realizar tareas sencillas de indagación, sobre aspectos geográficos o históricos vinculados a su entorno próximo.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.4",
+   "competencia": "CE.CS.6",
+   "columna": "Primer Ciclo",
+   "texto": "Presentar los resultados de las indagaciones o trabajos escolares sobre ciencias sociales de forma oral o gráfica con ayuda de un guion.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.CS.6",
+   "columna": "Segundo Ciclo",
+   "texto": "Formular preguntas mostrando curiosidad por el medio natural, social y cultural cercano.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.CS.6",
+   "columna": "Segundo Ciclo",
+   "texto": "Buscar información sencilla de forma guiada procedente de recursos específicos de las Ciencias Sociales, utilizándola en trabajos relacionados con el medio natural, social y cultural.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.CS.6",
+   "columna": "Segundo Ciclo",
+   "texto": "Utilizar fuentes de diferente naturaleza para realizar tareas sencillas de indagación, sobre aspectos geográficos o históricos de culturas representativas de las diferentes etapas cronológicas.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.4",
+   "competencia": "CE.CS.6",
+   "columna": "Segundo Ciclo",
+   "texto": "Presentar los resultados de las indagaciones o trabajos escolares sobre ciencias sociales de forma oral o escrita utilizando léxico específico básico de las disciplinas de Ciencias Sociales.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.CS.6",
+   "columna": "Tercer ciclo",
+   "texto": "Formular preguntas mostrando curiosidad por el medio natural, social o cultural y sus cambios a lo largo del tiempo.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.CS.6",
+   "columna": "Tercer ciclo",
+   "texto": "Buscar información sencilla de forma guiada procedente de recursos tecnológicos específicos de las Ciencias Sociales, utilizándola en trabajos relacionados con el medio natural, social y cultural.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.CS.6",
+   "columna": "Tercer ciclo",
+   "texto": "Utilizar y comparar fuentes de diferente naturaleza para realizar tareas sencillas de indagación, sobre aspectos geográficos o históricos de culturas representativas de las diferentes etapas cronológicas.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "6.4",
+   "competencia": "CE.CS.6",
+   "columna": "Tercer ciclo",
+   "texto": "Presentar los resultados o conclusiones de indagaciones o trabajos escolares, utilizando léxico específico de las ciencias sociales y representaciones gráficas propias de estas disciplinas.",
+   "cursos": [
+    5,
+    6
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Primer ciclo de Educación Primaria",
+   "cursos": [
+    1,
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Exploración y observación guiada del entorno físico y social, con especial interés en el patrimonio, el paisaje y la organización de la localidad.",
+        "Inicio al trabajo con fuentes. Uso de objetos y artefactos de la vida cotidiana como fuentes para reflexionar sobre el cambio y la continuidad, las causas y consecuencias.",
+        "Inicio en la representación gráfica del espacio (lectura o Inicio a la representación gráfica del espacio y del tiempo. Utilización de mapas, croquis o planos sencillos o visualización a través de sistemas de información geográfica como Google Earth o similares. Elaboración de líneas temporales sencillas, árboles genealógicos, etc."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sociedades y territorios",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Retos del mundo actual",
+       "saberes": [
+        "Retos sobre situaciones cotidianas. Categorías espaciales. Funciones básicas del pensamiento espacial y temporal para la interacción con el medio y la resolución de situaciones de la vida cotidiana. Itinerarios y trayectos, desplazamientos y viajes.",
+        "La diversidad de las poblaciones en el entorno físico y sociocultural."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Sociedades en el tiempo",
+       "saberes": [
+        "La percepción del tiempo. Categorías temporales básicas. Medida del tiempo en la vida cotidiana.",
+        "El ciclo vital y las relaciones intergeneracionales.",
+        "Recursos y medios analógicos y digitales. Las fuentes orales y la memoria colectiva. La historia local y la biografía familiar, hombres y mujeres como sujetos de la historia.",
+        "Las expresiones y producciones artísticas a través del tiempo. El patrimonio material e inmaterial local y del contexto sociocultural del alumnado. Las lenguas propias de Aragón (aragonés y catalán)."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Alfabetización cívica",
+       "saberes": [
+        "La vida en colectividad. La familia. Diversidad familiar. Compromisos, participación y normas en el entorno familiar, vecinal y escolar. Prevención, gestión y resolución dialogada de conflictos.",
+        "Habilidades emocionales (conciencia y regulación emocional; autovaloración) y comunicativas (verbales, no verbales, y conversacionales; la escucha activa).",
+        "La vida en sociedad. Espacios, recursos y servicios del entorno. Formas y modos de interacción social en espacios públicos desde una perspectiva de género.",
+        "Identidad y diversidad cultural: existencia de realidades diferentes y aproximación a las distintas etnoculturas presentes en el entorno. La convivencia con los demás y el rechazo a las actitudes discriminatorias. Cultura de paz y no violencia.",
+        "Ocupación y trabajo. Identificación de las principales actividades profesionales y laborales de mujeres y hombres en el entorno.",
+        "Igualdad de género y conducta no sexista.",
+        "Seguridad vial. La ciudad como espacio de convivencia. Normas básicas en los desplazamientos como peatones y usuarios de los medios de locomoción."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Conciencia ecosocial",
+       "saberes": [
+        "Conocimiento de nuestro entorno. Paisajes naturales y paisajes humanizados, y sus elementos. La acción humana sobre el medio y sus consecuencias.",
+        "Relación entre el ser humano y el medio.",
+        "Responsabilidad ecosocial. Acciones para la conservación, mejora y uso sostenible de los bienes comunes. El maltrato animal y su prevención.",
+        "Estilos de vida sostenible. El uso responsable del agua, la movilidad segura, saludable y sostenible, y la prevención y gestión de los residuos."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Segundo ciclo de Educación Primaria",
+   "cursos": [
+    3,
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Iniciación a la investigación y a los métodos de trabajo para la realización de proyectos, que analicen hechos, asuntos y temas de la vida cotidiana o de relevancia actual desde una perspectiva histórica, contextualizándolos en la época correspondiente desde la Prehistoria a la Edad Contemporánea, como son la supervivencia y la alimentación, la vivienda, los intercambios comerciales (de dónde viene el dinero, los trabajos no remunerados), la explotación de bienes comunes y recursos, los avances técnicos.",
+        "Las fuentes históricas: clasificación y utilización de las distintas fuentes (orales, escritas, patrimoniales) como vía para el análisis de los cambios y permanencias en la localidad a lo largo de la historia. Las huellas de la historia en lugares, edificios, objetos, oficios o tradiciones de la localidad.",
+        "La representación gráfica del espacio y del tiempo. Comparación de mapas y planos de diferentes escalas. Representaciones gráficas y visuales del clima y los paisajes. Las Tecnologías de la Información Geográfica (TIG)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sociedades y territorios",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Retos del mundo actual",
+       "saberes": [
+        "Conocimiento del espacio. Representación de la Tierra a través del globo terráqueo, los mapas y otros recursos analógicos y digitales. Mapas y planos en distintas escalas. Técnicas de orientación mediante la observación de los elementos del medio físico y otros medios de localización espacial.).",
+        "El clima y el paisaje. gráfica. Relación entre las zonas climáticas y la diversidad de paisajes. El medio físico de Aragón. Distribución territorial de Aragón.",
+        "Retos demográficos. Ocupación y distribución de la población en el espacio y análisis de los principales problemas y retos demográficos. Representación gráfica y cartográfica de la población. La organización del territorio en Aragón y rasgos básicos de España y en Europa.",
+        "Desigualdad social y acceso a los recursos. Usos del espacio por el ser humano y evolución de las actividades productivas. El valor, el control del dinero y medios de pago. De la supervivencia a la sobreproducción."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Sociedades en el tiempo",
+       "saberes": [
+        "El tiempo histórico. Nociones temporales y cronología. Representación gráfica del tiempo (líneas del tiempo y ejes cronológicos).",
+        "Ubicación temporal de las grandes etapas históricas en ejes cronológicos. Características civilizaciones y sociedades representativas de las grandes etapas cronológicas, profundizando en las referentes a España y Aragón.",
+        "La acción de las mujeres y los hombres como sujetos en la historia. Interpretación del papel de los individuos y de los distintos grupos sociales, relaciones, conflictos, creencias y condicionantes en cada época histórica. Las personas como agentes/motor de los cambios.",
+        "Introducción a las expresiones artísticas y culturales y su contextualización histórica, incluyendo una perspectiva de género. La función del arte y la cultura en el mundo a lo largo de las diferentes etapas históricas.",
+        "Ejemplos destacados del patrimonio natural y cultural de Aragón. Los espacios protegidos, culturales y naturales, parques culturales y elementos patrimoniales protegidos. Patrimonio material e inmaterial. Su uso, cuidado y conservación. Las lenguas propias de Aragón (aragonés y catalán)."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Alfabetización cívica",
+       "saberes": [
+        "Compromisos y normas para la vida en sociedad.",
+        "Las costumbres, tradiciones y manifestaciones etnoculturales del entorno. Respeto por la diversidad cultural, los derechos humanos y la cohesión social. La cultura de paz y no violencia.",
+        "La organización política y territorial de Aragón y rasgos básicos de España.",
+        "Organización y funcionamiento de la sociedad. Las principales instituciones y entidades del entorno local, regional y nacional y los servicios públicos que prestan. Estructura administrativa de Aragón y aspectos básicos de la España.",
+        "Seguridad vial. La ciudad como espacio de convivencia. Normas de circulación, señales y marcas viales. Movilidad segura, saludable y sostenible como peatones y usuarios de los medios de locomoción."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Conciencia ecosocial",
+       "saberes": [
+        "Riesgos ambientales y el cambio climático. Introducción a las causas y consecuencias del cambio climático y los riesgos ambientales, y su impacto en los paisajes de la Tierra. Medidas de mitigación y adaptación.",
+        "Responsabilidad ecosocial. Ecodependencia e interdependencia entre personas, sociedades y medio natural.",
+        "Ciudadanía geográfica espacial.",
+        "Desequilibrios territoriales",
+        "La transformación y la degradación de los ecosistemas naturales por acción humana. Conservación y protección de la naturaleza. El maltrato animal y su prevención.",
+        "Estilos de vida sostenible. El consumo responsable, el uso del agua y la energía, la movilidad sostenible y la gestión de los residuos."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Tercer ciclo de Educación Primaria",
+   "cursos": [
+    5,
+    6
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Aplicación de competencias del pensamiento histórico.",
+        "Las fuentes históricas: clasificación y utilización de fuentes de distinta naturaleza (orales, escritas, materiales, iconográficas, etc).",
+        "Representación gráfica, visual y cartográfica a través de medios y recursos analógicos y digitales usando las Tecnologías de la Información Geográfica (TIG). Representación gráfica del tiempo (líneas temporales, mapas históricos, etc.)"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sociedades y territorios",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Retos del mundo actual",
+       "saberes": [
+        "El clima y el planeta. Introducción a la dinámica atmosférica y a las grandes áreas climáticas del mundo. Los principales ecosistemas y sus paisajes.",
+        "El entorno natural. La diversidad geográfica de España y de Europa.",
+        "Migraciones y diversidad cultural. Las principales variables demográficas y su representación gráfica. Los comportamientos de la población y su evolución. Los movimientos migratorios y apreciación de la diversidad cultural. Contraste entre zonas urbanas y despoblación rural.",
+        "Ciudadanía activa. Fundamentos y principios para la organización política y gestión del territorio en España y Europa. Participación social y ciudadana. Ciudadanía europea.",
+        "Igualdad de género y conductas no sexistas. Crítica de los estereotipos y roles en los distintos ámbitos: académico, profesional, social y cultural. Acciones para la igualdad efectiva de mujeres y hombres."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Sociedades en el tiempo",
+       "saberes": [
+        "Acontecimientos y procesos históricos relevantes en la historia del mundo desde la Prehistoria a la actualidad, el papel representado por los sujetos históricos (individuales y colectivos), acontecimientos y procesos.",
+        "Principales hitos de la evolución histórica de Aragón y de España",
+        "El patrimonio natural y cultural material e inmaterial de Aragón y España como bien y recurso; su uso, cuidado y conservación. Las lenguas propias de Aragón (aragonés y catalán).",
+        "El papel de las mujeres en la historia y los principales movimientos en defensa de sus derechos. Situación actual y retos de futuro en la igualdad de género. Otros movimientos en defensa de los derechos de diferentes colectivos sociales.",
+        "Profundización en la función del arte y la cultura. Las expresiones artísticas y culturales y su contextualización histórica, incluyendo una perspectiva de género.",
+        "La memoria democrática. Análisis multicausal del proceso de construcción de la democracia en España. La Constitución de 1978."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Alfabetización cívica",
+       "saberes": [
+        "Historia y cultura de las minorías étnico-culturales presentes en nuestro país, particularmente las propias del pueblo gitano. Reconocimiento de la diversidad cultural y lingüística de Aragón y de España.",
+        "Los principios y valores de los derechos humanos y de la infancia y la Constitución española, derechos y deberes de la ciudadanía. La contribución del Estado y sus instituciones a la paz, la seguridad integral y la cooperación internacional para el desarrollo.",
+        "La cultura de paz y no violencia. El pensamiento crítico como herramienta para el análisis de los conflictos de intereses. El reconocimiento de las víctimas de la violencia.",
+        "La organización política. Principales entidades políticas y administrativas del entorno local, autonómico y nacional en Aragón y España. Sistemas de representación y de participación política.",
+        "Fórmulas para la participación de la ciudadanía en la vida pública en Aragón, España y Europa.",
+        "Aragón, España y Europa. Las principales instituciones de Aragón, España y de la Unión Europea, de sus valores y de sus funciones. Los ámbitos de acción de las instituciones autonómicas, estatales y europeas y su repercusión en el entorno. B. 4. Conciencia ecosocial:",
+        "El cambio climático de lo local a lo global: causas y consecuencias. Medidas de mitigación y adaptación.",
+        "Responsabilidad ecosocial. Ecodependencia, interdependencia e interrelación entre personas, sociedades y medio natural.",
+        "El desarrollo sostenible. La actividad humana sobre el espacio y la explotación de los recursos. La actividad económica y la distribución de la riqueza: desigualdad social y regional en el mundo y en España. Los Objetivos de Desarrollo Sostenible.",
+        "Economía verde. La influencia de los mercados (de bienes, financiero y laboral) en la vida de la ciudadanía. Los agentes económicos y los derechos laborales desde una perspectiva de género. El valor social de los impuestos. Responsabilidad social y ambiental de las empresas. Publicidad, consumo responsable (necesidades y deseos) y derechos del consumidor.",
+        "Estilos de vida sostenible: los límites del planeta y el agotamiento de recursos. La huella ecológica.",
+        "Agenda Urbana. El desarrollo urbano sostenible. La ciudad como espacio de convivencia."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 98.5,
+  "no_encontrados": [
+   "saber B.1: Conocimiento del espacio. Representación de la Tierra a través del globo terráqueo, los mapas y otros recursos analógico",
+   "saber B.3: Aragón, España y Europa. Las principales instituciones de Aragón, España y de la Unión Europea, de sus valores y de sus "
+  ]
+ },
+ "materia": "Ciencias Sociales"
+}

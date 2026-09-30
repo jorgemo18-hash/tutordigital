@@ -1,0 +1,301 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "55 Sociedad, Medioambiente y Territorios Sostenibles.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.SMT.1",
+   "texto": "Conocer los elementos esenciales que conforman las sociedades humanas, identificando desde una perspectiva geográfica las interacciones entre el medio natural y el ser humano, para comprender así la configuración de paisajes, estructuras territoriales y organizaciones sociales complejas en constante proceso de evolución y transformación."
+  },
+  {
+   "codigo": "CE.SMT.2",
+   "texto": "Entender el proceso de globalización actual como marco general en el que se encuadran las sociedades humanas condicionando la evolución de los sistemas económicos así como los comportamientos sociales y culturales recientes, profundizando con carácter crítico en las relaciones de causa y efecto para comprender la interconexión e interdependencia establecidas en todos los ámbitos territoriales y escalas, para promover una ciudadanía global basada en el respeto a los derechos humanos y a la preservación del medioambiente."
+  },
+  {
+   "codigo": "CE.SMT.3",
+   "texto": "Introducir a la aplicación de las Tecnologías de la Información Geográfica (TIG), herramientas espaciales, métodos y técnicas propios o de ciencias afines, localizando fenómenos naturales y humanos, y argumentando con rigor sus límites o categorías, para resolver eficientemente el problema de la escala en cualquier análisis o propuesta de actuación."
+  },
+  {
+   "codigo": "CE.SMT.4",
+   "texto": "Tomar conciencia de la situación del medioambiente en el mundo actual, de la importancia del medio natural como soporte esencial de la vida en el planeta, de su difícil y precario equilibrio, de las consecuencias que sobre el mismo tiene el desarrollo humano en sus múltiples vertientes, y por lo tanto de la necesidad de incorporar la noción de sostenibilidad ambiental como cuestión clave que debe estar presente en la toma de decisiones y en la formación de ciudadanos y ciudadanas responsables."
+  },
+  {
+   "codigo": "CE.SMT.5",
+   "texto": "Presentar las características esenciales de los territorios y explicar de forma crítica los desequilibrios tanto ambientales como demográficos, económicos o sociales que presentan, identificando los procesos y las decisiones que han contribuido a generar la situación presente, para reflexionar y tomar conciencia de los problemas al tiempo que se proponen soluciones y propuestas que, tomando como referencia modelos de desarrollo más sostenibles, permitan contribuir a la ordenación del territorio y a una mejor calidad de vida para sus habitantes."
+  },
+  {
+   "codigo": "CE.SMT.6",
+   "texto": "Reconocer los retos ecosociales actuales y futuros de la sociedad, debatiendo desde la perspectiva geográfica sobre los mensajes recibidos a través de canales oficiales y extraoficiales, formales e informales, y desarrollando el pensamiento crítico, para transformar patrones de consumo insostenibles y adoptar hábitos de vida saludables."
+  },
+  {
+   "codigo": "CE.SMT.7",
+   "texto": "Movilizar conocimientos previos, nuevos y de otros campos del saber al abordar situaciones del pasado, del presente o del futuro, reorientando eficazmente decisiones y estrategias de trabajo individual o en equipo, para aportar soluciones innovadoras a contextos en transformación y fomentar el aprendizaje permanente."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.SMT.1",
+   "columna": null,
+   "texto": "Comprender el complejo proceso de configuración de las sociedades humanas a lo largo del tiempo y del espacio, valorando la diversidad de resultados como expresión de la diversidad humana y su gran riqueza etnocultural.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.SMT.1",
+   "columna": null,
+   "texto": "Analizar la importancia de las interacciones entre el medio natural y el ser humano como factor clave que explica la configuración de paisajes y las estructuras territoriales en el mundo.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.SMT.2",
+   "columna": null,
+   "texto": "Valorar la dignidad humana analizando críticamente las consecuencias de nuestras acciones sobre las condiciones laborales y de vida, tanto en España como en otros países, investigando el sistema de relaciones económicas globalizadas y los sectores económicos, y planteando soluciones razonables.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.SMT.2",
+   "columna": null,
+   "texto": "Expresar la necesidad de preservar el medioambiente, indagando sobre los impactos de los modos de producción, distribución y consumo a escala local y global, y proponiendo actuaciones de mejora.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.SMT.3",
+   "columna": null,
+   "texto": "Emplear la escala apropiada para localizar o representar, con apoyo de las TIG, cualquier fenómeno físico o humano, justificando los métodos y datos elegidos, y la delimitación de regiones o categorías de análisis, así́ como de áreas de transición.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.SMT.3",
+   "columna": null,
+   "texto": "Crear productos propios individuales o en grupo con fines explicativos comunicando diagnósticos, proponiendo hipótesis o conclusiones, y aplicando las TIG.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.SMT.4",
+   "columna": null,
+   "texto": "Valorar todo impacto de la acción antrópica desde el principio de sostenibilidad, reconociendo la complejidad sistémica del medio natural y de las propias actividades humanas.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.SMT.4",
+   "columna": null,
+   "texto": "Extraer información de paisajes naturales y humanizados, analizando fuentes visuales, distinguiendo elementos geográficos e interpretando la influencia e interrelaciones de factores físicos y humanos.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.SMT.5",
+   "columna": null,
+   "texto": "Elaborar una síntesis territorial identificando los rasgos esenciales que definen cada conjunto espacial.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.SMT.5",
+   "columna": null,
+   "texto": "Justificar la necesidad de los mecanismos de compensación de los desequilibrios tanto ambientales como demográficos, económicos o sociales, identificando los procesos pasados y recientes, así como sus causas y consecuencias actuales.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.SMT.5",
+   "columna": null,
+   "texto": "Argumentar el origen de los desequilibrios socioeconómicos analizando los factores de localización de las actividades económicas y de la población en una sociedad terciarizada.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.SMT.6",
+   "columna": null,
+   "texto": "Cuestionar modos de vida insostenibles mediante el análisis geográfico de todo tipo de fuentes de información que traten los retos ecosociales presentes y futuros, y desde argumentos fundados sobre su relevancia y la necesidad de las acciones para afrontarlos.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.SMT.6",
+   "columna": null,
+   "texto": "Debatir sobre los retos naturales y sociales de la sociedad actual de forma comprometida y respetuosa con opiniones ajenas, utilizando estrategias orales con apoyo digital de gráficos, imágenes y cartografía, y presentando en público datos rigurosos.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.SMT.7",
+   "columna": null,
+   "texto": "Reelaborar saberes sobre fenómenos naturales y humanos relevantes a diferentes escalas y en nuevos contextos, aplicando el pensamiento geográfico, movilizando y revisando críticamente conocimientos previos y nuevos, diagnosticando problemas y oportunidades, y razonando previsiones y posibles soluciones.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "La configuración de las sociedades humanas a lo largo del tiempo y del espacio",
+       "saberes": [
+        "Comprender la organización social y su plasmación territorial."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "La población mundial",
+       "saberes": [
+        "evolución, distribución, estructura y dinámicas recientes. Interpretación causal de datos, gráficos y mapas para comprender el proceso de transición demográfica a escala global, la cuestión de la explosión demográfica y los movimientos migratorios. Visión crítica en relación al reto demográfico en la sociedad desarrolladas: envejecimiento, despoblación e inmigración."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Los espacios urbanos y su creciente importancia en el mundo globalizado",
+       "saberes": [
+        "El crecimiento de las ciudades en el contexto de la globalización, así como la configuración de los diferentes tipos de aglomeraciones urbanas en el mundo, analizando de forma crítica sus repercusiones sobre las formas de vida, producción y el medioambiente, reflexionando sobre los cambios necesarios para poder generar ciudades más sostenibles."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "La configuración de los espacios productivos en el mundo",
+       "saberes": [
+        "analizar los espacios y paisajes agrarios, las zonas industriales y la evolución de sus factores de localización en el marco de la globalización, así como los espacios terciarizados y su importancia creciente en la economía y la sociedad actuales."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "La globalización y su influencia en las sociedades humanas",
+       "saberes": [
+        "manejar datos, indicadores significativos, gráficos y mapas para desarrollar una visión crítica sobre los procesos globalizadores en el ámbito económico, político, social, cultural y ambiental."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Los desequilibrios territoriales como consecuencia de la desigual distribución de los recursos y las dinámicas de concentración derivadas de la acción humana",
+       "saberes": [
+        "La repercusión en la desigual distribución de la población la riqueza, la innovación, la calidad ambiental y la situación social de los seres humanos. El debate sobre las políticas de desarrollo y reequilibrio territorial."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. El medioambiente y los grandes problemas del mundo actual",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Factores físicos y diversidad de paisajes y ecosistemas",
+       "saberes": [
+        "Análisis como condicionante geomorfológico, bioclimático, edáfico, hídrico y de las actividades humanas y prevención de sus riesgos asociados para las personas."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Diversidad climática. Análisis comparativos de distribución y representación de climas. Emergencia climática",
+       "saberes": [
+        "cambios en los patrones termopluviométricos; causas, consecuencias y medidas de adaptación. Estrategias de interpretación del tiempo y alertas meteorológicas."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Biodiversidad, suelos y red hídrica",
+       "saberes": [
+        "Características por regiones naturales. Impacto de las actividades humanas y efectos sobre las mismas: pérdida de biodiversidad, de suelos y gestión del agua. La destrucción de ecosistemas por intereses económicos. Interpretación de imágenes, cartografía y datos. Riesgos generados por las personas."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Políticas ambientales en el mundo, la Unión Europea y España",
+       "saberes": [
+        "uso de herramientas de diagnóstico. La red de Espacios Naturales Protegidos y la red Natura 2000. El debate sobre los cambios del modelo de desarrollo: el principio de sostenibilidad."
+       ]
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "Los conflictos en el mundo",
+       "saberes": [
+        "Las guerras, el crimen organizado, las redes de tráfico ilegal (drogas, minerales, especies protegidas, seres humanos, etcétera) o los índices de violencia asociados a la pobreza. Los acuerdos internacionales y la necesidad de establecer políticas globales que consigan reducir estos graves problemas sociales"
+       ]
+      },
+      {
+       "codigo": "B.6",
+       "nombre": "El desarrollo humano",
+       "saberes": [
+        "La cuestión de la desigualdad y el acceso a los servicios básicos. La situación de la mujer en el mundo. Los Objetivos de Desarrollo Sostenible (ODS)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Territorios sostenibles y políticas responsables",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Las políticas y actuaciones en relación al cambio climático.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "La gestión de los recursos hídricos, la conservación de los humedales y la recuperación de acuíferos.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "El problema de la desertificación, la degradación de los suelos y la pérdida de la biodiversidad.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "La intervención en los océanos para evitar la contaminación y acidificación de los océanos, así como la sobreexplotación pesquera.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.5",
+       "nombre": "La progresiva reducción del consumo de combustibles fósiles, la transición a las energías renovables y la huella de carbono.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.6",
+       "nombre": "La necesidad de políticas de protección del medio rural, del sector primario como sector estratégico y de los recursos cinegéticos, los corredores biológicos, el fenómeno de la “neoruralidad”, la figura del humano como guardián del medio rural y sus ecosistemas, el fomento del consumo de productos de proximidad en relación a la agricultura ecológica y biológica y sus posibilidades de crecimiento.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.7",
+       "nombre": "La gestión de los residuos y la energía a escala supramunicipal (comarcal, mancomunal y otras fórmulas comunitarias).",
+       "saberes": []
+      },
+      {
+       "codigo": "C.8",
+       "nombre": "El transporte público de calidad, el regreso del tren para las distancias medias y cercanías.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.9",
+       "nombre": "La ciudad 2.0, el uso de los espacios verdes en las ciudades como zonas de cultivo, los huertos urbanos, los parques como llanuras de inundación o sistemas de contención en desbordamientos de ríos u océanos.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.10",
+       "nombre": "La ordenación del territorio para adaptar la acción humana al medio natural y sus cambios para evitar riesgos.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.11",
+       "nombre": "El asociacionismo como forma de garantizar una mayor conciencia sobre los problemas ambientales y una forma de actuar sobre los medios de vida y la sostenibilidad.",
+       "saberes": []
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Sociedad, Medioambiente y Territorios Sostenibles"
+}

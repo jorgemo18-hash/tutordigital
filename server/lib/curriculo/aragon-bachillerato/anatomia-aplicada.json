@@ -1,0 +1,418 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "03 Anatomía Aplicada.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.AA.1",
+   "texto": "Utilizar recursos variados, con sentido crítico y ético, para buscar y seleccionar información contrastada argumentando sobre ella, detectar los bulos y la desinformación y establecer colaboraciones con la sociedad."
+  },
+  {
+   "codigo": "CE.AA.2",
+   "texto": "Planificar y desarrollar proyectos de investigación, siguiendo los pasos de las metodologías propias de la ciencia utilizando con precisión, procedimientos, materiales o instrumentos adecuados, y cooperando cuando sea necesario para indagar en aspectos relacionados con los procesos físicos, químicos y biológicos relacionados con la salud y los hábitos saludables."
+  },
+  {
+   "codigo": "CE.AA.3",
+   "texto": "Comprender y explicar los procesos funcionales del cuerpo humano, utilizando los principios, leyes y teorías científicas adecuadas, para adquirir una visión holística y sistémica de su funcionamiento y de su interacción con el medio natural."
+  },
+  {
+   "codigo": "CE.AA.4",
+   "texto": "Analizar los efectos de determinadas acciones humanas sobre el medio ambiente cuyas consecuencias repercuten en la salud, basándose en fundamentos científicos, para promover y adoptar hábitos que eviten o minimicen los impactos medioambientales negativos para que sean compatibles con un desarrollo sostenible y permitan mantener y mejorar la salud individual y colectiva."
+  },
+  {
+   "codigo": "CE.AA.5",
+   "texto": "Argumentar sobre la importancia de los hábitos saludables y sostenibles, basándose en fundamentos científicos, para adoptarlos y promoverlos en su entorno familiar y social."
+  },
+  {
+   "codigo": "CE.AA.6",
+   "texto": "Resolver problemas relacionados con la salud y los hábitos saludables aplicando el pensamiento científico y los razonamientos lógico-matemáticos, mediante la búsqueda y selección de estrategias y herramientas científicotecnológicas apropiadas."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.AA.1",
+   "columna": null,
+   "texto": "Reconocer la información en torno a temas sobre la salud y el bienestar con consistencia científica, distinguiéndola de pseudociencias, bulos, teorías conspiratorias y creencias infundadas y manteniendo una actitud escéptica ante estos.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.AA.1",
+   "columna": null,
+   "texto": "Manejar con soltura diferentes medios de consulta para conseguir la información necesaria en la resolución de dudas o cuestiones sobre salud.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.AA.1",
+   "columna": null,
+   "texto": "Utilizar la información adecuada respetando la autoría de las fuentes y citándolas correctamente.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.AA.1",
+   "columna": null,
+   "texto": "Entender la investigación como una labor colectiva e interdisciplinar en constante evolución que debe compartirse a través de la divulgación responsable.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.AA.2",
+   "columna": null,
+   "texto": "Plantear preguntas, realizar predicciones y formular hipótesis en torno a la salud y la anatomía y fisiología del cuerpo humano que puedan ser respondidas o contrastadas utilizando métodos científicos.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.AA.2",
+   "columna": null,
+   "texto": "Diseñar la experimentación, la toma de datos y el análisis de fenómenos biológicos y ambientales y seleccionar los instrumentos necesarios que permitan responder a preguntas concretas o contrastar las hipótesis planteadas, minimizando los sesgos en la medida de lo posible.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.AA.2",
+   "columna": null,
+   "texto": "Realizar la experimentación y la toma de datos cuantitativos y cualitativos seleccionando los materiales, herramientas o técnicas adecuadas con corrección y precisión.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.AA.2",
+   "columna": null,
+   "texto": "Interpretar y analizar los resultados obtenidos de un proyecto de investigación usando, cuando sea necesario, herramientas matemáticas y tecnológicas, reconociendo su alcance y sus limitaciones y obteniendo conclusiones razonadas y fundamentadas o reconociendo la imposibilidad de hacerlo.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.5",
+   "competencia": "CE.AA.2",
+   "columna": null,
+   "texto": "Establecer colaboraciones dentro y fuera del centro educativo en las fases del proyecto de investigación que lo requieran para aumentar la eficacia y la difusión, usando las herramientas digitales adecuadas, valorando la cooperación en la investigación, respetando la diversidad y favoreciendo la discusión.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.AA.3",
+   "columna": null,
+   "texto": "Comprender los procesos relacionados con las funciones de nutrición, relación y reproducción y establecer el papel que realiza cada uno de los sistemas y aparatos implicados en cada una de esas funciones.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.AA.3",
+   "columna": null,
+   "texto": "Adquirir el vocabulario y las expresiones necesarias para expresarse con precisión y respeto alrededor de los temas relacionados con la anatomía, morfología y fisiología humanas.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.AA.3",
+   "columna": null,
+   "texto": "Descubrir las estrechas relaciones de dependencia entre los diferentes sistemas y aparatos y visualizar el cuerpo humano como un todo, en el que los sistemas deben ser analizados en su conjunto y no solo a través del análisis de las partes que los componen.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.AA.4",
+   "columna": null,
+   "texto": "Analizar situaciones generadas por las acciones humanas que comportan modificaciones en el medio ambiente con consecuencias para la salud a nivel individual, local y global.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.AA.4",
+   "columna": null,
+   "texto": "Comprender la relación directa que existe entre la calidad del medio ambiente en el que vivimos y el buen funcionamiento de los aparatos y sistemas del cuerpo humano y la propia sensación de bienestar.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.AA.4",
+   "columna": null,
+   "texto": "Proponer y crear soluciones en el entorno cercano que contribuyan a minimizar el impacto medioambiental negativo para compatibilizar el entorno con el ejercicio de una vida sana individual y colectiva.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.AA.5",
+   "columna": null,
+   "texto": "Comprender y argumentar con fundamentos científicos la necesidad de abordar las actividades personales y colectivas de forma respetuosa con el propio cuerpo y con el medio ambiente del que depende la propia salud.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.AA.5",
+   "columna": null,
+   "texto": "Observar y analizar las situaciones cotidianas individuales y colectivas y encontrar y descubrir cómo realizarlas respetando las necesidades del cuerpo humano y de su entorno, para determinar optimizarlas y evitar los malos hábitos que ponen en riesgo la salud y que se deben transformar en saludables.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.AA.5",
+   "columna": null,
+   "texto": "Aplicar lo aprendido en relación a las necesidades fisiológicas y psicológicas del ser humano en la vida cotidiana para garantizar la salud y la sensación de bienestar físico, psíquico y social.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.4",
+   "competencia": "CE.AA.5",
+   "columna": null,
+   "texto": "Divulgar y difundir las actitudes respetuosas y los hábitos saludables con el cuerpo y con el entorno que promueven la salud y un ambiente saludable y colaboran en la sensación de bienestar.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Estrategias para la búsqueda de información",
+       "saberes": [
+        "Instituciones científicas con publicaciones sobre temas relacionados con el funcionamiento del cuerpo humano",
+        "Uso responsable de la búsqueda en internet y en las redes sociales",
+        "Herramientas informáticas y documentales básicas para buscar y acceder a instigaciones que sobre la materia puedan publicarse a través de la red o en las publicaciones especializadas",
+        "Participación en entornos colaborativos fiables con interés sobre esta materia"
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Fuentes de información",
+       "saberes": [
+        "Fuentes fiables de información sobre salud y hábitos saludables",
+        "Reconocimiento, respeto de la autoría y uso",
+        "Citación correcta de las fuentes y respeto a la autoría"
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Desinformación en torno a la salud",
+       "saberes": [
+        "Información sobre salud y bienestar con consistencia científica frente a pseudociencias, bulos, teorías conspiratorias y creencias infundadas",
+        "Análisis e interpretación de textos sobre salud y fisiología humanas para reconocer sesgos o radicalidad de información."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Salud y medio ambiente",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "La salud",
+       "saberes": [
+        "Concepto de Salud según la OMS",
+        "Tratamientos médicos (higiénicos, farmacológicos, quirúrgicos…) con finalidad de curar enfermedades o mitigar sus síntomas",
+        "Etapas en la experiencia de enfermedad. La conducta del paciente. La historia clínica. La dependencia del sistema de salud. Salud pública.",
+        "Medicina frente a “pseudomedicinas”."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "La salud y el medio ambiente",
+       "saberes": [
+        "Aire, agua, radiación, ruido ambiental, entorno de trabajo, interior de edificios, calidad ambiental en los lugares de producción de alimento (agricultura, ganadería…), prácticas agrícolas (uso de plaguicidas, reutilización de aguas residuales…), entornos urbanizados, cambio climático.",
+        "Factores químicos, físicos, biológicos y sociales externos al cuerpo humano que afecta su salud y la sensación de bienestar.",
+        "Principales efectos de la salud atribuibles a factores ambientales: enfermedades respiratorias, trastornos neurológicos de desarrollo, cáncer, exposición a humos durante los embarazos, alteraciones en la actividad inmunológica por plaguicidas o radiación ultravioleta, disminución en la eficacia de aprendizaje en escuelas junto a espacios con niveles de ruido elevado o persistentes. Relaciones causa-efecto."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. El cuerpo humano como sistema",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Niveles de organización del cuerpo humano",
+       "saberes": [
+        "Nivel atómico, molecular, celular, tisular, órganos, sistemas y aparatos, individuo, población, ecosistema."
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Sistemas y aparatos",
+       "saberes": [
+        "Presentación de los diferentes sistemas y aparatos en una visión de conjunto, asociados a las tres funciones vitales."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "El cuerpo humano como sistema",
+       "saberes": [
+        "El cuerpo como sistema vivo global que sigue las leyes de la Biología, cuyos aparatos y sistemas trabajan hacia un fin común",
+        "Dependencia entre los diferentes sistemas y aparatos."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "El microbioma humano",
+       "saberes": [
+        "Microorganismos que residen en la piel o el tracto digestivo. Sus efectos beneficiosos para la salud en el ser humano. La fragilidad de la biota humana frente al abuso de medicamentos como los antibióticos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Alimentación y nutrición",
+     "apartados": [
+      {
+       "codigo": "D.1",
+       "nombre": "Diferencia entre alimentación y nutrición",
+       "saberes": [
+        "Nutrientes inorgánicos y orgánicos.",
+        "Metabolismo: catabolismo y anabolismo y el flujo de energía. ATP como molécula intermediaria de energía entre uno y otro.",
+        "Alimentos y sus nutrientes. Tipos de alimentos.",
+        "Dietas equilibradas y dietas restrictivas. Hábitos saludables en la alimentación. Los factores sociales y el comportamiento alimentario.",
+        "Alimentación e hidratación y el ejercicio físico"
+       ]
+      },
+      {
+       "codigo": "D.2",
+       "nombre": "Anatomía y fisiología del aparato digestivo",
+       "saberes": [
+        "Estructura del aparato digestivo: tejidos y órganos.",
+        "Anatomía y fisiología del aparato digestivo",
+        "Procesos digestivos: ingestión, digestión, absorción y eliminación de residuos.",
+        "Hábitos saludables en relación al aparato digestivo"
+       ]
+      },
+      {
+       "codigo": "D.3",
+       "nombre": "Anatomía y fisiología del aparato excretor",
+       "saberes": [
+        "La excreción: sudor, lágrimas y orina",
+        "Anatomía y fisiología del aparato excretor. Riñones, uréteres, vejiga y uretra. Glándulas lacrimales y sudoríparas.",
+        "Hábitos saludables en torno a la excreción."
+       ]
+      },
+      {
+       "codigo": "D.4",
+       "nombre": "Anatomía y fisiología del aparato circulatorio",
+       "saberes": [
+        "Anatomía y fisiología del aparato circulatorio: sistema sanguíneo y sistema linfático. Vasos sanguíneos, corazón y circulación sanguínea y linfática.",
+        "Hábitos saludables en relación al aparato circulatorio"
+       ]
+      },
+      {
+       "codigo": "D.5",
+       "nombre": "Anatomía y fisiología de los aparatos respiratorio y fonador",
+       "saberes": [
+        "Anatomía y fisiología del aparato respiratorio. La respiración.",
+        "Estructura y funcionamiento del aparato fonador. Uso de la voz y disfonías por su mal uso.",
+        "Hábitos saludables en relación al aparato respiratorio y fonador."
+       ]
+      },
+      {
+       "codigo": "D.6",
+       "nombre": "Trastornos asociados a los aparatos y sistemas de la función de nutrición",
+       "saberes": [
+        "Enfermedades frecuentes de los aparatos digestivo, excretor, circulatorio y respiratorio/fonador",
+        "tratamientos y profilaxis"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. La función de relación",
+     "apartados": [
+      {
+       "codigo": "E.1",
+       "nombre": "Sistema Nervioso y órganos de los sentidos",
+       "saberes": [
+        "El tejido nervioso. Funcionamiento del impulso nervioso, la sinapsis entre neuronas y los neurotransmisores.",
+        "sustancias que provocan adicciones y su efecto negativo sobre la salud.",
+        "Estructura y función del sistema nervioso: sistema nervioso central y el sistema nervioso periférico. Su funcionamiento.",
+        "Hábitos saludables en relación al sistema nervioso"
+       ]
+      },
+      {
+       "codigo": "E.2",
+       "nombre": "Sistema endocrino",
+       "saberes": [
+        "hormonas: naturaleza química y función",
+        "órganos, glándulas y células que producen hormonas",
+        "la regulación hormonal"
+       ]
+      },
+      {
+       "codigo": "E.4",
+       "nombre": "Hábitos saludables de los sistemas coordinadores",
+       "saberes": [
+        "Alimentación adecuada. Los problemas de salud asociados al consumo de tabaco, alcohol, esteroides y drogas. Higiene del sueño. El estrés y el control emocional. La conveniencia de mantener una mente activa"
+       ]
+      },
+      {
+       "codigo": "E.5",
+       "nombre": "Aparato locomotor",
+       "saberes": [
+        "La locomoción en el ser humano. El movimiento en la vida cotidiana y en la expresión corporal etológica (el lenguaje no verbal) y artística",
+        "Sistema esquelético: anatomía y fisiología. Hábitos saludables.",
+        "Sistema muscular: anatomía y fisiología. Hábitos saludables"
+       ]
+      },
+      {
+       "codigo": "E.6",
+       "nombre": "Sistema inmunológico",
+       "saberes": [
+        "Sustancias y células que intervienen en la respuesta inmunológica frente a agentes patógenos.",
+        "Sistema inmunológico innato y adaptativo. Respuestas primaria y secundaria.",
+        "Inmunidad activa y pasiva. Inmunidad artificial y natural. Responsabilidad social frente a las enfermedades extendidas en las poblaciones humanas: el calendario de vacunas y los sistemas de prevención de enfermedades como los protocolos de detección del cáncer o la vacunación contra la Covid19.",
+        "Errores del sistema inmunológico: las alergias.",
+        "Relación entre el ejercicio físico y la actividad del sistema inmunológico."
+       ]
+      },
+      {
+       "codigo": "E.7",
+       "nombre": "Trastornos asociados a los aparatos y sistemas efectores.",
+       "saberes": [
+        "Enfermedades frecuentes del aparato locomotor y del sistema inmunológico de relación: sistema nervioso, aparato locomotor, sistema endocrino y sistema inmunológico",
+        "Tratamientos y profilaxis"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Sexualidad y reproducción",
+     "apartados": [
+      {
+       "codigo": "F.1",
+       "nombre": "Aparato reproductor",
+       "saberes": [
+        "Aparato reproductor femenino. Fisiología y ciclo ovárico y endometrial.",
+        "Aparato reproductor masculino. Fisiología.",
+        "Hábitos saludables vinculados al aparato reproductor."
+       ]
+      },
+      {
+       "codigo": "F.2",
+       "nombre": "Diferencia entre reproducción y sexualidad",
+       "saberes": [
+        "Diferencia entre reproducción y sexualidad. Reproducción sexual.",
+        "Reproducción humana. Hábitos saludables."
+       ]
+      },
+      {
+       "codigo": "F.3",
+       "nombre": "La compleja sexualidad humana",
+       "saberes": [
+        "Educación sexual y perspectiva de género para fomentar la salud sexual integral, que alejen al alumnado de relaciones con desigualdad, desequilibrios de poder y dinámicas tóxicas."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 98.9,
+  "no_encontrados": [
+   "saber B.2: Aire, agua, radiación, ruido ambiental, entorno de trabajo, interior de edificios, calidad ambiental en los lugares de p"
+  ]
+ },
+ "materia": "Anatomía Aplicada"
+}

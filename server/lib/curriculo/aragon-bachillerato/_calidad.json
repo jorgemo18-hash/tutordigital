@@ -1,0 +1,669 @@
+[
+ {
+  "materia": "Artes Escénicas",
+  "archivo": "artes-escenicas",
+  "competencias": 5,
+  "criterios": 21,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Artes Escénicas I": 25,
+   "Artes Escénicas II": 27
+  },
+  "literal": 98.8
+ },
+ {
+  "materia": "Análisis Musical",
+  "archivo": "analisis-musical",
+  "competencias": 5,
+  "criterios": 22,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Análisis Musical I": 11,
+   "Análisis Musical II": 9
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Anatomía Aplicada",
+  "archivo": "anatomia-aplicada",
+  "competencias": 6,
+  "criterios": 19,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 64
+  },
+  "literal": 98.9
+ },
+ {
+  "materia": "Biología",
+  "archivo": "biologia",
+  "competencias": 6,
+  "criterios": 12,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 37
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Biología, Geología y Ciencias Ambientales",
+  "archivo": "biologia-geologia-y-ciencias-ambientales",
+  "competencias": 6,
+  "criterios": 17,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 45
+  },
+  "literal": 98.5
+ },
+ {
+  "materia": "Ciencias de la Tierra y del Medioambiente",
+  "archivo": "ciencias-de-la-tierra-y-del-medioambiente",
+  "competencias": 5,
+  "criterios": 14,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 96
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Ciencias Generales",
+  "archivo": "ciencias-generales",
+  "competencias": 6,
+  "criterios": 14,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 31
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Coro y Técnica Vocal",
+  "archivo": "coro-y-tecnica-vocal",
+  "competencias": 4,
+  "criterios": 9,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Coro y Técnica Vocal I": 21,
+   "Coro y Técnica Vocal II": 20
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Cultura Audiovisual",
+  "archivo": "cultura-audiovisual",
+  "competencias": 4,
+  "criterios": 13,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 29
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Cultura y Patrimonio de Aragón",
+  "archivo": "cultura-y-patrimonio-de-aragon",
+  "competencias": 6,
+  "criterios": 16,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 18
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Dibujo Artístico",
+  "archivo": "dibujo-artistico",
+  "competencias": 9,
+  "criterios": 41,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Dibujo Artístico I": 29,
+   "Dibujo Artístico II": 27
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Dibujo Técnico",
+  "archivo": "dibujo-tecnico",
+  "competencias": 5,
+  "criterios": 24,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Dibujo Técnico I": 23,
+   "Dibujo Técnico II": 13
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Dibujo Técnico aplicado a las Artes Plásticas y al Diseño",
+  "archivo": "dibujo-tecnico-aplicado-a-las-artes-plasticas-y-al-diseno",
+  "competencias": 5,
+  "criterios": 17,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Dibujo Técnico Aplicado a las Artes Plásticas y al Diseño I": 17,
+   "Dibujo Técnico Aplicado a las Artes Plásticas y al Diseño II": 12
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Diseño",
+  "archivo": "diseno",
+  "competencias": 6,
+  "criterios": 16,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 31
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Economía",
+  "archivo": "economia",
+  "competencias": 6,
+  "criterios": 14,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 21
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Economía, Emprendimiento y Actividad Empresarial",
+  "archivo": "economia-emprendimiento-y-actividad-empresarial",
+  "competencias": 6,
+  "criterios": 10,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 14
+  },
+  "literal": 96.7
+ },
+ {
+  "materia": "Educación Física",
+  "archivo": "educacion-fisica",
+  "competencias": 5,
+  "criterios": 14,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 33
+  },
+  "literal": 98.1
+ },
+ {
+  "materia": "Educación Física y Vida Activa",
+  "archivo": "educacion-fisica-y-vida-activa",
+  "competencias": 2,
+  "criterios": 4,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 13
+  },
+  "literal": 94.7
+ },
+ {
+  "materia": "Educación para la Ciudadanía y los Derechos Humanos",
+  "archivo": "educacion-para-la-ciudadania-y-los-derechos-humanos",
+  "competencias": 4,
+  "criterios": 7,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 31
+  },
+  "literal": 95.2
+ },
+ {
+  "materia": "Empresa y Diseño de Modelos de Negocio",
+  "archivo": "empresa-y-diseno-de-modelos-de-negocio",
+  "competencias": 5,
+  "criterios": 16,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 25
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Filosofía",
+  "archivo": "filosofia",
+  "competencias": 9,
+  "criterios": 14,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 33
+  },
+  "literal": 98.2
+ },
+ {
+  "materia": "Física",
+  "archivo": "fisica",
+  "competencias": 6,
+  "criterios": 15,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 19
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Física y Química",
+  "archivo": "fisica-y-quimica",
+  "competencias": 6,
+  "criterios": 17,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 22
+  },
+  "literal": 97.8
+ },
+ {
+  "materia": "Fundamentos Artísticos",
+  "archivo": "fundamentos-artisticos",
+  "competencias": 7,
+  "criterios": 14,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 31
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Fundamentos de Administración y Gestión",
+  "archivo": "fundamentos-de-administracion-y-gestion",
+  "competencias": 9,
+  "criterios": 57,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 27
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Geografía",
+  "archivo": "geografia",
+  "competencias": 7,
+  "criterios": 13,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 14
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Geología y Ciencias Ambientales",
+  "archivo": "geologia-y-ciencias-ambientales",
+  "competencias": 6,
+  "criterios": 13,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 37
+  },
+  "literal": 98.2
+ },
+ {
+  "materia": "Griego",
+  "archivo": "griego",
+  "competencias": 5,
+  "criterios": 35,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Griego I": 58,
+   "Griego II": 52
+  },
+  "literal": 99.3
+ },
+ {
+  "materia": "Historia de España",
+  "archivo": "historia-de-espana",
+  "competencias": 9,
+  "criterios": 20,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 33
+  },
+  "literal": 95.2
+ },
+ {
+  "materia": "Historia de la Filosofía",
+  "archivo": "historia-de-la-filosofia",
+  "competencias": 7,
+  "criterios": 11,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 23
+  },
+  "literal": 97.6
+ },
+ {
+  "materia": "Historia de la Música y de la Danza",
+  "archivo": "historia-de-la-musica-y-de-la-danza",
+  "competencias": 5,
+  "criterios": 12,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 15
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Historia del Arte",
+  "archivo": "historia-del-arte",
+  "competencias": 8,
+  "criterios": 12,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 20
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Historia del Mundo Contemporáneo",
+  "archivo": "historia-del-mundo-contemporaneo",
+  "competencias": 8,
+  "criterios": 18,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 30
+  },
+  "literal": 98.2
+ },
+ {
+  "materia": "Imagen y Sonido",
+  "archivo": "imagen-y-sonido",
+  "competencias": 5,
+  "criterios": 25,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Concreción de los saberes básicos Imagen y Sonido, 2º de Bachillerato": 33
+  },
+  "literal": 98.4
+ },
+ {
+  "materia": "Informática",
+  "archivo": "informatica",
+  "competencias": 6,
+  "criterios": 47,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Informática I": 5,
+   "Informática II": 13
+  },
+  "literal": 87.7
+ },
+ {
+  "materia": "Latín",
+  "archivo": "latin",
+  "competencias": 5,
+  "criterios": 38,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Latín I": 58,
+   "Latín II": 52
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Lengua Castellana y Literatura",
+  "archivo": "lengua-castellana-y-literatura",
+  "competencias": 10,
+  "criterios": 44,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Lengua Castellana y Literatura I": 51,
+   "Lengua Castellana y Literatura II": 52
+  },
+  "literal": 98.1
+ },
+ {
+  "materia": "Lengua Extranjera: Alemán",
+  "archivo": "lengua-extranjera-aleman",
+  "competencias": 6,
+  "criterios": 32,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Lengua Extranjera, Alemán I": 24,
+   "Lengua Extranjera, Alemán II": 24
+  },
+  "literal": 97.7
+ },
+ {
+  "materia": "Lengua Extranjera: Francés",
+  "archivo": "lengua-extranjera-frances",
+  "competencias": 6,
+  "criterios": 32,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Lengua Extranjera I": 24,
+   "Lengua Extranjera II": 24
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Lengua Extranjera: Inglés",
+  "archivo": "lengua-extranjera-ingles",
+  "competencias": 6,
+  "criterios": 32,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Lengua Extranjera, Inglés I": 23,
+   "Lengua Extranjera, Inglés II": 23
+  },
+  "literal": 98.8
+ },
+ {
+  "materia": "Lenguaje y Práctica Musical",
+  "archivo": "lenguaje-y-practica-musical",
+  "competencias": 5,
+  "criterios": 12,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 17
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Lenguas Propias de Aragón: Aragonés",
+  "archivo": "lenguas-propias-de-aragon-aragones",
+  "competencias": 7,
+  "criterios": 39,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Lengua Aragonesa I": 34,
+   "Lengua Aragonesa II": 34
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Lenguas Propias de Aragón: Catalán",
+  "archivo": "lenguas-propias-de-aragon-catalan",
+  "competencias": 10,
+  "criterios": 43,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Lenguas Propias de Aragón: Catalán I": 45,
+   "Lenguas Propias de Aragón: Catalán II": 45
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Literatura Dramática",
+  "archivo": "literatura-dramatica",
+  "competencias": 5,
+  "criterios": 11,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 35
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Literatura Universal",
+  "archivo": "literatura-universal",
+  "competencias": 5,
+  "criterios": 7,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 30
+  },
+  "literal": 97.6
+ },
+ {
+  "materia": "Matemáticas",
+  "archivo": "matematicas",
+  "competencias": 9,
+  "criterios": 35,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Matemáticas I": 40,
+   "Matemáticas II": 38
+  },
+  "literal": 99.2
+ },
+ {
+  "materia": "Matemáticas Aplicadas a las Ciencias Sociales",
+  "archivo": "matematicas-aplicadas-a-las-ciencias-sociales",
+  "competencias": 9,
+  "criterios": 36,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Matemáticas aplicadas a las Ciencias Sociales I": 34,
+   "Matemáticas aplicadas a las Ciencias Sociales II": 33
+  },
+  "literal": 99.1
+ },
+ {
+  "materia": "Matemáticas Generales",
+  "archivo": "matematicas-generales",
+  "competencias": 9,
+  "criterios": 18,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 32
+  },
+  "literal": 98.3
+ },
+ {
+  "materia": "Movimientos Culturales y Artísticos",
+  "archivo": "movimientos-culturales-y-artisticos",
+  "competencias": 5,
+  "criterios": 15,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 12
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Oratoria",
+  "archivo": "oratoria",
+  "competencias": 6,
+  "criterios": 17,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 25
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Proyectos Artísticos",
+  "archivo": "proyectos-artisticos",
+  "competencias": 5,
+  "criterios": 15,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 8
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Proyecto de Investigación e Innovación Integrado",
+  "archivo": "proyecto-de-investigacion-e-innovacion-integrado",
+  "competencias": 4,
+  "criterios": 16,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 6
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Psicología",
+  "archivo": "psicologia",
+  "competencias": 7,
+  "criterios": 23,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 39
+  },
+  "literal": 97.1
+ },
+ {
+  "materia": "Química",
+  "archivo": "quimica",
+  "competencias": 6,
+  "criterios": 19,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 35
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Sociedad, Medioambiente y Territorios Sostenibles",
+  "archivo": "sociedad-medioambiente-y-territorios-sostenibles",
+  "competencias": 7,
+  "criterios": 14,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 12
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Técnicas de Expresión Gráfico-Plástica",
+  "archivo": "tecnicas-de-expresion-grafico-plastica",
+  "competencias": 5,
+  "criterios": 12,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 25
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Tecnología e Ingeniería",
+  "archivo": "tecnologia-e-ingenieria",
+  "competencias": 6,
+  "criterios": 31,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Tecnología e Ingeniería I": 21,
+   "Tecnología e Ingeniería II": 15
+  },
+  "literal": 98.7
+ },
+ {
+  "materia": "Unión Europea",
+  "archivo": "union-europea",
+  "competencias": 7,
+  "criterios": 14,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 17
+  },
+  "literal": 94.7
+ },
+ {
+  "materia": "Volumen",
+  "archivo": "volumen",
+  "competencias": 4,
+  "criterios": 12,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 31
+  },
+  "literal": 97.9
+ }
+]

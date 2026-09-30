@@ -1,0 +1,398 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "12 Dibujo Técnico.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.DT.1",
+   "texto": "Interpretar elementos o conjuntos arquitectónicos y de ingeniería, empleando recursos asociados a la percepción, estudio, construcción e investigación de formas para analizar las estructuras geométricas y los elementos técnicos utilizados."
+  },
+  {
+   "codigo": "CE.DT.2",
+   "texto": "",
+   "sin_enunciado": true
+  },
+  {
+   "codigo": "CE.DT.3",
+   "texto": "Desarrollar la visión espacial, utilizando la geometría descriptiva en proyectos sencillos, considerando la importancia del dibujo en arquitectura e ingenierías para resolver problemas e interpretar y recrear gráficamente la realidad tridimensional sobre la superficie del plano."
+  },
+  {
+   "codigo": "CE.DT.4",
+   "texto": "Formalizar y definir diseños técnicos aplicando las normas UNE e ISO de manera apropiada, valorando la importancia que tiene el croquis para documentar gráficamente proyectos arquitectónicos e ingenieriles."
+  },
+  {
+   "codigo": "CE.DT.5",
+   "texto": "Investigar, experimentar y representar digitalmente elementos, planos y esquemas técnicos mediante el uso de programas específicos CAD de manera individual o grupal, apreciando su uso en las profesiones actuales, para virtualizar objetos y espacios en dos dimensiones y tres dimensiones."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.DT.1",
+   "columna": "Dibujo Técnico I",
+   "texto": "Analizar, a lo largo de la historia, la relación entre las matemáticas y el dibujo geométrico valorando su importancia en diferentes campos como la arquitectura o la ingeniería, desde la perspectiva de género y la diversidad cultural, empleando adecuadamente el vocabulario específico técnico y artístico.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.DT.1",
+   "columna": "Dibujo Técnico II",
+   "texto": "Analizar la evolución de las estructuras geométricas y elementos técnicos en la arquitectura e ingeniería contemporáneas, valorando la influencia del progreso tecnológico y de las técnicas digitales de representación y modelado en los campos de la arquitectura y la ingeniería.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.DT.2",
+   "columna": "Dibujo Técnico I",
+   "texto": "Solucionar gráficamente cálculos matemáticos y transformaciones básicas aplicando conceptos y propiedades de la geometría plana.",
+   "competencia_en_tabla": "CE.DT.1",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.DT.2",
+   "columna": "Dibujo Técnico I",
+   "texto": "Trazar gráficamente construcciones poligonales basándose en sus propiedades y mostrando interés por la precisión, claridad y limpieza.",
+   "competencia_en_tabla": "CE.DT.1",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.DT.2",
+   "columna": "Dibujo Técnico I",
+   "texto": "Resolver gráficamente tangencias y trazar curvas aplicando sus propiedades con rigor en su ejecución.",
+   "competencia_en_tabla": "CE.DT.1",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.DT.2",
+   "columna": "Dibujo Técnico II",
+   "texto": "Construir figuras planas aplicando transformaciones geométricas y valorando su utilidad en los sistemas de representación.",
+   "competencia_en_tabla": "CE.DT.1",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.DT.2",
+   "columna": "Dibujo Técnico II",
+   "texto": "Resolver tangencias aplicando los conceptos de potencia con una actitud de rigor en la ejecución.",
+   "competencia_en_tabla": "CE.DT.1",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.DT.2",
+   "columna": "Dibujo Técnico II",
+   "texto": "Trazar curvas cónicas y sus rectas tangentes aplicando propiedades y métodos de construcción, mostrando interés por la precisión.",
+   "competencia_en_tabla": "CE.DT.1",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.DT.3",
+   "columna": "Dibujo Técnico I",
+   "texto": "Representar en sistema diédrico elementos básicos en el espacio determinando su relación de pertenencia, posición y distancia.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.DT.3",
+   "columna": "Dibujo Técnico I",
+   "texto": "Definir elementos y figuras planas en sistemas axonométricos valorando su importancia como métodos de representación espacial.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.DT.3",
+   "columna": "Dibujo Técnico I",
+   "texto": "Representar e interpretar elementos básicos en el sistema de planos acotados haciendo uso de sus fundamentos.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.DT.3",
+   "columna": "Dibujo Técnico I",
+   "texto": "Dibujar elementos en el espacio empleando la perspectiva cónica.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.DT.3",
+   "columna": "Dibujo Técnico I",
+   "texto": "Valorar el rigor gráfico del proceso; la claridad, la precisión y el proceso de resolución y construcción gráfica.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.DT.3",
+   "columna": "Dibujo Técnico II",
+   "texto": "Resolver problemas geométricos mediante abatimientos, giros y cambios de plano, reflexionando sobre los métodos utilizados y los resultados obtenidos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.DT.3",
+   "columna": "Dibujo Técnico II",
+   "texto": "Representar cuerpos geométricos y de revolución aplicando los fundamentos del sistema diédrico.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.DT.3",
+   "columna": "Dibujo Técnico II",
+   "texto": "Recrear la realidad tridimensional mediante la representación de sólidos en perspectivas axonométricas y cónica, aplicando los conocimientos específicos de dichos sistemas de representación.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.DT.3",
+   "columna": "Dibujo Técnico II",
+   "texto": "Desarrollar proyectos gráficos sencillos mediante el sistema de planos acotados.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.DT.3",
+   "columna": "Dibujo Técnico II",
+   "texto": "Valorar el rigor gráfico del proceso; la claridad, la precisión y el proceso de resolución y construcción gráfica.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.DT.4",
+   "columna": "Dibujo Técnico I",
+   "texto": "Documentar gráficamente objetos sencillos mediante sus vistas acotadas aplicando la normativa UNE e ISO en la utilización de sintaxis, escalas y formatos, valorando la importancia de usar un lenguaje técnico común.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.DT.4",
+   "columna": "Dibujo Técnico I",
+   "texto": "Utilizar el croquis y el boceto como elementos de reflexión en la aproximación e indagación de alternativas y soluciones a los procesos de trabajo.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.DT.4",
+   "columna": "Dibujo Técnico II",
+   "texto": "Elaborar la documentación gráfica apropiada a proyectos de diferentes campos, formalizando y definiendo diseños técnicos empleando croquis y planos conforme a la normativa UNE e ISO.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.DT.5",
+   "columna": "Dibujo Técnico I",
+   "texto": "Crear figuras planas y tridimensionales mediante programas de dibujo vectorial, usando las herramientas que aportan y las técnicas asociadas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.DT.5",
+   "columna": "Dibujo Técnico I",
+   "texto": "Recrear virtualmente piezas en tres dimensiones aplicando operaciones algebraicas entre primitivas para la presentación de proyectos en grupo.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.DT.5",
+   "columna": "Dibujo Técnico II",
+   "texto": "Integrar el soporte digital en la representación de objetos y construcciones mediante aplicaciones CAD valorando las posibilidades que estas herramientas aportan al dibujo y al trabajo colaborativo.",
+   "cursos": [
+    2
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Dibujo Técnico I",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Fundamentos geométricos",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Desarrollo histórico del dibujo técnico. Campos de acción y aplicaciones: dibujo arquitectónico, mecánico, eléctrico y electrónico, geológico, urbanístico, etc.",
+        "Orígenes de la geometría. Thales, Pitágoras, Euclides, Hipatia de Alejandría.",
+        "Concepto de lugar geométrico. Arco capaz. Aplicaciones de los lugares geométricos a las construcciones fundamentales.",
+        "Ángulos. Operaciones con segmentos y ángulos. Ángulos de la circunferencia.",
+        "Proporcionalidad, equivalencia y semejanza.",
+        "Triángulos, cuadriláteros y polígonos regulares. Propiedades y métodos de construcción.",
+        "Transformaciones geométricas. Traslación. Giro. Simetría. Homotecia.",
+        "Tangencias básicas. Curvas técnicas.",
+        "Interés por el rigor en los razonamientos y precisión, claridad y limpieza en las ejecuciones."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Geometría proyectiva",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Fundamentos de la geometría proyectiva.",
+        "Sistema diédrico: Representación de punto, recta y plano. Trazas con planos de proyección. Determinación del plano. Pertenencia.",
+        "Relaciones entre elementos: Intersecciones, paralelismo y perpendicularidad. Obtención de distancias.",
+        "Sistema axonométrico, ortogonal y oblicuo. Perspectivas isométrica y caballera. Disposición de los ejes y uso de los coeficientes de reducción. Elementos básicos: punto, recta, plano.",
+        "Sistema de planos acotados. Fundamentos y elementos básicos. Identificación de elementos para su interpretación en planos.",
+        "Sistema cónico: fundamentos y elementos del sistema. Perspectiva frontal y oblicua."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Normalización y documentación gráfica de proyectos.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Escalas numéricas y gráficas. Construcción y uso.",
+        "Formatos.",
+        "Concepto de normalización. Las normas fundamentales UNE e ISO. Aplicaciones de la normalización: simbología industrial y arquitectónica.",
+        "Elección de vistas necesarias. Líneas normalizadas. Acotación."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Sistemas CAD.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Aplicaciones vectoriales 2D-3D.",
+        "Fundamentos de diseño de piezas en tres dimensiones.",
+        "Modelado de caja. Operaciones básicas con primitivas.",
+        "Aplicaciones de trabajo en grupo para conformar piezas complejas a partir de otras más sencillas."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Dibujo Técnico II",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Fundamentos geométricos",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La geometría en la arquitectura e ingeniería desde la revolución industrial. Los avances en el desarrollo tecnológico y en las técnicas digitales aplicadas a la construcción de nuevas formas.",
+        "Transformaciones geométricas: Homología y afinidad. Aplicación para la resolución de problemas en los sistemas de representación.",
+        "Potencia de un punto respecto a una circunferencia. Eje radical y centro radical. Aplicaciones en tangencias.",
+        "Curvas cónicas: elipse, hipérbola y parábola. Propiedades y métodos de construcción. Rectas tangentes. Trazado con y sin herramientas digitales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Geometría proyectiva",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Sistema diédrico: Figuras contenidas en planos. Abatimientos y verdaderas magnitudes. Giros y cambios de plano. Aplicaciones. Representación de cuerpos geométricos: prismas y pirámides. Secciones planas y verdaderas magnitudes de la sección. Representación de cuerpos de revolución rectos: cilindros y conos. Representación de poliedros regulares: tetraedro, hexaedro y octaedro.",
+        "Sistema axonométrico, ortogonal y oblicuo. Representación de figuras y sólidos.",
+        "Sistema de planos acotados. Resolución de problemas de cubiertas sencillas. Representación de perfiles o secciones de terreno a partir de sus curvas de nivel.",
+        "Perspectiva cónica. Representación de sólidos y formas tridimensionales a partir de sus vistas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Normalización y documentación gráfica de proyectos",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Representación de cuerpos y piezas industriales sencillas. Croquis y planos de taller. Cortes, secciones y roturas. Perspectivas normalizadas.",
+        "Diseño, ecología y sostenibilidad.",
+        "Proyectos en colaboración. Elaboración de la documentación gráfica de un proyecto ingenieril o arquitectónico sencillo.",
+        "Planos de montaje sencillos. Elaboración e interpretación."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Sistemas CAD",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Aplicaciones CAD. Construcciones gráficas en soporte digital."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Dibujo Técnico"
+}

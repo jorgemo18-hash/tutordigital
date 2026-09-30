@@ -7,7 +7,7 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { materiaPorSlug } from "../../lib/curriculo/curriculoAragon.js";
 import {
-  DatosSchema, CabeceraSchema, MAX_BYTES,
+  DatosSchema, CabeceraBase, CursoDeLaMateria, MAX_BYTES,
   misProgramaciones, creaProgramacion, leeProgramacion, guardaProgramacion, borraProgramacion,
 } from "../../lib/programaciones/programaciones.js";
 
@@ -21,7 +21,7 @@ import {
 export const ROLES = ["teacher", "admin"];
 
 const Id = z.string().uuid();
-const Nueva = CabeceraSchema.extend({ datos: DatosSchema.optional() });
+const Nueva = CabeceraBase.extend({ datos: DatosSchema.optional() }).superRefine(CursoDeLaMateria);
 const Guardar = z.object({ titulo: z.string().max(200).optional(), datos: DatosSchema });
 
 export function crearRutasDeProgramaciones({ adminFn = createSupabaseAdmin } = {}) {

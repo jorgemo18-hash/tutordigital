@@ -1,0 +1,294 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "58 Unión Europea.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.UE.1",
+   "texto": "Valorar los movimientos y acciones que han promovido e impulsado la construcción europea, utilizando debidamente términos y conceptos históricos y geográficos, a través de la comparación de periodos, para valorar el desarrollo de las instituciones, organizaciones y del derecho europeo y su impacto en procesos de consolidación democrática."
+  },
+  {
+   "codigo": "CE.UE.2",
+   "texto": "Identificar la diversidad cultural e identitaria de la UE, mediante el contraste de la información y revisión crítica de fuentes, tomando conciencia del papel que juegan en la actualidad y los retos que plantea para el futuro, para impulsar el respeto hacia los sentimientos de pertenencia, la existencia de identidades múltiples y las normas y símbolos que establece nuestro marco común de convivencia, a nivel nacional y europeo."
+  },
+  {
+   "codigo": "CE.UE.3",
+   "texto": "Explicar de forma crítica los desequilibrios políticos, económicos y territoriales de la Unión Europea y de su estructura sociolaboral y demográfica, reconociendo los procesos y las decisiones que han contribuido a las desigualdades presentes, para reforzar la conciencia de solidaridad y el compromiso con los mecanismos de cooperación y cohesión europeos."
+  },
+  {
+   "codigo": "CE.UE.4",
+   "texto": "Identificar y valorar los retos y desafíos más relevantes a los que se enfrenta la Unión Europea en la actualidad, analizando su origen, características y relevancia, así como sus implicaciones y consecuencias presentes y futuras, a través del uso crítico de las fuentes y medios de comunicación, para elaborar y exponer juicios personales desde una actitud crítica, racional, para promover medidas que fomenten la equidad, la justicia social, el respeto a la dignidad humana y al medio ambiente como base de una ciudadanía global."
+  },
+  {
+   "codigo": "CE.UE.5",
+   "texto": "Movilizar conocimientos previos, nuevos y de otros campos del saber al abordar situaciones del pasado, del presente o del futuro, reorientando eficazmente decisiones y estrategias de trabajo individual o en equipo, potenciando la iniciativa, la creatividad y la implicación en cuestiones de interés social y cultural, para promover y adoptar soluciones innovadoras a contextos en transformación y fomentar el aprendizaje permanente."
+  },
+  {
+   "codigo": "CE.UE.6",
+   "texto": "Incorporar la perspectiva de género en el estudio de la Unión Europa, mediante el análisis multidisciplinar de la presencia de la mujer en todos los ámbitos sociales, a través de la contextualización histórica de fuentes literarias y artísticas, investigando sus movilizaciones y luchas políticas, para reconocer su presencia como protagonista de la historia y promover actitudes en defensa de la igualdad efectiva entre hombres y mujeres."
+  },
+  {
+   "codigo": "CE.UE.7",
+   "texto": "Valorar el patrimonio histórico y cultural, material e inmaterial, de los países que conforman la Unión Europea como un legado y expresión de la memoria colectiva europea, asumiendo como una responsabilidad individual y colectiva su conservación y uso para fortalecer la cohesión social."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.UE.1",
+   "columna": null,
+   "texto": "Reconocer los hitos más relevantes en el origen y evolución histórica primero de la CEE, luego de la UE, señalando los principales tratados de la unión, reconociendo sus estados miembros en cada una de las fases de ampliación, así como los requisitos de ingreso y poniendo en valor los esfuerzos políticos y económicos realizados por los países para cumplir las demandas europeas.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.UE.1",
+   "columna": null,
+   "texto": "Distinguir las diferentes instituciones y organismos europeos, analizando su composición, funcionamiento y los mecanismos de toma de decisiones, con el fin de conocer los principios, objetivos y valores de la UE.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.UE.1",
+   "columna": null,
+   "texto": "Identificar el papel de la adhesión de España en la UE en el establecimiento de la democracia actual y valorar la Carta Fundamental de los derechos de la UE como el marco de garantías y libertades de los ciudadanos europeos y de las ciudadanas europeas.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.UE.2",
+   "columna": null,
+   "texto": "Señalar los fundamentos de la idea de Europa a través de las diferentes experiencias históricas del pasado e identificar el legado histórico, institucional, artístico y cultural como patrimonio común de la ciudadanía europea.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.UE.2",
+   "columna": null,
+   "texto": "Identificar los procesos políticos, culturales y administrativos que han tenido lugar en la formación de la actual UE y en la construcción de la ciudadanía europea, analizando los logros y resultados de las acciones llevadas a cabo y de las reacciones generadas, conociendo y respetando las identidades múltiples y los símbolos y normas comunes que forman el marco de convivencia europea actual.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.UE.3",
+   "columna": null,
+   "texto": "Justificar la necesidad de los mecanismos de compensación a nivel europeo de las desigualdades individuales y territoriales identificando los procesos pasados y recientes, así como, sus causas y consecuencias sociolaborales y demográficas.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.UE.3",
+   "columna": null,
+   "texto": "Argumentar el origen de los desequilibrios socioeconómicos de Europa, de España y Aragón analizando los factores de localización de las actividades económicas y de la población en una sociedad terciarizada.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.UE.4",
+   "columna": null,
+   "texto": "Identificar y comprender los principales retos políticos, económicos, sociales y medioambientales actuales de la UE, analizando de forma crítica y constructiva su origen, características y evolución, fomentando iniciativas que respondan a las necesidades que plantean los retos.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.UE.4",
+   "columna": null,
+   "texto": "Proponer alternativas y nuevas soluciones a los desafíos actuales de la UE, analizando sus efectos en la política, sociedad, economía y en el entorno, reconociendo la necesidad de la cooperación y solidaridad internacional para afrontar desafíos globales.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.UE.5",
+   "columna": null,
+   "texto": "Reelaborar saberes sobre fenómenos naturales y humanos relevantes a diferentes escalas y en nuevos contextos, aplicando el pensamiento geográfico e histórico, movilizando y revisando críticamente conocimientos previos y nuevos, diagnosticando problemas y oportunidades, y razonando previsiones y posibles soluciones.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.UE.6",
+   "columna": null,
+   "texto": "Introducir la perspectiva de género en la observación y análisis de la realidad histórica y actual de la Unión Europea, identificando los mecanismos de dominación que han generado y mantenido la desigualdad entre hombres y mujeres, los roles asignados y los espacios de actividad ocupados tradicionalmente por la mujer, vislumbrando la evolución de la adquisición de derechos a nivel europeo.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.UE.6",
+   "columna": null,
+   "texto": "Constatar el papel relegado de la mujer en la historia reciente europea analizando fuentes literarias y artísticas, valorando las acciones en favor de la emancipación de la mujer y del movimiento feminista y recuperando figuras individuales y colectivas como protagonistas de los procesos históricos, destacando su rol en la construcción europea y promoviendo actitudes en defensa de la igualdad.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.UE.7",
+   "columna": null,
+   "texto": "Valorar, proteger y conservar el patrimonio artístico, histórico y cultural como fundamento de la identidad colectiva local, autonómica, nacional, europea y universal, considerándolo un bien para el disfrute recreativo y cultural y un recurso para el desarrollo de los pueblos.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.UE.7",
+   "columna": null,
+   "texto": "Realizar trabajos de indagación e investigación generando productos relacionados con los personajes relevantes del panorama cultural, científico o artístico europeo, o elementos patrimoniales de interés social o cultural del entorno, poniendo en valor el patrimonio natural, histórico, artístico, materia o inmaterial y considerándolo un bien común que se debe proteger.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "La Unión Europea como espacio geográfico",
+       "saberes": [
+        "La diversidad del espacio físico, el espacio humano y la geografía política de la UE."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "El proceso de construcción de Europa",
+       "saberes": [
+        "La idea de unidad europea desde la Revolución francesa. Del final de la II Guerra Mundial a la CECA. Nacimiento y consolidación del proyecto europeo de la CEE."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "La caída del muro de Berlín y la reunificación alemana como momento de inflexión en la Historia de la Unión Europea.",
+       "saberes": []
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "El proceso de integración europea, de los tratados fundacionales al proceso de ampliación del proyecto europeo",
+       "saberes": [
+        "Los estados miembros de la Unión Europea."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "La integración de España en el proyecto europeo, su impacto en la consolidación de la democracia y en su integración en el escenario político internacional.",
+       "saberes": []
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Aragón en la Unión Europea",
+       "saberes": [
+        "Participación de Aragón en las instituciones y órganos de la Unión Europea y el impacto de la financiación europea en nuestro territorio."
+       ]
+      },
+      {
+       "codigo": "A.7",
+       "nombre": "Pioneras",
+       "saberes": [
+        "Protagonistas femeninas, individuales y colectivas en el proceso de construcción europea. La lucha de la emancipación de la mujer en Europa y los movimientos feministas. El rol y la presencia de la mujer en las instituciones y en la política europea, ayer y hoy."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B.",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "El tratado de la Unión Europea",
+       "saberes": [
+        "La creación del espacio Schengen, los derechos de los ciudadanos europeos y de las ciudadanas europeas y el proceso de creación de la Unión Económica y Monetaria."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "El funcionamiento de la UE",
+       "saberes": [
+        "Organismos e instituciones. El proceso de toma de decisiones. Las políticas comunes."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "La Unión Europea en el contexto global",
+       "saberes": [
+        "Retos y desafíos actuales y futuros."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "La Agenda 2030 y la consecución de los Objetivos de Desarrollo Sostenible en Europa",
+       "saberes": [
+        "La política medioambiental y la Agenda 2030 de desarrollo sostenible. Políticas ambientales en España y la Unión Europea."
+       ]
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "Tensiones secesionistas en el seno de la UE y el proceso de salida de la UE",
+       "saberes": [
+        "El Brexit."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Identidad y compromiso cívico europeo",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Conciencia democrática",
+       "saberes": [
+        "conocimiento de los principios y normas europeas, de los derechos fundamentales de la Unión Europea, el ejercicio de los valores cívicos y participación ciudadana."
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "La ciudadanía europea",
+       "saberes": [
+        "reconocimiento de las identidades múltiples y de los símbolos y normas que comparten los estados miembros."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Comportamiento ecosocial",
+       "saberes": [
+        "la Agenda 2030 y el compromiso con el cumplimiento de los Objetivos de Desarrollo Sostenible."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "Ciudadanía ética digital",
+       "saberes": [
+        "respeto a la propiedad intelectual. Participación y ejercicio de la ciudadanía global a través de las tecnologías digitales. Prevención y defensa ante la desinformación y la manipulación mediática e informacional."
+       ]
+      },
+      {
+       "codigo": "C.5",
+       "nombre": "Los valores del europeísmo",
+       "saberes": [
+        "principios que guían la idea de la Unión Europea y actitud participativa ante los programas y proyectos comunitarios."
+       ]
+      },
+      {
+       "codigo": "C.6",
+       "nombre": "Solidaridad y cooperación",
+       "saberes": [
+        "los grandes desafíos de la Unión Europea y del mundo. El compromiso social, el asociacionismo y el voluntariado."
+       ]
+      },
+      {
+       "codigo": "C.7",
+       "nombre": "Conservación y difusión del patrimonio natural, material e inmaterial europeo",
+       "saberes": [
+        "el valor patrimonial, social y cultural de la memoria colectiva europea como elemento de cohesión social. La cultura europea."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 94.7,
+  "no_encontrados": [
+   "saber B.1: La creación del espacio Schengen, los derechos de los ciudadanos europeos y de las ciudadanas europeas y el proceso de c",
+   "saber C.4: respeto a la propiedad intelectual. Participación y ejercicio de la ciudadanía global a través de las tecnologías digita"
+  ]
+ },
+ "materia": "Unión Europea"
+}

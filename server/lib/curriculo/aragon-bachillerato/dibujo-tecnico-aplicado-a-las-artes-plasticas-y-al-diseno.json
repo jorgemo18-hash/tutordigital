@@ -1,0 +1,321 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "13 Dibujo Técnico aplicado a las Artes Plásticas y al Diseño.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.DTAGD.1",
+   "texto": "Observar, analizar y valorar la presencia de la geometría en la naturaleza, el entorno construido y el arte, identificando sus estructuras geométricas, elementos y códigos, con una actitud proactiva de apreciación y disfrute, para explicar su origen, función e intencionalidad en distintos contextos y medios."
+  },
+  {
+   "codigo": "CE.DTAGD.2",
+   "texto": "Desarrollar propuestas gráficas y de diseño, utilizando tanto el dibujo a mano alzada como los materiales propios del dibujo técnico y elaborando trazados, composiciones y transformaciones geométricas en el plano de forma intuitiva y razonada, para incorporar estos recursos tanto en la transmisión y desarrollo de ideas, como en la expresión de sentimientos y emociones."
+  },
+  {
+   "codigo": "CE.DTAGD.3",
+   "texto": "Comprender e interpretar el espacio y los objetos tridimensionales, analizando y valorando su presencia en las representaciones artísticas, seleccionando y utilizando el sistema de representación más adecuado para aplicarlo a la realización de ilustraciones y proyectos de diseño de objetos y espacios."
+  },
+  {
+   "codigo": "CE.DTAGD.4",
+   "texto": "Analizar, definir formalmente o visualizar ideas, aplicando las normas fundamentales UNE e ISO para interpretar y representar objetos y espacios, así como documentar proyectos de diseño."
+  },
+  {
+   "codigo": "CE.DTAGD.5",
+   "texto": "Integrar y aprovechar las posibilidades que ofrecen las herramientas digitales, seleccionando y utilizando programas y aplicaciones específicas de dibujo vectorial 2D y de modelado 3D para desarrollar procesos de creación artística personal o de diseño."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.DTAGD.1",
+   "columna": "Dibujo Técnico I",
+   "texto": "Reconocer diferentes tipos de estructuras, formas y relaciones geométricas en la naturaleza, el entorno, el arte y el diseño, analizando su función y valorando la importancia dentro del contexto histórico.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.DTAGD.1",
+   "columna": "Dibujo Técnico II",
+   "texto": "Identificar y explicar la presencia de formas y relaciones geométricas en el arte y el diseño, comprendiendo el motivo o intencionalidad con la que se han utilizado.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.DTAGD.2",
+   "columna": "Dibujo Técnico I",
+   "texto": "Dibujar formas poligonales y resolver tangencias básicas y simetrías aplicadas al diseño de formas, valorando la importancia de la limpieza y la precisión en el trazado.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.DTAGD.2",
+   "columna": "Dibujo Técnico I",
+   "texto": "Transmitir ideas, sentimientos y emociones mediante la realización de estudios, esbozos y apuntes del natural a mano alzada, identificando la geometría interna y externa de las formas y apreciando su importancia en el dibujo.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.DTAGD.2",
+   "columna": "Dibujo Técnico II",
+   "texto": "Diseñar patrones y mosaicos, aplicando las transformaciones geométricas al diseño de patrones y mosaicos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.DTAGD.2",
+   "columna": "Dibujo Técnico II",
+   "texto": "Diseñar formas creativas, empleando tangencias, enlaces y curvas cónicas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.DTAGD.3",
+   "columna": "Dibujo Técnico I",
+   "texto": "Diferenciar las características de los distintos sistemas de representación, seleccionando en cada caso el sistema más apropiado a la finalidad de la representación.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.DTAGD.3",
+   "columna": "Dibujo Técnico I",
+   "texto": "Representar objetos sencillos mediante sus vistas diédricas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.DTAGD.3",
+   "columna": "Dibujo Técnico I",
+   "texto": "Diseñar envases sencillos, representándolos en perspectiva isométrica o caballera y reflexionando sobre el proceso realizado y el resultado obtenido.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.DTAGD.3",
+   "columna": "Dibujo Técnico I",
+   "texto": "Dibujar ilustraciones o viñetas aplicando las técnicas de la perspectiva cónica en la representación de espacios, objetos o personas desde distintos puntos de vista.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.DTAGD.3",
+   "columna": "Dibujo Técnico II",
+   "texto": "Dibujar, en las perspectivas isométrica y caballera, formas volumétricas incorporando curvas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.DTAGD.3",
+   "columna": "Dibujo Técnico II",
+   "texto": "Diseñar espacios o escenografías aplicando la perspectiva cónica, representando las luces y sombras de los objetos contenidos y reflexionando sobre el proceso realizado y el resultado obtenido.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.DTAGD.4",
+   "columna": "Dibujo Técnico I",
+   "texto": "Realizar bocetos y croquis conforme a las normas UNE e ISO, comunicando la forma y dimensiones de objetos, proponiendo ideas creativas y resolviendo problemas con autonomía.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.DTAGD.4",
+   "columna": "Dibujo Técnico II",
+   "texto": "Proyectar, de manera individual o en grupo, un diseño sencillo, comunicando de manera clara e inequívoca su forma y dimensiones mediante el uso de la normalización, aplicando estrategias y destrezas que agilicen el trabajo colaborativo.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.DTAGD.5",
+   "columna": "Dibujo Técnico I",
+   "texto": "Adquirir destrezas en el manejo de herramientas y técnicas de dibujo vectorial en 2D, aplicándolos a la realización de proyectos de diseño.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.DTAGD.5",
+   "columna": "Dibujo Técnico II",
+   "texto": "Realizar y presentar proyectos, aprovechando las posibilidades que las herramientas de dibujo vectorial aportan a los campos del diseño y el arte.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.DTAGD.5",
+   "columna": "Dibujo Técnico I",
+   "texto": "Iniciarse en el modelado en 3D mediante el diseño de esculturas o instalaciones, valorando su potencial como herramienta de creación.",
+   "cursos": [
+    1
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Dibujo Técnico Aplicado a las Artes Plásticas y al Diseño I",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Geometría, arte y entorno. ́ ́",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La geometría en la naturaleza, en el entorno y en el arte. Observación directa e indirecta",
+        "La geometría en la composición.",
+        "La representación del espacio en el arte. Estudios sobre la geometría y la perspectiva a lo largo de la historia del arte.",
+        "Relaciones geométricas en el arte y el diseño: proporción, igualdad y simetría. El número áureo en el arte y la naturaleza.",
+        "Escalas numéricas y gráficas. Construcción y uso.",
+        "Construcciones poligonales. Aplicación en el diseño.",
+        "Tangencias básicas. Curvas técnicas. Aplicación en el diseño.",
+        "Estudios a mano alzada de la geometría interna y externa de la forma. Apuntes y esbozos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sistemas de representación del espacio aplicado.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Concepto y tipos de proyección. Finalidad de los distintos sistemas de representación.",
+        "Sistema diédrico ortogonal en el primer diedro. Vistas en sistema europeo.",
+        "Perspectivas isométrica y caballera. Iniciación al diseño de packaging.",
+        "Aplicación de la perspectiva cónica, frontal y oblicua, al cómic y a la ilustración."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Normalización y diseño de proyectos.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Concepto de normalización. Las normas fundamentales UNE e ISO.",
+        "Documentación gráfica de proyectos: necesidad y ámbito de aplicación de las normas.",
+        "Elaboración de bocetos y croquis."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Herramientas digitales para el diseño.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Iniciación a las herramientas y técnicas de dibujo vectorial en 2D. Aplicaciones al diseño gráfico.",
+        "Iniciación al modelado en 3D. Aplicaciones a proyectos artísticos."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Dibujo Técnico Aplicado a las Artes Plásticas y al Diseño II",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Geometría, arte y entorno",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Composiciones modulares en el diseño gráfico, de objetos y de espacios.",
+        "Geometría e ilusiones ópticas en el arte y el diseño.",
+        "Las curvas cónicas en la naturaleza, el entorno, el arte y el diseño.",
+        "La representación del espacio en el diseño y arte contemporáneo.",
+        "Transformaciones geométricas aplicadas a la creación de mosaicos y patrones. Trazado con y sin herramientas digitales.",
+        "Enlaces y tangencias. Aplicación en el diseño gráfico mediante trazado manual y digital."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sistemas de representación del espacio aplicado",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Representación de la circunferencia y de sólidos sencillos en perspectivas isométrica y caballera. Aplicación al diseño de formas tridimensionales.",
+        "Estructuras poliédricas. Los sólidos platónicos. Aplicación en la Arquitectura y el diseño",
+        "Aplicaciones de la perspectiva cónica, frontal, oblicua y de cuadro inclinado, al diseño de espacios y objetos. Representación de luces y sombras."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Normalización y diseño de proyectos",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Fases de un proyecto de diseño: del croquis al plano de taller.",
+        "Representación de objetos mediante sus vistas acotadas. Cortes, secciones y roturas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Herramientas digitales para el diseño",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Dibujo asistido por ordenador aplicado a proyectos de arte y diseño."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Dibujo Técnico aplicado a las Artes Plásticas y al Diseño"
+}

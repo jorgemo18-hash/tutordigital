@@ -1,0 +1,588 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "28 Griego.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.GR.1",
+   "texto": "Traducir y comprender textos griegos de dificultad creciente y justificar la traducción, identificando y analizando los aspectos básicos de la Lengua Griega y sus unidades lingüísticas y reflexionando sobre ellas mediante la comparación con las lenguas de enseñanza y con otras lenguas del repertorio individual del alumnado, para realizar una lectura comprensiva, directa y eficaz y una interpretación razonada de su contenido."
+  },
+  {
+   "codigo": "CE.GR.2",
+   "texto": "Distinguir los étimos y formantes griegos presentes en el léxico de uso cotidiano, identificando los cambios semánticos que hayan tenido lugar y estableciendo una comparación con las lenguas de enseñanza y otras lenguas del repertorio individual del alumnado, para deducir el significado etimológico del léxico conocido y los significados de léxico nuevo o especializado."
+  },
+  {
+   "codigo": "CE.GR.3",
+   "texto": "Leer, interpretar y comentar textos griegos de diferentes géneros y épocas, asumiendo el proceso creativo como complejo e inseparable del contexto histórico, social y político y de sus influencias artísticas, para identificar su genealogía y valorar su aportación a la literatura europea."
+  },
+  {
+   "codigo": "CE.GR.4",
+   "texto": "Analizar las características de la civilización griega en el ámbito personal, religioso y sociopolítico, adquiriendo conocimientos sobre el mundo heleno y comparando críticamente el presente y el pasado, para valorar las aportaciones del mundo clásico griego a nuestro entorno como base de una ciudadanía democrática y comprometida."
+  },
+  {
+   "codigo": "CE.GR.5",
+   "texto": "Valorar críticamente el patrimonio histórico, arqueológico, artístico y cultural heredado de la civilización griega, promoviendo su sostenibilidad y reconociéndolo como producto de la creación humana y como testimonio de la historia, para explicar el legado material e inmaterial griego como transmisor de conocimiento y fuente de inspiración de creaciones modernas y contemporáneas."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.GR.1",
+   "columna": "Griego I",
+   "texto": "Realizar traducciones directas o inversas de textos o fragmentos adaptados u originales, de dificultad adecuada y progresiva, con corrección ortográfica y expresiva, identificando y analizando unidades lingüísticas regulares de la lengua y apreciando variantes y coincidencias con otras lenguas conocidas",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.GR.1",
+   "columna": "Griego I",
+   "texto": "Seleccionar de manera progresivamente autónoma el significado apropiado de palabras polisémicas y justificar la decisión, teniendo en cuenta la información cotextual o contextual y utilizando herramientas de apoyo al proceso de traducción en distintos soportes, tales como listas de vocabulario, glosarios, diccionarios, mapas o atlas, correctores ortográficos, gramáticas y libros de estilo.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.GR.1",
+   "columna": "Griego I",
+   "texto": "Revisar y subsanar de manera progresivamente autónoma las propias traducciones y las de los compañeros y las compañeras, realizando propuestas de mejora y argumentando los cambios con terminología especializada a partir de la reflexión lingüística.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.GR.1",
+   "columna": "Griego I",
+   "texto": "Realizar la lectura directa de textos griegos sencillos identificando las unidades lingüísticas básicas de la Lengua Griega, comparándolas con las de las lenguas del repertorio lingüístico propio y asimilando los aspectos morfológicos, sintácticos y léxicos elementales del griego.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.5",
+   "competencia": "CE.GR.1",
+   "columna": "Griego I",
+   "texto": "Registrar los progresos y dificultades de aprendizaje de la Lengua Griega, seleccionando las estrategias más adecuadas y eficaces para superar esas dificultades y consolidar su aprendizaje, realizando actividades de planificación del propio aprendizaje, autoevaluación y coevaluación, como las propuestas en el Portfolio Europeo de las Lenguas (PEL) o en un diario de aprendizaje, haciéndolos explícitos y compartiéndolos.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.GR.1",
+   "columna": "Griego II",
+   "texto": "Realizar traducciones directas o inversas de textos o fragmentos de dificultad adecuada y progresiva, con corrección ortográfica y expresiva, identificando y analizando unidades lingüísticas regulares de la lengua, y apreciando variantes y coincidencias con otras lenguas conocidas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.GR.1",
+   "columna": "Griego II",
+   "texto": "Seleccionar el significado apropiado de palabras polisémicas y justificar la decisión, teniendo en cuenta la información cotextual o contextual y utilizando herramientas de apoyo al proceso de traducción en distintos soportes, tales como listas de vocabulario, léxicos de frecuencia, glosarios, diccionarios, mapas o atlas, correctores ortográficos, gramáticas y libros de estilo.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.GR.1",
+   "columna": "Griego II",
+   "texto": "Revisar y subsanar las propias traducciones y las de los compañeros y las compañeras, realizando propuestas de mejora y argumentando los cambios con terminología especializada a partir de la reflexión lingüística.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.GR.1",
+   "columna": "Griego II",
+   "texto": "Realizar la lectura directa de textos griegos de dificultad adecuada identificando las unidades lingüísticas más frecuentes de la Lengua Griega, comparándolas con las de las lenguas del repertorio lingüístico propio y asimilando los aspectos morfológicos, sintácticos y léxicos del griego.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.5",
+   "competencia": "CE.GR.1",
+   "columna": "Griego II",
+   "texto": "Registrar los progresos y dificultades de aprendizaje de la Lengua Griega, seleccionando las estrategias más adecuadas y eficaces para superar esas dificultades y consolidar su aprendizaje, realizando actividades de planificación del propio aprendizaje, autoevaluación y coevaluación, como las propuestas en el Portfolio Europeo de las Lenguas (PEL) o en un diario de aprendizaje, haciéndolos explícitos y compartiéndolos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.GR.2",
+   "columna": "Griego I",
+   "texto": "Explicar, de manera guiada, la relación del griego con las lenguas modernas, analizando los elementos lingüísticos comunes de origen griego y utilizando estrategias y conocimientos de las lenguas y lenguajes que conforman el repertorio propio.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.GR.2",
+   "columna": "Griego I",
+   "texto": "Identificar prejuicios y estereotipos lingüísticos adoptando una actitud de respeto y valoración de la diversidad como riqueza cultural, lingüística y dialectal, a partir de criterios dados.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.GR.2",
+   "columna": "Griego II",
+   "texto": "Deducir el significado etimológico de un término de uso común e inferir el significado de términos de nueva aparición o procedentes de léxico especializado aplicando estrategias de reconocimiento de étimos y formantes griegos atendiendo a los cambios fonéticos, morfológicos o semánticos que hayan tenido lugar.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.GR.2",
+   "columna": "Griego II",
+   "texto": "Explicarla relación del griego con las lenguas modernas, analizando los elementos lingüísticos comunes de origen griego y utilizando con iniciativa estrategias y conocimientos de las lenguas y lenguajes que conforman el repertorio propio.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.GR.2",
+   "columna": "Griego II",
+   "texto": "Analizar críticamente prejuicios y estereotipos lingüísticos adoptando una actitud de respeto y valoración de la diversidad como riqueza cultural, lingüística y dialectal.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.GR.3",
+   "columna": "Griego I",
+   "texto": "Interpretar y comentar, de forma guiada, textos y fragmentos literarios griegos de diversa índole y de creciente complejidad, aplicando estrategias de análisis y reflexión que impliquen movilizar la propia experiencia, comprender el mundo y la condición humana y desarrollar la sensibilidad estética y el hábito lector.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.GR.3",
+   "columna": "Griego I",
+   "texto": "Analizar y explicar los géneros, temas, tópicos y valores éticos o estéticos de obras o fragmentos literarios griegos comparándolos con obras o fragmentos literarios posteriores, desde un enfoque intertextual guiado.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.GR.3",
+   "columna": "Griego I",
+   "texto": "Identificar y definir, de manera guiada, palabras griegas que designan conceptos fundamentales para el estudio y comprensión de la civilización helena y cuyo aprendizaje combina conocimientos léxicos y culturales, tales como ἀρχή, δῆμος, μῦθος, λόγος, en textos de diferentes formatos.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.GR.3",
+   "columna": "Griego I",
+   "texto": "Crear textos individuales o colectivos con intención literaria y conciencia de estilo, en distintos soportes y con ayuda de otros lenguajes artísticos y audiovisuales, a partir de la lectura de obras o fragmentos significativos en los que se haya partido de la civilización y la cultura griegas como fuente de inspiración.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.GR.3",
+   "columna": "Griego II",
+   "texto": "Interpretar y comentar textos y fragmentos literarios de diversa índole de creciente complejidad, aplicando estrategias de análisis y reflexión que impliquen movilizar la propia experiencia, comprender el mundo y la condición humana y desarrollar la sensibilidad estética y el hábito lector.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.GR.3",
+   "columna": "Griego II",
+   "texto": "Analizar y explicar los géneros, temas, tópicos y valores éticos o estéticos de obras o fragmentos literarios griegos comparándolos con obras o fragmentos literarios posteriores, desde un enfoque intertextual.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.GR.3",
+   "columna": "Griego II",
+   "texto": "Identificar y definir palabras griegas que designan conceptos fundamentales para el estudio y comprensión de la civilización helena y cuyo aprendizaje combina conocimientos léxicos y culturales, tales como ἀρχή, δῆμος, μῦθος, λόγος, en textos de diferentes formatos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.GR.3",
+   "columna": "Griego II",
+   "texto": "Crear textos individuales o colectivos con intención literaria y conciencia de estilo, en distintos soportes y con ayuda de otros lenguajes artísticos y audiovisuales, a partir de la lectura de obras o fragmentos significativos en los que se haya partido de la civilización y la cultura griegas como fuente de inspiración.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.GR.4",
+   "columna": "Griego I",
+   "texto": "Explicar, a partir de criterios dados, los procesos históricos y políticos, las instituciones, los modos de vida y las costumbres de la sociedad helena, comparándolos con los de las sociedades actuales, valorando las adaptaciones y cambios experimentados a la luz de la evolución de las sociedades y los derechos humanos, y favoreciendo el desarrollo de una cultura compartida y una ciudadanía comprometida con la memoria colectiva y los valores democráticos.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.GR.4",
+   "columna": "Griego I",
+   "texto": "Debatir acerca de la importancia, evolución, asimilación o cuestionamiento de diferentes aspectos del legado griego en nuestra sociedad, utilizando estrategias retóricas y oratorias de manera guiada, mediando entre posturas cuando sea necesario, seleccionando y contrastando información y experiencias veraces y mostrando interés, respeto y empatía por otras opiniones y argumentaciones.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.GR.4",
+   "columna": "Griego II",
+   "texto": "Explicar los procesos históricos y políticos, las instituciones, los modos de vida y las costumbres de la sociedad helena, comparándolos con los de las sociedades actuales, valorando de manera crítica las adaptaciones y cambios experimentados a la luz de la evolución de las sociedades y los derechos humanos, y favoreciendo el desarrollo de una cultura compartida y una ciudadanía comprometida con la memoria colectiva y los valores democráticos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.GR.4",
+   "columna": "Griego II",
+   "texto": "Debatir acerca de la importancia, evolución, asimilación o cuestionamiento de diferentes aspectos del legado griego en nuestra sociedad, utilizando estrategias retóricas y oratorias de manera guiada, mediando entre posturas cuando sea necesario, seleccionando y contrastando información y experiencias veraces y mostrando interés, respeto y empatía por otras opiniones y argumentaciones.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.GR.4",
+   "columna": "Griego I",
+   "texto": "Elaborar trabajos de investigación de manera progresivamente autónoma en diferentes soportes sobre aspectos del legado de la civilización griega en el ámbito personal, religioso y sociopolítico localizando, seleccionando, contrastando y reelaborando información procedente de diferentes fuentes, calibrando su fiabilidad y pertinencia y respetando los principios de rigor y propiedad intelectual.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.GR.4",
+   "columna": "Griego II",
+   "texto": "Elaborar trabajos de investigación en diferentes soportes sobre aspectos del legado de la civilización griega en el ámbito personal, religioso y sociopolítico localizando, seleccionando, contrastando y reelaborando información procedente de diferentes fuentes, calibrando su fiabilidad y pertinencia y respetando los principios de rigor y propiedad intelectual..",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.GR.5",
+   "columna": "Griego I",
+   "texto": "Identificar y explicar el legado material e inmaterial de la civilización griega como fuente de inspiración, analizando producciones culturales y artísticas posteriores a partir de criterios dados.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.GR.5",
+   "columna": "Griego I",
+   "texto": "Investigar, de manera guiada, el patrimonio histórico, arqueológico, artístico y cultural heredado de la civilización griega, actuando de forma adecuada, empática y respetuosa e interesándose por los procesos de preservación y por aquellas actitudes cívicas que aseguran su sostenibilidad.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.GR.5",
+   "columna": "Griego I",
+   "texto": "Explorar el legado griego en el entorno del alumnado a partir de criterios dados, aplicando los conocimientos adquiridos y reflexionando sobre las implicaciones de sus distintos usos, dando ejemplos de la pervivencia de la Antigüedad clásica en su vida cotidiana y presentando los resultados a través de diferentes soportes.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.GR.5",
+   "columna": "Griego II",
+   "texto": "Identificar y explicar el legado material e inmaterial de la civilización griega como fuente de inspiración, analizando producciones culturales y artísticas posteriores.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.GR.5",
+   "columna": "Griego II",
+   "texto": "Investigar el patrimonio histórico, arqueológico, artístico y cultural heredado de la civilización griega, actuando de forma adecuada, empática y respetuosa e interesándose por los procesos de preservación y por aquellas actitudes cívicas que aseguran su sostenibilidad.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.GR.5",
+   "columna": "Griego II",
+   "texto": "Explorar el legado griego en el entorno del alumnado, aplicando los conocimientos adquiridos y reflexionando sobre las implicaciones de sus distintos usos, dando ejemplos de la pervivencia de la Antigüedad clásica en su vida cotidiana y presentando sus resultados a través de diferentes soportes.",
+   "cursos": [
+    2
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Griego I",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Unidades lingüísticas de la Lengua Griega.",
+        "Alfabeto, pronunciación y acentuación de la Lengua Griega clásica.",
+        "Clases de palabras.",
+        "Concepto de lengua flexiva: flexión nominal y pronominal (sistema casual y declinaciones) y flexión verbal (el sistema de conjugaciones).",
+        "Sintaxis oracional: funciones y sintaxis de los casos.",
+        "Estructuras oracionales. La concordancia y el orden de palabras en oraciones simples y oraciones compuestas.",
+        "Formas nominales del verbo.",
+        "La traducción: técnicas, procesos y herramientas",
+        "El análisis morfosintáctico como herramienta de traducción.",
+        "Estrategias de traducción: formulación de expectativas a partir del entorno textual (título, obra…) y del propio texto (campos temáticos, familias de palabras, etc.), así como a partir del contexto; conocimiento del tema; descripción de la estructura y género; peculiaridades lingüísticas de los textos traducidos (discurso directo / indirecto, uso de tiempos verbales, géneros verbales, pregunta retórica, etc.); errores frecuentes de traducción y técnicas para evitarlos.",
+        "Herramientas de traducción: glosarios, diccionarios, atlas o correctores ortográficos en soporte analógico o digital, etc.",
+        "Lectura comparada de diferentes traducciones y comentario de textos bilingües a partir de terminología metalingüística.",
+        "Recursos estilísticos frecuentes y su relación con el contenido del texto.",
+        "Estrategias básicas de retroversión de textos breves.",
+        "La traducción como instrumento que favorece el razonamiento lógico, la constancia, la memoria, la resolución de problemas y la capacidad de análisis y síntesis.",
+        "Aceptación del error como parte del proceso de aprendizaje y actitud positiva de superación.",
+        "Estrategias y herramientas, analógicas y digitales, individuales y cooperativas, para la autoevaluación, la coevaluación y la autorreparación."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Plurilingüismo",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Sistemas de escritura a lo largo de la historia.",
+        "El alfabeto griego: su historia e influencia posterior. Reglas de transcripción del alfabeto griego a las lenguas de enseñanza.",
+        "Del indoeuropeo al griego. Etapas de la Lengua Griega.",
+        "Léxico:",
+        "procedimientos básicos de composición y derivación en la formación de palabras griegas;",
+        "lexemas, sufijos y prefijos de origen griego en el léxico de uso común y en el específico de las ciencias, la técnica y otros ámbitos del conocimiento;",
+        "significado y definición de palabras de uso común en las lenguas de enseñanza a partir de sus étimos griegos;",
+        "influencia del griego en la evolución de las lenguas de enseñanza y del resto de lenguas que conforman el repertorio lingüístico individual del alumnado;",
+        "técnicas básicas para la elaboración de familias léxicas y de un vocabulario básico griego de frecuencia.",
+        "Interés por conocer el significado etimológico de las palabras y la importancia del uso adecuado del vocabulario como instrumento básico en la comunicación.",
+        "Respeto por todas las lenguas y aceptación de las diferencias culturales de las gentes que las hablan.",
+        "Herramientas analógicas y digitales para el aprendizaje, la comunicación y el desarrollo de proyectos con estudiantes de griego a nivel transnacional.",
+        "Expresiones y léxico específico básico para reflexionar y compartir la reflexión sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Educación literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Etapas y vías de transmisión de la literatura griega.",
+        "Principales géneros y autores de la literatura griega: origen, tipología, cronología, características, temas, motivos, tradición, características y principales autores.",
+        "Técnicas básicas para el comentario y análisis lingüístico y literario de los textos literarios griegos.",
+        "Recepción de la literatura griega: influencia en la literatura latina y en la producción cultural europea, nociones básicas de intertextualidad, imitatio, aemulatio, interpretatio, allusio.",
+        "Analogías y diferencias básicas entre los géneros literarios griegos y los de la literatura actual.",
+        "Introducción a la crítica literaria.",
+        "Interés hacia la literatura como fuente de placer y de conocimiento del mundo.",
+        "Respeto de la propiedad intelectual y derechos de autor sobre las fuentes consultadas y contenidos utilizados: herramientas para el tratamiento de datos bibliográficos y recursos para evitar el plagio."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. La antigua Grecia",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Geografía de la antigua Grecia: topografía, nombre y función de los principales enclaves.",
+        "Historia: etapas; hitos de la historia del mundo griego entre los siglos VIII a.C. y V d.C.; leyendas y principales episodios históricos, personalidades históricas relevantes de la historia de Grecia, su biografía en contexto y su importancia para Europa.",
+        "Historia y organización política y social de Grecia como parte esencial de la historia y la cultura de la sociedad actual.",
+        "Instituciones, creencias y formas de vida de la civilización Grecia y su reflejo y pervivencia en la sociedad actual.",
+        "Influencias de la cultura griega en la civilización latina: Graecia capta ferum victorem cepit.",
+        "La aportación de Grecia a la cultura y al pensamiento de la sociedad occidental.",
+        "Relación de Grecia con culturas extranjeras como Persia o Roma.",
+        "El mar Mediterráneo como encrucijada de culturas ayer y hoy.",
+        "La importancia del discurso público para la vida política y social."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Legado y patrimonio",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Conceptos de legado, herencia y patrimonio.",
+        "La transmisión textual griega como patrimonio cultural y fuente de conocimiento a través de diferentes culturas y épocas. Soportes de escritura: tipos y preservación.",
+        "La mitología clásica y su pervivencia en manifestaciones literarias y artísticas.",
+        "Obras públicas y urbanismo: construcción, conservación, preservación y restauración.",
+        "Las representaciones y festivales teatrales, su evolución y pervivencia en la actualidad.",
+        "Las competiciones atléticas y su pervivencia en la actualidad.",
+        "Las instituciones políticas griegas, su influencia y pervivencia en el sistema político actual.",
+        "Técnicas básicas de debate y de exposición oral.",
+        "La educación en la antigua Grecia: los modelos educativos de Atenas y Esparta y su comparación con los sistemas actuales.",
+        "Principales obras artísticas de la Antigüedad griega.",
+        "Principales sitios arqueológicos, museos o festivales relacionados con la Antigüedad clásica."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Griego II",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Unidades lingüísticas de la Lengua Griega",
+        "Concepto de lengua flexiva: flexión nominal y pronominal (sistema casual y declinaciones) y flexión verbal (el sistema de conjugaciones).",
+        "Sintaxis oracional: funciones y sintaxis de los casos.",
+        "Estructuras oracionales. La concordancia y el orden de palabras en oraciones simples y oraciones compuestas.",
+        "Formas nominales del verbo.",
+        "La traducción: técnicas, procesos y herramientas El análisis morfosintáctico como herramienta de traducción.",
+        "Estrategias de traducción: formulación de expectativas a partir del entorno textual (título, obra…) y del propio texto (campos temáticos, familias de palabras, etc.), así como a partir del contexto; conocimiento del tema; descripción de la estructura y género; peculiaridades lingüísticas de los textos traducidos (discurso directo / indirecto, uso de tiempos verbales, géneros verbales, pregunta retórica, etc.); errores frecuentes de traducción y técnicas para evitarlos.",
+        "Herramientas para la traducción: glosarios, diccionarios, atlas o correctores ortográficos en soporte analógico o digital, etc.",
+        "Lectura comparada de diferentes traducciones y comentario de textos bilingües a partir de terminología metalingüística.",
+        "Recursos estilísticos frecuentes y su relación con el contenido del texto.",
+        "Estrategias de retroversión de textos breves.",
+        "La traducción como instrumento que favorece el razonamiento lógico, la constancia, la memoria, la resolución de problemas y la capacidad de análisis y síntesis.",
+        "Aceptación del error como parte del proceso de aprendizaje y actitud positiva de superación.",
+        "Estrategias y herramientas, analógicas y digitales, individuales y cooperativas, para la autoevaluación, la coevaluación y la autorreparación."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Plurilingüismo",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Influencia del griego en la evolución de las lenguas de enseñanza y del resto de lenguas que conforman el repertorio lingüístico individual del alumnado.",
+        "Léxico:",
+        "Procedimientos de composición y derivación en la formación de palabras griegas;",
+        "lexemas, sufijos y prefijos de origen griego en el léxico de uso común y en el específico de las ciencias, la técnica y otros ámbitos del conocimiento;",
+        "significado y definición de palabras en las lenguas de enseñanza a partir de sus étimos griegos;",
+        "técnicas para la elaboración de familias léxicas y de un vocabulario básico griego de frecuencia.",
+        "Interés por conocer el significado etimológico de las palabras y reconocimiento de la importancia del uso adecuado del vocabulario como instrumento básico en la comunicación.",
+        "Respeto por todas las lenguas y aceptación de las diferencias culturales de las gentes que las hablan.",
+        "Herramientas analógicas y digitales para el aprendizaje, la comunicación y el desarrollo de proyectos con estudiantes de griego a nivel transnacional.",
+        "Expresiones y léxico específico para reflexionar y compartir la reflexión sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Educación Literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Etapas y vías de transmisión de la literatura griega.",
+        "Principales géneros y autores de la literatura griega: origen, tipología, cronología, temas, motivos, tradición, características y principales autores.",
+        "Técnicas para el comentario y análisis lingüístico y literario de los textos literarios griegos.",
+        "Recepción de la literatura griega: influencia en la literatura latina y en la producción cultural europea, nociones básicas de intertextualidad, imitatio, aemulatio, interpretatio, allusio.",
+        "Analogías y diferencias entre los géneros literarios griegos y los de la literatura actual.",
+        "Introducción a la crítica literaria.",
+        "Interés hacia la literatura como fuente de placer y de conocimiento del mundo.",
+        "Respeto de la propiedad intelectual y derechos de autor sobre las fuentes consultadas y contenidos utilizados: herramientas para el tratamiento de datos bibliográficos y recursos para evitar el plagio."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. La antigua Grecia",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Geografía de la antigua Grecia: topografía, nombre y función de los principales sitios. Viajeros ilustres.",
+        "Historia: etapas; hitos de la historia del mundo griego entre los siglos VIII a.C. y V d.C.; leyendas y principales episodios históricos, personalidades históricas relevantes de la historia de Grecia, su biografía en contexto y su importancia para Europa.",
+        "Historia y organización política y social de Grecia como parte esencial de la historia y la cultura de la sociedad actual.",
+        "Instituciones, creencias y formas de vida de la civilización Grecia y su reflejo y pervivencia en la sociedad actual.",
+        "Influencias de la cultura griega en la civilización latina: Graecia capta ferum victorem cepit.",
+        "La aportación de Grecia a la cultura y al pensamiento de la sociedad occidental.",
+        "Relación de Grecia con culturas extranjeras como Persia o Roma.",
+        "El mar Mediterráneo como encrucijada de culturas ayer y hoy.",
+        "La importancia del discurso público para la vida política y social."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Legado y patrimonio",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Conceptos de legado, herencia y patrimonio.",
+        "La transmisión textual griega como patrimonio cultural y fuente de conocimiento a través de diferentes culturas y épocas. Soportes de escritura: tipos y preservación.",
+        "La mitología clásica y su pervivencia en manifestaciones literarias y artísticas.",
+        "Obras públicas y urbanismo: construcción, conservación, preservación y restauración.",
+        "Las representaciones y festivales teatrales, su evolución y pervivencia en la actualidad.",
+        "Las competiciones atléticas y su pervivencia en la actualidad.",
+        "Las instituciones políticas griegas, su influencia y pervivencia en el sistema político actual.",
+        "Técnicas de debate y de exposición oral.",
+        "La educación en la antigua Grecia: los modelos educativos de Atenas y Esparta y su comparación con los sistemas actuales.",
+        "Principales obras artísticas de la Antigüedad griega.",
+        "Principales sitios arqueológicos, museos o festivales relacionados con la Antigüedad."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 99.3,
+  "no_encontrados": [
+   "saber : Expresiones y léxico específico básico para reflexionar y compartir la reflexión sobre la comunicación, la lengua, el ap"
+  ]
+ },
+ "materia": "Griego"
+}

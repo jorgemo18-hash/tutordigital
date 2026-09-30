@@ -1,0 +1,349 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "48 Matemáticas Generales.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.MG.1",
+   "texto": "Modelizar y resolver problemas de la vida cotidiana y de diversos ámbitos aplicando diferentes estrategias y formas de razonamiento, con ayuda de herramientas tecnológicas, para obtener posibles soluciones."
+  },
+  {
+   "codigo": "CE.MG.2",
+   "texto": "Verificar la validez de las posibles soluciones de un problema empleando el razonamiento y la argumentación para contrastar su idoneidad."
+  },
+  {
+   "codigo": "CE.MG.3",
+   "texto": "Generar preguntas de tipo matemático aplicando saberes y estrategias conocidas para dar respuesta a situaciones problemáticas de la vida cotidiana."
+  },
+  {
+   "codigo": "CE.MG.4",
+   "texto": "Utilizar el pensamiento computacional de forma eficaz, modificando y creando algoritmos que resuelvan problemas mediante el uso de las matemáticas, para modelizar y resolver situaciones de la vida cotidiana y de diversos ámbitos."
+  },
+  {
+   "codigo": "CE.MG.5",
+   "texto": "Establecer, investigar y utilizar conexiones entre las diferentes ideas matemáticas estableciendo vínculos entre conceptos, procedimientos, argumentos y modelos para dar significado y estructurar el aprendizaje matemático."
+  },
+  {
+   "codigo": "CE.MG.6",
+   "texto": "Descubrir los vínculos de las matemáticas con otras materias y profundizar en sus conexiones, interrelacionando conceptos y procedimientos, para modelizar, resolver problemas y desarrollar la capacidad crítica, creativa e innovadora en situaciones diversas."
+  },
+  {
+   "codigo": "CE.MG.7",
+   "texto": "Representar conceptos, procedimientos e información matemáticos seleccionando diferentes tecnologías, para visualizar ideas y estructurar razonamientos matemáticos."
+  },
+  {
+   "codigo": "CE.MG.8",
+   "texto": "Comunicar las ideas matemáticas, de forma individual y colectiva, empleando el soporte, la terminología y el rigor apropiados, para organizar y consolidar el pensamiento matemático."
+  },
+  {
+   "codigo": "CE.MG.9",
+   "texto": "Utilizar destrezas personales y sociales, identificando y gestionando las propias emociones y respetando las de los demás y organizando activamente el trabajo en equipos heterogéneos, aprendiendo del error como parte del proceso de aprendizaje y afrontando situaciones de incertidumbre, para perseverar en la consecución de objetivos en el aprendizaje de las matemáticas."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.MG.1",
+   "columna": null,
+   "texto": "Emplear diferentes estrategias y herramientas digitales que resuelvan problemas de la vida cotidiana y de ámbitos diversos, seleccionando la más adecuada en cada caso.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.MG.1",
+   "columna": null,
+   "texto": "Obtener todas las posibles soluciones matemáticas de problemas de la vida cotidiana y de ámbitos diversos, describiendo el procedimiento realizado.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.MG.2",
+   "columna": null,
+   "texto": "Comprobar la validez matemática de las posibles soluciones de un problema utilizando el razonamiento, la argumentación y las herramientas digitales.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.MG.2",
+   "columna": null,
+   "texto": "Seleccionar la solución más adecuada de un problema en función del contexto (sostenibilidad, consumo responsable, equidad...) usando el razonamiento y la argumentación.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.MG.3",
+   "columna": null,
+   "texto": "Adquirir nuevo conocimiento matemático mediante la formulación de preguntas de naturaleza matemática de forma autónoma.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.MG.3",
+   "columna": null,
+   "texto": "Emplear herramientas tecnológicas adecuadas en la formulación o investigación de preguntas o problemas.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.MG.4",
+   "columna": null,
+   "texto": "Interpretar, modelizar y resolver situaciones problematizadas de ámbitos diversos, utilizando el pensamiento computacional, modificando o creando algoritmos.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.MG.5",
+   "columna": null,
+   "texto": "Manifestar una visión matemática integrada, investigando y conectando las diferentes ideas matemáticas.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.MG.5",
+   "columna": null,
+   "texto": "Resolver problemas estableciendo y aplicando conexiones entre las diferentes ideas matemáticas",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.MG.6",
+   "columna": null,
+   "texto": "Resolver problemas en situaciones diversas utilizando procesos matemáticos, estableciendo y aplicando conexiones entre el mundo real, otras materias y las matemáticas.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.MG.6",
+   "columna": null,
+   "texto": "Analizar la aportación de las matemáticas al progreso de la humanidad reflexionando sobre su contribución en la propuesta de soluciones a situaciones complejas y a los retos que se plantean en la sociedad.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.MG.7",
+   "columna": null,
+   "texto": "Representar ideas matemáticas estructurando diferentes razonamientos matemáticos y seleccionando las tecnologías más adecuadas para la resolución de problemas.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.MG.7",
+   "columna": null,
+   "texto": "Seleccionar y utilizar diversas formas de representación valorando su utilidad para compartir información.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.MG.8",
+   "columna": null,
+   "texto": "Mostrar organización al comunicar las ideas matemáticas empleando el soporte, la terminología y el rigor apropiados.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.MG.8",
+   "columna": null,
+   "texto": "Reconocer y emplear el lenguaje matemático en diferentes contextos, comunicando la información con precisión y rigor.",
+   "cursos": []
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.MG.9",
+   "columna": null,
+   "texto": "Afrontar las situaciones de incertidumbre y tomar decisiones evaluando distintas opciones identificando y gestionando emociones y aceptando y aprendiendo del error como parte del proceso de aprendizaje de las matemáticas.",
+   "cursos": []
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.MG.9",
+   "columna": null,
+   "texto": "Mostrar una actitud positiva y perseverante, aceptando y aprendiendo de la crítica razonada, al hacer frente a las diferentes situaciones de aprendizaje de las matemáticas.",
+   "cursos": []
+  },
+  {
+   "codigo": "9.3",
+   "competencia": "CE.MG.9",
+   "columna": null,
+   "texto": "Participar en tareas matemáticas de forma activa en equipos heterogéneos, respetando las emociones y experiencias de las demás personas, escuchando su razonamiento, identificando las habilidades sociales más propicias y fomentando el bienestar del equipo y las relaciones saludables.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Conteo",
+       "saberes": [
+        "Reglas y estrategias para determinar el cardinal de conjuntos finitos en problemas de la vida cotidiana: principios de comparación, adición, multiplicación y división, del palomar y de inclusión-exclusión."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Sentido de las operaciones",
+       "saberes": [
+        "Interpretación de la información numérica en documentos de la vida cotidiana: documentos financieros, facturas, nóminas, noticias, etc.",
+        "Herramientas tecnológicas y digitales en la resolución de problemas numéricos.",
+        "Logaritmos: comprensión y utilización de sus relaciones para simplificar y resolver problemas."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Relaciones",
+       "saberes": [
+        "Razones, proporciones, porcentajes y tasas: comprensión, relación y aplicación en problemas en contextos diversos."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Educación financiera",
+       "saberes": [
+        "Razonamiento proporcional en la resolución de problemas financieros: medios de pago con cobro de intereses y comisiones, cambios de divisas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sentido de la medida",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Cambio",
+       "saberes": [
+        "Estudio de la variación absoluta y de la variación media.",
+        "Concepto de derivada: definición a partir del estudio del cambio en diferentes contextos. Análisis e interpretación con medios tecnológicos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Sentido espacial",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Visualización, razonamiento y modelización geométrica",
+       "saberes": [
+        "Grafos: representación de situaciones de la vida cotidiana mediante diferentes tipos de grafos (dirigidos, planos, ponderados, árboles, etc.). Fórmula de Euler.",
+        "Grafos eulerianos y hamiltonianos: resolución de problemas de caminos y circuitos. Coloración de grafos.",
+        "Resolución del problema del camino mínimo en diferentes contextos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Sentido algebraico",
+     "apartados": [
+      {
+       "codigo": "D.1",
+       "nombre": "Patrones",
+       "saberes": [
+        "Generalización de patrones en situaciones sencillas."
+       ]
+      },
+      {
+       "codigo": "D.2",
+       "nombre": "Modelo matemático",
+       "saberes": [
+        "Funciones lineales, cuadráticas, racionales sencillas, exponenciales, logarítmicas, a trozos y periódicas: modelización de situaciones del mundo real con herramientas digitales",
+        "Programación lineal: modelización de problemas reales y resolución mediante herramientas digitales."
+       ]
+      },
+      {
+       "codigo": "D.3",
+       "nombre": "Igualdad y desigualdad",
+       "saberes": [
+        "Resolución de sistemas de ecuaciones e inecuaciones en diferentes contextos mediante herramientas digitales."
+       ]
+      },
+      {
+       "codigo": "D.4",
+       "nombre": "Relaciones y funciones",
+       "saberes": [
+        "Propiedades de las clases de funciones, incluyendo lineales, cuadráticas, racionales sencillas, exponenciales y logarítmicas."
+       ]
+      },
+      {
+       "codigo": "D.5",
+       "nombre": "Pensamiento computacional",
+       "saberes": [
+        "Formulación, resolución, análisis, representación e interpretación de relaciones y problemas de la vida cotidiana y de distintos ámbitos utilizando algoritmos, programas y herramientas tecnológicas adecuados."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Sentido estocástico",
+     "apartados": [
+      {
+       "codigo": "E.1",
+       "nombre": "Organización y análisis de datos",
+       "saberes": [
+        "Interpretación y análisis de información estadística en diversos contextos.",
+        "Organización de los datos procedentes de variables bidimensionales: distribución conjunta, distribuciones marginales y condicionadas. Análisis de la dependencia estadística.",
+        "Estudio de la relación entre dos variables mediante la regresión lineal y cuadrática: valoración gráfica de la pertinencia del ajuste. Diferencia entre correlación y causalidad.",
+        "Coeficientes de correlación lineal y de determinación: cuantificación de la relación lineal, predicción y valoración de su fiabilidad en contextos científicos, económicos, sociales, etc.",
+        "Calculadora, hoja de cálculo o software específico en el análisis de datos estadísticos."
+       ]
+      },
+      {
+       "codigo": "E.2",
+       "nombre": "Incertidumbre",
+       "saberes": [
+        "Cálculo de probabilidades en experimentos simples y compuestos en problemas de la vida cotidiana. Probabilidad condicionada e independencia de sucesos aleatorios. Diagramas de árbol y tablas de contingencia. Teorema de la probabilidad total."
+       ]
+      },
+      {
+       "codigo": "E.3",
+       "nombre": "Distribuciones de probabilidad",
+       "saberes": [
+        "Distribuciones de probabilidad uniforme (discreta y continua), binomial y normal. Cálculo de probabilidades asociadas mediante herramientas tecnológicas: aplicación a la resolución de problemas."
+       ]
+      },
+      {
+       "codigo": "E.4",
+       "nombre": "Inferencia",
+       "saberes": [
+        "Selección de muestras representativas. Técnicas sencillas de muestreo. Discusión de la validez de una estimación en función de la representatividad de la muestra.",
+        "Diseño de estudios estadísticos relacionados con diversos contextos utilizando herramientas digitales. Representatividad de una muestra."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Sentido socioafectivo",
+     "apartados": [
+      {
+       "codigo": "F.1",
+       "nombre": "Creencias, actitudes y emociones",
+       "saberes": [
+        "Destrezas de autoconciencia encaminadas a reconocer emociones propias, afrontando eventuales situaciones de estrés y ansiedad en el aprendizaje de las matemáticas.",
+        "Tratamiento del error, individual y colectivo como elemento movilizador de saberes previos adquiridos y generador de oportunidades de aprendizaje en el aula de matemáticas."
+       ]
+      },
+      {
+       "codigo": "F.2",
+       "nombre": "Trabajo en equipo, toma de decisiones, inclusión, respeto y diversidad",
+       "saberes": [
+        "Destrezas básicas para evaluar opciones y tomar decisiones en la resolución de problemas y tareas matemáticas.",
+        "Técnicas y estrategias de trabajo en equipo para la resolución de problemas y tareas matemáticas, en grupos heterogéneos.",
+        "Destrezas para desarrollar una comunicación efectiva: la escucha activa, la formulación de preguntas o solicitud y prestación de ayuda cuando sea necesario.",
+        "Valoración de la contribución de las Matemáticas y el papel de matemáticos y matemáticas a lo largo de la historia en el avance de la humanidad."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 98.3,
+  "no_encontrados": [
+   "saber A.1: Reglas y estrategias para determinar el cardinal de conjuntos finitos en problemas de la vida cotidiana: principios de c"
+  ]
+ },
+ "materia": "Matemáticas Generales"
+}

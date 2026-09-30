@@ -1,0 +1,340 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "49 Movimientos Culturales y Artísticos.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.MCA.1",
+   "texto": "Analizar producciones de distintos movimientos culturales y artísticos desde las vanguardias a la actualidad, reflexionando de forma abierta y crítica sobre su contexto histórico y sus aspectos singulares y comunes, para comprender el valor del arte como representación del espíritu de una época."
+  },
+  {
+   "codigo": "CE.MCA.2",
+   "texto": "Explicar el valor social del patrimonio, reflexionando sobre el compromiso del arte con su época y sobre la importancia de la libertad de expresión en producciones culturales y artísticas, para construir una mirada sobre el arte que reconozca, valore y respete la diversidad cultural."
+  },
+  {
+   "codigo": "CE.MCA.3",
+   "texto": "Explorar y valorar los lenguajes y los códigos de diferentes manifestaciones culturales y artísticas desde las vanguardias hasta la actualidad, identificando y comprendiendo sus características, referentes e intencionalidades, para potenciar las posibilidades de disfrute estético."
+  },
+  {
+   "codigo": "CE.MCA.4",
+   "texto": "Analizar la evolución del arte y la cultura en la historia reciente, identificando los distintos ámbitos en los que se producen y manifiestan, así como el valor de la innovación y el papel de las tecnologías, para desarrollar un criterio informado y crítico ante el hecho artístico que favorezca la identificación de oportunidades de desarrollo personal, social, académico y profesional."
+  },
+  {
+   "codigo": "CE.MCA.5",
+   "texto": "Explicar la práctica cultural y artística como un medio de expresión y comunicación individual y colectivo de ideas, opiniones y sentimientos, a partir de un análisis crítico de diversas manifestaciones culturales y artísticas que incluya también una reflexión sobre su impacto ambiental, económico y social, para profundizar en el conocimiento de la sociedad contemporánea y promover el compromiso personal con la sostenibilidad."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.MCA.1",
+   "columna": null,
+   "texto": "Identificar los aspectos singulares de diversas manifestaciones culturales y artísticas desde las vanguardias hasta la actualidad, relacionándolos con el sentido de dichas obras, con los contextos en los que han sido producidas y con la tradición artística, de forma abierta, crítica y respetuosa.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.MCA.1",
+   "columna": null,
+   "texto": "Establecer relaciones entre manifestaciones culturales de distintos campos creativos de los principales movimientos culturales y artísticos contemporáneos, identificando elementos comunes que configuran el espíritu de su época.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.MCA.1",
+   "columna": null,
+   "texto": "Investigar acerca del papel de los movimientos culturales y artísticos como motores de cambio y evolución de la sociedad, recurriendo a fuentes fiables.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.MCA.2",
+   "columna": null,
+   "texto": "Explicar la importancia de la promoción, conservación y puesta en valor del patrimonio artístico y cultural.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.MCA.2",
+   "columna": null,
+   "texto": "Explicar la repercusión y el compromiso social del arte, analizando ejemplos que muestren la implicación de las personas creadoras y los efectos generados en la sociedad.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.MCA.2",
+   "columna": null,
+   "texto": "Analizar la importancia de la diversidad cultural y de la libre expresión en el arte a partir del estudio de manifestaciones culturales y artísticas diversas, incluyendo las realizadas por mujeres o las procedentes de ámbitos diferentes a la cultura occidental.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.MCA.2",
+   "columna": null,
+   "texto": "Desarrollar proyectos de investigación individuales o colectivos que muestren una implicación y una respuesta personales en torno a la libre expresión artística y sus posibles límites, partiendo del análisis de casos concretos.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.MCA.3",
+   "columna": null,
+   "texto": "Identificar y explicar las características de diversas producciones culturales y artísticas a partir del análisis de sus lenguajes y códigos propios.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.MCA.3",
+   "columna": null,
+   "texto": "Investigar y analizar la presencia de referentes comunes en distintas manifestaciones culturales y artísticas, comparando sus temas, lenguajes o intencionalidades.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.MCA.3",
+   "columna": null,
+   "texto": "Debatir sobre diferentes propuestas culturales y artísticas, intercambiando las opiniones y los sentimientos experimentados, e incorporando juicios de valor vinculados a la apreciación estética de las obras de manera argumentada, constructiva y respetuosa.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.MCA.4",
+   "columna": null,
+   "texto": "Argumentar la influencia y aportaciones que los nuevos lenguajes y tecnologías han incorporado en la cultura y el arte recientes, a partir del análisis crítico de diferentes producciones, valorando la actitud innovadora de las personas creadoras.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.MCA.4",
+   "columna": null,
+   "texto": "Explorar, explicar y valorar la repercusión social y económica de diferentes manifestaciones culturales y artísticas, reflexionando sobre las oportunidades personales y profesionales que ofrecen.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.MCA.4",
+   "columna": null,
+   "texto": "Identificar una variedad de ámbitos y espacios en los que se desarrolla la práctica cultural y artística en la actualidad, analizando de qué modo condicionan las manifestaciones que acogen.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.MCA.5",
+   "columna": null,
+   "texto": "Explorar diferentes manifestaciones culturales y artísticas actuales con interés, curiosidad y respeto, identificando su valor expresivo y comunicativo tanto de la individualidad de las personas creadoras, como de la sociedad en la que se producen.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.MCA.5",
+   "columna": null,
+   "texto": "Explicar algunas de las repercusiones medioambientales, sociales y económicas de la cultura y el arte sobre la sociedad actual, explorando alternativas que favorezcan la consecución de los objetivos de desarrollo sostenible.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "La evolución del concepto de arte.",
+       "saberes": []
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Las distintas manifestaciones de la expresión artística.",
+       "saberes": []
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Elementos esenciales de los distintos lenguajes artísticos.",
+       "saberes": []
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Los grandes movimientos artísticoculturales contemporáneos",
+       "saberes": [
+        "Aspectos fundamentales."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "La expresión artística en su contexto social e histórico.",
+       "saberes": []
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Función social del arte y la cultura",
+       "saberes": [
+        "Su impacto socioeconómico."
+       ]
+      },
+      {
+       "codigo": "A.7",
+       "nombre": "La libertad de expresión",
+       "saberes": [
+        "La censura en el arte."
+       ]
+      },
+      {
+       "codigo": "A.8",
+       "nombre": "Estereotipos culturales y artísticos",
+       "saberes": [
+        "La perspectiva de género y la perspectiva intercultural en el arte. El respeto a la diversidad."
+       ]
+      },
+      {
+       "codigo": "A.9",
+       "nombre": "El arte como herramienta de expresión individual y colectiva.",
+       "saberes": []
+      },
+      {
+       "codigo": "A.10",
+       "nombre": "Estrategias de investigación, análisis, interpretación y valoración crítica de productos culturales y artísticos.",
+       "saberes": []
+      }
+     ]
+    },
+    {
+     "bloque": "B. Naturaleza, arte y cultura",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Del plein air a la fotografía de naturaleza.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Arte, conciencia ecológica y sostenibilidad.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Arte Povera.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Arte ambiental y Land Art.",
+       "saberes": []
+      }
+     ]
+    },
+    {
+     "bloque": "C. El arte dentro del arte",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Arte primitivo, oriental, precolombino y africano",
+       "saberes": [
+        "Su papel como inspiración para las vanguardias."
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "La pervivencia de lo clásico en el arte y la cultura contemporánea.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Cultura popular y Pop art",
+       "saberes": [
+        "El Arte pop en España."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "Relaciones interdisciplinares",
+       "saberes": [
+        "literatura, cine, música, fotografía, artes plásticas, cómic, publicidad, artes escénicas, diseño y moda."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. El arte en los espacios urbanos",
+     "apartados": [
+      {
+       "codigo": "D.1",
+       "nombre": "Arquitectura y sociedad.",
+       "saberes": []
+      },
+      {
+       "codigo": "D.2",
+       "nombre": "La arquitectura en el arte contemporáneo.",
+       "saberes": []
+      },
+      {
+       "codigo": "D.3",
+       "nombre": "Intervenciones artísticas en proyectos de urbanismo.",
+       "saberes": []
+      },
+      {
+       "codigo": "D.4",
+       "nombre": "Arte mural y trampantojo",
+       "saberes": [
+        "Arte urbano."
+       ]
+      },
+      {
+       "codigo": "D.5",
+       "nombre": "Los espacios del arte",
+       "saberes": [
+        "museos, salones, ferias, festivales, exhibiciones, galerías, talleres, etc."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Lenguajes artísticos contemporáneos",
+     "apartados": [
+      {
+       "codigo": "E.1",
+       "nombre": "Explorando el cuerpo humano",
+       "saberes": [
+        "happening y performance, arte acción y body art."
+       ]
+      },
+      {
+       "codigo": "E.2",
+       "nombre": "Diseño industrial y artes decorativas.",
+       "saberes": []
+      },
+      {
+       "codigo": "E.3",
+       "nombre": "Medios electrónicos, informáticos y digitales en el arte",
+       "saberes": [
+        "Videoarte."
+       ]
+      },
+      {
+       "codigo": "E.4",
+       "nombre": "Instalaciones",
+       "saberes": [
+        "Del arte ambiente al arte inmersivo e interactivo."
+       ]
+      },
+      {
+       "codigo": "E.5",
+       "nombre": "Narrativas seriales en el audiovisual del siglo XXI.",
+       "saberes": []
+      },
+      {
+       "codigo": "E.6",
+       "nombre": "Narrativa multiverso y videojuegos.",
+       "saberes": []
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Movimientos Culturales y Artísticos"
+}

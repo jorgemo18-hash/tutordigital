@@ -6,7 +6,7 @@ import fs from "node:fs";
 export async function run({ test, assert }) {
   const RAIZ = new URL("../", import.meta.url).pathname;
   const { validaUnidades, proponUnidades, mensajeDelCurriculo } = await import("../server/lib/programaciones/ia/proponUnidades.js");
-  const { redactaTextos, validaTextos, LETRAS_DE_TEXTO, esquemaDeTextos, GUIA } = await import("../server/lib/programaciones/ia/redactaTextos.js");
+  const { redactaTextos, validaTextos, letrasDeTexto, esquemaDeTextos, GUIA, promptDeTextos } = await import("../server/lib/programaciones/ia/redactaTextos.js");
   const { curriculoDeCurso } = await import("../server/lib/curriculo/curriculoAragon.js");
   const { saberesConId, criteriosDe, cobertura } = await import("../assets/shared/programacion/estructuraDeLaProgramacion.js");
   const { DatosSchema } = await import("../server/lib/programaciones/programaciones.js");
@@ -83,7 +83,7 @@ export async function run({ test, assert }) {
 
   test("a la IA se le da el currículo con sus ids y sus criterios, y se le obliga a usar la herramienta", async () => {
     const cliente = clienteQueDevuelve({ unidades: [{ titulo: "Todo", trimestre: 1, sesiones: 5, saberes: ids, criterios: codigos }] });
-    const r = await proponUnidades({ client: cliente, model: "m", curriculo: cur, curso: 1, sesionesTotales: 140 });
+    const r = await proponUnidades({ client: cliente, model: "m", curriculo: cur, materiaSlug: "matematicas", curso: 1, sesionesTotales: 140 });
     const p = cliente.llamadas[0];
     assert.equal(p.tool_choice.name, "propon_unidades");
     assert.match(p.system, /Matemáticas/);
@@ -95,29 +95,50 @@ export async function run({ test, assert }) {
 
   test("TEXTOS: solo las letras pedidas, recortadas, y el prompt prohíbe inventar datos del centro", async () => {
     const cliente = clienteQueDevuelve({ apartado_f: "Medidas de atención…", apartado_j: "  ", zz: "no pedida" });
-    const r = await redactaTextos({ client: cliente, model: "m", curriculo: { ...cur, curso: 1 }, datos: { unidades: [], pesos: {} }, letras: ["f", "j"] });
+    const r = await redactaTextos({ client: cliente, model: "m", curriculo: { ...cur, curso: 1 }, materiaSlug: "matematicas", datos: { unidades: [], pesos: {} }, letras: ["f", "j"] });
     assert.deepEqual(r.textos, { f: "Medidas de atención…" }, "j vacío no cuenta; zz no se pidió");
     assert.match(cliente.llamadas[0].system, /\[a completar por el centro\]/);
     assert.match(cliente.llamadas[0].messages[0].content, /f\) Actuaciones generales/);
     assert.equal(validaTextos({ c: "x".repeat(30000) }, ["c"]).c.length, 20000);
-    assert.deepEqual(LETRAS_DE_TEXTO, ["c", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "ñ"]);
+    assert.deepEqual(letrasDeTexto("matematicas"), ["c", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "ñ"]);
+    assert.deepEqual(letrasDeTexto("primaria-matematicas"), ["c", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n"]);
+    assert.deepEqual(letrasDeTexto("bachillerato-fisica"), ["c", "e", "f", "g", "h", "i", "j", "k", "l", "m"]);
   });
 
   test("REGRESIÓN (24/9): pedir f–ñ fallaba entero — las claves de la herramienta solo pueden ser [a-zA-Z0-9_.-]", async () => {
-    const claves = Object.keys(esquemaDeTextos(LETRAS_DE_TEXTO).properties);
+    const claves = Object.keys(esquemaDeTextos(letrasDeTexto("matematicas")).properties);
     for (const k of claves) assert.match(k, /^[a-zA-Z0-9_.-]{1,64}$/, `clave inválida para la API: ${k}`);
     const cliente = clienteQueDevuelve({ apartado_nn: "Salida al museo de la ciencia [a completar por el centro]." });
-    const r = await redactaTextos({ client: cliente, model: "m", curriculo: { ...cur, curso: 1 }, datos: { unidades: [], pesos: {} }, letras: ["ñ"] });
+    const r = await redactaTextos({ client: cliente, model: "m", curriculo: { ...cur, curso: 1 }, materiaSlug: "matematicas", datos: { unidades: [], pesos: {} }, letras: ["ñ"] });
     assert.equal(r.textos["ñ"], "Salida al museo de la ciencia [a completar por el centro].", "y lo que vuelve se guarda en la ñ");
   });
 
   test("REGRESIÓN (24/9): cada apartado lleva qué tiene que incluir, y el prompt prohíbe repetir el contexto", async () => {
     const cliente = clienteQueDevuelve({});
-    await redactaTextos({ client: cliente, model: "m", curriculo: { ...cur, curso: 1 }, datos: { unidades: [], pesos: {} }, letras: ["c", "e"] });
+    await redactaTextos({ client: cliente, model: "m", curriculo: { ...cur, curso: 1 }, materiaSlug: "matematicas", datos: { unidades: [], pesos: {} }, letras: ["c", "e"] });
     const msg = cliente.llamadas[0].messages[0].content;
-    assert.ok(msg.includes(GUIA.c) && msg.includes(GUIA.e));
+    assert.ok(msg.includes(GUIA.instrumentos) && msg.includes(GUIA.inicial));
     assert.match(cliente.llamadas[0].system, /NO repitas los datos del contexto/);
-    for (const l of LETRAS_DE_TEXTO) assert.ok(GUIA[l], `falta la guía de ${l}`);
+    const { apartadosDeTextoDe } = await import("../assets/shared/programacion/apartadosLegales.js");
+    for (const slug of ["matematicas", "primaria-matematicas", "bachillerato-fisica"]) {
+      for (const a of apartadosDeTextoDe(slug)) assert.ok(GUIA[a.clave], `falta la guía de ${slug} ${a.letra}`);
+    }
+  });
+
+  test("ETAPAS (30/9): la guía va por lo que ES el apartado, no por su letra; en Primaria escribe el equipo de ciclo", async () => {
+    // La h) de Bachillerato es la metodología; la de ESO, la materia pendiente.
+    const cliente = clienteQueDevuelve({});
+    await redactaTextos({ client: cliente, model: "m", curriculo: { ...cur, curso: 1 }, materiaSlug: "bachillerato-fisica", datos: { unidades: [], pesos: {} }, letras: ["g", "h"] });
+    const msg = cliente.llamadas[0].messages[0].content;
+    assert.ok(msg.includes(`g) Plan de recuperación de materias pendientes.`));
+    assert.ok(msg.includes(GUIA.pendientes) && msg.includes(GUIA.metodologia));
+    assert.match(cliente.llamadas[0].system, /1\.º de Bachillerato según el artículo 54\.3 de la ORDEN ECD\/1173\/2022/);
+    const pri = promptDeTextos({ materia: "Matemáticas", materiaSlug: "primaria-matematicas", curso: 3 });
+    assert.match(pri, /maestro o maestra de Matemáticas en un colegio de Aragón/);
+    assert.match(pri, /3\.º de Primaria según el artículo 42\.3 de la ORDEN ECD\/1112\/2022/);
+    assert.match(pri, /equipo didáctico de ciclo/);
+    assert.doesNotMatch(pri, /departamento/);
+    assert.match(promptDeTextos({ materia: "Matemáticas", materiaSlug: "matematicas", curso: 1 }), /jefe de departamento de Matemáticas en un instituto de Aragón y redactas la programación didáctica de 1\.º de ESO según el artículo 59\.3/);
   });
 
   test("las frases sobre las instrucciones no llegan al documento", () => {

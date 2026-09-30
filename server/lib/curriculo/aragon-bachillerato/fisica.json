@@ -1,0 +1,213 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "22 Física.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.F.1",
+   "texto": "Utilizar las teorías, principios y leyes que rigen los procesos físicos más importantes, considerando su base experimental y desarrollo matemático en la resolución de problemas, para reconocer la Física como una ciencia relevante implicada en el desarrollo de la tecnología, de la economía, de la sociedad y la sostenibilidad ambiental."
+  },
+  {
+   "codigo": "CE.F.2",
+   "texto": "Adoptar los modelos, teorías y leyes aceptados de la Física como base de estudio de los sistemas naturales y predecir su evolución para inferir soluciones generales a los problemas cotidianos relacionados con las aplicaciones prácticas demandadas por la sociedad en el campo tecnológico, industrial y biosanitario."
+  },
+  {
+   "codigo": "CE.F.3",
+   "texto": "Utilizar el lenguaje de la Física con la formulación matemática de sus principios, magnitudes, unidades, ecuaciones, etc., para establecer una comunicación adecuada entre diferentes comunidades científicas y como una herramienta fundamental en la investigación."
+  },
+  {
+   "codigo": "CE.F.4",
+   "texto": "Utilizar de forma autónoma, eficiente, crítica y responsable recursos en distintos formatos, plataformas digitales de información y de comunicación en el trabajo individual y colectivo para el fomento de la creatividad mediante la producción y el intercambio de materiales científicos y divulgativos que faciliten acercar la Física a la sociedad como un campo de conocimientos accesible."
+  },
+  {
+   "codigo": "CE.F.5",
+   "texto": "Aplicar técnicas de trabajo e indagación propias de la Física, así como la experimentación, el razonamiento lógico-matemático y la cooperación, en la resolución de problemas y la interpretación de situaciones relacionadas, para poner en valor el papel de la Física en una sociedad basada en valores éticos y sostenibles."
+  },
+  {
+   "codigo": "CE.F.6",
+   "texto": "Reconocer y analizar el carácter multidisciplinar de la Física, considerando su relevante recorrido histórico y sus contribuciones al avance del conocimiento científico como un proceso en continua evolución e innovación, para establecer unas bases de conocimiento y relación con otras disciplinas científicas."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.F.1",
+   "columna": null,
+   "texto": "Reconocer la relevancia de la Física en el desarrollo de la ciencia, tecnología, la economía, la sociedad y la sostenibilidad ambiental, empleando adecuadamente los fundamentos científicos relativos a esos ámbitos.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.F.1",
+   "columna": null,
+   "texto": "Resolver problemas de manera experimental y analítica, utilizando principios, leyes y teorías de la Física.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.F.2",
+   "columna": null,
+   "texto": "Analizar y comprender la evolución de los sistemas naturales, utilizando modelos, leyes y teorías de la Física.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.F.2",
+   "columna": null,
+   "texto": "Inferir soluciones generales a problemas generales a partir del análisis de situaciones particulares y las variables de que dependen.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.F.2",
+   "columna": null,
+   "texto": "Conocer aplicaciones prácticas y productos útiles para la sociedad en el campo tecnológico, industrial y biosanitario, analizándolos en base a los modelos, las leyes y las teorías de la Física.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.F.3",
+   "columna": null,
+   "texto": "Aplicar los principios, leyes y teorías científicas en el análisis crítico de procesos físicos del entorno, como los observados y los publicados en distintos medios de comunicación, analizando, comprendiendo y explicando las causas que los producen.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.F.3",
+   "columna": null,
+   "texto": "Utilizar de manera rigurosa las unidades de las variables Físicas en diferentes sistemas de unidades, empleando correctamente su notación y sus equivalencias, así como la elaboración e interpretación adecuada de gráficas que relacionan variables Físicas, posibilitando una comunicación efectiva con toda la comunidad científica.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.F.3",
+   "columna": null,
+   "texto": "Expresar de forma adecuada los resultados, argumentando las soluciones obtenidas, en la resolución de los ejercicios y problemas que se plantean, bien sea a través de situaciones reales o ideales.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.F.4",
+   "columna": null,
+   "texto": "Consultar, elaborar e intercambiar materiales científicos y divulgativos en distintos formatos con otros miembros del entorno de aprendizaje, utilizando de forma autónoma y eficiente plataformas digitales.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.F.4",
+   "columna": null,
+   "texto": "Usar de forma crítica, ética y responsable medios de comunicación digitales y tradicionales como modo de enriquecer el aprendizaje y el trabajo individual y colectivo.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.F.5",
+   "columna": null,
+   "texto": "Obtener relaciones entre variables Físicas, midiendo y tratando los datos experimentales, determinando los errores y utilizando sistemas de representación gráfica.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.F.5",
+   "columna": null,
+   "texto": "Reproducir en laboratorios, sean reales o virtuales, determinados procesos físicos modificando las variables que los condicionan, considerando los principios, leyes o teorías implicados, generando el correspondiente informe con formato adecuado e incluyendo argumentaciones, conclusiones, tablas de datos, gráficas y referencias bibliográficas.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.F.5",
+   "columna": null,
+   "texto": "Valorar la Física, debatiendo de forma fundamentada sobre sus avances y la implicación en la sociedad desde el punto de vista de la ética y de la sostenibilidad.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.F.6",
+   "columna": null,
+   "texto": "Identificar los principales avances científicos relacionados con la Física que han contribuido a las leyes y teorías aceptadas actualmente en el conjunto de las disciplinas científicas, como las fases para el entendimiento de las metodologías de la ciencia, su evolución constante y su universalidad.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.F.6",
+   "columna": null,
+   "texto": "Reconocer el carácter multidisciplinar de la ciencia y las contribuciones de unas disciplinas sobre otras, estableciendo relaciones entre la Física y la Química, la Biología o las Matemáticas.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Determinación, a través del cálculo vectorial, del campo gravitatorio producido por un sistema de masas. Efectos sobre las variables cinemáticas y dinámicas de objetos inmersos en el campo.",
+        "Momento angular de un objeto en un campo gravitatorio: cálculo, relación con las fuerzas centrales y aplicación de su conservación en el estudio de su movimiento.",
+        "Energía mecánica de un objeto sometido a un campo gravitatorio: deducción del tipo de movimiento que posee, cálculo del trabajo o los balances energéticos existentes en desplazamientos entre distintas posiciones, velocidades y tipos de trayectorias.",
+        "Leyes que se verifican en el movimiento planetario y extrapolación al movimiento de satélites y cuerpos celestes.",
+        "Introducción a la cosmología y la astrofísica como aplicación del campo gravitatorio: implicación de la Física en la evolución de objetos astronómicos, del conocimiento del universo y repercusión de la investigación en estos ámbitos en la industria, la tecnología, la economía y en la sociedad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Campo electromagnético",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Campos eléctrico y magnético: tratamiento vectorial, determinación de las variables cinemáticas y dinámicas de cargas eléctricas libres en presencia de estos campos. Fenómenos naturales y aplicaciones tecnológicas en los que se aprecian estos efectos.",
+        "Intensidad del campo eléctrico en distribuciones de cargas discretas, y continuas: cálculo e interpretación del flujo de campo eléctrico.",
+        "Energía de una distribución cargas estáticas: magnitudes que se modifican y que permanecen constantes con el desplazamiento de cargas libres entre puntos de distinto potencial eléctrico.",
+        "Campos magnéticos generados por hilos con corriente eléctrica en distintas configuraciones geométricas: rectilíneos, espiras, solenoides o toros. Interacción con cargas eléctricas libres presentes en su entorno.",
+        "Líneas de campo eléctrico y magnético producido por distribuciones de carga sencillas, imanes e hilos con corriente eléctrica en distintas configuraciones geométricas.",
+        "Generación de la fuerza electromotriz: funcionamiento de motores, generadores y transformadores a partir de sistemas donde se produce una variación del flujo magnético."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Vibraciones y ondas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Movimiento oscilatorio: variables cinemáticas de un cuerpo oscilante y conservación de energía en estos sistemas.",
+        "Movimiento ondulatorio: gráficas de oscilación en función de la posición y del tiempo, ecuación de onda que lo describe y relación con el movimiento armónico simple. Distintos tipos de movimientos ondulatorios en la naturaleza.",
+        "Fenómenos ondulatorios: situaciones y contextos naturales en los que se ponen de manifiesto distintos fenómenos ondulatorios y aplicaciones. Ondas sonoras y sus cualidades.",
+        "Naturaleza de la luz: controversias y debates históricos. La luz como onda electromagnética. Espectro electromagnético.",
+        "Formación de imágenes en medios y objetos con distinto índice de refracción. Sistemas ópticos: lentes delgadas, espejos planos y curvos y sus aplicaciones."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Física relativista, cuántica, nuclear y de partículas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Principios de la relatividad, de la Física cuántica y de la Física de partículas en el estudio de las principales partículas involucradas en la Física atómica y nuclear: propiedades e interacciones. Implicaciones de la dualidad onda-corpúsculo y del principio de incertidumbre.",
+        "El efecto fotoeléctrico como sistema de transformación energética y de producción de diferencias de potencial eléctrico para su aplicación tecnológica.",
+        "Radiactividad natural: procesos y constantes implicados que permiten el cálculo de la variación poblacional y actividad de muestras radiactivas. Aplicación en el campo de las ciencias y de la salud."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Física"
+}

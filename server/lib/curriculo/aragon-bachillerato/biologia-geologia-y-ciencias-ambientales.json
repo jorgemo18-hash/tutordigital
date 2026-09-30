@@ -1,0 +1,288 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "05 Biología, Geología y Ciencias Ambientales.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.BGCA.1",
+   "texto": "Interpretar y transmitir información y datos científicos, argumentando sobre estos con precisión y utilizando diferentes formatos para analizar procesos, métodos, experimentos o resultados de las ciencias biológicas, geológicas y medioambientales."
+  },
+  {
+   "codigo": "CE.BGCA.2",
+   "texto": "Localizar y utilizar fuentes fiables, identificando, seleccionando y organizando información, evaluándola críticamente y contrastando su veracidad, para resolver preguntas planteadas relacionadas con las ciencias biológicas, geológicas y medioambientales de forma autónoma."
+  },
+  {
+   "codigo": "CE.BGCA.3",
+   "texto": "Diseñar, planear y desarrollar proyectos de investigación siguiendo los pasos de las metodologías científicas, teniendo en cuenta los recursos disponibles de forma realista y buscando vías de colaboración, para indagar en aspectos relacionados con las ciencias biológicas, geológicas y medioambientales."
+  },
+  {
+   "codigo": "CE.BGCA.4",
+   "texto": "Buscar y utilizar estrategias en la resolución de problemas analizando críticamente las soluciones y respuestas halladas y reformulando el procedimiento si fuera necesario, para dar explicación a fenómenos relacionados con las ciencias biológicas, geológicas y medioambientales."
+  },
+  {
+   "codigo": "CE.BGCA.5",
+   "texto": "Diseñar, promover y ejecutar iniciativas relacionadas con la conservación del medioambiente, la sostenibilidad y la salud, basándose en los fundamentos de las ciencias biológicas, geológicas y ambientales, para fomentar estilos de vida sostenibles y saludables."
+  },
+  {
+   "codigo": "CE.BGCA.6",
+   "texto": "Analizar los elementos del registro geológico utilizando fundamentos científicos, para relacionarlos con los grandes eventos ocurridos a lo largo de la historia de la Tierra y con la magnitud temporal en que se desarrollaron."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.BGCA.1",
+   "columna": null,
+   "texto": "Analizar críticamente conceptos y procesos relacionados con los saberes de la materia, interpretando información en diferentes formatos (modelos, gráficos, tablas, diagramas, fórmulas, esquemas).",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.BGCA.1",
+   "columna": null,
+   "texto": "Comunicar informaciones u opiniones razonadas relacionadas con los saberes de la materia o con trabajos científicos, transmitiéndolas de forma clara y rigurosa, utilizando la terminología y el formato adecuados (modelos, gráficos, tablas, vídeos, informes, diagramas, fórmulas, esquemas y símbolos, entre otros) y herramientas digitales.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.BGCA.1",
+   "columna": null,
+   "texto": "Argumentar sobre aspectos relacionados con los saberes de la materia, defendiendo una postura de forma razonada y con una actitud abierta, flexible, receptiva y respetuosa ante la opinión de los demás.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.BGCA.2",
+   "columna": null,
+   "texto": "Plantear y resolver cuestiones relacionadas con los saberes de la materia, localizando y citando fuentes adecuadas y seleccionando, organizando y analizando críticamente la información.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.BGCA.2",
+   "columna": null,
+   "texto": "Contrastar y justificar la veracidad de la información relacionada con los saberes de la materia, utilizando fuentes fiables y adoptando una actitud crítica y escéptica hacia informaciones sin una base científica como pseudociencias, teorías conspiratorias, creencias infundadas, bulos, etc.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.BGCA.2",
+   "columna": null,
+   "texto": "Argumentar sobre la contribución de la ciencia a la sociedad y la labor de las personas dedicadas a ella, destacando el papel de la mujer y entendiendo la investigación como una labor colectiva e interdisciplinar en constante evolución e influida por el contexto político y los recursos económicos.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.BGCA.3",
+   "columna": null,
+   "texto": "Plantear preguntas, realizar predicciones y formular hipótesis que puedan ser respondidas o contrastadas, utilizando métodos científicos y que intenten explicar fenómenos biológicos, geológicos o ambientales.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.BGCA.3",
+   "columna": null,
+   "texto": "Diseñar la experimentación, la toma de datos y el análisis de fenómenos biológicos, geológicos y ambientales y seleccionar los instrumentos necesarios de modo que permitan responder a preguntas concretas y contrastar una hipótesis planteada, minimizando los sesgos en la medida de lo posible.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.BGCA.3",
+   "columna": null,
+   "texto": "Realizar experimentos y tomar datos cuantitativos y cualitativos sobre fenómenos biológicos, geológicos y ambientales, seleccionando y utilizando los instrumentos, herramientas o técnicas adecuadas con corrección y precisión.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.BGCA.3",
+   "columna": null,
+   "texto": "Interpretar y analizar resultados obtenidos en un proyecto de investigación, utilizando, cuando sea necesario, herramientas matemáticas y tecnológicas, reconociendo su alcance y limitaciones y obteniendo conclusiones razonadas y fundamentadas o valorando la imposibilidad de hacerlo.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.BGCA.3",
+   "columna": null,
+   "texto": "Establecer colaboraciones dentro y fuera del centro educativo en las distintas fases del proyecto científico con el fin de trabajar con mayor eficiencia, utilizando las herramientas tecnológicas adecuadas, valorando la importancia de la cooperación en la investigación, respetando la diversidad y favoreciendo la inclusión.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.BGCA.4",
+   "columna": null,
+   "texto": "Resolver problemas o dar explicación a procesos biológicos, geológicos o ambientales, utilizando recursos variados como conocimientos propios, datos e información recabados, razonamiento lógico, pensamiento computacional o herramientas digitales.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.BGCA.4",
+   "columna": null,
+   "texto": "Analizar críticamente la solución a un problema sobre fenómenos biológicos, geológicos o ambientales y modificar los procedimientos utilizados o las conclusiones obtenidas si dicha solución no fuese viable o ante nuevos datos aportados o recabados con posterioridad.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.BGCA.5",
+   "columna": null,
+   "texto": "Analizar las causas y consecuencias ecológicas, sociales y económicas de los principales problemas medioambientales desde una perspectiva individual, local y global, concibiéndolos como grandes retos de la humanidad y basándose en datos científicos y en los saberes de la materia.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.BGCA.5",
+   "columna": null,
+   "texto": "Proponer y poner en práctica hábitos e iniciativas sostenibles y saludables a nivel local y argumentar sobre sus efectos positivos y la urgencia de adoptarlos basándose en los saberes de la materia.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.BGCA.6",
+   "columna": null,
+   "texto": "Relacionar los grandes eventos de la historia terrestre con determinados elementos del registro geológico y con los sucesos que ocurren en la actualidad, utilizando los principios geológicos básicos y el razonamiento lógico.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.BGCA.6",
+   "columna": null,
+   "texto": "Resolver problemas de datación, analizando elementos del registro geológico y fósil y aplicando métodos de datación.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Hipótesis, preguntas, problemas y conjeturas: planteamiento con perspectiva científica.",
+        "Estrategias para la búsqueda de información, colaboración, comunicación e interacción con instituciones científicas: herramientas digitales, formatos de presentación de procesos, resultados e ideas (diapositivas, gráficos, vídeos, posters, informes y otros).",
+        "Fuentes fiables de información: búsqueda, reconocimiento y utilización.",
+        "Experiencias científicas de laboratorio o de campo: diseño, planificación y realización. Contraste de hipótesis. Controles experimentales.",
+        "Métodos de análisis de resultados: organización, representación y herramientas estadísticas.",
+        "Estrategias de comunicación científica: vocabulario científico, formatos (informes, vídeos, modelos, gráficos y otros) y herramientas digitales.",
+        "La labor científica y las personas dedicadas a la ciencia: contribución a las ciencias biológicas, geológicas y ambientales e importancia social. El papel de la mujer en la ciencia.",
+        "La evolución histórica del saber científico: la ciencia como labor colectiva, interdisciplinar y en continua construcción."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Ecología y sostenibilidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El medio ambiente como motor económico y social: importancia de la evaluación de impacto ambiental y de la gestión sostenible de recursos y residuos. La relación entre la salud medioambiental, humana y de otros seres vivos: one health (una sola salud).",
+        "La sostenibilidad de las actividades cotidianas: uso de indicadores de sostenibilidad, estilos de vida compatibles y coherentes con un modelo de desarrollo sostenible. Concepto de huella ecológica.",
+        "Iniciativas locales y globales para promover un modelo de desarrollo sostenible.",
+        "La dinámica de los ecosistemas: flujos de energía, ciclos de la materia (carbono, nitrógeno, fósforo y azufre), interdependencia y relaciones tróficas. Resolución de problemas.",
+        "El cambio climático: su relación con el ciclo del carbono, causas y consecuencias sobre la salud, la economía, la ecología y la sociedad. Estrategias y herramientas para afrontarlo: mitigación y adaptación.",
+        "La pérdida de biodiversidad: causas y consecuencias ambientales y sociales.",
+        "El problema de los residuos. Los compuestos xenobióticos: los plásticos y sus efectos sobre la naturaleza y sobre la salud humana y de otros seres vivos. La prevención y gestión adecuada de los residuos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Historia de la Tierra y la vida",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El tiempo geológico: magnitud, escala y métodos de datación. Problemas de datación absoluta y relativa.",
+        "La historia de la Tierra: principales acontecimientos geológicos.",
+        "Métodos y principios para el estudio del registro geológico: reconstrucción de la historia geológica de una zona. Principios geológicos.",
+        "La historia de la vida en la Tierra: principales cambios en los grandes grupos de seres vivos y justificación desde la perspectiva evolutiva. Principales teorías evolutivas actuales; importancia de la conservación de la biodiversidad, la sexta extinción.",
+        "Los principales grupos taxonómicos: características fundamentales. Importancia de la conservación de la biodiversidad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. La dinámica y composición terrestre",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estructura y funciones de la atmósfera",
+        "Estructura y funciones de la hidrosfera.",
+        "Estructura, composición y dinámica de la geosfera. Métodos de estudio directos e indirectos.",
+        "Los procesos geológicos internos, el relieve y su relación con la tectónica de placas. Tipos de bordes, relieves, actividad sísmica y volcánica y rocas resultantes en cada uno de ellos.",
+        "Los procesos geológicos externos: agentes causales y consecuencias sobre el relieve. Formas principales de modelado del relieve y geomorfología.",
+        "La edafogénesis: factores y procesos formadores del suelo. La edafodiversidad e importancia de su conservación.",
+        "Los riesgos naturales: relación con los procesos geológicos y las actividades humanas. Estrategias de predicción, prevención y corrección.",
+        "Clasificación e identificación de las rocas: según su origen y composición. El ciclo litológico. Clasificación e identificación de minerales y rocas.",
+        "Clasificación químico-estructural e identificación de minerales y rocas.",
+        "La importancia de los minerales y las rocas: usos cotidianos. Su explotación y uso responsable.",
+        "La importancia de la conservación del patrimonio geológico."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Fisiología e histología animal",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La función de nutrición: importancia biológica y estructuras implicadas en diferentes grupos taxonómicos.",
+        "La función de relación: fisiología y funcionamiento de los sistemas de coordinación (nervioso y endocrino), de los receptores sensoriales, y de los órganos efectores.",
+        "La función de reproducción: importancia biológica, tipos, estructuras implicadas en diferentes grupos taxonómicos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Fisiología e histología vegetal",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La función de nutrición: la fotosíntesis, su balance general e importancia para la vida en la Tierra.",
+        "La savia bruta y la savia elaborada: composición, formación y mecanismos de transporte.",
+        "La función de relación: tipos de respuestas de los vegetales a estímulos e influencia de las fitohormonas (auxinas, citoquininas, etileno, etc.).",
+        "La función de reproducción: la reproducción sexual y asexual, relevancia evolutiva, los ciclos biológicos, tipos de reproducción asexual, procesos implicados en la reproducción sexual (polinización, fecundación, dispersión de la semilla y el fruto) y su relación con el ecosistema.",
+        "Las adaptaciones de los vegetales al medio: relación entre estas y el ecosistema en el que se desarrollan."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "G. Los microorganismos y formas acelulares",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Las eubacterias y las arqueobacterias: diferencias.",
+        "El metabolismo bacteriano: ejemplos de importancia ecológica (simbiosis y ciclos biogeoquímicos).",
+        "Los microorganismos como agentes causales de enfermedades infecciosas: zoonosis y epidemias.",
+        "El cultivo de microorganismos: técnicas de esterilización y cultivo.",
+        "Mecanismos de transferencia genética horizontal en bacterias: el problema de la resistencia a antibióticos.",
+        "Las formas acelulares (virus, viroides y priones): características, mecanismos de infección e importancia biológica."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 98.5,
+  "no_encontrados": [
+   "saber : La función de reproducción: la reproducción sexual y asexual, relevancia evolutiva, los ciclos biológicos, tipos de repr"
+  ]
+ },
+ "materia": "Biología, Geología y Ciencias Ambientales"
+}

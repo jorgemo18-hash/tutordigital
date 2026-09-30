@@ -1,0 +1,313 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "02 Análisis Musical.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.AM.1",
+   "texto": "Analizar los elementos musicales de diferentes obras, utilizando la escucha activa y el estudio de partituras, para describir sus características y establecer comparaciones."
+  },
+  {
+   "codigo": "CE.AM.2",
+   "texto": "Establecer relaciones entre los elementos musicales de una composición, a través del análisis de su estructura y de los procedimientos compositivos utilizados, para asociar la obra con un género, un estilo y un contexto de creación."
+  },
+  {
+   "codigo": "CE.AM.3",
+   "texto": "Elaborar comentarios y críticas musicales sobre las obras analizadas, utilizando una terminología adecuada y consultando distintas fuentes de información, para expresar juicios personales fundamentados y contribuir a la difusión del patrimonio musical a través de los medios disponibles."
+  },
+  {
+   "codigo": "CE.AM.4",
+   "texto": "Utilizar los procedimientos compositivos fundamentales y las tecnologías digitales, empleando los elementos y las estructuras musicales más adecuadas, para crear obras sencillas y realizar improvisaciones."
+  },
+  {
+   "codigo": "CE.AM.5",
+   "texto": "Investigar sobre los usos de la música con fines terapéuticos y en combinación con otras formas de expresión artística, utilizando diferentes fuentes de información y analizando las características musicales de las obras, para entender de qué forma inciden determinados rasgos musicales en la salud y en las emociones."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.AM.1",
+   "columna": "Análisis Musical I",
+   "texto": "Identificar los elementos que constituyen una obra musical y su función dentro de la composición a través de la escucha activa y con apoyo de la partitura.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.AM.1",
+   "columna": "Análisis Musical I",
+   "texto": "Describir las características musicales básicas de una obra a partir de la escucha activa y el estudio de partituras, analizando sus elementos constitutivos.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.AM.1",
+   "columna": "Análisis Musical II",
+   "texto": "Describir las características musicales de una obra a partir de la escucha activa y el estudio de partituras, analizando sus elementos constitutivos y la función que estos cumplen dentro de la composición.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.AM.1",
+   "columna": "Análisis Musical II",
+   "texto": "Comparar los elementos constitutivos y las características musicales de diferentes obras, estableciendo analogías y diferencias entre ellas, a partir de la escucha activa y del estudio de partituras.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.AM.2",
+   "columna": "Análisis Musical I",
+   "texto": "Analizar, de forma guiada, obras musicales, identificando la estructura formal y los procedimientos compositivos utilizados.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.AM.2",
+   "columna": "Análisis Musical I",
+   "texto": "Asociar las obras analizadas con su contexto de creación, investigando sobre su autor o autora y su época.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.AM.2",
+   "columna": "Análisis Musical II",
+   "texto": "Distinguir los principales géneros y estilos musicales que se desarrollan en la historia, analizando los factores que inciden en la evolución de las formas musicales.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.AM.2",
+   "columna": "Análisis Musical II",
+   "texto": "Asociar las obras analizadas con un género, un estilo y un contexto de creación determinados, identificando, de forma autónoma, la estructura formal y los procedimientos compositivos utilizados.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.AM.3",
+   "columna": "Análisis Musical I",
+   "texto": "Expresar de forma correcta y ordenada una opinión propia, informada y fundamentada, sobre las obras analizadas, utilizando un vocabulario musical adecuado. tanto de forma oral como escrita, y utilizando diversos medios analógicos y digitales.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.AM.3",
+   "columna": "Análisis Musical I",
+   "texto": "Publicar reseñas musicales en los medios disponibles, analógicos y digitales, respetando los derechos de autor y la propiedad intelectual.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.AM.3",
+   "columna": "Análisis Musical II",
+   "texto": "Expresar de forma correcta y ordenada juicios personales sobre las obras analizadas, argumentando la opinión propia y utilizando una terminología musical adecuada. Es igual que 3.1. pero con otras palabras y dividiéndola en dos: una para argumentar lo observado, y otra lo investigado.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.AM.3",
+   "columna": "Análisis Musical II",
+   "texto": "Justificar la opinión propia sobre las obras analizadas, investigando y seleccionando la información más pertinente a partir de medios analógicos y digitales.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.AM.3",
+   "columna": "Análisis Musical II",
+   "texto": "Publicar críticas musicales y comentarios propios en los medios disponibles, analógicos y digitales, respetando los derechos de autor y la propiedad intelectual.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.AM.4",
+   "columna": "Análisis Musical I",
+   "texto": "Reproducir patrones melódicos, rítmicos, armónicos y formales de obras analizadas, aplicando estrategias de memorización y utilizando la interpretación vocal, corporal o instrumental en proyectos musicales grupales.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.AM.4",
+   "columna": "Análisis Musical I",
+   "texto": "Generar nuevas ideas musicales, combinando patrones melódicos, rítmicos, armónicos y formales previamente analizados e interiorizados.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.AM.4",
+   "columna": "Análisis Musical I",
+   "texto": "Utilizar, de forma guiada, las tecnologías digitales en la composición musical.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.4",
+   "competencia": "CE.AM.4",
+   "columna": "Análisis Musical I",
+   "texto": "Colaborar con una actitud de interés y cooperación en los proyectos musicales grupales, respetando al resto de miembros del grupo, sus roles y su trabajo.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.AM.4",
+   "columna": "Análisis Musical II",
+   "texto": "Realizar improvisaciones sencillas o pequeñas composiciones, en proyectos musicales grupales, utilizando los procedimientos compositivos fundamentales y aplicando patrones melódicos, rítmicos, armónicos y formales previamente analizados e interiorizados.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.AM.4",
+   "columna": "Análisis Musical II",
+   "texto": "Utilizar, de forma eficaz, las tecnologías digitales en la composición musical.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.AM.5",
+   "columna": "Análisis Musical I",
+   "texto": "Identificar las funciones que cumple la música cuando se asocia con otras formas de expresión (cine, teatro, danza...), analizando sus características y el efecto que genera en el espectador.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.AM.5",
+   "columna": "Análisis Musical II",
+   "texto": "Analizar los usos terapéuticos de la música y cómo inciden determinados rasgos musicales en la salud y las emociones, a partir de la información obtenida en fuentes de información fiables.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.AM.5",
+   "columna": "Análisis Musical II",
+   "texto": "Describir las características de la música que se utiliza con fines terapéuticos, analizando ejemplos de obras y relacionando sus rasgos con posibles efectos en el oyente.",
+   "cursos": [
+    2
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Análisis Musical I",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Iniciación al análisis musical",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La escucha activa y el estudio de partituras como soportes para el análisis.",
+        "Elementos básicos de la música y la relación entre ellos: ritmo, tempo, melodía, armonía, textura, timbre, dinámica y agógica.",
+        "Técnicas de análisis auditivo de obras de diferentes estilos y géneros.",
+        "Estrategias de análisis de los elementos musicales de la partitura con apoyo de la audición.",
+        "Reseñas musicales.",
+        "Recursos digitales para la investigación, la composición y la difusión musical.",
+        "Derechos de autor y propiedad intelectual."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. La forma musical",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Elementos estructurales: célula, motivo, frase y semifrase, período, sección y movimiento. Ritmo melódico y armónico. Cadencias.",
+        "Formas simples, formas compuestas y libres. Formas-tipo. Representación de esquemas formales.",
+        "Procedimientos compositivos fundamentales: repetición, variación, contraste y desarrollo.",
+        "Función de la música en combinación con otras manifestaciones artísticas."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Análisis Musical II",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Técnicas de análisis musical",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La comparación como técnica analítica.",
+        "Técnicas de análisis de audición y de partituras.",
+        "Técnicas para el análisis del contexto de creación. El pensamiento de la persona creadora, los condicionantes contextuales y la interpretación de la obra.",
+        "Comentarios y críticas musicales.",
+        "Recursos digitales para la investigación, la composición y la difusión musical.",
+        "Derechos de autor y propiedad intelectual."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Géneros musicales",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Las características sonoras y estilísticas de la música desde la Edad Media hasta la actualidad. Evolución organológica.",
+        "Las formas y los géneros musicales desde la Edad Media hasta la actualidad.",
+        "Uso de la música con fines terapéuticos."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Análisis Musical"
+}

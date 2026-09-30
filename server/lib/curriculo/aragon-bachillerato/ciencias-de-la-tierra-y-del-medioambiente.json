@@ -1,0 +1,530 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "06 Ciencias de la Tierra y del Medioambiente.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.CTM.1",
+   "texto": "Comprender y explicar los diversos procesos que se producen en nuestro planeta utilizando los conocimientos científicos adecuados, para adquirir una visión holística del funcionamiento del medio natural."
+  },
+  {
+   "codigo": "CE.CTM.2",
+   "texto": "Argumentar sobre la importancia de los hábitos sostenibles y saludables, basándose en fundamentos científicos, para adoptarlos y promoverlos en su entorno."
+  },
+  {
+   "codigo": "CE.CTM.3",
+   "texto": "Adoptar una actitud crítica basada en argumentos científicos relevantes, de actualidad y contrastables respecto a la situación medioambiental actual y los diferentes modelos de desarrollo, siendo capaz de comunicarlos eficazmente."
+  },
+  {
+   "codigo": "CE.CTM.4",
+   "texto": "Comprender que el actual sistema económico no es sostenible a medio plazo y que un colapso económico y humano planetario es bastante razonable si no se toman medidas drásticas en la dirección correcta."
+  },
+  {
+   "codigo": "CE.CTM.5",
+   "texto": "Conocer y valorar el patrimonio natural aragonés y la necesidad de su conservación."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.CTM.1",
+   "columna": null,
+   "texto": "Analizar y explicar fenómenos del entorno, representándolos mediante expresiones, tablas, gráficas, modelos, simulaciones, diagramas u otros formatos.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.CTM.1",
+   "columna": null,
+   "texto": "Explicar fenómenos que ocurren en el entorno, utilizando principios, leyes y teorías de las ciencias de la naturaleza.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.CTM.1",
+   "columna": null,
+   "texto": "Explicar, utilizando los fundamentos científicos adecuados, los elementos y procesos básicos que se dan en los ecosistemas terrestres.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.CTM.2",
+   "columna": null,
+   "texto": "Adoptar y promover hábitos compatibles con un modelo de desarrollo sostenible y valorar su importancia utilizando fundamentos científicos.",
+   "competencia_en_tabla": "CE.CTM.1",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.CTM.2",
+   "columna": null,
+   "texto": "Adoptar y promover hábitos saludables y valorar su importancia.",
+   "competencia_en_tabla": "CE.CTM.1",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.CTM.3",
+   "columna": null,
+   "texto": "Busca información, en diversos soportes, de forma eficaz evitando aquellas fuentes no confiables por no ser científicamente relevantes.",
+   "competencia_en_tabla": "CE.CTM.1",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.CTM.3",
+   "columna": null,
+   "texto": "Discernir entre argumentos científicos válidos y no válidos.",
+   "competencia_en_tabla": "CE.CTM.1",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.CTM.3",
+   "columna": null,
+   "texto": "Explica de forma clara las razones por las cuales se ha llegado a la situación ambiental actual y la necesidad de un cambio en el sentido del desarrollo sostenible.",
+   "competencia_en_tabla": "CE.CTM.1",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.CTM.4",
+   "columna": null,
+   "texto": "Aplicar modelos simples de dinámica de sistemas e interpretarlos.",
+   "competencia_en_tabla": "CE.CTM.1",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.CTM.4",
+   "columna": null,
+   "texto": "Conocer aquellos hábitos que hace 50 años hacían a las sociedades más sostenibles y cómo los avances científicos y tecnológicos nos pueden ayudar a recuperar sostenibilidad sin perder prácticamente calidad de vida, aunque cambiando considerablemente hábitos.",
+   "competencia_en_tabla": "CE.CTM.1",
+   "cursos": []
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.CTM.4",
+   "columna": null,
+   "texto": "Conocer el concepto de límite de un sistema físico-químico y que el agotamiento de los recursos no es algo opcional o elegible, sino que obedece a leyes naturales.",
+   "competencia_en_tabla": "CE.CTM.1",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.CTM.5",
+   "columna": null,
+   "texto": "Conoce elementos del patrimonio natural aragonés tales como Espacios Naturales Protegidos, Especies Catalogadas, Lugares de Interés Geológico.",
+   "competencia_en_tabla": "CE.CTM.1",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.CTM.5",
+   "columna": null,
+   "texto": "Comprende la importancia de la conservación del patrimonio natural, así como de los servicios que nos proporcionan.",
+   "competencia_en_tabla": "CE.CTM.1",
+   "cursos": []
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.CTM.5",
+   "columna": null,
+   "texto": "Conoce los objetivos de la conservación del patrimonio natural y cultural.",
+   "competencia_en_tabla": "CE.CTM.1",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Ciencias y de la Tierra y del Medioambiente",
+       "saberes": [
+        "Importancia de su estudio.",
+        "Disciplinas y aspectos de las mismas que abarca."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Ecología fundamental",
+       "saberes": [
+        "Concepto de ecología y etimología de la palabra.",
+        "Concepto de ecosistema. Componentes de los ecosistemas: bióticos (biocenosis y comunidad, nicho ecológico, niveles tróficos) abióticos (biotopo, hábitat, factores ambientales).",
+        "Tipos de ecosistemas: diferencias entre ecosistemas acuáticos y terrestres.",
+        "El suelo: concepto, estructura e importancia para los ecosistemas y la producción primaria. El suelo y la agricultura.",
+        "Los ecosistemas más característicos de Aragón: singularidades e importancia."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "El funcionamiento de los ecosistemas",
+       "saberes": [
+        "Las relaciones tróficas intraespecíficas e interespecíficas.",
+        "Representación de las relaciones tróficas: redes y cadenas tróficas.",
+        "El flujo de materia y energía a través de los ecosistemas y las redes tróficas.",
+        "Los ciclos biogeoquímicos del carbono, fósforo y nitrógeno. Importancia de estos elementos para los ecosistemas. Principales alteraciones con origen antrópico de dichos ciclos.",
+        "Dinámica de los ecosistemas. Sucesiones ecológicas: tipos, características y ejemplos."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Modelización y estudio de los ecosistemas.",
+       "saberes": [
+        "Concepto y tipos de sistemas.",
+        "Concepto de modelización.",
+        "La modelización de ecosistemas mediante modelos matemáticos. Modelo depredador-presa. Ejemplos de modelos multivariantes y su utilidad como predictores de los parámetros ecosistémicos.",
+        "La teoría de sistemas en el estudio de los ecosistemas. Creación de modelos teóricos simples."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Reduccionismos y holismo",
+       "saberes": [
+        "concepto e importancia de la elección del enfoque en los estudios ambientales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Interacción del ser humano y el medio.",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Historia ambiental humana",
+       "saberes": [
+        "Principales etapas",
+        "Predicciones sobre el futuro ambiental de nuestro planeta."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Los recursos naturales",
+       "saberes": [
+        "Clasificación de los recursos naturales: renovables, potencialmente renovables y no renovables. Definición y ejemplos.",
+        "Problemática asociada a la sobreexplotación de los recursos y soluciones."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Impactos generados sobre la biodiversidad.",
+       "saberes": [
+        "Definición y ejemplos.Principales causas de la pérdida de biodiversidad: destrucción y fragmentación de hábitats e introducción de especies invasoras.",
+        "Bioacumulación y eutrofización.",
+        "Corredores e infraestructuras verdes."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Accidentes ambientales históricos de gran repercusión",
+       "saberes": [
+        "Bhopal, Minamata, Chernóbil, Aznalcóllar, Prestige e Inquinosa (Alto Aragón)."
+       ]
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "Prevención, gestión y corrección de riesgos.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.6",
+       "nombre": "Ordenación y planificación territorial.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.7",
+       "nombre": "Modelos de desarrollo.",
+       "saberes": [
+        "Alternativas a la problemática ambiental y conflictos de intereses: desarrollismo, conservacionismo y sostenibilidad.",
+        "Economía y medioambiente.",
+        "Sostenibilidad económica frente a colapso económico y ambiental, posibles respuestas: decrecimiento.",
+        "Huella ecológica y día de la Sobrecapacidad de la Tierra."
+       ]
+      },
+      {
+       "codigo": "B.8",
+       "nombre": "Cambio global",
+       "saberes": [
+        "principales características y repercusiones.",
+        "Retos demográficos, económicos, agrícolas, ganaderos, forestales, energéticos, climáticos, materiales y urbanísticos"
+       ]
+      },
+      {
+       "codigo": "B.9",
+       "nombre": "Nuevas y viejas soluciones frente a los retos ambientales.",
+       "saberes": [
+        "Producción y consumo local, simplicidad de vida voluntaria, ruralismo, movimiento lento y otras formas para vivir de forma sostenible."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Derecho y políticas medioambientales",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "La importancia de las políticas y legislación ambiental.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "La política de medio ambiente en la UE",
+       "saberes": [
+        "principios generales y marco básico."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Legislación ambiental europea, española y aragonesa.",
+       "saberes": [
+        "Los artículos 11 y 191 a 193 del Tratado de Funcionamiento de la Unión Europea.",
+        "Directivas europeas relativas al medio ambiente.",
+        "Artículo 45 de la Constitución Española.",
+        "La Ley 42/2007 de 13 de diciembre, del Patrimonio Natural y de la Biodiversidad. Inventarios de Patrimonio Natural y Biodiversidad.",
+        "El Catálogo Español de Especies Amenazas. La necesidad de conservación de las especies. El catálogo Aragonés.",
+        "Catálogo Español de Especies Exóticas Invasoras. Especies Invasoras presentes en Aragón: su repercusión sobre los ecosistemas y la economía.",
+        "Convenios internacionales relativos a la conservación de la biodiversidad: RAMSAR, CITES, Berna, Bonn."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "Espacios Naturales Protegidos",
+       "saberes": [
+        "Tipología y modalidad de protección. Figuras de protección internacionales, europeas, nacionales y aragonesas (la Red Natural de Aragón).",
+        "Ejemplos relevantes españoles y aragoneses."
+       ]
+      },
+      {
+       "codigo": "C.5",
+       "nombre": "Evaluación de Impacto Ambiental (EIA).",
+       "saberes": [
+        "Definición. Etapas de una EIA: Estudio de Impacto Ambiental, Declaración de Impacto Ambiental, medidas de control y seguimiento.",
+        "Actividades que requieren EIA."
+       ]
+      },
+      {
+       "codigo": "C.6",
+       "nombre": "Sistemas de gestión y auditoría ambiental.",
+       "saberes": [
+        "Definición.",
+        "Norma ISO 14.001. Características generales, beneficios y limitaciones ambientales.",
+        "Certificación europea EMAS. Características generales, beneficios y limitaciones ambientales."
+       ]
+      },
+      {
+       "codigo": "C.7",
+       "nombre": "Principales acuerdos internacionales.",
+       "saberes": [
+        "Protocolo de Montreal (1987).",
+        "Declaración de Río (1992).",
+        "Acuerdo de París (2015)."
+       ]
+      },
+      {
+       "codigo": "C.8",
+       "nombre": "Agenda 2030 y ODS",
+       "saberes": [
+        "Repaso de los ODS. Aplicación en España, Aragón, municipios, universidades y centros educativos."
+       ]
+      },
+      {
+       "codigo": "C.9",
+       "nombre": "Participación ciudadana",
+       "saberes": [
+        "ONG ambientales. Diversidad, ejemplos e importancia."
+       ]
+      },
+      {
+       "codigo": "C.10",
+       "nombre": "Fuerzas y cuerpos de seguridad ambiental",
+       "saberes": [
+        "Seprona y Agentes de Protección de la Naturaleza"
+       ]
+      },
+      {
+       "codigo": "C.11",
+       "nombre": "Medidas políticas para afrontar los retos ambientales",
+       "saberes": [
+        "Medidas en el transporte, urbanismo, agroindustria, energías, contra la obsolescencia programada, a favor de la sostenibilidad intergeneracional e intrageneracional."
+       ]
+      },
+      {
+       "codigo": "C.11",
+       "nombre": "Técnicas de incentivos económicos",
+       "saberes": [
+        "Impuestos y ayudas ambientales."
+       ]
+      },
+      {
+       "codigo": "C.12",
+       "nombre": "Ecoetiquetas, ecoblanqueo o greenwashing.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.13",
+       "nombre": "Economía circular.",
+       "saberes": []
+      }
+     ]
+    },
+    {
+     "bloque": "D. Salud, alimentación y medioambiente",
+     "apartados": [
+      {
+       "codigo": "D.1",
+       "nombre": "Efectos en la salud de la contaminación",
+       "saberes": [
+        "Efectos de la contaminación atmosférica",
+        "Efectos de la contaminación hídrica",
+        "Efectos de la contaminación biológica",
+        "Efectos de la contaminación acústica",
+        "Efectos de las radiaciones ionizantes y no ionizantes"
+       ]
+      },
+      {
+       "codigo": "D.2",
+       "nombre": "Alimentación y salud",
+       "saberes": [
+        "Efectos ambientales y en la salud individual de la dieta de los países desarrollados. Alternativas saludables."
+       ]
+      },
+      {
+       "codigo": "D.3",
+       "nombre": "Salud planetaria y salud humana",
+       "saberes": [
+        "Teoría Gaia. Ejemplos de homeostasis planetaria en la regulación del clima.",
+        "Interacciones entre salud planetaria y salud humana: revisión de ejemplos conocidos (contaminación, bioinvasiones, calentamiento global y agujero de la capa de ozono).",
+        "Nexos entre deforestación, bioinvasiones y ganadería industrial con la proliferación de epidemias.",
+        "Definición de epidemia, endemia y pandemia.",
+        "Definición de zoonosis, efectos del cambio global en su dispersión.",
+        "Enfermedades tropicales. Efectos del calentamiento global y de la globalización en su expansión."
+       ]
+      },
+      {
+       "codigo": "D.4",
+       "nombre": "Agricultura y Ganadería",
+       "saberes": [
+        "Tipos de agricultura: tradicional, industrial, integrada y biológica. Efectos ambientales.",
+        "Tipos de ganadería: nómada, extensiva, intensiva. Efectos ambientales y en la salud humana."
+       ]
+      },
+      {
+       "codigo": "D.5",
+       "nombre": "Producción local",
+       "saberes": [
+        "Los productos km 0. Costes ambientales ocultos de los productos procedentes de largas distancias.",
+        "Beneficios de la producción local en las sociedades rurales.",
+        "Recuperación de variedades autóctonas adaptadas al clima local. Beneficios ambientales y culturales (gastronomía, productos artesanos, turismo cultural)"
+       ]
+      },
+      {
+       "codigo": "D.6",
+       "nombre": "Nuevas tecnologías aplicadas a la agricultura",
+       "saberes": [
+        "Transgénicos. Ventajas e inconvenientes.",
+        "Riegos localizados, empleo de aguas residuales depuradas.",
+        "Control biológico de las plagas."
+       ]
+      },
+      {
+       "codigo": "D.7",
+       "nombre": "Patrimonio agroalimentario de Aragón.",
+       "saberes": [
+        "Alimentos aragoneses con denominación de origen (DO).",
+        "Productos aragoneses alimentarios, variedades autóctonas. La Red de Semillas de Aragón.",
+        "Patrimonio cultural agroalimentario y lucha contra la despoblación rural."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Geología, ingeniería y medioambiente.",
+     "apartados": [
+      {
+       "codigo": "E.1",
+       "nombre": "Riesgos geológicos",
+       "saberes": [
+        "Terremotos, volcanes, inundaciones, movimientos de ladera, colapsos y subsidencias y dinámica litoral. Caracterización, predicción, prevención y corrección."
+       ]
+      },
+      {
+       "codigo": "E.2",
+       "nombre": "Recursos geológicos",
+       "saberes": [
+        "Recursos geológicos energéticos: combustibles fósiles (carbón, petróleo y gas), uranio, geotermia. Impactos ambientales de su aprovechamiento.",
+        "Recursos geológicos minerales. Impactos ambientales de la minería en galería, a cielo abierto, canteras y graveras."
+       ]
+      },
+      {
+       "codigo": "E.3",
+       "nombre": "El agotamiento de los recursos geológicos",
+       "saberes": [
+        "El pico de Hubbert para ilustrar el agotamiento de los recursos geológicos no renovables."
+       ]
+      },
+      {
+       "codigo": "E.4",
+       "nombre": "El agua potable como recurso potencialmente renovable",
+       "saberes": [
+        "Uso insostenible del agua, efectos de la contaminación y de la sobreexplotación de aguas naturales en su escasez. E. 5. Las aguas subterráneas",
+        "Conexiones entre aguas superficiales y subterráneas. Recarga y contaminación de acuíferos. Explotación de acuíferos, impactos y gestión sostenible. E. 6. Emplazamiento geológico de residuos",
+        "Depósito controlado de residuos. Características geológicas y elementos de la instalación. Clausura y seguimiento posterior."
+       ]
+      },
+      {
+       "codigo": "E.7",
+       "nombre": "Gestión y tratamiento de aguas",
+       "saberes": [
+        "Estación de Tratamiento de Aguas Potables (ETAP). Definición, etapas e instalaciones.",
+        "Estación Depuradora de Aguas Residuales (EDAR). Definición, etapas e instalaciones.",
+        "Usos de los fangos, gases y aguas depuradas."
+       ]
+      },
+      {
+       "codigo": "E.8",
+       "nombre": "Gestión y tratamiento de residuo",
+       "saberes": [
+        "Definición de residuos, tipología: RSU, agrícolas, ganaderos y forestales, sanitarios, tóxicos y peligrosos, radiactivos e inertes.",
+        "Gestión de residuos: reducción, valorización, recogida selectiva, recuperación, reciclaje, transformación (compostaje y biometanización) y eliminación (depósitos controlados e incineración). El problema de los vertederos incontrolados."
+       ]
+      },
+      {
+       "codigo": "E.9",
+       "nombre": "Análisis del Ciclo de Vida (ACV) de productos y servicios",
+       "saberes": [
+        "Definición. Utilidad para ajustar los impuestos al nivel de contaminación de cada elemento. Productos muy biodegradables o duraderos, reparables y de fácil reciclado."
+       ]
+      },
+      {
+       "codigo": "E.10",
+       "nombre": "Obsolescencia programada (OP).",
+       "saberes": [
+        "Definición, efectos ambientales y costes ocultos.",
+        "Lucha contra la OP: productos sin OP y legislación para prolongar la vida de los productos, su reparabilidad y la garantía."
+       ]
+      },
+      {
+       "codigo": "E.11",
+       "nombre": "Sistemas de control y vigilancia ambiental",
+       "saberes": [
+        "Utilidad de los sistemas de control y vigilancia ambiental. Definición y elementos que lo componen.",
+        "Sistema Automático de Información Hidrológica (SAIH) de la Confederación Hidrográfica del Ebro (CHE).",
+        "Sistemas de monitorización de la calidad atmosférica."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Ciencias de la Tierra y del Medioambiente"
+}

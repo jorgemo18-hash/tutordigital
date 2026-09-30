@@ -1,0 +1,738 @@
+{
+ "fuente": "ORDEN ECD/1112/2022, anexo II, con las modificaciones de la ORDEN ECD/866/2024 (Aragón)",
+ "archivo": "01 Ciencias de la Naturaleza.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.CN.1",
+   "texto": "Utilizar dispositivos y recursos digitales de forma segura, responsable y eficiente, para buscar información, comunicarse y trabajar de manera individual, en equipo y en red y para reelaborar y crear contenido digital de acuerdo a las necesidades digitales del contexto educativo.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.CN.2",
+   "texto": "Plantear y dar respuesta a cuestiones científicas sencillas, relacionadas con las Ciencias de la Naturaleza, utilizando diferentes técnicas, instrumentos y modelos propios del pensamiento científico, para interpretar y explicar hechos y fenómenos que ocurren en el medio natural, social y cultural."
+  },
+  {
+   "codigo": "CE.CN.3",
+   "texto": "Resolver problemas a través de proyectos de diseño y de la aplicación de pensamiento computacional, para generar o reelaborar cooperativamente un producto creativo e innovador que responda a necesidades concretas.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.CN.4",
+   "texto": "Conocer y tomar conciencia del propio cuerpo, así como de las emociones y sentimientos propios y ajenos, aplicando el conocimiento científico, para desarrollar hábitos saludables y para conseguir el bienestar físico, emocional y social."
+  },
+  {
+   "codigo": "CE.CN.5",
+   "texto": "Identificar las características de los diferentes elementos o sistemas del medio natural, analizando su organización y propiedades y estableciendo relaciones entre los mismos, para reconocer el valor del patrimonio natural, conservarlo, mejorarlo y emprender acciones para su uso responsable."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.CN.1",
+   "columna": "Primer Ciclo",
+   "texto": "Utilizar dispositivos y recursos digitales de forma segura y de acuerdo con las necesidades del contexto educativo de forma segura.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.CN.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Utilizar dispositivos y recursos digitales, de acuerdo a las necesidades del contexto educativo de forma segura, buscando información, comunicándose y trabajando de forma individual y en equipo, reelaborando y creando contenidos digitales sencillos.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.CN.1",
+   "columna": "Tercer ciclo",
+   "texto": "Utilizar dispositivos y recursos digitales de acuerdo con las necesidades del contexto educativo de forma segura y eficiente, buscando información, comunicándose y trabajando de forma individual, en equipo y en red y creando contenidos digitales sencillos.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.CN.2",
+   "columna": "Primer Ciclo",
+   "texto": "Formular preguntas y realizar predicciones mostrando curiosidad por objetos, hechos y fenómenos cercanos.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.CN.2",
+   "columna": "Primer Ciclo",
+   "texto": "Buscar información sencilla de diferentes fuentes seguras y fiables, más allá del ámbito virtual, de forma guiada, utilizándola en investigaciones relacionadas con el medio natural, social y cultural.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.CN.2",
+   "columna": "Primer Ciclo",
+   "texto": "Utilizar diferentes técnicas sencillas de indagación, participando en experimentos pautados o guiados, empleando de forma segura instrumentos y registrando las observaciones de forma clara.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.CN.2",
+   "columna": "Primer Ciclo",
+   "texto": "Proponer respuestas a preguntas planteadas, comparando la información y datos obtenidos con las predicciones realizadas.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.5",
+   "competencia": "CE.CN.2",
+   "columna": "Primer Ciclo",
+   "texto": "Comunicar de forma oral o gráfica el resultado de las investigaciones escolares explicando los pasos seguidos con ayuda de un guion.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.CN.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Formular preguntas y realizar predicciones razonadas, demostrando curiosidad por el medio natural, social y cultural cercano.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.CN.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Buscar y seleccionar información, de diferentes fuentes seguras y fiables, más allá del ámbito virtual utilizándola en investigaciones escolares relacionadas con el medio natural, social y cultural y, adquiriendo léxico científico básico.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.CN.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Realizar experimentos guiados, cuando la investigación lo requiera, utilizando diferentes técnicas de indagación y modelos, empleando de forma segura instrumentos y dispositivos, realizando observaciones y mediciones precisas y registrándolas correctamente.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.CN.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Proponer posibles respuestas a las preguntas planteadas, a través de la interpretación de la información y los resultados obtenidos, comparándolos con las predicciones realizadas.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.5",
+   "competencia": "CE.CN.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Presentar los resultados de las investigaciones escolares en diferentes formatos, utilizando lenguaje científico básico, utilizando representaciones gráficas y explicando los pasos seguidos.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.CN.2",
+   "columna": "Tercer ciclo",
+   "texto": "Formular preguntas y realizar predicciones razonadas sobre el medio natural, social o cultural mostrando y manteniendo la curiosidad.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.CN.2",
+   "columna": "Tercer ciclo",
+   "texto": "Buscar, seleccionar y contrastar información, de diferentes fuentes seguras y fiables, más allá del ámbito virtual, usando los criterios de fiabilidad de fuentes, adquiriendo léxico científico básico, utilizándola en investigaciones escolares relacionadas con el medio natural, social y cultural.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.CN.2",
+   "columna": "Tercer ciclo",
+   "texto": "Diseñar y realizar experimentos guiados, cuando la investigación lo requiera, utilizando diferentes estrategias de indagación y modelos, empleando de forma segura los instrumentos y dispositivos apropiados, realizando observaciones y mediciones precisas y registrándolas correctamente.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.CN.2",
+   "columna": "Tercer ciclo",
+   "texto": "Proponer posibles respuestas a las preguntas planteadas, a través del análisis e interpretación de la información y los resultados obtenidos, valorando la coherencia de las posibles soluciones, comparándolas con las predicciones realizadas.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.5",
+   "competencia": "CE.CN.2",
+   "columna": "Tercer ciclo",
+   "texto": "Comunicar los resultados y conclusiones de las investigaciones escolares adaptando el mensaje y el formato a la audiencia que va dirigido, utilizando lenguaje científico, utilizando representaciones gráficas y explicando los pasos seguido.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.CN.3",
+   "columna": "Primer Ciclo",
+   "texto": "Realizar, de forma guiada, un producto final sencillo que dé solución a un problema de diseño, probando en equipo diferentes prototipos y utilizando de forma segura los materiales adecuados.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.CN.3",
+   "columna": "Primer Ciclo",
+   "texto": "Presentar de forma oral o gráfica el producto final de los proyectos de diseño, explicando los pasos seguidos con la ayuda de un guion.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.CN.3",
+   "columna": "Primer Ciclo",
+   "texto": "Mostrar interés por el pensamiento computacional, participando en la resolución guiada de problemas sencillos de programación.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.CN.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Construir en equipo un producto final sencillo que dé solución a un problema de diseño, proponiendo posibles soluciones, probando diferentes prototipos y utilizando de forma segura las herramientas, técnicas y materiales adecuados.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.CN.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Diseñar posibles soluciones a los problemas planteados de acuerdo con técnicas sencillas de los proyectos de diseño y pensamiento computacional, mediante estrategias básicas de gestión de proyectos cooperativos, teniendo en cuenta los recursos necesarios y estableciendo criterios concretos para evaluar el proyecto.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.CN.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Resolver, de forma guiada, problemas sencillos de programación, modificando algoritmos de acuerdo a principios básicos del pensamiento computacional (descomposición, reconocimiento, abstracción y escritura del algoritmo).",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.CN.3",
+   "columna": "Tercer ciclo",
+   "texto": "Plantear problemas de diseño que se resuelvan con la creación de un prototipo o solución digital, evaluando necesidades del entorno y estableciendo objetivos concretos.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.CN.3",
+   "columna": "Tercer ciclo",
+   "texto": "Diseñar posibles soluciones a los problemas planteados de acuerdo a técnicas sencillas de pensamiento de diseño y pensamiento computacional, mediante estrategias básicas de gestión de proyectos cooperativos, teniendo en cuenta los recursos necesarios y estableciendo criterios concretos para evaluar el proyecto.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.CN.3",
+   "columna": "Tercer ciclo",
+   "texto": "Desarrollar un producto final que dé solución a un problema de diseño, probando en equipo, diferentes prototipos o soluciones digitales y utilizando de forma segura las herramientas, dispositivos, técnicas y materiales adecuados.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.CN.3",
+   "columna": "Tercer ciclo",
+   "texto": "Comunicar el diseño de un producto final, adaptando el mensaje y el formato a la audiencia, explicando los pasos seguidos, justificando por qué ese prototipo o solución digital cumple con los requisitos del proyecto y proponiendo posibles retos para futuros proyectos.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.CN.4",
+   "columna": "Primer Ciclo",
+   "texto": "Identificar las emociones propias y las de los demás, entendiendo las relaciones familiares y escolares a las que pertenecen y reconociendo las acciones que favorezcan el bienestar emocional y social.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.CN.4",
+   "columna": "Primer Ciclo",
+   "texto": "Reconocer estilos de vida saludables, valorando la importancia de una alimentación variada, equilibrada y sostenible, la higiene, el ejercicio físico y el descanso y el uso adecuado de las tecnologías.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.CN.4",
+   "columna": "Segundo Ciclo",
+   "texto": "Identificar las emociones propias y las de los demás, mostrando empatía y estableciendo relaciones afectivas saludables mostrando actitudes que fomenten el bienestar emocional y social",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.CN.4",
+   "columna": "Segundo Ciclo",
+   "texto": "Afianzar los hábitos de cuidado y salud corporales e incorporar la educación física y la práctica del deporte para favorecer el desarrollo personal y social.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.CN.4",
+   "columna": "Tercer ciclo",
+   "texto": "Adoptar actitudes que fomenten el bienestar emocional y social, identificando y gestionando las emociones propias y respetando las de los demás, fomentando relaciones afectivas saludables y reflexionando ante los usos de la tecnología y la gestión del tiempo libre.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.CN.4",
+   "columna": "Tercer ciclo",
+   "texto": "Adoptar estilos de vida saludable, valorando la importancia de una alimentación variada, equilibrada y sostenible, el ejercicio físico, el contacto con la naturaleza, el descanso, la higiene y la prevención de enfermedades y el uso adecuado de nuevas tecnologías.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.CN.4",
+   "columna": "Tercer ciclo",
+   "texto": "Conocer y valorar la dimensión humana de la sexualidad en toda su diversidad.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "4.4",
+   "competencia": "CE.CN.4",
+   "columna": "Tercer ciclo",
+   "texto": "Valorar críticamente los hábitos sociales relacionados con la salud, el consumo, el cuidado, la empatía y el respeto hacia los seres vivos y el medio ambiente, contribuyendo a su conservación, mantenimiento y mejora del entorno.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.CN.5",
+   "columna": "Primer Ciclo",
+   "texto": "Reconocer las características, organización y propiedades de los elementos del medio natural a través de indagación u otras prácticas científicas, utilizando las herramientas y procesos adecuados de forma pautada.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.CN.5",
+   "columna": "Primer Ciclo",
+   "texto": "Reconocer conexiones sencillas y directas entre diferentes elementos del medio natural por medio de la observación, la manipulación y la experimentación.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.CN.5",
+   "columna": "Primer Ciclo",
+   "texto": "Mostrar actitudes de respeto para el disfrute del patrimonio natural, reconociéndolo como un bien común.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.CN.5",
+   "columna": "Segundo Ciclo",
+   "texto": "Identificar las características, la organización y propiedades de los elementos del medio natural a través de la indagación u otras prácticas científicas y utilizando las herramientas y procesos adecuados.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.CN.5",
+   "columna": "Segundo Ciclo",
+   "texto": "Identificar conexiones sencillas entre diferentes elementos del medio natural social y cultural mostrando comprensión de las relaciones que se establecen.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.CN.5",
+   "columna": "Segundo Ciclo",
+   "texto": "Proteger el patrimonio natural, y valorarlo como un bien común, adoptando conductas respetuosas para su disfrute y proponiendo acciones de mejora para su conservación y mejora.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.CN.5",
+   "columna": "Tercer ciclo",
+   "texto": "Identificar y analizar las características, organización y propiedades de los elementos del medio a través de la indagación u otras prácticas científicas utilizando las herramientas y procesos adecuados.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.CN.5",
+   "columna": "Tercer ciclo",
+   "texto": "Establecer conexiones sencillas entre diferentes elementos del medio natural mostrando comprensión de las relaciones que se establecen.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.CN.5",
+   "columna": "Tercer ciclo",
+   "texto": "Valorar, proteger y mostrar actitudes de conservación y mejora del patrimonio natural a través de propuestas y acciones que reflejen compromisos y conductas en favor de la sostenibilidad.",
+   "cursos": [
+    5,
+    6
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Primer ciclo de Educación Primaria",
+   "cursos": [
+    1,
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Cultura científica",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Iniciación a la actividad científica",
+       "saberes": [
+        "Procedimientos adecuados a las necesidades de la investigación escolar (observación en el tiempo, identificación y clasificación, búsqueda de patrones...).",
+        "Instrumentos y dispositivos apropiados para realizar observaciones y mediciones de acuerdo a las necesidades de las diferentes investigaciones escolares.",
+        "Vocabulario científico básico relacionado con las diferentes investigaciones.",
+        "La curiosidad y la iniciativa en la realización de las diferentes investigaciones como actitudes presentes en la construcción del conocimiento científico.",
+        "Las profesiones relacionadas con la ciencia y la tecnología desde una perspectiva de género.",
+        "Estilos de vida sostenible e importancia del cuidado del planeta a través de acciones presentes en la vida cotidiana basadas en el conocimiento científico."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "La vida en nuestro planeta",
+       "saberes": [
+        "Necesidades básicas de los seres vivos y la diferencia con los objetos inertes.",
+        "Las adaptaciones de los seres vivos a su hábitat, concebido como el lugar en el que cubren sus necesidades.",
+        "Clasificación e identificación de los seres vivos de acuerdo con sus características observables.",
+        "Las relaciones entre los seres humanos, los animales y las plantas. Cuidado y respeto hacia los seres vivos y el entorno en el que viven.",
+        "Hábitos saludables relacionados con el bienestar físico del ser humano: higiene, alimentación variada y equilibrada, ejercicio físico, contacto con la naturaleza, descanso y cuidado del cuerpo para prevenir posibles enfermedades.",
+        "Hábitos saludables relacionados con el bienestar emocional y social: estrategias de identificación de las propias emociones y respeto por las de los demás. Sensibilidad y aceptación de la diversidad presente en el aula y en la sociedad. Educación afectivosexual."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Materia, fuerzas y energía",
+       "saberes": [
+        "Propiedades observables de los materiales, su procedencia y su uso en objetos de la vida cotidiana de acuerdo a las necesidades de diseño para los que fueron fabricados.",
+        "La luz y el sonido como entidades físicas.",
+        "Otras formas de energía. Fuentes y uso en la vida cotidiana.",
+        "Las mezclas y sus componentes. Identificación de mezclas homogéneas y heterogéneas. Separación de mezclas heterogéneas y algunas homogéneas mediante distintos métodos físicos sencillos.",
+        "Estructuras resistentes, estables y útiles en el contexto escolar."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "La Tierra y el espacio",
+       "saberes": [
+        "La Tierra en el universo. Algunos componentes. Propiedades físicas observables de algunos minerales y rocas.",
+        "Movimientos y dinámicas relacionados con la Tierra y el universo y sus consecuencias en la vida diaria y en el entorno. Secuencias temporales y cambios estacionales.",
+        "La vida en la Tierra. Fenómenos atmosféricos y su repercusión en los ciclos biológicos y en la vida diaria. Observación y registro de datos atmosféricos"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Tecnología y digitalización",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Digitalización del entorno personal de aprendizaje",
+       "saberes": [
+        "Dispositivos y recursos del entorno digital de aprendizaje de acuerdo con las necesidades del contexto educativo.",
+        "Recursos digitales para comunicarse con personas conocidas en entornos conocidos y seguros."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Proyectos de diseño y pensamiento computacional",
+       "saberes": [
+        "Fases de los proyectos de diseño: de modelos analógicos y prototipos, prueba y comunicación.",
+        "Materiales adecuados a la consecución del proyecto de diseño.",
+        "Iniciación a la programación a través de recursos analógicos o digitales adaptados al nivel lector del alumnado (actividades desenchufadas, plataformas digitales de iniciación a la programación, robótica educativa...).",
+        "Estrategias básicas de trabajo en equipo."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Segundo ciclo de Educación Primaria",
+   "cursos": [
+    3,
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Cultura científica",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Iniciación a la actividad científica",
+       "saberes": [
+        "Procedimientos adecuados a las necesidades de la investigación escolar (observación en el tiempo, identificación y clasificación, búsqueda de patrones, creación de modelos, investigación a través de búsqueda de información, diseño y puesta en marcha de experimentos con control de variables...).",
+        "Instrumentos y dispositivos apropiados para realizar observaciones y mediciones precisas de acuerdo a las necesidades de la investigación.",
+        "Vocabulario científico básico relacionado con las diferentes investigaciones.",
+        "La curiosidad, la iniciativa y la constancia en la realización de las diferentes investigaciones como actitudes presentes en la construcción del conocimiento científico",
+        "Avances en el pasado relacionados con la ciencia y la tecnología que han contribuido a transformar nuestra sociedad para mostrar modelos desde una perspectiva de género.",
+        "La importancia del uso de la ciencia y la tecnología para ayudar a comprender las consecuencias de las propias acciones, tomar decisiones razonadas y realizar tareas de forma más eficiente."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "La vida en nuestro planeta",
+       "saberes": [
+        "Los reinos de la naturaleza desde una perspectiva general e integrada a partir del estudio y análisis de las características de diferentes ecosistemas.",
+        "Características propias de los animales que permiten su clasificación y diferenciación en subgrupos relacionados con su capacidad adaptativa al medio: obtención de energía, relación con el entorno y perpetuación la especie.",
+        "Características propias de las plantas que permiten su clasificación en relación con su capacidad adaptativa al medio: obtención de energía, relación con el entorno y perpetuación de la especie.",
+        "Los ecosistemas como lugar donde intervienen factores bióticos y abióticos, manteniéndose un equilibrio entre los diferentes elementos y recursos. Sus interacciones y relación con otros sistemas.",
+        "Relación del ser humano con los ecosistemas para cubrir las necesidades de la sociedad. Ejemplos de buenos y malos usos de los recursos naturales de nuestro planeta y sus consecuencias."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Materia, fuerzas y energía",
+       "saberes": [
+        "Estados de la materia.",
+        "El calor y temperatura. Cambios de estado.",
+        "Materiales conductores y aislantes ante el calor, instrumentos de medición de la temperatura, efectos del calor sobre los materiales y aplicaciones en la vida cotidiana.",
+        "Los cambios que experimentan determinados materiales en situaciones de la vida cotidiana (físicos o químicos, reversibles o irreversibles…) para reconocer procesos y transformaciones observando la situación inicial y final.",
+        "Las fuerzas y sus efectos. Fuerzas de contacto y a distancia.",
+        "Trabajo mecánico",
+        "Propiedades de las máquinas simples y su efecto sobre las fuerzas. Aplicaciones y usos en la vida cotidiana."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "La Tierra y el espacio",
+       "saberes": [
+        "La Tierra y las catástrofes riesgos naturales.",
+        "Clasificación elemental de las rocas",
+        "Las formas de relieve más relevantes.",
+        "Elementos Componentes, movimientos, dinámicas que ocurren en el universo y su relación con determinados fenómenos físicos que afectan a la Tierra y repercuten en la vida diaria y en el entorno",
+        "Los fenómenos atmosféricos. Toma y registro de datos meteorológicos y su representación gráfica y visual"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Tecnología y digitalización",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Digitalización del entorno personal de aprendizaje",
+       "saberes": [
+        "Dispositivos y recursos digitales de acuerdo a las necesidades del contexto educativo.",
+        "Estrategias de búsquedas guiadas de información seguras y eficientes en internet (valoración, discriminación, selección y organización).",
+        "Reglas básicas de seguridad y privacidad para navegar por internet y para proteger el entorno digital personal de aprendizaje.",
+        "Recursos y plataformas digitales restringidas y seguras para comunicarse con otras personas. Etiqueta digital, reglas básicas de cortesía y respeto y estrategias para resolver problemas en la comunicación digital.",
+        "Estrategias para fomentar el bienestar digital. Reconocimiento de los riesgos asociados a un uso inadecuado y poco seguro de las tecnologías digitales (tiempo excesivo de uso, ciberacoso, acceso a contenidos inadecuados, publicidad y correos no deseados, etc.), y estrategias de actuación."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Proyectos de diseño y pensamiento computacional",
+       "saberes": [
+        "Fases de los proyectos de diseño: diseño, construcción de modelos y prototipos, prueba y comunicación.",
+        "Materiales, herramientas y objetos adecuados a la consecución de un proyecto de diseño.",
+        "Técnicas cooperativas sencillas para el trabajo en equipo y estrategias para la gestión de conflictos y promoción de conductas empáticas e inclusivas.",
+        "Iniciación a la programación a través de recursos analógicos (actividades desenchufadas) o digitales (plataformas digitales de iniciación a la programación, aplicaciones de programación por bloques, robótica educativa...)."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Tercer ciclo de Educación Primaria",
+   "cursos": [
+    5,
+    6
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Cultura científica",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Iniciación a la actividad científica",
+       "saberes": [
+        "Prácticas científicas (observación, formulación de preguntas y predicciones, planificación y realización de experimentos, recogida y análisis de información y datos, comunicación de resultados y conclusiones...).",
+        "Instrumentos y dispositivos apropiados para realizar observaciones y mediciones precisas de acuerdo con las necesidades de la investigación.",
+        "Vocabulario científico básico relacionado con las diferentes investigaciones.",
+        "La curiosidad, la iniciativa, la constancia y el sentido de la responsabilidad como actitudes en la realización de las diferentes investigaciones.",
+        "La ciencia, la tecnología y la ingeniería como actividades humanas. Las profesiones STEM en la actualidad desde una perspectiva de género.",
+        "La relación entre los avances en matemáticas, ciencia, ingeniería y tecnología para comprender la evolución de la sociedad en el ámbito científico-tecnológico."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "La vida en nuestro planeta",
+       "saberes": [
+        "Aspectos básicos de las funciones vitales del ser humano desde una perspectiva integrada: obtención de energía, relación con el entorno y perpetuación de la especie.",
+        "Los cambios físicos, emocionales y sociales que conllevan la pubertad y la adolescencia para aceptarlos de forma positiva tanto en uno mismo como en los demás. Educación afectivo-sexual.",
+        "Pautas para una alimentación saludable y sostenible: menús saludables y equilibrados. La importancia de la cesta de la compra y del etiquetado de los productos alimenticios para conocer sus nutrientes y su aporte energético.",
+        "Pautas que fomenten una salud emocional y social adecuadas: higiene del sueño, prevención y consecuencias del consumo de drogas (legales e ilegales), gestión saludable del ocio y del tiempo libre, uso adecuado de dispositivos digitales, estrategias para el fomento de relaciones sociales saludables y fomento de los cuidados de las personas.",
+        "Pautas para la prevención de riesgos y accidentes. Conocimiento de actuaciones básicas de primeros auxilios."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Materia, fuerzas y energía",
+       "saberes": [
+        "Masa y volumen. Su medida en objetos y materiales.",
+        "Instrumentos y procedimientos para calcular medirla masa y la capacidad volumen de un diferentes objetos.",
+        "Concepto de densidad y su relación con la flotabilidad de un objeto o material en un líquido o en un gas.",
+        "La energía eléctrica: fuentes, transferencia, transformaciones entre formas de energía y usos en la vida cotidiana. Los circuitos eléctricos y las estructuras robotizadas como ejemplos de transferencia y transformación y algunos usos.",
+        "Las fuentes de energías renovables y no renovables y su influencia en la contribución al desarrollo sostenible de la sociedad.",
+        "Artefactos, objetos y seres vivos voladores. Principios básicos físicos del vuelo. A2- La Tierra y el espacio",
+        "El futuro de la Tierra y del universo. Los fenómenos físicos relacionados con la Tierra y el universo y su repercusión en la vida diaria y en el entorno.",
+        "Clasificación básica de rocas y minerales. Usos y explotación sostenible de los recursos geológicos",
+        "Procesos geológicos básicos de formación y modelado del relieve.",
+        "Fenómenos atmosféricos",
+        "La exploración espacial y la observación del cielo; la contaminación lumínica."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Tecnología y digitalización",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Digitalización del entorno personal de aprendizaje",
+       "saberes": [
+        "Dispositivos y recursos digitales de acuerdo a las necesidades del contexto educativo.",
+        "Estrategias de búsquedas de información seguras y eficientes en Internet (valoración, discriminación, selección, organización y propiedad intelectual).",
+        "Estrategias de recogida, almacenamiento y representación de datos para facilitar su comprensión y análisis.",
+        "Reglas básicas de seguridad y privacidad para navegar por Internet y para proteger el entorno digital personal de aprendizaje.",
+        "Recursos y plataformas digitales restringidas y seguras para comunicarse con otras personas. Etiqueta digital, reglas básicas de cortesía y respeto y estrategias para resolver problemas en la comunicación digital.",
+        "Estrategias para fomentar el bienestar físico y mental. Reconocimiento de los riesgos asociados a un uso inadecuado y poco seguro de las tecnologías digitales (tiempo excesivo de uso, ciberacoso, dependencia tecnológica, acceso a contenidos inadecuados, etc.), y estrategias de actuación."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Proyectos de diseño y pensamiento computacional",
+       "saberes": [
+        "Fases de los proyectos de diseño: identificación de necesidades, diseño, creación de un prototipo, prueba, evaluación y comunicación.",
+        "Fases del pensamiento computacional (descomposición de una tarea en partes más sencillas, reconocimiento de patrones y creación de algoritmos sencillos para la resolución del problema...).",
+        "Materiales, herramientas, objetos, dispositivos y recursos digitales (programación por bloques, sensores, motores, simuladores, impresoras 3D, ...) seguros y adecuados a la consecución del proyecto.",
+        "Estrategias en situaciones de incertidumbre: adaptación y cambio de estrategia cuando sea necesario, valoración del error propio y el de los demás como oportunidad de aprendizaje."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 99.3,
+  "no_encontrados": [
+   "saber A.3: Artefactos, objetos y seres vivos voladores. Principios básicos físicos del vuelo. A2- La Tierra y el espacio"
+  ]
+ },
+ "materia": "Ciencias de la Naturaleza"
+}

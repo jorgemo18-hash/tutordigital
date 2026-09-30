@@ -66,10 +66,10 @@ function filasPorCriterio(doc, { tabla, curriculo, datos, alCambiar }) {
   pintaSubtotales();
 }
 
-export function pintarPasoEvaluacion({ contenedor, curriculo, datos, onCambio, ia = null, doc = document }) {
+export function pintarPasoEvaluacion({ contenedor, curriculo, materiaSlug, datos, onCambio, ia = null, doc = document }) {
   const modo = modoDeCalificacion(datos);
   if (!datos.pesos || !Object.keys(datos.pesos).length) datos.pesos = pesosIguales(curriculo, modo);
-  const repintar = () => pintarPasoEvaluacion({ contenedor, curriculo, datos, onCambio, ia, doc });
+  const repintar = () => pintarPasoEvaluacion({ contenedor, curriculo, materiaSlug, datos, onCambio, ia, doc });
 
   const tabla = el(doc, "div", "rc-card rc-pg__pesos");
   tabla.append(el(doc, "span", "rc-pg__letra", "d)"), el(doc, "span", "rc-pg__titulo", "Criterios de calificación."));
@@ -114,9 +114,10 @@ export function pintarPasoEvaluacion({ contenedor, curriculo, datos, onCambio, i
 
   contenedor.replaceChildren(
     ...(ia ? [barraDeRedactar(doc, { ia, datos, letras: ["c", "e"], onCambio, repintar })] : []),
-    cuadroDeTexto({ letra: "c", datos, onCambio, doc }),
+    // c) y e) son instrumentos y evaluación inicial en las tres etapas.
+    cuadroDeTexto({ letra: "c", materiaSlug, datos, onCambio, doc }),
     tabla,
     bloqueDeCriterios({ curriculo, datos, onCambio, repintar, doc }),
-    cuadroDeTexto({ letra: "e", datos, onCambio, doc }),
+    cuadroDeTexto({ letra: "e", materiaSlug, datos, onCambio, doc }),
   );
 }

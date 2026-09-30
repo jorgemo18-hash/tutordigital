@@ -1,0 +1,876 @@
+{
+ "fuente": "ORDEN ECD/1112/2022, anexo II, con las modificaciones de la ORDEN ECD/866/2024 (Aragón)",
+ "archivo": "04 Educación Física.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.EF.1",
+   "texto": "Adaptar la motricidad (esquema corporal, las capacidades físicas, perceptivo-motrices y coordinativas, las habilidades y destrezas motrices, aplicando procesos de percepción, decisión y ejecución) en diferentes situaciones de aprendizaje, para dar una respuesta ajustada a las demandas de proyectos de aprendizaje relacionadas con actividades conectadas con el contexto social próximo."
+  },
+  {
+   "codigo": "CE.EF.2",
+   "texto": "Practicar y reconocer diferentes manifestaciones lúdicas, físico-deportivas y artístico-expresivas propias de la cultura motriz, valorando su influencia y sus aportaciones estéticas y creativas a la cultura tradicional y contemporánea, para integrarlas en las situaciones motrices y para realizar proyectos de aprendizaje conectados con el contexto social próximo."
+  },
+  {
+   "codigo": "CE.EF.3",
+   "texto": "Desarrollar procesos de autorregulación e interacción en la práctica motriz, con actitud empática e inclusiva, haciendo uso de habilidades personales y sociales y actitudes de cooperación, respeto, trabajo en equipo y deportividad, con independencia de las diferencias étnico-culturales, sociales, de género y de habilidad de los participantes, para contribuir a la convivencia y al compromiso ético en los diferentes espacios conectados con el contexto social próximo."
+  },
+  {
+   "codigo": "CE.EF.4",
+   "texto": "Valorar diferentes espacios naturales y urbanos como contextos de práctica motriz, interactuando en ellos y comprendiendo la importancia de su conservación desde un enfoque sostenible, adoptando medidas de responsabilidad individual durante la práctica de juegos, actividades físico-deportivas y artístico-expresivas, para realizar una práctica eficiente y respetuosa con el entorno y participar en su cuidado y mejora."
+  },
+  {
+   "codigo": "CE.EF.5",
+   "texto": "Desarrollar un estilo de vida activo y saludable a través de un proceso de construcción social compartido, practicando regularmente actividades físico-deportivas y artístico-expresivas, que le capacite a tomar decisiones saludables (físicas, emocionales y sociales), para él o para ella y para su entorno social que contribuyan a su bienestar."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.EF.1",
+   "columna": "Primer Ciclo",
+   "texto": "Comprender y resolver acciones motrices individuales con la ayuda docente (por ejemplo, desplazamientos, saltos, giros equilibrios, o combinación de ellos) ajustando los movimientos corporales a un proyecto personal.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.EF.1",
+   "columna": "Primer Ciclo",
+   "texto": "Comprender la lógica de las situaciones planteadas y resolver, con la ayuda docente, situaciones en las que se realicen acciones motrices de oposición (por ejemplo, luctatorias, situaciones motrices globales de cancha dividida, u otras).",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.EF.1",
+   "columna": "Primer Ciclo",
+   "texto": "Comprender y resolver acciones motrices, con la ayuda docente, ajustando los movimientos corporales a las situaciones de cooperación.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.EF.1",
+   "columna": "Primer Ciclo",
+   "texto": "Comprender y resolver acciones motrices, con la ayuda docente, de forma coordinada y equilibrada, ajustando los movimientos corporales a diferentes cambios de las condiciones de las situaciones colaboración-oposición.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.5",
+   "competencia": "CE.EF.1",
+   "columna": "Primer Ciclo",
+   "texto": "Comprender y resolver, con la ayuda docente, acciones motrices para decodificar información y adaptar su motricidad de forma segura a situaciones con poca incertidumbre en contextos de centro o próximos al mismo.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.EF.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Integrar diferentes acciones motrices individuales para realizar proyectos de acción tendentes a mejorar sus resultados (por ejemplo, atletismo, natación, etc.) y/o diseñar y realizar un encadenamiento motriz (por ejemplo, gimnasia deportiva, patines, etc.).",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.EF.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Encadenar acciones que le permitan resolver y analizar diferentes situaciones de juego en las que se movilicen diferentes acciones motrices de oposición (por ejemplo, luctatorias, de cancha dividida u otras).",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.EF.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Encadenar acciones para resolver situaciones de retos cooperativos asumiendo diferentes roles.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.EF.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Encadenar acciones para resolver situaciones modificadas de colaboraciónoposición asumiendo los diferentes roles.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.5",
+   "competencia": "CE.EF.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Combinar acciones motrices con la ayuda docente, para decodificar información y adaptar su motricidad de forma segura para realizar recorridos con incertidumbre en el medio, aprovechando las posibilidades del centro escolar, y modulando determinados aspectos (por ejemplo, el tipo de desplazamiento, el espacio, el número de señales, el grado de incertidumbre, la duración, el uso o no de equipos o vehículos, etc.).",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.EF.1",
+   "columna": "Tercer ciclo",
+   "texto": "Combinar acciones motrices individuales para implicarse en proyectos de acción tendentes a mejorar sus resultados (por ejemplo, atletismo, carrera de larga duración, natación, etc.) y/o planificar un encadenamiento para realizar producciones con cierto grado de dificultad (por ejemplo, gimnasia deportiva, patines, etc.).",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.EF.1",
+   "columna": "Tercer ciclo",
+   "texto": "Encadenar acciones motrices durante el juego para resolver, analizar, valorar y perfeccionar diferentes situaciones motrices (tácticos y técnicos) de oposición (por ejemplo, luctatorias, de cancha dividida u otras).",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.EF.1",
+   "columna": "Tercer ciclo",
+   "texto": "Utilizar los recursos adecuados para resolver con éxito situaciones motrices de cooperación.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.EF.1",
+   "columna": "Tercer ciclo",
+   "texto": "Utilizar los recursos adecuados para resolver con éxito situaciones básicas de táctica individual y colectiva en diferentes situaciones motrices colaboraciónoposición.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "1.5",
+   "competencia": "CE.EF.1",
+   "columna": "Tercer ciclo",
+   "texto": "Combinar acciones motrices con autonomía para decodificar información y adaptar su motricidad de forma segura para realizar recorridos con incertidumbre en el medio, aprovechando las posibilidades del centro escolar, y modulando determinados aspectos (por ejemplo, el tipo de desplazamiento, el espacio, el número de señales, el grado de incertidumbre, la duración, el uso o no de equipos o vehículos, etc.).",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "1.6",
+   "competencia": "CE.EF.1",
+   "columna": "Primer Ciclo",
+   "texto": "Improvisar y crear pequeñas producciones artístico-expresivas, utilizando los recursos expresivos del cuerpo (motricidad expresiva, simbolización y comunicación) de forma elemental (uso de la inmovilidad, los niveles, trayectorias, tipos de desplazamiento para bailar, principio y fin claros, etc.) y cuando corresponda, los recursos propios de cada actividad artísticoexpresiva (pasos, figuras, hazañas, etc.).",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.6",
+   "competencia": "CE.EF.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Improvisar y crear producciones artístico-expresivas en grupo, utilizando los recursos expresivos del cuerpo (motricidad expresiva, simbolización y comunicación), prestando especial atención a las relaciones que se establecen en el alumnado respecto al espacio, al tiempo (unísono, cascada, alternancia...), contacto corporal y roles, y cuando corresponda, utilizando los recursos propios de cada actividad artístico-expresiva (pasos, figuras, hazañas, etc.).",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.6",
+   "competencia": "CE.EF.1",
+   "columna": "Tercer ciclo",
+   "texto": "Improvisar y crear de forma autónoma una producción artístico-expresiva individual o grupal, utilizando recursos expresivos que requieren un mayor control del cuerpo (uso de las calidades de movimiento, desequilibrios, etc.) y una motricidad más simbólica, estética e inhabitual y cuando corresponda, utilizando los recursos propios de cada actividad artístico-expresiva (pasos, figuras, hazañas, etc.)",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.EF.2",
+   "columna": "Primer Ciclo",
+   "texto": "Participar activamente en juegos y otras manifestaciones artístico-expresivas de carácter cultural propias del entorno, valorando su componente lúdico-festivo y disfrutando de su puesta en práctica.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.EF.2",
+   "columna": "Primer Ciclo",
+   "texto": "Conocer y valorar los logros de distintos referentes del deporte de ambos géneros, reconociendo el esfuerzo, la dedicación y los sacrificios requeridos para alcanzar dichos éxitos.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.EF.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Participar activamente en juegos motores y otras manifestaciones artísticoexpresivas con arraigo en la cultura propia, tradicional o actual, así como otros procedentes de diversas culturas, contextualizando su origen, su aparición y su transmisión a lo largo del tiempo y valorando su importancia, repercusión e influencia en las sociedades pasadas y presentes.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.EF.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Asumir una visión abierta del deporte a partir del conocimiento de distintas ligas femeninas, masculinas o mixtas, acercándose al deporte organizado (escolar, amateur y profesional) e identificando y rechazando comportamientos contrarios a la convivencia independientemente del contexto en el que tengan lugar.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.EF.2",
+   "columna": "Tercer ciclo",
+   "texto": "Participar activamente en juegos motores y otras manifestaciones artísticoexpresivas con arraigo en la cultura propia, tradicional o actual, así como otros procedentes de diversas culturas, reconociendo y transmitiendo su valor cultural y su potencial como espacio generador de interacciones constructivas entre personas con orígenes diferentes para favorecer su conservación.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.EF.2",
+   "columna": "Tercer ciclo",
+   "texto": "Valorar el deporte como fenómeno cultural analizando críticamente los estereotipos de género y los comportamientos sexistas que a veces suceden en su contexto, rechazándolos y adoptando actitudes que eviten su reproducción en el futuro.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.EF.3",
+   "columna": "Primer Ciclo",
+   "texto": "Identificar las emociones que se producen durante el juego, intentando gestionarlas y disfrutando de la actividad física.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.EF.3",
+   "columna": "Primer Ciclo",
+   "texto": "Respetar las normas consensuadas, así como las reglas de juego y actuar desde los parámetros de la deportividad y el juego limpio, aceptando las características y niveles de los participantes.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.EF.3",
+   "columna": "Primer Ciclo",
+   "texto": "Participar en las prácticas motrices cotidianas, comenzando a desarrollar habilidades sociales de acogida, inclusión, ayuda y cooperación, iniciándose en la resolución de conflictos personales de forma dialógica y justa, y mostrando un compromiso activo frente a las actuaciones discriminatorias y de violencia.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.EF.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Mostrar una disposición positiva hacia la práctica física y hacia el esfuerzo, controlando la impulsividad y las emociones negativas que surjan en contextos de actividad motriz.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.EF.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Respetar las normas consensuadas en clase, así como las reglas de juego y actuar desde los parámetros de la deportividad y el juego limpio, valorando la aportación de los participantes (deportistas, árbitros-juez, entrenadores u otros roles que formen parte de la dinámica establecida).",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.EF.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Desarrollar habilidades sociales de acogida, inclusión, ayuda y cooperación al participar en prácticas motrices variadas, resolviendo los conflictos individuales y colectivos de forma dialógica y justa, y mostrando un compromiso activo frente a los estereotipos, las actuaciones discriminatorias y de violencia.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.EF.3",
+   "columna": "Tercer ciclo",
+   "texto": "Participar en actividades de carácter motor, desde la autorregulación de su actuación, con predisposición, esfuerzo, perseverancia y mentalidad de crecimiento, controlando la impulsividad, gestionando las emociones y expresándolas de forma asertiva.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.EF.3",
+   "columna": "Tercer ciclo",
+   "texto": "Respetar las normas consensuadas, así como las reglas de juego, y actuar desde los parámetros de la deportividad y el juego limpio, reconociendo las actuaciones de deportistas, árbitros-juez, entrenadores u otros roles que formen parte de la dinámica establecida.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.EF.3",
+   "columna": "Tercer ciclo",
+   "texto": "Afianzar habilidades sociales en la realización de prácticas motrices, utilizando el diálogo en la resolución de conflictos y el respeto ante la diversidad (género, afectivosexual, origen nacional, étnico, socioeconómica o competencia motriz), y mostrando una actitud crítica y un compromiso activo frente a los estereotipos, las actuaciones discriminatorias y la violencia.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.EF.4",
+   "columna": "Primer Ciclo",
+   "texto": "Participar de forma segura del entorno natural y urbano conociendo otros usos desde la motricidad y adoptando actitudes de respeto, cuidado y conservación hacia ellos durante el desarrollo de distintas prácticas lúdico-recreativas en contextos terrestres o acuáticos.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.EF.4",
+   "columna": "Segundo Ciclo",
+   "texto": "Desarrollar una práctica motriz segura en contextos naturales y urbanos de carácter terrestre o acuático, adecuando las acciones al análisis de cada situación, aplicando medidas de conservación ambiental.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.EF.4",
+   "columna": "Tercer ciclo",
+   "texto": "Utilizar los espacios naturales y/o del entorno próximo respetando la flora y la fauna del lugar, haciendo un buen uso de las instalaciones y/o servicios que ofrece con una perspectiva eco sostenible y comunitaria del cuidado del entorno.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.EF.5",
+   "columna": "Primer Ciclo",
+   "texto": "Explorar las posibilidades de la propia motricidad a través del juego, aplicando en distintas situaciones cotidianas medidas básicas de cuidado de la salud personal: higiene corporal, educación postural y atuendo deportivo.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.EF.5",
+   "columna": "Primer Ciclo",
+   "texto": "Participar en juegos de activación y vuelta a la calma reconociendo su utilidad para adaptar el cuerpo a la actividad física y evitar lesiones, manteniendo la calma y sabiendo cómo actuar en caso de que se produzca algún accidente en contextos de práctica motriz.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.EF.5",
+   "columna": "Primer Ciclo",
+   "texto": "Realizar pequeños proyectos personales o de grupo que impliquen el inicio en el conocimiento personal sobre sus capacidades físicas.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.4",
+   "competencia": "CE.EF.5",
+   "columna": "Primer Ciclo",
+   "texto": "Conocer los valores positivos que fomenta la práctica motriz compartida reconociendo, vivenciando y disfrutando sus beneficios en contextos variados e inclusivos y respetando a todos los participantes con independencia de sus diferencias individuales.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.5",
+   "competencia": "CE.EF.5",
+   "columna": "Primer Ciclo",
+   "texto": "Identificar comportamientos saludables conociendo sus beneficios para el establecimiento de un estilo de vida saludable.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.EF.5",
+   "columna": "Segundo Ciclo",
+   "texto": "Aplicar medidas de educación postural, higiene corporal y preparación de la práctica motriz, asumiendo responsabilidades (e.g atuendo) y generando hábitos y rutinas en situaciones cotidianas.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.EF.5",
+   "columna": "Segundo Ciclo",
+   "texto": "Tomar medidas de precaución y prevención de lesiones en relación con la conservación y al mantenimiento del material en el marco de distintas prácticas físico-deportivas, conociendo protocolos básicos de actuación ante accidentes que se puedan producir en este contexto.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.EF.5",
+   "columna": "Segundo Ciclo",
+   "texto": "Participar en proyectos que conlleven a la autogestión de sus capacidades físicas, siendo capaces de regular y dosificar la intensidad y la duración del esfuerzo acorde con sus posibilidades y dentro de unos criterios saludables.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.4",
+   "competencia": "CE.EF.5",
+   "columna": "Segundo Ciclo",
+   "texto": "Reconocer la propia imagen corporal y la de los demás, aceptando y respetando las diferencias individuales que puedan existir, superando y rechazando las conductas discriminatorias que se puedan producir en contextos de práctica motriz.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.5",
+   "competencia": "CE.EF.5",
+   "columna": "Segundo Ciclo",
+   "texto": "Analizar comportamientos saludables en función de diferentes momentos (del día, de la semana o del año) para establecer acciones (personales, colectivas o sociales) que le ayuden a adoptar un estilo de vida saludable.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.EF.5",
+   "columna": "Tercer ciclo",
+   "texto": "Integrar rutinas de higiene personal establecidas en las sesiones de Educación Física, interiorizando las pautas propias de una práctica motriz saludable y segura.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.EF.5",
+   "columna": "Tercer ciclo",
+   "texto": "Adoptar medidas de seguridad antes, durante y después de la práctica de actividad física, reconociendo los riesgos y sabiendo actuar con seguridad ante un accidente.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.EF.5",
+   "columna": "Tercer ciclo",
+   "texto": "Implicarse en proyectos (personales, de clase, de centro o sociales) que conlleven la autogestión de sus capacidades físicas, siendo capaces de regular y dosificar la intensidad y la duración del esfuerzo acorde con sus posibilidades y dentro de unos criterios saludables.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "5.4",
+   "competencia": "CE.EF.5",
+   "columna": "Tercer ciclo",
+   "texto": "Identificar conductas inapropiadas vinculadas al ámbito corporal, la actividad física y el deporte, que resultan perjudiciales para la salud o afectan negativamente a la convivencia, adoptando posturas de rechazo a la discriminación y a los estereotipos de género, y evitando activamente su reproducción.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "5.5",
+   "competencia": "CE.EF.5",
+   "columna": "Tercer ciclo",
+   "texto": "Evaluar de forma global su estilo de vida (cantidad y tipo de actividades, horas de sueño, alimentación, etc.) para tomar decisiones reales encaminadas a mejorar su bienestar.",
+   "cursos": [
+    5,
+    6
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Primer ciclo de Educación Primaria",
+   "cursos": [
+    1,
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Resolución de problemas en situaciones motrices",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Acciones motrices individuales. Principios para actuar metódicamente: emitir hipótesis de acción, identificar constantes, anticipar las acciones que hay que realizar, seleccionar las formas de hacer más apropiadas, resolver problemas. Perfeccionamiento y combinación de acciones motrices elementales para construir otras de mayor complejidad en situaciones y medios variados.",
+        "Acciones motrices de oposición. Información visual (juegos con raqueta: visión puntual, periférica, espacios libres...) y kinestésica (juegos de lucha: percepción del tono muscular, del equilibrio y desequilibrio, del centro de gravedad...). Principios y reglas de acción para superar al adversario (colocación en el terreno, utilización de la fuerza del oponente, alternancia...)",
+        "Acciones motrices de cooperación: la colaboración, la sincronización, la disponibilidad. Encadenamiento y coordinación de acciones grupales. Sincronización de acciones. Utilización de estrategias básicas de juego (anticipación). Práctica de actividades cooperativas que supongan un esfuerzo conjunto. Verbalización de reglas de acuerdo con las posibilidades del alumnado y respetando los principios de seguridad. Toma de informaciones y referencias pertinentes para construir un desplazamiento razonado y reflexionado. Adopción de una motricidad adaptada y específica para ajustarse a un medio variado y, a veces, variable (natural o reproducido) y para manejar instrumentos o materiales que produzcan problemas acción para la colaboración con compañeros y compañeras para conseguir un objetivo común.",
+        "Acciones motrices de colaboración-oposición: roles que vinculan interacciones posibles, relaciones con espacios y tiempos o uso de objetos. Explicación a posteriori de la propia acción, la de sus compañeros, compañeras y oponentes. Aplicación del repertorio de acciones motrices como portador y no portador del móvil (pelota), en ataque y en defensa. Ajuste de las conductas para hacerlas más eficaces (anticipar, actuar rápido, cambiar de ritmo...). Elaboración y utilización de estrategias de acción colectiva de ataque y defensa, enunciando reglas de acción para buscar la eficacia.",
+        "Acciones motrices en el medio natural: características y modalidades de utilización del material y el equipo para la realización de actividades en el medio natural, incluido el de seguridad. Preparación y realización de un proyecto de acción en el medio natural (excursión, acampada, cicloturismo, orientación) de acuerdo con las posibilidades del alumnado y respetando los principios de seguridad. Toma de informaciones y referencias pertinentes para construir un desplazamiento razonado y reflexionado. Adopción de una motricidad adaptada y específica para ajustarse a un medio variado y, a veces, variable (natural o reproducido) y para manejar instrumentos o materiales que produzcan problemas de equilibrio. Gestión para llevar a buen término una actividad con economía y eficacia.",
+        "Acciones motrices con intención artística o expresiva: el cuerpo como instrumento de expresión y comunicación. Algunas manifestaciones expresivas relacionadas con estas actividades: la expresión corporal, la dramatización, la(s) danza(s), la gimnasia rítmica. Espacio propio, próximo y común o coreográfico. Utilización de los recursos expresivos del cuerpo y el movimiento (energía, espacio y tiempo) para la creación, expresión y comunicación de imágenes, ideas, estados de ánimo, sentimientos, emociones, roles, actitudes, tramas… Ejecución con precisión de formas motrices (desplazamientos, pasos, gestos, figuras...) y evoluciones en el espacio (formaciones, coreografías...) ajustadas al ritmo o soporte sonoro. Participación en la construcción, estructuración y ejecución de una producción colectiva, previendo roles y tareas de cada uno."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Manifestaciones de la cultura motriz",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Aportaciones de la cultura motriz a la herencia cultural. Los juegos populares y tradicionales como manifestación de la propia cultura y su potencial intercultural.",
+        "Aportaciones de la cultura motriz a la herencia cultural. Las danzas como manifestación de la propia cultura y su potencial intercultural.",
+        "Conocimiento de nombres de juegos populares y tradicionales. Deporte y perspectiva de género: referentes en el deporte de distintos géneros.",
+        "El juego y el deporte: reglamento"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Autorregulación emocional e interacción social en situaciones motrices",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Gestión emocional: estrategias de identificación, experimentación y manifestación de emociones, pensamientos y sentimientos a partir de experiencias motrices.",
+        "Habilidades sociales: verbalización de emociones derivadas de la interacción en contextos motrices.",
+        "Respeto de las reglas de juego.",
+        "Conductas que favorezcan la convivencia, inclusivas y de respeto a los demás, en situaciones motrices: estrategias de identificación de conductas contrarias a la convivencia o discriminatorias.",
+        "Roles de trabajo en las actividades relacionadas con las diferentes situaciones motrices.",
+        "Conciencia de los efectos producidos tras la realización de acciones motrices."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Interacción eficiente y sostenible con el entorno",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Normas de uso: educación vial para peatones. Normas de uso de la vía pública. Movilidad sostenible.",
+        "Posibilidades motrices de los espacios de juego y esparcimiento infantil.",
+        "El material y sus posibilidades de uso para el desarrollo de la motricidad.",
+        "Realización de actividades físicas en el medio natural y urbano.",
+        "Cuidado del entorno próximo, como servicio a la comunidad, durante la práctica de actividad física en el medio natural."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Organización y gestión de la actividad física",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Preparación de la práctica motriz: vestimenta deportiva y hábitos generales de higiene corporal.",
+        "Cuidado del material utilizado en la actividad a desarrollar.",
+        "Prevención de accidentes en las prácticas motrices: juegos de activación, calentamiento y vuelta a la calma.",
+        "Preparación de mochilas para la piscina, senderismo, etc.",
+        "Participación en proyectos motores sencillos: objetivos o metas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Vida activa y saludable",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Salud física: efectos físicos beneficiosos de un estilo de vida activo. Alimentación saludable e hidratación. Educación postural en situaciones cotidianas. Cuidado del cuerpo: higiene personal y el descanso tras la actividad física.",
+        "Salud social: la actividad física como práctica social saludable. Derechos de los niños y niñas en el deporte escolar. Respeto hacia todas las personas con independencia de sus características personales.",
+        "Salud mental: bienestar personal y en el entorno a través de la motricidad. Autoconocimiento e identificación de fortalezas y debilidades en todos los ámbitos (social, físico y mental)."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Segundo ciclo de Educación Primaria",
+   "cursos": [
+    3,
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Resolución de problemas en situaciones motrices",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Acciones motrices individuales. Principios para actuar metódicamente: emitir hipótesis de acción, identificar constantes, anticipar las acciones que hay que realizar, seleccionar las formas de hacer más apropiadas, resolver problemas. Perfeccionamiento y combinación de acciones motrices elementales para construir otras de mayor complejidad en situaciones y medios variados.",
+        "Acciones motrices de oposición. Información visual (juegos con raqueta: visión puntual, periférica, espacios libres...) y kinestésica (juegos de lucha: percepción del tono muscular, del equilibrio y desequilibrio, del centro de gravedad...). Principios y reglas de acción para superar al adversario (colocación en el terreno, utilización de la fuerza del oponente, alternancia...)",
+        "Acciones motrices de cooperación: la colaboración, la sincronización, la disponibilidad. Encadenamiento y coordinación de acciones grupales. Sincronización de acciones. Utilización de estrategias básicas de juego (anticipación). Práctica de actividades cooperativas que supongan un esfuerzo conjunto. Verbalización de reglas de acuerdo con las posibilidades del alumnado y respetando los principios de seguridad. Toma de informaciones y referencias pertinentes para construir un desplazamiento razonado y reflexionado. Adopción de una motricidad adaptada y específica para ajustarse a un medio variado y, a veces, variable (natural o reproducido) y para manejar instrumentos o materiales que produzcan problemas acción para la colaboración con compañeros y compañeras para conseguir un objetivo común.",
+        "Acciones motrices de colaboración-oposición: roles que vinculan interacciones posibles, relaciones con espacios y tiempos o uso de objetos. Explicación a posteriori de la propia acción, la de sus compañeros, compañeras y oponentes. Aplicación del repertorio de acciones motrices como portador y no portador del móvil (pelota), en ataque y en defensa. Ajuste de las conductas para hacerlas más eficaces (anticipar, actuar rápido, cambiar de ritmo...). Elaboración y utilización de estrategias de acción colectiva de ataque y defensa, enunciando reglas de acción para buscar la eficacia.",
+        "Acciones motrices en el medio natural: características y modalidades de utilización del material y el equipo para la realización de actividades en el medio natural, incluido el de seguridad. Preparación y realización de un proyecto de acción en el medio natural (excursión, acampada, cicloturismo, orientación) de acuerdo con las posibilidades del alumnado y respetando los principios de seguridad. Toma de informaciones y referencias pertinentes para construir un desplazamiento razonado y reflexionado. Adopción de una motricidad adaptada y específica para ajustarse a un medio variado y, a veces, variable (natural o reproducido) y para manejar instrumentos o materiales que produzcan problemas de equilibrio. Gestión para llevar a buen término una actividad con economía y eficacia.",
+        "Acciones motrices con intención artística o expresiva: el cuerpo como instrumento de expresión y comunicación. Algunas manifestaciones expresivas relacionadas con estas actividades: la expresión corporal, la dramatización, la(s) danza(s), la gimnasia rítmica. Espacio propio, próximo y común o coreográfico. Utilización de los recursos expresivos del cuerpo y el movimiento (energía, espacio y tiempo) para la creación, expresión y comunicación de imágenes, ideas, estados de ánimo, sentimientos, emociones, roles, actitudes, tramas… Ejecución con precisión de formas motrices (desplazamientos, pasos, gestos, figuras...) y evoluciones en el espacio (formaciones, coreografías...) ajustadas al ritmo o soporte sonoro. Participación en la construcción, estructuración y ejecución de una producción colectiva, previendo roles y tareas de cada uno.",
+        "Aportaciones de la cultura motriz a la herencia cultural. Los juegos populares y tradicionales como manifestación de la propia cultura y su potencial intercultural.",
+        "Aportaciones de la cultura motriz a la herencia cultural. Las danzas como manifestación de la propia cultura y su potencial intercultural.",
+        "Conocimiento de nombres de juegos populares y tradicionales.",
+        "Deporte y perspectiva de género: ligas masculinas, femeninas y mixtas de distintos deportes. Referentes en el deporte de distintos géneros.",
+        "El juego y el deporte: reglamento."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Autorregulación emocional e interacción social en situaciones motrices",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Gestión emocional: reconocimiento de emociones propias, pensamientos y sentimientos a partir de experiencias motrices.",
+        "Habilidades sociales: escucha activa y estrategias de negociación para la resolución de conflictos en contextos motrices.",
+        "Concepto de deportividad.",
+        "Conductas contrarias a la convivencia, discriminatorias o sexistas, en situaciones motrices (discriminación por cuestiones de competencia motriz, raza, género u otras): estrategias de identificación y efectos negativos.",
+        "Dominio de las emociones en un ámbito de las actividades en el medio natural con incertidumbre (impulsivo-reflexivo, etc.)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Interacción eficiente y sostenible con el entorno",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Normas de uso: educación vial para peatones, patinetes, bicicletas, etc. Movilidad sostenible.",
+        "Espacios naturales en el contexto urbano: uso, disfrute y mantenimiento.",
+        "Estado del material para actividades en el medio natural: valoración previa y actuación ante desperfectos.",
+        "Prevención y sensibilización sobre la generación de residuos.",
+        "Realización de actividades físicas en el medio natural y urbano.",
+        "Cuidado del entorno como servicio a la comunidad, durante la práctica de actividad física."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Organización y gestión de la actividad física",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Cuidado y preparación del material según la actividad a desarrollar.",
+        "Pautas de higiene personal relacionados con la actividad física.",
+        "Elección de la práctica física: usos y fines. Respeto a las elecciones de los demás.",
+        "Prevención de accidentes en las prácticas motrices: mecanismos de prevención y control corporal para la prevención de lesiones.",
+        "Protocolo de actuación antes accidentes. Técnicas PAS (proteger, ayudar, socorrer) u otras.",
+        "Planificación y autorregulación de proyectos motores: mecanismos básicos para ejecutar lo planificado."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Vida activa y saludable",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Salud física: efectos físicos y psicológicos beneficiosos de un estilo de vida activo. Características de alimentos naturales, procesados y ultraprocesados. Educación postural en acciones motrices habituales. Factores básicos que inciden en el cuidado del cuerpo.",
+        "Salud social: la actividad física como hábito y alternativa saludable frente a formas de ocio nocivas. Límites para evitar una competitividad desmedida. Aceptación de distintas tipologías corporales, para practicar, en igualdad, diversidad de actividades físico-deportivas.",
+        "Salud mental: respeto y aceptación del propio cuerpo. Autoconocimiento e identificación de fortalezas y debilidades o posibilidades y limitaciones en todos los ámbitos (social, físico y mental)."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Tercer ciclo de Educación Primaria",
+   "cursos": [
+    5,
+    6
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Resolución de problemas en situaciones motrices",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Acciones motrices individuales. Principios para actuar metódicamente: emitir hipótesis de acción, identificar constantes, anticipar las acciones que hay que realizar, seleccionar las formas de hacer más apropiadas, resolver problemas. Perfeccionamiento y combinación de acciones motrices elementales para construir otras de mayor complejidad en situaciones y medios variados.",
+        "Acciones motrices de oposición. Información visual (juegos con raqueta: visión puntual, periférica, espacios libres...) y kinestésica (juegos de lucha: percepción del tono muscular, del equilibrio y desequilibrio, del centro de gravedad...). Principios y reglas de acción para superar al adversario (colocación en el terreno, utilización de la fuerza del oponente, alternancia...)",
+        "Acciones motrices de cooperación: la colaboración, la sincronización, la disponibilidad. Encadenamiento y coordinación de acciones grupales. Sincronización de acciones. Utilización de estrategias básicas de juego (anticipación). Práctica de actividades cooperativas que supongan un esfuerzo conjunto. Verbalización de reglas de acuerdo con las posibilidades del alumnado y respetando los principios de seguridad. Toma de informaciones y referencias pertinentes para construir un desplazamiento razonado y reflexionado. Adopción de una motricidad adaptada y específica para ajustarse a un medio variado y, a veces, variable (natural o reproducido) y para manejar instrumentos o materiales que produzcan problemas acción para la colaboración con compañeros y compañeras para conseguir un objetivo común.",
+        "Acciones motrices de colaboración-oposición: roles que vinculan interacciones posibles, relaciones con espacios y tiempos o uso de objetos. Explicación a posteriori de la propia acción, la de sus compañeros, compañeras y oponentes. Aplicación del repertorio de acciones motrices como portador y no portador del móvil (pelota), en ataque y en defensa. Ajuste de las conductas para hacerlas más eficaces (anticipar, actuar rápido, cambiar de ritmo...). Elaboración y utilización de estrategias de acción colectiva de ataque y defensa, enunciando reglas de acción para buscar la eficacia.",
+        "Acciones motrices en el medio natural: características y modalidades de utilización del material y el equipo para la realización de actividades en el medio natural, incluido el de seguridad. Preparación y realización de un proyecto de acción en el medio natural (excursión, acampada, cicloturismo, orientación) de acuerdo con las posibilidades del alumnado y respetando los principios de seguridad. Toma de informaciones y referencias pertinentes para construir un desplazamiento razonado y reflexionado. Adopción de una motricidad adaptada y específica para ajustarse a un medio variado y, a veces, variable (natural o reproducido) y para manejar instrumentos o materiales que produzcan problemas de equilibrio. Gestión para llevar a buen término una actividad con economía y eficacia.",
+        "Acciones motrices con intención artística o expresiva: el cuerpo como instrumento de expresión y comunicación. Algunas manifestaciones expresivas relacionadas con estas actividades: la expresión corporal, la dramatización, la(s) danza(s), la gimnasia rítmica. Espacio propio, próximo y común o coreográfico. Utilización de los recursos expresivos del cuerpo y el movimiento (energía, espacio y tiempo) para la creación, expresión y comunicación de imágenes, ideas, estados de ánimo, sentimientos, emociones, roles, actitudes, tramas… Ejecución con precisión de formas motrices (desplazamientos, pasos, gestos, figuras...) y evoluciones en el espacio (formaciones, coreografías...) ajustadas al ritmo o soporte sonoro. Participación en la construcción, estructuración y ejecución de una producción colectiva, previendo roles y tareas de cada uno."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Manifestaciones de la cultura motriz",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Aportaciones de la cultura motriz a la herencia cultural. Los juegos populares y tradicionales como manifestación de la propia cultura y su potencial intercultural.",
+        "Aportaciones de la cultura motriz a la herencia cultural. Las danzas como manifestación de la propia cultura y su potencial intercultural.",
+        "Valoración de los juegos tradicionales aragoneses como prácticas culturales de nuestro entorno.",
+        "Conocimiento de nombres de juegos populares y tradicionales.",
+        "El juego como manifestación social y cultural.",
+        "El ritmo y la organización temporal: la pulsación, la frase musical, el acento, la estructura rítmica… Formas motrices: desplazamientos y pasos (marcha, «salticado», galope...), figuras, gestos, posiciones…",
+        "Realización de danzas folclóricas, juegos danzados y otras producciones corporales propias de Aragón.",
+        "Valoración de las danzas folclóricas aragonesas como componente de nuestro patrimonio cultural.",
+        "Deporte y perspectiva de género: sexismo en el deporte amateur y profesional.",
+        "Deportes olímpicos y paralímpicos, instituciones e historia asociada a los Juegos Olímpicos y Paralímpicos.",
+        "Normas, reglas de juegos y deportes y su posible evolución o adaptación."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Autorregulación emocional e interacción social en situaciones motrices",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Gestión emocional: ansiedad, enfado desmedido en situaciones motrices. Estrategias de afrontamiento y gestión.",
+        "Habilidades sociales: estrategias de trabajo en equipo para la resolución constructiva de conflictos en situaciones motrices colectivas.",
+        "Concepto de fairplay o “juego limpio”.",
+        "Identificación y rechazo de conductas contrarias a la convivencia en situaciones motrices (discriminación).",
+        "Autoconfianza en el trabajo individual, por parejas o en grupo.",
+        "Aceptación de la dimensión afectiva unida a la oposición: las caídas, los contactos con el otro, el enfrentamiento, la combatibilidad…",
+        "Disfrute del placer de jugar, independientemente de los resultados alcanzados.",
+        "Valoración de las posibilidades como equipo y de la participación de cada uno de sus miembros con independencia del resultado obtenido.",
+        "Aceptación del reto que supone oponerse a otros en situaciones de juego sin que ello derive en actitudes de rivalidad o menosprecio.",
+        "Responsabilidad, cooperación y autonomía para desenvolverse en un medio no habitual con espíritu de aventura y convivencia.",
+        "Dominio de las emociones en un ámbito de las actividades en el medio natural con incertidumbre (impulsivo-reflexivo; solidaridad, positividad, etc.).",
+        "Control de la emoción y sus efectos para representar en público y para atreverse a expresar las emociones.",
+        "Colaboración en el proceso creativo, estableciendo relaciones positivas dentro del grupo, búsqueda de consensos, interés por las producciones de los demás, y aceptando las críticas constructivas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Interacción eficiente y sostenible con el entorno",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Normas de uso: la educación vial actuando como peatones o utilizando artilugios (bicicletas, patinetes, etc.).",
+        "Valoración de acciones con respecto al fomento del transporte activo y sostenible: bicicletas, patines, patinetes.",
+        "Previsión de riesgos de accidente durante la práctica en el medio natural: valoración previa y actuación.",
+        "Construcción y reutilización de materiales para la práctica motriz. Realización de actividades físicas en el medio natural y urbano.",
+        "Cuidado del entorno como servicio a la comunidad, durante la práctica de actividad física en el medio natural.",
+        "Respeto y conservación del entorno, la naturaleza, las instalaciones y el material tanto propio como común.",
+        "Espíritu crítico ante el deterioro del medio natural.",
+        "Contemplación y disfrute de la belleza natural."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Organización y gestión de la actividad física",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Usos y finalidades: catárticos, lúdico-recreativos, competitivos y agonísticos.",
+        "Actitudes consumistas en torno al equipamiento. Análisis crítico de la adquisición de material para la práctica físico-deportiva.",
+        "Hábitos autónomos de higiene corporal en acciones cotidianas.",
+        "Planificación y autorregulación de proyectos motores: seguimiento y valoración durante el proceso y del resultado.",
+        "Prevención de accidentes en las prácticas motrices: calentamiento general y vuelta a la calma. Importancia de respetar las normas de seguridad. Compromiso de responsabilidad hacia la seguridad propia y de los demás.",
+        "Actuaciones básicas ante accidentes durante la práctica de actividades físicas. Posición lateral de seguridad. Técnicas PAS (proteger, ayudar, socorrer).",
+        "Respeto a las propias limitaciones y restricción de los deseos cuando impliquen un riesgo o un peligro para la salud.",
+        "Efectos de la actividad física en el proceso de desarrollo, en la salud y en la mejora de las capacidades físicas.",
+        "Descubrimiento, a través de la práctica, de los grandes factores de la condición física general. Estimulación de las funciones respiratorias y circulatorias.",
+        "Gestión eficaz de la energía en función del tipo de esfuerzo solicitado.",
+        "Toma de conciencia de los riesgos y actuación con seguridad para uno mismo y para los demás."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Vida activa y saludable",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Salud física: efectos físicos, psicológicos y sociales beneficiosos del estilo de vida activo. Impacto de alimentos ultraprocesados y bebidas energéticas o azucaradas. Educación postural en acciones motrices específicas. Responsabilidad personal en el cuidado del cuerpo.",
+        "Salud social: aproximación a los efectos de los malos hábitos relacionados con la salud e influencia en la práctica de actividad física. La exigencia del deporte profesional. Aceptación de distintas tipologías corporales, para practicar en igualdad, diversidad de actividades físico-deportivas. Estereotipos corporales, de género y competencia motriz.",
+        "Salud mental: Consolidación y ajuste realista del autoconcepto, teniendo en cuenta la perspectiva de género. Respeto y aceptación del propio cuerpo y del aspecto corporal de los demás.",
+        "Interés por participar en la organización y desarrollo de proyectos de acción tales como encuentros deportivos entre escuelas del medio rural, fiestas de juegos tradicionales aragoneses, juegos deportivos para grupos de alumnado de diferentes clases...",
+        "Barreras y facilitadores para cumplir las recomendaciones internacionales sobre comportamientos saludables."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 98.8,
+  "no_encontrados": [
+   "saber : Salud social: la actividad física como hábito y alternativa saludable frente a formas de ocio nocivas. Límites para evit",
+   "saber : Salud física: efectos físicos, psicológicos y sociales beneficiosos del estilo de vida activo. Impacto de alimentos ultr"
+  ]
+ },
+ "materia": "Educación Física"
+}

@@ -1,0 +1,205 @@
+{
+ "fuente": "ORDEN ECD/1112/2022, anexo II, con las modificaciones de la ORDEN ECD/866/2024 (Aragón)",
+ "archivo": "03 Educación en Valores Cívicos y Éticos.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.EVCE.1",
+   "texto": "Deliberar y argumentar sobre problemas de carácter ético referidos a sí mismo y su entorno, buscando y analizando información fiable y generando una actitud reflexiva al respecto, para promover el autoconocimiento y la autonomía moral."
+  },
+  {
+   "codigo": "CE.EVCE.2",
+   "texto": "Actuar e interactuar de acuerdo con normas y valores cívicos y éticos, reconociendo su importancia para la vida individual y colectiva, y aplicándolos de manera efectiva y argumentada en distintos contextos, para promover una convivencia democrática, justa, respetuosa y pacífica."
+  },
+  {
+   "codigo": "CE.EVCE.3",
+   "texto": "Comprender las relaciones sistémicas entre el individuo, la sociedad y la naturaleza, a través del conocimiento y la reflexión sobre los problemas ecosociales, para comprometerse activamente con valores y prácticas consecuentes con el respeto, cuidado y protección de las personas y el planeta."
+  },
+  {
+   "codigo": "CE.EVCE.4",
+   "texto": "Desarrollar la autoestima y la empatía con el entorno, identificando, gestionando y expresando emociones y sentimientos propios, y reconociendo y valorando los de los otros, para adoptar una actitud fundada en el cuidado y aprecio de sí mismo, de los demás y del resto de la naturaleza."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.EVCE.1",
+   "columna": null,
+   "texto": "Construir un adecuado concepto de sí mismo o sí misma en relación con los demás y la naturaleza, organizando y generando, de forma segura y crítica, información analógica y digital acerca de los rasgos relativos a la identidad, diferencia y dignidad de las personas.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.EVCE.1",
+   "columna": null,
+   "texto": "Identificar y expresar emociones, afectos y deseos, mostrando confianza en las propias capacidades al servicio de la consecución motivada de fines personales y colectivos.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.EVCE.1",
+   "columna": null,
+   "texto": "Generar una posición moral autónoma mediante el ejercicio de la deliberación racional, el uso de conceptos éticos y el diálogo respetuoso con otros, en torno a distintos valores y modos de vida, así como a problemas relacionados con el uso responsable, seguro y crítico de las redes y medios de comunicación, las conductas adictivas, la prevención del abuso y el acoso escolar, y el respeto a la intimidad personal.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.EVCE.2",
+   "columna": null,
+   "texto": "Promover y demostrar un modo de convivencia democrática, justa, respetuosa y pacífica a partir de la investigación y comprensión de la naturaleza social y política del ser humano y mediante el uso crítico de los conceptos de «ley», “ética”, “civismo”, «democracia», «justicia» y «paz».",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.EVCE.2",
+   "columna": null,
+   "texto": "Interactuar con otros adoptando, de forma motivada y autónoma, conductas cívicas y éticas orientadas por valores comunes, a partir del conocimiento de los derechos humanos y los principios constitucionales fundamentales, en relación con contextos y problemas concretos, ,así como por una consideración crítica y dialogada acerca de cómo debemos relacionarnos con los demás.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.EVCE.2",
+   "columna": null,
+   "texto": "Reflexionar y asumir un compromiso activo y crítico con valores relativos a la solidaridad, el respeto por las minorías y las identidades étnicoculturales y de género, analizando desde un punto de vista ético cuestiones relacionadas con la desigualdad y la pobreza, el hecho multicultural, la diversidad humana y los fenómenos migratorios.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.EVCE.2",
+   "columna": null,
+   "texto": "Contribuir a generar una convivencia respetuosa, no sexista y comprometida con el logro de la igualdad y la corresponsabilidad efectivas, y con la erradicación de la violencia de género, a partir del conocimiento y análisis crítico de la situación secular de desigualdad entre hombres y mujeres.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.5",
+   "competencia": "CE.EVCE.2",
+   "columna": null,
+   "texto": "Comprender y valorar los principios de justicia, solidaridad, seguridad y paz, a la vez que el respeto a las libertades básicas, a partir del análisis y la ponderación de las políticas y acciones de ayuda y cooperación internacional, de defensa para la paz y de seguridad integral ciudadana, ejercidas por el Estado y sus instituciones, los organismos internaciones, las ONG y ONGD y la propia ciudadanía.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.EVCE.3",
+   "columna": null,
+   "texto": "Evaluar diferentes alternativas con que frenar el cambio climático y lograr los Objetivos de Desarrollo Sostenible, identificando causas y problemas ecosociales, y justificando argumentalmente, y de modo crítico, el deber ético de proteger y cuidar de la naturaleza.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.EVCE.3",
+   "columna": null,
+   "texto": "Comprometerse activamente con valores, prácticas y actitudes afectivas consecuentes con el respeto, cuidado y protección de las personas, los animales y el planeta, a través de la participación en actividades que promuevan un consumo responsable y un uso sostenible del suelo, el aire, el agua, la energía, la movilidad segura, saludable y sostenible, y la prevención y gestión de residuos, reconociendo el papel de las personas, colectivos y entidades comprometidas con la protección del entorno.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.EVCE.4",
+   "columna": null,
+   "texto": "Gestionar equilibradamente pensamientos, sentimientos y emociones, y desarrollar una actitud de estima y cuidado de sí mismo o sí misma, de los demás y del entorno, identificando, analizando y expresando de manera asertiva las propias emociones y afectos, y reconociendo y valorando los de otras personas, en distintos contextos y en relación con actividades creativas y de reflexión individual o dialogada sobre cuestiones éticas y cívicas.",
+   "cursos": [
+    5,
+    6
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Tercer ciclo de Educación Primaria",
+   "cursos": [
+    5,
+    6
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Autoconocimiento y autonomía moral",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El pensamiento crítico y ético.",
+        "La naturaleza humana y la identidad personal. Igualdad y diferencia entre las personas.",
+        "La gestión de las emociones y los sentimientos. La autoestima.",
+        "La educación afectivo-sexual.",
+        "Deseos y razones. La voluntad y el juicio moral. Autonomía y responsabilidad.",
+        "La ética como guía de nuestras acciones. El debate en torno a lo valioso y a los valores.Las normas, las virtudes y los sentimientos morales.",
+        "El propio proyecto personal: la diversidad de valores, fines y modelos de vida.",
+        "La influencia y el uso crítico y responsable de los medios y las redes de comunicación. La prevención del abuso y el ciberacoso. El respeto a la intimidad. Los límites a la libertad de expresión. Las conductas adictivas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sociedad, justicia y democracia",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Las virtudes del diálogo y las normas de la argumentación. La toma democrática de decisiones.",
+        "Fundamentos de la vida en sociedad. La empatía con los demás. Los afectos. La familia. La amistad y el amor.",
+        "Las reglas de convivencia. Moralidad, legalidad y conducta cívica.",
+        "Principios y valores constitucionales y democráticos. El problema de la justicia.",
+        "Los derechos humanos y de la infancia y su relevancia ética.",
+        "La desigualdad económica. La pobreza y la explotación infantil: análisis de sus causas y búsqueda de soluciones locales y globales.",
+        "La igualdad y la corresponsabilidad entre mujeres y hombres. La prevención de los abusos y la violencia de género. La conducta no sexista. Interseccionalidad.",
+        "El respeto por las minorías y las identidades étnoculturales y de género. Interculturalidad y migraciones.",
+        "La cultura de paz y no violencia. La contribución del Estado y sus instituciones a la paz, la seguridad y la cooperación internacional. La seguridad integral del ciudadano. Valoración de la defensa como un compromiso cívico y solidario al servicio de la paz. La protección civil y la colaboración ciudadana frente a los desastres. El papel de las ONG y ONGD. La resolución pacífica de los conflictos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Desarrollo sostenible y Ética ambiental",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La empatía, el cuidado y el aprecio hacia los seres vivos y el medio natural. El maltrato animal y su prevención.",
+        "La acción humana en la naturaleza. Ecosistemas y sociedades: interdependencia, ecodependencia e interrelación.",
+        "Los límites del planeta y el cambio climático.",
+        "El deber ético y la obligación legal de proteger y cuidar del planeta.",
+        "Hábitos y actividades para el logro de los Objetivos de Desarrollo Sostenible. El consumo responsable. El uso sostenible del suelo, del aire, del agua y de la energía. La movilidad segura, saludable y sostenible. La prevención y la gestión de los residuos."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Educación en Valores Cívicos y Éticos"
+}

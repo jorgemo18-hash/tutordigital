@@ -1,0 +1,144 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "19 Educación para la Ciudadanía y los Derechos Humanos.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.ECDH.1",
+   "texto": "Entender el diálogo como un ejercicio de rigor, espíritu crítico, tolerancia y empatía en lo que supone de requisito indispensable para la práctica de una ciudadanía activa y democrática, a través la resolución de manera dialógica y respetuosa con las opiniones contrarias de las cuestiones que atañen a la vida en común y a los problemas derivados de ésta."
+  },
+  {
+   "codigo": "CE.ECDH.2",
+   "texto": "Comprender la necesidad de las normas para la consecución de los valores democráticos de libertad, igualdad y justicia a fin de guiar nuestra acción ética y política de manera responsable, crítica y comprometida con la convivencia pacífica y con el bien común, así como distinguir en el ejercicio del poder por parte del Estado las acciones que garanticen y promuevan esos valores."
+  },
+  {
+   "codigo": "CE.ECDH.3",
+   "texto": "Analizar problemas éticos y políticos fundamentales, derivados de cuestiones de actualidad como la manipulación y el control a través de los medios de comunicación e internet, la igualdad de género y el papel del ser humano en la destrucción del medioambiente y la pandemia, mediante la exposición crítica y dialéctica de distintas posiciones filosóficamente pertinentes en la interpretación y resolución de los mismos, para desarrollar el juicio propio y la autonomía moral."
+  },
+  {
+   "codigo": "CE.ECDH.4",
+   "texto": "Adquirir una perspectiva global, sistémica y transdisciplinar en el planteamiento de cuestiones fundamentales y de actualidad, integrando información e ideas de distintos ámbitos disciplinares a través de la perspectiva que otorga el conocimiento de los conceptos y corrientes filosóficas en juego, para tratar problemas complejos de modo crítico, creativo y transformador."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.ECDH.1",
+   "columna": null,
+   "texto": "Ejercer el diálogo de manera racional, respetuosa, abierta, constructiva y comprometida con la verdad como forma de entender el contraste e intercambio de ideas, necesarios en una ciudadanía activa y democrática para ampliar la comprensión y posibilitar la resolución de problemas relevantes para la vida en común y la consecución de valores como libertad, igualdad y justicia.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.ECDH.1",
+   "columna": null,
+   "texto": "Producir y evaluar discursos orales acerca de cuestiones éticas y políticas, usando la argumentación de manera correcta, así como detectando y evitando modos dogmáticos y sesgados de sostener opiniones e hipótesis.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.ECDH.2",
+   "columna": null,
+   "texto": "Usar y comprender críticamente los conceptos de ley, poder, justicia, Estado, democracia, igualdad económica, así como igualdad ante la ley y de oportunidades, violencia y desobediencia a la ley.",
+   "competencia_en_tabla": "CE.ECDH.1",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.ECDH.2",
+   "columna": null,
+   "texto": "Generar un compromiso activo con el bien común a través del análisis y la toma razonada y dialogante de posición en torno a cuestiones éticas y políticas de actualidad que atañen al papel del Estado ante asuntos relativos a la igualdad, las libertades y los derechos.",
+   "competencia_en_tabla": "CE.ECDH.1",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.ECDH.3",
+   "columna": null,
+   "texto": "Desarrollar el propio juicio y la autonomía moral mediante el análisis filosófico de problemas éticos y políticos fundamentales y de actualidad, como los derivados de las nuevas tecnologías de la comunicación o de nuestra relación con el medio ambiente, considerando las distintas posiciones en liza, para contrastarlas con las propias tesis a través de la argumentación y el diálogo.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.ECDH.3",
+   "columna": null,
+   "texto": "Tomar consciencia de la lucha por una efectiva igualdad de género, a través del análisis de las teorías en torno a la cuestión del género como una creación social, y de la comprensión de los conceptos más importantes del feminismo, para la consecución de una actitud igualitaria ante las distintas discriminaciones practicadas sobre la mujer.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.ECDH.4",
+   "columna": null,
+   "texto": "Utilizar conceptos e ideas provenientes de distintos campos del saber para afrontar temas complejos, de carácter fundamental y de actualidad, de modo interdisciplinar, sistémico y transformador, orientándolos y articulándolos críticamente desde una perspectiva filosófica.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "¿Qué es el poder? ¿Nos hace más o menos libres?",
+        "Conceptos de poder, Estado, democracia y sociedad civil. Concepto normativo de Estado de derecho.",
+        "El imperio de la ley como garantía frente al poder arbitrario. El pensamiento político de la Ilustración frente al absolutismo.",
+        "La dialéctica entre seguridad y libertad en los distintos modelos de Estado.",
+        "El poder disciplinario y las sociedades disciplinarias. Las sociedades de control (Michel Foucault y Gilles Deleuze). ¿Es posible la igualdad? ¿Es deseable?",
+        "La igualdad económica o social y el concepto de propiedad. Teorías clásicas y actuales sobre la distribución justa de la riqueza.",
+        "El papel del Estado como garante de la igualdad ante la ley.",
+        "El Estado de bienestar y la igualdad. La seguridad social y la protección de los derechos sociales, laborales y culturales.",
+        "La Educación y otras instituciones del Estado como garantes de la igualdad de oportunidades. ¿Es violencia desobedecer una ley injusta? Justicia, desobediencia civil y violencia.",
+        "El derecho de rebelión o desobediencia a la ley en el pensamiento ilustrado y las teorías del contrato.",
+        "La violencia en Marx y George Sorel como violencia legítima contra la violencia del sistema capitalista y el Estado",
+        "¿Violencia justa contra la injusticia? Polémica entre Camus y Sartre",
+        "Protesta ciudadana y desobediencia civil. Su papel en la teoría de la justicia de Rawls y las concepciones de La Boétie, Thoreau, Tolstoi y Gandhi como precursores.",
+        "La violencia y los fanatismos como enemigos de la libertad.",
+        "La ética de la compasión frente a la violencia estructural. Chantal Maillard."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Retos y problemas de la actualidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Tecnologías de la información y medios de comunicación, ¿Crean la realidad o la reflejan? ¿Son capaces de cambiarla? Análisis crítico de los medios",
+        "El uso público de la razón en Kant. La función de la opinión pública.",
+        "Ideología y medios de comunicación. La Escuela de Frankfurt y la industria cultural. Noam Chomsky y las estrategias de manipulación.",
+        "Las teorías de la verdad. La posverdad y los medios de comunicación. Fakenews, influencers y twitter y su papel en la política. El poder del algoritmo",
+        "La función social del arte a través de los medios. La función social de la cultura de masas. Apocalípticos contra integrados. La sociedad del espectáculo. GuyDebord.",
+        "Responsabilidad y límites éticos en las redes. ¿Naturaleza o roles sociales? Feminismo y cuestiones de género",
+        "La distinción entre sexo y género. Simone de Beauvoir y El segundo sexo. La construcción de la identidad femenina y el ideal de la mujer independiente. Enfoques actuales del feminismo.",
+        "Conceptos para repensar el mundo desde el feminismo: La ola como metáfora del movimiento feminista, Androcentrismo, patriarcado, doble verdad, sororidad, nuevas masculinidades.",
+        "Distintas manifestaciones del sexismo: La desigualdad en las tareas domésticas, en las relaciones y condiciones laborales, en la educación y la transmisión de costumbres. El sexismo en el lenguaje, en los medios de comunicación y en la publicidad. Los micromachismos.",
+        "Definición de violencia de género. Violencia vicaria. Factores sociales que causan la violencia. Teoría del ciclo de la violencia. Razones que dificultan salir del ciclo. Mitos y falsas creencias sobre violencia de género. ¿Generan cambios las grandes catástrofes? Reflexión filosófica acerca de la historia, problemas medioambientales y pandemia.",
+        "La defensa del progreso en la historia y teorías críticas. Desde el optimismo ilustrado a la visión de la historia como catástrofe de Benjamin, Adorno y Horkheimer.",
+        "Un antecedente en la filosofía: el debate entre Voltaire y Rousseau sobre el terremoto de Lisboa de 1789. Cambios a nivel filosófico y social.",
+        "Papel del ser humano en la destrucción del medio ambiente, la pérdida de la biodiversidad, el cambio climático y la pandemia.",
+        "Éticas de la felicidad ante la catástrofe: la recuperación del estoicismo y el hedonismo.",
+        "Conceptos políticos en juego a partir de la pandemia. La polémica entre nuevo capitalismo (ByungChul Han) y nuevo comunismo (SlavojZizek). Otras polémicas y reflexiones filosóficas.",
+        "Guerra y paz: doctrinas filosóficas sobre la guerra y las intervenciones militares. El derecho de guerra y la guerra justa."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 95.2,
+  "no_encontrados": [
+   "saber : El poder disciplinario y las sociedades disciplinarias. Las sociedades de control (Michel Foucault y Gilles Deleuze). ¿E",
+   "saber : La distinción entre sexo y género. Simone de Beauvoir y El segundo sexo. La construcción de la identidad femenina y el i"
+  ]
+ },
+ "materia": "Educación para la Ciudadanía y los Derechos Humanos"
+}

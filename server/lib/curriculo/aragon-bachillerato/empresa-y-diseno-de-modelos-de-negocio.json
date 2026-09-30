@@ -1,0 +1,243 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "20 Empresa y Diseño de Modelos de Negocio.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.EDMN.1",
+   "texto": "Analizar la actividad empresarial y emprendedora, reconociendo el poder de transformación que ejercen en la sociedad y reflexionando sobre el valor de la innovación y la digitalización en este proceso, para comprender el papel que desempeñan dentro del funcionamiento global de la economía actual."
+  },
+  {
+   "codigo": "CE.EDMN.2",
+   "texto": "Investigar el entorno económico y social y su influencia en la actividad empresarial, analizando las interrelaciones empresas-entorno e identificando estrategias viables que partan de los criterios de responsabilidad social corporativa, de la igualdad y la inclusión, para valorar la capacidad de adaptación de las empresas."
+  },
+  {
+   "codigo": "CE.EDMN.3",
+   "texto": "Reconocer y comprender modelos de negocio actuales comparándolos con otros modelos tradicionales y aplicando estrategias y herramientas que faciliten el diseño creativo para proponer modelos de negocio que aporten valor, permitan satisfacer necesidades y contribuir al bienestar económico y social."
+  },
+  {
+   "codigo": "CE.EDMN.4",
+   "texto": "Valorar y seleccionar estrategias comunicativas de aplicación al mundo empresarial, utilizando nuevas fórmulas y obteniendo la información que se genera tanto en el ámbito interno como externo de la empresa, para gestionar eficazmente la información necesaria en el proceso de toma de decisiones y su correcta trasmisión."
+  },
+  {
+   "codigo": "CE.EDMN.5",
+   "texto": "Realizar el análisis previsional del modelo de negocio diseñado, aplicando herramientas de análisis empresarial necesarias para comprender todo el proceso llevado a cabo y validar la propuesta del modelo de negocio."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.EDMN.1",
+   "columna": "2º Bachillerato",
+   "texto": "Comprender la importancia de la actividad empresarial y el emprendimiento dentro de la economía actual, reconociendo el poder de transformación que ejercen en la sociedad y reflexionando sobre el valor de la innovación y la digitalización.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.EDMN.1",
+   "columna": "2º Bachillerato",
+   "texto": "Analizar el papel de la I+D+I en el desarrollo social y empresarial, identificando nuevas tendencias y tecnologías que tienen un alto impacto en la economía.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.EDMN.2",
+   "columna": "2º Bachillerato",
+   "texto": "Valorar la capacidad de adaptación ágil, responsable y sostenible de las empresas a los cambios del entorno y a las exigencias del mercado investigando el entorno económico y social y su influencia en la actividad empresarial.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.EDMN.2",
+   "columna": "2º Bachillerato",
+   "texto": "Conocer los distintos tipos de empresa, sus elementos y funciones, así como las formas jurídicas que adoptan, relacionando con cada una de ellas las responsabilidades legales de sus propietarios y gestores y las exigencias de capital.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.EDMN.2",
+   "columna": "2º Bachillerato",
+   "texto": "Identificar y analizar las características del entorno en el que la empresa desarrolla su actividad, explicando, a partir de ellas, las distintas estrategias y decisiones adoptadas y las posibles implicaciones sociales y medioambientales de su actividad.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.EDMN.3",
+   "columna": "2º Bachillerato",
+   "texto": "Proponer un modelo de negocio o de gestión diferenciado que permita dar respuesta a las necesidades actuales, comparando distintos modelos y utilizando estrategias y herramientas de diseño creativo.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.EDMN.3",
+   "columna": "2º Bachillerato",
+   "texto": "Analizar las características organizativas y funcionales de la empresa, analizando a partir de ellas, las decisiones de planificación, gestión y optimización de actividades, recursos y asociaciones clave del modelo de negocio.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.EDMN.3",
+   "columna": "2º Bachillerato",
+   "texto": "Analizar y tomar decisiones sobre los procesos productivos desde la perspectiva de la eficiencia y la productividad, definiendo el soporte necesario para hacer realidad el modelo de negocio.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.EDMN.3",
+   "columna": "2º Bachillerato",
+   "texto": "Analizar las características del mercado y explicar, de acuerdo con ellas, la propuesta de valor, canales, relaciones con clientes y fuentes de ingresos del modelo de negocio.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.EDMN.4",
+   "columna": "2º Bachillerato",
+   "texto": "Gestionar eficazmente la información y facilitar el proceso de toma de decisiones a partir de la información obtenida tanto en el ámbito interno como externo de la empresa y aplicando estrategias y nuevas fórmulas comunicativas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.EDMN.4",
+   "columna": "2º Bachillerato",
+   "texto": "Seleccionar estrategias de comunicación aplicadas al mundo empresarial, utilizando nuevas fórmulas comunicativas que faciliten la gestión eficaz de la información y la trasmisión de la misma a otros.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.EDMN.4",
+   "columna": "2º Bachillerato",
+   "texto": "Exponer el proyecto de modelo de negocio llevado a cabo utilizando las herramientas necesarias que permitan despertar el interés y cautivar a los demás con la propuesta de valor presentada.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.EDMN.5",
+   "columna": "2º Bachillerato",
+   "texto": "Validar la propuesta de modelo de negocio diseñado dentro de un contexto determinado, definiéndolo a partir de las tendencias clave del momento, la situación macroeconómica, el mercado y la competencia, comprendiendo todo el proceso llevado a cabo y aplicando técnicas de estudio previsional y herramientas de análisis empresarial.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.EDMN.5",
+   "columna": "2º Bachillerato",
+   "texto": "Determinar previsionalmente la estructura de ingresos y costes, calculando su beneficio y umbral de rentabilidad, a partir del modelo de negocio planteado.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.EDMN.5",
+   "columna": "2º Bachillerato",
+   "texto": "Elaborar un plan de negocio básico sobre un escenario simulado concreto, justificando las decisiones tomadas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.4",
+   "competencia": "CE.EDMN.5",
+   "columna": "2º Bachillerato",
+   "texto": "Analizar y explicar la situación económico-financiera, a partir de la información recogida tanto en el balance como en la cuenta de pérdidas y ganancias e indicando las posibles soluciones a los desequilibrios encontrados.",
+   "cursos": [
+    2
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El empresario o la empresaria. Perfiles.",
+        "La empresa. Clasificación. Localización y dimensión de la empresa. Marco jurídico que regula la actividad empresarial.",
+        "El entorno empresarial. Responsabilidad social corporativa. Mujer y emprendimiento. Inclusión y emprendimiento.",
+        "La empresa, digitalización e innovación. I+D+i. Teorías de la innovación. Tipos de innovación. Tendencias emergentes. Estrategias de innovación."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. El modelo de negocio y de gestión",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Empresa y modelo de negocio.",
+        "La función comercial. Segmento de clientes. La propuesta de valor. Canales. Relaciones con clientes. Fuentes de ingresos. Estrategias de marketing.",
+        "La función productiva. Proceso productivo. Eficiencia y productividad. Actividades clave. Recursos clave. Asociaciones clave. Estructura de costes: clasificación y cálculo de costes.",
+        "La gestión de los recursos humanos. Formación y funcionamiento de equipos ágiles. Habilidades que demanda el mercado de trabajo. La contratación y las relaciones laborales de la empresa. Las políticas de igualdad y de inclusión en las empresas.",
+        "La función financiera. Estructura económica y financiera. Inversión. Valoración y selección de inversiones. Recursos financieros. Análisis de fuentes alternativas de financiación interna y externa.",
+        "La información en la empresa: obligaciones contables. Composición y valoración del patrimonio. Cuentas anuales e imagen fiel. Elaboración de balance y cuenta de pérdidas y ganancias."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Herramientas para innovar en modelos de negocio y de gestión",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El lienzo de modelo de negocio y de gestión: concepto, áreas, bloques, utilidad y patrones de modelos de negocio.",
+        "El punto de vista de los clientes: mapa de empatía.",
+        "La creatividad aplicada al diseño de modelo de negocio y de gestión. El proceso de creatividad: divergencia y convergencia. Dinámicas de generación de nuevas ideas de modelos de negocio.",
+        "La competencia y nichos de mercado.",
+        "Las herramientas de organización de ideas: Pensamiento Visual o Visual Thinking. Capacidad de síntesis. Ideación. Comunicación.",
+        "El prototipado: concepto y utilidad. Posibilidades de prototipado: bienes, servicios y aplicaciones.",
+        "Las herramientas de presentación de un proyecto o una idea. Metodología: narración de historias o storytelling y el discurso en el ascensor o elevator pitch. Otras metodologías.",
+        "Los escenarios: exploración de ideas, escenarios futuros y nuevos modelos de negocio.",
+        "Otras herramientas para innovar en modelos de negocio y de gestión.",
+        "El entorno del modelo de negocio. Previsión: tendencias clave. Macroeconomía: variables macroeconómicas. Competencia: fuerzas competitivas.",
+        "La evaluación previa de modelos de negocio: análisis DAFO, análisis previsional de ingresos y costes y el umbral de rentabilidad.",
+        "La validación del modelo de negocio. Lean Startup. Desarrollo de clientes. Desarrollo de producto ágil.",
+        "La protección de la idea, del producto y de la marca.",
+        "La toma de decisiones. Estrategias. Simulación en hoja de cálculo. Redacción de un plan de negocios básico.",
+        "El análisis de resultados: estudio de mercado, análisis e interpretación de la información contable y análisis de estados financieros."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Empresa y Diseño de Modelos de Negocio"
+}

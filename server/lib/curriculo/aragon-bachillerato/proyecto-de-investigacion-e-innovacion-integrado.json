@@ -1,0 +1,298 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "52 Proyecto de Investigación e Innovación Integrado.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.PI.1",
+   "texto": "Conocer los factores históricos y de contexto de la investigación científica demostrando dominio sobre la aplicabilidad del proceso de investigación para la resolución de situaciones y problemas propios de la realidad presente, pasada y futura."
+  },
+  {
+   "codigo": "CE.PI.2",
+   "texto": "Reflexionar, diseñar y justificar sobre las fases de elaboración de un proyecto especificando los métodos, el enfoque y el tipo de investigación con sus respectivos marcos teóricos y contextuales para desarrollar las destrezas propias para llevar a cabo un proyecto de investigación.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.PI.3",
+   "texto": "Conocer y aplicar las herramientas metodológicas de la investigación desarrollando un proyecto en el que se diferencien las fases, elementos, técnicas y recursos propios del proceso, haciendo un uso crítico de las fuentes para trabajar a partir de hipótesis y conocer la práctica de la labor investigadora."
+  },
+  {
+   "codigo": "CE.PI.4",
+   "texto": "Plantear, elaborar y comunicar los resultados de una investigación a través del uso del lenguaje formal y mediante formatos diversos tanto para la presentación visual como oral del desempeño final, para reflejar los resultados del proceso con coherencia formal y de contenidos."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.PI.1",
+   "columna": "2º Bachillerato",
+   "texto": "Reconocer la curiosidad natural del ser humano como origen de la investigación.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.PI.1",
+   "columna": "2º Bachillerato",
+   "texto": "Conocer la evolución de la investigación entendiendo su significado y practicidad.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.PI.1",
+   "columna": "2º Bachillerato",
+   "texto": "Comprender la investigación como elemento constructor de la sociedad del conocimiento.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.PI.2",
+   "columna": "2º Bachillerato",
+   "texto": "Diseñar un proyecto de investigación, reconociendo los métodos analítico, sintético, inductivo y deductivo para aplicarlo a un diseño de investigación.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.PI.2",
+   "columna": "2º Bachillerato",
+   "texto": "Distinguir los enfoques cualitativo y cuantitativo de investigación según la realidad a indagar.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.PI.2",
+   "columna": "2º Bachillerato",
+   "texto": "Vincular la problemática de investigación al correspondiente tipo de indagación.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.PI.2",
+   "columna": "2º Bachillerato",
+   "texto": "Especificar en el diseño de investigación los marcos contextuales y teóricos básicos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.PI.3",
+   "columna": "2º Bachillerato",
+   "texto": "Reconocer un tema o pregunta de investigación teniendo en cuenta su relevancia científica.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.PI.3",
+   "columna": "2º Bachillerato",
+   "texto": "Conocer los distintos tipos de fuentes de investigación y su accesibilidad o posibilidades de consulta.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.PI.3",
+   "columna": "2º Bachillerato",
+   "texto": "Buscar, analizar, contrastar y verificar la información procedente de las fuentes.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.PI.3",
+   "columna": "2º Bachillerato",
+   "texto": "Reconocer todos los elementos y técnicas propios del proceso de investigación para llevar a cabo el proceso de manera adecuada.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.PI.3",
+   "columna": "2º Bachillerato",
+   "texto": "Manejar herramientas y recursos TAC de procesamiento de la información.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.PI.4",
+   "columna": "2º Bachillerato",
+   "texto": "Conocer todos los componentes formales para una correcta presentación de un informe final de investigación.",
+   "competencia_en_tabla": "CE.UE.4",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.PI.4",
+   "columna": "2º Bachillerato",
+   "texto": "Manejar los distintos modelos de informes existentes y las partes que los componen.",
+   "competencia_en_tabla": "CE.UE.4",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.PI.4",
+   "columna": "2º Bachillerato",
+   "texto": "Comprender los principios éticos de la ciencia para asegurar el avance del conocimiento, la comprensión y mejora de la condición humana y el progreso de la sociedad.",
+   "competencia_en_tabla": "CE.UE.4",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.4",
+   "competencia": "CE.PI.4",
+   "columna": "2º Bachillerato",
+   "texto": "Usar diversos formatos tradicionales y digitales para la visibilización de los resultados de la investigación.",
+   "competencia_en_tabla": "CE.UE.4",
+   "cursos": [
+    2
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Significado y sentido de la investigación",
+       "saberes": [
+        "La curiosidad natural del ser humano y el origen histórico de la investigación."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "La sociedad del conocimiento.",
+       "saberes": []
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "El proceso de investigación",
+       "saberes": [
+        "sus métodos “lógicos” (analítico, sintético, inductivo y deductivo)."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "El proceso de investigación",
+       "saberes": [
+        "sus enfoques (cuantitativo y cualitativo)."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Los tipos de investigación.",
+       "saberes": []
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Los grandes marcos (contextual y teórico) en la investigación.",
+       "saberes": []
+      }
+     ]
+    },
+    {
+     "bloque": "B. Metodología de la investigación",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "La selección del tema o pregunta de investigación.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Uso de las fuentes de investigación y sus tipos",
+       "saberes": [
+        "El tratamiento de la información en la era digital."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Elementos de investigación (variables, muestra y operativización).",
+       "saberes": []
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Técnicas de investigación.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "Las estrategias para analizar la información o datos de investigación.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.6",
+       "nombre": "Herramientas y recursos de procesamiento de la información",
+       "saberes": [
+        "Las TAC al servicio de la investigación."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. El informe de investigación",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Estructura del informe de investigación.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Presentación de resultados cualitativos y cuantitativos",
+       "saberes": []
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "La ética en la presentación del informe de investigación.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "Aspectos formales para la presentación",
+       "saberes": [
+        "citas, referencias, notas a pie, bibliografía."
+       ]
+      },
+      {
+       "codigo": "C.5",
+       "nombre": "Formatos de presentación visual y oral.",
+       "saberes": []
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Proyecto de Investigación e Innovación Integrado"
+}

@@ -1,0 +1,541 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "25 Fundamentos de Administración y Gestión.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.FAG.1",
+   "texto": "Identificar los principales aspectos de la innovación, elemento necesario para garantizar el desarrollo sostenible de un país y la competitividad de sus empresas, destacando el papel fundamental que desempeña el proceso emprendedor en el complejo proceso de la innovación. Relacionar la innovación con situaciones actuales de la economía aragonesa a nivel local y en un contexto nacional e internacional."
+  },
+  {
+   "codigo": "CE.FAG.2",
+   "texto": "Identifica y lleva a cabo el proceso de toma de decisiones en la generación de ideas innovadoras con sentido crítico y ético, con estrategias de planificación para poner en marcha un proyecto empresarial. Identifica las áreas de la empresa, los objetivos y los valores corporativos. Decide la forma jurídica y la localización. Adopta en la toma de decisiones una actitud integradora, de respeto a la diversidad de opiniones y en igualdad."
+  },
+  {
+   "codigo": "CE.FAG.3",
+   "texto": "Identifica los procedimientos legales antes los diferentes organismos públicos para la puesta en marcha de una empresa."
+  },
+  {
+   "codigo": "CE.FAG.4",
+   "texto": "Identifica el proceso productivo en sus diferentes fases, con sus implicaciones técnicas y medioambientales."
+  },
+  {
+   "codigo": "CE.FAG.5",
+   "texto": "Conoce y aplica métodos de investigación de mercados, analizando la información obtenida y segmentando el mercado de acuerdo con objetivos prefijados. Planifica estrategias comerciales distinguiendo las variables del marketing-mix."
+  },
+  {
+   "codigo": "CE.FAG.6",
+   "texto": "Interpreta la estructura organizativa de una empresa identificando la planificación de los recursos humanos y comprendiendo la documentación de contratación en su contexto normativo."
+  },
+  {
+   "codigo": "CE.FAG.7",
+   "texto": "Reconoce el método contable como mecanismo de trasladar los hechos en las relaciones económicas a datos que reflejan la situación patrimonial, económica y financiera de una empresa a través de sus cuentas anuales.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.FAG.8",
+   "texto": "Analiza y comprueba la viabilidad de la empresa adquiriendo hábitos de búsqueda de la mejora continua en la toma de decisiones. Identifica las necesidades financieras y las opciones de acceso a fuentes de financiación.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.FAG.9",
+   "texto": "Expone su proyecto de emprendimiento siguiendo el Plan de Empresa elaborado, con una comunicación oral y escrita eficaz, utilizando medios audiovisuales, adaptándose a contextos de audiencia diversa vinculada con el entorno específico del propio proyecto.",
+   "de": "tabla de criterios"
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.FAG.1",
+   "columna": null,
+   "texto": "Identifica distintos tipos de innovación y la relaciona con la solución a necesidades humanas.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.FAG.1",
+   "columna": null,
+   "texto": "Reconoce diversas experiencias de innovación empresarial y social identificando la necesidad de viabilidad y responsabilidad social corporativa.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.FAG.1",
+   "columna": null,
+   "texto": "Analiza la información económica de algún sector de actividad empresarial utilizando herramientas de investigación.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.FAG.1",
+   "columna": null,
+   "texto": "Relaciona las actividades empresariales con el desarrollo local, la calidad de vida y la sostenibilidad.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.FAG.2",
+   "columna": null,
+   "texto": "Analiza las ventajas e inconvenientes de diferentes ideas, evaluando las repercusiones de su decisión.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.FAG.2",
+   "columna": null,
+   "texto": "Selecciona una idea de negocio, valorando y argumentando de forma técnica la elección.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.FAG.2",
+   "columna": null,
+   "texto": "Trabaja en equipo manteniendo una comunicación fluida, respetuosa y eficaz con sus compañeros o compañeras para el desarrollo del proyecto de empresa.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.FAG.2",
+   "columna": null,
+   "texto": "Establece los objetivos sociales y/o empresariales a alcanzar con el proyecto, identificando los valores de la empresa y la responsabilidad social corporativa, teniendo en cuenta los Objetivos de Desarrollo Sostenibles.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.5",
+   "competencia": "CE.FAG.2",
+   "columna": null,
+   "texto": "Identifica cada una de las áreas o departamentos funcionales de la empresa valorando su importancia e interacción como parte de un proyecto completo.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.6",
+   "competencia": "CE.FAG.2",
+   "columna": null,
+   "texto": "Razona la elección de la forma jurídica.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.7",
+   "competencia": "CE.FAG.2",
+   "columna": null,
+   "texto": "Razona la decisión de localización de la empresa.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.FAG.3",
+   "columna": null,
+   "texto": "Identifica los organismos ante los que deben realizarse los trámites legales necesarios para la puesta en marcha del negocio.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.FAG.3",
+   "columna": null,
+   "texto": "Analiza la información prescriptiva en cada caso para realizar los trámites.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.FAG.3",
+   "columna": null,
+   "texto": "Comprende e identifica el procedimiento para realizar los trámites administrativos a realizar ante Seguridad Social, Agencia Tributaria, organismos laborales, Ayuntamientos, y Registro Mercantil.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.FAG.3",
+   "columna": null,
+   "texto": "Muestra autonomía en la búsqueda de información para realizar los trámites y adaptarse a los cambios en los protocolos administrativos.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.FAG.3",
+   "columna": null,
+   "texto": "Reconoce los protocolos de seguridad en los trámites digitales con la administración.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.6",
+   "competencia": "CE.FAG.3",
+   "columna": null,
+   "texto": "Valora la importancia de la gestión de los organismos públicos para la convivencia en sociedad y la necesidad de cumplir los plazos legales.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.FAG.4",
+   "columna": null,
+   "texto": "Explica el proceso productivo de la idea de negocio de manera coherente, argumentando la viabilidad técnica del proyecto.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.FAG.4",
+   "columna": null,
+   "texto": "Analiza la viabilidad medioambiental del proyecto.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.FAG.4",
+   "columna": null,
+   "texto": "Diseña, de manera grupal, el prototipo del producto y/o el manual de procedimiento de prestación del servicio que aporte soluciones a problemas reales.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.4",
+   "competencia": "CE.FAG.4",
+   "columna": null,
+   "texto": "Establece las necesidades de aprovisionamiento de recursos.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.5",
+   "competencia": "CE.FAG.4",
+   "columna": null,
+   "texto": "Reconoce las variables de selección de proveedores, razonando prioridades, atendiendo a criterios técnicos, financieros y éticos, en coherencia con los valores de responsabilidad social.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.6",
+   "competencia": "CE.FAG.4",
+   "columna": null,
+   "texto": "Conoce y aplica técnicas y estrategias de búsqueda de información y de comunicación y negociación con proveedores, fomentando la cooperación, el comercio justo y el desarrollo local.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.7",
+   "competencia": "CE.FAG.4",
+   "columna": null,
+   "texto": "Identifica los elementos administrativos de compra y pagos.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.8",
+   "competencia": "CE.FAG.4",
+   "columna": null,
+   "texto": "Identifica los ingresos de una actividad y los gastos, distinguiendo costes fijos y variables, así como las inversiones y la cuantificación de las amortizaciones.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.9",
+   "competencia": "CE.FAG.4",
+   "columna": null,
+   "texto": "Aplica métodos de cálculo apropiados para hallar el umbral de rentabilidad comprendiendo su importancia para la supervivencia de la empresa y la viabilidad económica de los proyectos.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.FAG.5",
+   "columna": null,
+   "texto": "Identifica el mercado objetivo al que dirige un producto o servicio, distinguiendo los segmentos atendiendo a criterios adecuados.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.FAG.5",
+   "columna": null,
+   "texto": "Reflexiona y aplica técnicas de investigación útiles para valorar las necesidades y preferencias de los clientes potenciales respecto a producto, precio, distribución y comunicación. Utiliza para ello de forma correcta, ética y segura herramientas de comunicación y análisis digitales, redes sociales, encuestas y hojas de cálculo.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.FAG.5",
+   "columna": null,
+   "texto": "Analiza el entorno específico a través del análisis del núcleo competitivo de Porter o de las cinco fuerzas competitivas de un sector.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.4",
+   "competencia": "CE.FAG.5",
+   "columna": null,
+   "texto": "Realiza un análisis DAFO para concretar las estrategias comerciales.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.5",
+   "competencia": "CE.FAG.5",
+   "columna": null,
+   "texto": "Realiza previsiones de ventas y las compara con los resultados obtenidos en el cálculo del umbral de rentabilidad.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.6",
+   "competencia": "CE.FAG.5",
+   "columna": null,
+   "texto": "Analiza los métodos adecuados de fijación de precios.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.7",
+   "competencia": "CE.FAG.5",
+   "columna": null,
+   "texto": "Desarrolla una imagen de empresa que comprende el nombre y/o marca comercial, logotipo y eslóganes publicitarios, respetando en todo momento el uso correcto de la propiedad privada de imágenes y nombres comerciales.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.8",
+   "competencia": "CE.FAG.5",
+   "columna": null,
+   "texto": "Diseña una comunicación comercial con su mercado objetivo, utilizando internet, creación de páginas web y redes sociales.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.FAG.6",
+   "columna": null,
+   "texto": "Evalúa las necesidades de la empresa y describe los puestos de trabajo.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.FAG.6",
+   "columna": null,
+   "texto": "Representa en un organigrama la estructura de una empresa.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.FAG.6",
+   "columna": null,
+   "texto": "Identifica formas de selección del personal de una empresa.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.4",
+   "competencia": "CE.FAG.6",
+   "columna": null,
+   "texto": "Diferencia formas de contratación de acuerdo a la normativa laboral.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.5",
+   "competencia": "CE.FAG.6",
+   "columna": null,
+   "texto": "Reconoce las obligaciones de la empresa ante la Seguridad Social.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.6",
+   "competencia": "CE.FAG.6",
+   "columna": null,
+   "texto": "Identifica los conceptos de documentos de retribución del personal.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.FAG.7",
+   "columna": null,
+   "texto": "Identifica el concepto del patrimonio y distingue los elementos patrimoniales, bienes, derechos y obligaciones de situaciones prácticas.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.FAG.7",
+   "columna": null,
+   "texto": "Interpreta la información de un Balance de Situación y su evolución a lo largo de un ciclo contable.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.FAG.7",
+   "columna": null,
+   "texto": "Realiza una Cuenta de Resultados con información real o previsional y determina el resultado obtenido.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.4",
+   "competencia": "CE.FAG.7",
+   "columna": null,
+   "texto": "Comprende y reproduce la metodología contable para operaciones sencillas y habituales en las actividades económicas como compras, ventas, cobros, pagos, obtención del resultado o cierre contable.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.5",
+   "competencia": "CE.FAG.7",
+   "columna": null,
+   "texto": "Interpreta los principios de contabilidad del Plan General de Contabilidad.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.6",
+   "competencia": "CE.FAG.7",
+   "columna": null,
+   "texto": "Analiza las obligaciones contables y fiscales y los procedimientos para cumplir con ellas, en líneas generales.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.7",
+   "competencia": "CE.FAG.7",
+   "columna": null,
+   "texto": "Reconoce las aplicaciones informáticas de contabilidad.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.FAG.8",
+   "columna": null,
+   "texto": "Identifica las inversiones que requiere la empresa para la puesta en marcha de la actividad y su funcionamiento identificando las necesidades de financiación.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.FAG.8",
+   "columna": null,
+   "texto": "Analiza las opciones de financiación aplicables a situaciones concretas, valorando el coste, ayudas o subvenciones y las obligaciones que suponen.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.3",
+   "competencia": "CE.FAG.8",
+   "columna": null,
+   "texto": "Reconoce la utilidad de los estados previsionales de tesorería aplicando métodos de diseño de cálculos con herramientas digitales y reconoce la importancia de tomar decisiones que eviten situaciones de riesgo inasumibles.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.4",
+   "competencia": "CE.FAG.8",
+   "columna": null,
+   "texto": "Sintetiza conclusiones obtenidas del análisis de la viabilidad conjunta de la empresa en sus dimensiones técnica, medioambiental, jurídica, comercial, económica y financiera, reconsiderando las decisiones tomadas y adaptándose a la solución de problemas.",
+   "cursos": []
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.FAG.9",
+   "columna": null,
+   "texto": "Es capaz de identificar las características de la audiencia y adaptar sus explicaciones para ser entendido.",
+   "cursos": []
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.FAG.9",
+   "columna": null,
+   "texto": "Utiliza habilidades de comunicación eficaz, que captan la atención y transmiten los contenidos del Plan de Empresa de manera clara, concisa y amena.",
+   "cursos": []
+  },
+  {
+   "codigo": "9.3",
+   "competencia": "CE.FAG.9",
+   "columna": null,
+   "texto": "Elabora presentaciones y/o recursos audiovisuales para transmitir la idea de negocio y su viabilidad en todas sus dimensiones.",
+   "cursos": []
+  },
+  {
+   "codigo": "9.4",
+   "competencia": "CE.FAG.9",
+   "columna": null,
+   "texto": "Utiliza herramientas digitales y de difusión de la información de manera responsable y efectiva.",
+   "cursos": []
+  },
+  {
+   "codigo": "9.5",
+   "competencia": "CE.FAG.9",
+   "columna": null,
+   "texto": "Reflexiona sobre el impacto generado por su comunicación en la audiencia, interpretando las críticas y planteando soluciones a sus errores de proyecto y de comunicación.",
+   "cursos": []
+  },
+  {
+   "codigo": "9.6",
+   "competencia": "CE.FAG.9",
+   "columna": null,
+   "texto": "Valora la adecuación de los proyectos de todo el grupo clase a un entorno local con perspectiva global, teniendo en cuenta el impacto positivo y negativo que podría generar.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La investigación, desarrollo e innovación como fuente de crecimiento económico y desarrollo sostenible. I+D+i.",
+        "Tipos de innovación empresarial: producto, proceso, marketing y organización. Riesgos de la innovación.",
+        "Identificar necesidades para aportar soluciones.",
+        "Investigación de mercados, objetivos y herramientas. UX Designer.",
+        "Análisis del entorno general y específico: PESTEL y PORTER.",
+        "El proceso emprendedor en función de sus objetivos: Emprendimiento empresarial y emprendimiento social, relación de ambas opciones con la viabilidad económica y la responsabilidad social corporativa, RSC.",
+        "Emprendimiento y sinergias en el desarrollo local. Economía del conocimiento. Economía circular."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Decisiones para iniciar un proyecto emprendedor. Plan de Empresa.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El Plan de empresa. La idea de negocio. Patentes. Objetivos. Misión, Visión y valores. Áreas funcionales de la empresa.",
+        "Condicionantes para elegir el nombre de la empresa. El Registro Mercantil.",
+        "Localización y dimensión.",
+        "La forma jurídica y los principales trámites legales para iniciar un negocio, fiscales, laborales y de Seguridad Social.",
+        "Los organismos de asesoramiento y ayuda para iniciar el proyecto emprendedor. Asesoramiento al emprendedor."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Organización interna de la empresa.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Área de producción. El proceso productivo. Viabilidad técnica. Viabilidad medioambiental.",
+        "Clasificación de gastos, fijos y variables, directos e indirectos. Cálculo del umbral de rentabilidad.",
+        "Prototipos de productos y manuales de procedimiento de prestación de servicios.",
+        "Área de aprovisionamiento: selección de proveedores, criterios técnicos, financieros y éticos. Control de stocks. Documentos administrativos de compra: pedidos, albaranes y facturas y sus implicaciones fiscales. Formas de pago y documentos. Cheques, domiciliación bancaria, transferencias, efectos comerciales.",
+        "Área comercial. Mercado objetivo. Técnicas y aplicación de estudios de mercado. Segmentación. Estrategias comerciales. Marketing mix: producto, precio, distribución y comunicación. Estrategias comerciales. Análisis DAFO. Imagen de marca.",
+        "Área de recursos humanos, Organización interna y distribución de responsabilidades. El organigrama. Selección de personal. El currículum vitae. Contratación laboral. Obligación de la empresa. Las nóminas. La brecha salarial."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Viabilidad del Proyecto Emprendedor. Contabilidad y Fiscalidad.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La contabilidad: Concepto de patrimonio, rentabilidad y equilibrio financiero. Balance de Situación y Cuenta de Resultados, interpretación de la información. Método contable. Gestión de la contabilidad.",
+        "Obligaciones fiscales en función del tipo de empresa. IVA, IRPF, IS, IBI, ITPAJD. Fiscalidad verde. Educación fiscal y responsabilidad ciudadana. La economía sumergida y sus efectos.",
+        "Necesidad de inversión y opciones de financiación. Finanzas sostenibles. Previsión de tesorería.",
+        "Síntesis de la información y conclusiones de viabilidad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. La información y comunicación empresarial. Exposición de un proyecto de empresa.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Habilidades básicas de comunicación escrita, verbal y no verbal.",
+        "La Comunicación externa e interna.",
+        "Exposición pública de un proyecto. Aplicación de técnicas de comunicación eficaz. Adaptación a distintos tipos de público.",
+        "Uso de la tecnología en la comunicación. Distintas aplicaciones informáticas y audiovisuales.",
+        "Sinergias entre proyectos y con el entorno. Feedback de la exposición. Análisis de la repercusión del proyecto en un contexto real."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Fundamentos de Administración y Gestión"
+}

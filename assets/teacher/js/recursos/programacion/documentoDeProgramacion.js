@@ -1,10 +1,12 @@
 import { el, boton } from "../elementos.js";
-import { APARTADOS, REFERENCIA } from "../../../../shared/programacion/apartadosLegales.js";
+import { apartadosDe, referenciaDe } from "../../../../shared/programacion/apartadosLegales.js";
+import { nombreDelCurso } from "../../../../shared/curriculo/etapas.js";
 import { saberesConId, criteriosDe, sumaDePesos, pesoPorCompetencia, modoDeCalificacion } from "../../../../shared/programacion/estructuraDeLaProgramacion.js";
 import { INSTRUMENTOS, SIGLAS, fichaDeCriterio, pesoDeCriterio } from "../../../../shared/programacion/detalleDeCriterios.js";
 
 // EL DOCUMENTO: la programación entera, en el orden y con las letras del
-// artículo 59.3 (a–ñ), lista para imprimir o guardar como PDF desde el
+// artículo de su etapa (ESO a–ñ, Primaria a–n, Bachillerato a–m; ver
+// apartadosLegales.js), lista para imprimir o guardar como PDF desde el
 // navegador. a) sale del currículo oficial; b) de las unidades; d) de los
 // pesos; el resto, de lo que ha escrito el profesor. Lo que falta se marca
 // en el papel ("Sin redactar") en vez de esconderlo: mejor verlo aquí que
@@ -130,7 +132,7 @@ function texto(doc, s, valor) {
   t.split(/\n{2,}/).forEach((parrafo) => s.appendChild(el(doc, "p", "rc-doc__p", parrafo)));
 }
 
-// El documento en sí (portada y apartados a–ñ). Lo pintan el paso
+// El documento en sí (portada y apartados). Lo pintan el paso
 // "Documento" del editor y la página que hace el PDF en el servidor
 // (assets/shared/programacion/programacion-imprimible.html): es el mismo.
 function construirDocumento({ curriculo, datos, cabecera, centro = "", doc }) {
@@ -139,21 +141,21 @@ function construirDocumento({ curriculo, datos, cabecera, centro = "", doc }) {
   portada.append(
     el(doc, "p", "rc-doc__centro", centro),
     el(doc, "h1", "rc-doc__h1", "Programación didáctica"),
-    el(doc, "p", "rc-doc__materia", [curriculo.materia, cabecera.curso ? `${cabecera.curso}.º ESO` : "", datos.variante].filter(Boolean).join(" · ")),
+    el(doc, "p", "rc-doc__materia", [curriculo.materia, nombreDelCurso(cabecera.materia_slug, cabecera.curso), datos.variante].filter(Boolean).join(" · ")),
   );
   // El título por defecto repite materia y curso: entonces no se pone.
-  const porDefecto = `${curriculo.materia} ${cabecera.curso}.º ESO`;
+  const porDefecto = `${curriculo.materia} ${nombreDelCurso(cabecera.materia_slug, cabecera.curso)}`;
   if (cabecera.titulo && cabecera.titulo !== porDefecto) portada.appendChild(el(doc, "p", "rc-doc__sub", cabecera.titulo));
   const horas = datos.sesionesSemanales ? `${datos.sesionesSemanales} sesiones semanales · ${datos.semanas || 35} semanas` : "";
   if (horas) portada.appendChild(el(doc, "p", "rc-doc__sub", horas));
-  portada.appendChild(el(doc, "p", "rc-doc__ref", `Estructura según el ${REFERENCIA}.`));
+  portada.appendChild(el(doc, "p", "rc-doc__ref", `Estructura según el ${referenciaDe(cabecera.materia_slug)}.`));
   hoja.appendChild(portada);
 
-  for (const a of APARTADOS) {
+  for (const a of apartadosDe(cabecera.materia_slug)) {
     const s = seccion(doc, a);
-    if (a.letra === "a") apartadoA(doc, s, curriculo);
-    else if (a.letra === "b") apartadoB(doc, s, curriculo, datos);
-    else if (a.letra === "d") apartadoD(doc, s, curriculo, datos);
+    if (a.de === "curriculo") apartadoA(doc, s, curriculo);
+    else if (a.de === "unidades") apartadoB(doc, s, curriculo, datos);
+    else if (a.de === "calificacion") apartadoD(doc, s, curriculo, datos);
     else texto(doc, s, datos.textos?.[a.letra]);
     hoja.appendChild(s);
   }
@@ -171,7 +173,7 @@ export function pintarDocumentoImprimible({ contenedor, curriculo, datos, cabece
 export function pintarDocumento({ contenedor, curriculo, datos, cabecera, centro = "", onPdf = null, doc = document }) {
   const hoja = construirDocumento({ curriculo, datos, cabecera, centro, doc });
   const barra = el(doc, "div", "rc-doc__barra");
-  const faltan = APARTADOS.filter((a) => a.de === "texto" && !String(datos.textos?.[a.letra] || "").trim()).map((a) => a.letra);
+  const faltan = apartadosDe(cabecera.materia_slug).filter((a) => a.de === "texto" && !String(datos.textos?.[a.letra] || "").trim()).map((a) => a.letra);
   const aviso = el(doc, "p", "rc-msg rc-msg--error");
   aviso.hidden = true;
   const pdf = boton(doc, "PDF para imprimir", { clase: "rc-btn--pri" });

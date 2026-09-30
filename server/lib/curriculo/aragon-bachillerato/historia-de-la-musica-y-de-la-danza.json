@@ -1,0 +1,184 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "31 Historia de la Música y de la Danza.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.HMD.1",
+   "texto": "Identificar las características técnicas de la música y de la danza, apreciando su evolución a lo largo de la historia a través del análisis de las fuentes de estudio disponibles, para reconocer sus rasgos estilísticos y su función en un determinado contexto."
+  },
+  {
+   "codigo": "CE.HMD.2",
+   "texto": "Relacionar la música y la danza con otras formas de expresión artística, vinculándolas con la evolución del pensamiento humano, para comprender el carácter interdisciplinar del arte y valorar la importancia de su conservación y difusión como patrimonio cultural."
+  },
+  {
+   "codigo": "CE.HMD.3",
+   "texto": "Interpretar fragmentos musicales o adaptaciones de obras relevantes de la música y de la danza de diferentes épocas y estilos, a través de la dramatización y el empleo de la voz, el cuerpo y distintos instrumentos, para vivenciar el hecho artístico y comprenderlo desde la propia experiencia."
+  },
+  {
+   "codigo": "CE.HMD.4",
+   "texto": "Investigar sobre los principales compositores, intérpretes y obras de la historia de la música y de la danza, utilizando fuentes de información fiables, para analizar las diferentes corrientes interpretativas y reflexionar sobre la riqueza del patrimonio musical y sobre la propia identidad cultural."
+  },
+  {
+   "codigo": "CE.HMD.5",
+   "texto": "Transmitir opiniones e ideas propias, informadas y fundamentadas, sobre la evolución de la música y de la danza, usando un vocabulario específico, formulando argumentos de carácter teórico y estético y analizando críticamente el contexto de creación de las obras, para desarrollar la capacidad comunicativa sobre el hecho musical."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.HMD.1",
+   "columna": null,
+   "texto": "Reconocer los rasgos estilísticos de la música y de la danza en las diferentes épocas históricas, a través de la escucha activa y del visionado de manifestaciones artísticas, así como del análisis de partituras y textos representativos.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.HMD.1",
+   "columna": null,
+   "texto": "Determinar la función de la música y de la danza en los diferentes contextos, estableciendo vínculos entre las características de estas manifestaciones artísticas y los hechos histórico-estéticos que determinan el periodo.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.HMD.2",
+   "columna": null,
+   "texto": "Explicar la relación entre la música, la danza y otras manifestaciones artísticas, identificando los condicionantes históricos y los fundamentos estéticos que comparten y analizando su carácter interdisciplinar.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.HMD.2",
+   "columna": null,
+   "texto": "Analizar la importancia del patrimonio musical, escénico y artístico como expresión de una época, valorando la responsabilidad sobre su conservación y difusión.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.HMD.3",
+   "columna": null,
+   "texto": "Experimentar con las características de la música y de la danza de un periodo histórico determinado, interpretando o dramatizando fragmentos o adaptaciones de obras relevantes con instrumentos musicales, la voz o el propio cuerpo.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.HMD.3",
+   "columna": null,
+   "texto": "Valorar la riqueza del patrimonio musical y dancístico a través del reconocimiento de las características de un determinado periodo en la adaptación de las interpretaciones y el contraste con las muestras originales.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.HMD.3",
+   "columna": null,
+   "texto": "Participar activamente en las interpretaciones asumiendo las diferentes funciones que se asignen y mostrando interés por aproximarse al conocimiento y disfrute del repertorio propuesto.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.HMD.4",
+   "columna": null,
+   "texto": "Analizar las diferentes corrientes interpretativas, comparando distintas versiones musicales de una misma obra e identificando su vinculación con la estética del periodo.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.HMD.4",
+   "columna": null,
+   "texto": "Utilizar fuentes de información fiables en investigaciones sobre los principales compositores, intérpretes y obras de la historia de la música y de la danza, aplicando estrategias de búsqueda, de selección y de reelaboración de la información.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.HMD.4",
+   "columna": null,
+   "texto": "Reconocer la identidad cultural propia, valorando la riqueza del patrimonio musical a través de las investigaciones realizadas.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.HMD.5",
+   "columna": null,
+   "texto": "Explicar los distintos conceptos teórico-estéticos aplicados a la música y la danza, usando de forma fiable y responsable las tecnologías digitales y respetando los derechos de autor y la propiedad intelectual.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.HMD.5",
+   "columna": null,
+   "texto": "Expresar opiniones e ideas propias, informadas y fundamentadas, sobre el patrimonio musical y dancístico, usando un vocabulario específico, formulando argumentos de carácter teórico y estético y analizando críticamente el contexto de creación de las obras.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Elementos de la música y de la danza: identificación y análisis.",
+        "Rasgos que definen la música y la danza de diferentes periodos históricos a nivel auditivo y visual.",
+        "Aspectos socioculturales de la recepción artística. Evolución de los formatos y desarrollo del público.",
+        "Estrategias de escucha, visionado y análisis de textos y partituras."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Contextos de creación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Factores culturales, sociales, económicos y políticos que inciden en la creación musical. Función social de la música y de la danza.",
+        "Características y evolución estética y estilística de la música y de la danza a lo largo de la historia.",
+        "Principales corrientes, escuelas, autores y autoras, intérpretes y obras representativas de la música y de la danza desde la Antigüedad clásica hasta nuestros días.",
+        "El papel del intérprete a lo largo de la historia.",
+        "La música y la danza y su relación con las demás artes.",
+        "Interés por conocer, respetar y difundir el patrimonio musical y dancístico."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Investigación, opinión crítica y difusión",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La investigación musical: procesos de búsqueda, selección, tratamiento y difusión de la información. Fuentes de investigación musical: fiabilidad y validez.",
+        "Uso de las tecnologías digitales en la difusión de la música y de la danza. Reseñas, comentarios y críticas musicales. Derechos de autor y propiedad intelectual."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Experimentación activa",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Técnicas sencillas de interpretación de obras adaptadas o fragmentos musicales representativos del repertorio musical.",
+        "Práctica de danzas sencillas de diferentes periodos históricos.",
+        "Estrategias y técnicas básicas de dramatización de textos de la música vocal y su dramatización."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Historia de la Música y de la Danza"
+}

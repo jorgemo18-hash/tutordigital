@@ -1,0 +1,979 @@
+{
+ "fuente": "ORDEN ECD/1112/2022, anexo II, con las modificaciones de la ORDEN ECD/866/2024 (Aragón)",
+ "archivo": "11 Lengua Propia: Catalán.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.LPC.1",
+   "texto": "Comprender el sentido general e información específica de textos orales o multimodales, expresados en la lengua estándar o en cualquiera de sus variedades dialectales, haciendo uso de diversas estrategias y valorando con ayuda aspectos formales y de contenido básicos para construir conocimiento y responder a diferentes necesidades comunicativas, así como para ampliar el repertorio lingüístico."
+  },
+  {
+   "codigo": "CE.LPC.2",
+   "texto": "Producir textos orales y multimodales de manera comprensible, coherente y estructurada, mediante el empleo de diversas estrategias o recursos orales, conversacionales o multimodales, para expresar mensajes relacionados con necesidades inmediatas o cotidianas, construir conocimiento, establecer vínculos personales y fomentar una actitud empática y cooperativa en las interacciones orales."
+  },
+  {
+   "codigo": "CE.LPC.3",
+   "texto": "Comprender el sentido global, ideas principales e información específica sobre textos escritos o multimodales, expresados en la lengua estándar o en cualquiera de sus variedades dialectales, haciendo uso de diversas estrategias y estableciendo reflexiones sobre algunos aspectos formales y de contenido básicos para construir conocimiento y responder a diferentes necesidades comunicativas así como para desarrollar el repertorio lingüístico."
+  },
+  {
+   "codigo": "CE.LPC.4",
+   "texto": "Producir textos escritos y multimodales de manera comprensible, coherente y estructurada, con corrección gramatical y ortográfica básica, secuenciando correctamente los contenidos y aplicando estrategias elementales de planificación, redacción, revisión y edición para expresar mensajes relacionados con necesidades inmediatas o cotidianas, construir conocimiento y dar respuesta a unas demandas comunicativas concretas."
+  },
+  {
+   "codigo": "CE.LPC.5",
+   "texto": "Localizar, contrastar y seleccionar información sencilla y relevante procedente de diversas fuentes, evaluando su fiabilidad y utilidad para responder a una necesidad comunicativa o de conocimiento."
+  },
+  {
+   "codigo": "CE.LPC.6",
+   "texto": "Conocer y leer de forma autónoma fragmentos, obras y autores significativos de la literatura en lengua catalana en general y de la literatura aragonesa en lengua catalana en particular, haciendo uso también de la tradición oral y estableciendo vínculos con los sentimientos, realidades o ficciones que se expresan."
+  },
+  {
+   "codigo": "CE.LPC.7",
+   "texto": "Ser consciente de la pertenencia a la comunidad lingüística del catalán mostrando interés en el uso de la lengua y valorando las variedades dialectales del catalán de Aragón como elemento enriquecedor de nuestro patrimonio cultural, identificando y rechazando estereotipos y prejuicios lingüísticos."
+  },
+  {
+   "codigo": "CE.LPC.8",
+   "texto": "Conocer y realizar transferencias sencillas entre la lengua catalana y otras lenguas para facilitar la comunicación en contextos cotidianos y ampliar su repertorio lingüístico individual."
+  },
+  {
+   "codigo": "CE.LPC.9",
+   "texto": "Conocer, reflexionar y utilizar de forma adecuada los aspectos gramaticales y fonéticos básicos de la lengua en los procesos de análisis, producción y comprensión de textos en contextos significativos, utilizando la terminología elemental adecuada para desarrollar la conciencia y el análisis lingüístico."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.LPC.1",
+   "columna": "Primer Ciclo",
+   "texto": "Comprender el sentido de textos orales y multimodales sencillos, reconociendo las ideas principales y los mensajes explícitos e iniciando, de manera acompañada, la valoración del contenido y de los elementos no verbales más elementales.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.LPC.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Comprender el sentido de textos orales y multimodales sencillos, reconociendo las ideas principales, los mensajes explícitos y los mensajes implícitos más sencillos, y progresando, de manera acompañada, en la valoración crítica del contenido y de los elementos no verbales elementales.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.LPC.1",
+   "columna": "Tercer ciclo",
+   "texto": "Comprender el sentido de textos orales y multimodales sencillos, reconociendo las ideas principales y los mensajes explícitos e implícitos, valorando su contenido y los elementos no verbales elementales y, de manera acompañada, algunos elementos formales elementales.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.LPC.2",
+   "columna": "Primer Ciclo",
+   "texto": "Producir textos orales y multimodales coherentes, con planificación acompañada y utilizando recursos no verbales elementales.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.LPC.2",
+   "columna": "Primer Ciclo",
+   "texto": "Participar en interacciones orales espontáneas, respetando las normas básicas de la cortesía lingüística.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.LPC.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Producir textos orales y multimodales coherentes, con planificación acompañada, ajustando el discurso a la situación comunicativa y utilizando recursos no verbales básicos.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.LPC.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Participar en interacciones orales espontáneas o regladas, respetando las normas básicas de la cortesía lingüística e iniciándose en estrategias de escucha activa.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.LPC.2",
+   "columna": "Tercer ciclo",
+   "texto": "Producir textos orales y multimodales de manera autónoma, coherente y fluida, en contextos formales sencillos y utilizando correctamente recursos verbales y no verbales básicos.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.LPC.2",
+   "columna": "Tercer ciclo",
+   "texto": "Participar en interacciones orales espontáneas o regladas, respetando las normas de la cortesía lingüística y desarrollando estrategias sencillas de escucha activa y de cooperación conversacional.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.LPC.3",
+   "columna": "Primer Ciclo",
+   "texto": "Leer de manera silenciosa y en voz alta textos escritos y multimodales adecuados a su desarrollo cognitivo, identificando el sentido global y la información relevante y movilizando de forma acompañada estrategias básicas de comprensión.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.LPC.3",
+   "columna": "Primer Ciclo",
+   "texto": "Analizar, de manera acompañada, el contenido y aspectos formales y no verbales elementales de textos escritos y multimodales sencillos, valorando su contenido y estructura.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.LPC.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Leer de manera silenciosa y en voz alta textos escritos y multimodales sencillos, identificando el sentido global y la información relevante e integrando, de manera acompañada, la información explícita.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.LPC.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Analizar, de manera acompañada, el contenido y aspectos formales y no verbales elementales de textos escritos y multimodales, valorando su contenido y estructura e iniciándose en la evaluación de su fiabilidad.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.LPC.3",
+   "columna": "Tercer ciclo",
+   "texto": "Leer de manera silenciosa y en voz alta textos escritos y multimodales sencillos, identificando el sentido global y la información relevante, realizando inferencias directas de manera acompañada y superando la interpretación literal.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.LPC.3",
+   "columna": "Tercer ciclo",
+   "texto": "Analizar, de manera acompañada, el contenido y aspectos formales y no verbales elementales de textos escritos y multimodales, valorando su contenido y estructura y evaluando su calidad, fiabilidad e idoneidad en función del propósito de lectura.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.LPC.4",
+   "columna": "Primer Ciclo",
+   "texto": "Producir textos escritos y multimodales sencillos y coherentes en distintos soportes, desde las diferentes etapas del proceso evolutivo de la escritura, ajustándose a modelos dados y movilizando, de manera acompañada, estrategias elementales, individuales o grupales, de planificación, redacción, revisión y edición.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.LPC.4",
+   "columna": "Segundo Ciclo",
+   "texto": "Producir textos escritos y multimodales sencillos y coherentes, en distintos soportes, seleccionado el modelo discursivo que mejor responda a cada situación comunicativa, iniciándose en el uso de las normas gramaticales y ortográficas más sencillas y progresando, de manera acompañada, en la movilización de estrategias sencillas, individuales o grupales, de planificación, redacción, revisión y edición.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.LPC.4",
+   "columna": "Tercer ciclo",
+   "texto": "Producir textos escritos y multimodales coherentes de relativa complejidad, en distintos soportes, seleccionando el modelo discursivo que mejor responda a cada situación comunicativa, progresando en el uso de las normas gramaticales y ortográficas básicas y movilizando, de manera puntualmente acompañada, estrategias sencillas, individuales o grupales, de planificación, redacción, revisión y edición.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.LPC.5",
+   "columna": "Primer Ciclo",
+   "texto": "Compartir los resultados de un proceso de investigación sencillo, individual o grupal, sobre algún tema de interés personal, realizado de manera acompañada, que implique la localización, selección y contraste de información de distintas fuentes, incluidas las digitales, citándolas y recreándolas mediante la adaptación creativa de modelos dados.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.LPC.5",
+   "columna": "Segundo Ciclo",
+   "texto": "Compartir los resultados de un proceso de investigación sencillo, individual o grupal, sobre algún tema de interés personal o ecosocial, realizado de manera acompañada, que implique la localización, selección y contraste de información de distintas fuentes, incluidas las digitales, citándolas y recreándolas mediante la adaptación creativa de modelos dados.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.LPC.5",
+   "columna": "Tercer ciclo",
+   "texto": "Compartir los resultados de un proceso de investigación sencillo, individual o grupal, sobre algún tema de interés personal o ecosocial, realizado de manera acompañada, que implique la localización, selección y contraste de información de distintas fuentes, incluidas las digitales, citándolas y recreándolas de manera creativa.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.LPC.6",
+   "columna": "Primer Ciclo",
+   "texto": "Leer de manera autónoma textos de distintos autores y autoras acordes con sus gustos e intereses, seleccionados de manera acompañada, desde las diferentes etapas del proceso evolutivo de la lectura.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.LPC.6",
+   "columna": "Primer Ciclo",
+   "texto": "Compartir oralmente la experiencia de lectura.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.LPC.6",
+   "columna": "Segundo Ciclo",
+   "texto": "Leer de manera autónoma o acompañada textos de diversos autores y autoras, ajustados a sus gustos e intereses y seleccionados con creciente autonomía, avanzando en la construcción de su identidad lectora.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.LPC.6",
+   "columna": "Segundo Ciclo",
+   "texto": "Compartir la experiencia de lectura, en soportes diversos, participando en comunidades lectoras en el ámbito escolar.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.LPC.6",
+   "columna": "Segundo Ciclo",
+   "texto": "Crear textos literarios para expresar sentimientos, realidades o ficciones.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.LPC.6",
+   "columna": "Tercer ciclo",
+   "texto": "Leer de manera autónoma textos de diversos autores y autoras ajustados a sus gustos e intereses, seleccionados con criterio propio, progresando en la construcción de su identidad lectora.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.LPC.6",
+   "columna": "Tercer ciclo",
+   "texto": "Compartir la experiencia de lectura, en soportes diversos, participando en comunidades lectoras en el ámbito escolar o social.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.LPC.6",
+   "columna": "Tercer ciclo",
+   "texto": "Analizar e interpretar los recursos y elementos propios del ámbito literario",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "6.4",
+   "competencia": "CE.LPC.6",
+   "columna": "Tercer ciclo",
+   "texto": "Crear textos con recursos y elementos literarios explícitos para expresar sentimientos, realidades o ficciones.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.LPC.7",
+   "columna": "Primer Ciclo",
+   "texto": "Ser consciente de la pertenencia a la comunidad lingüística del catalán.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.LPC.7",
+   "columna": "Primer Ciclo",
+   "texto": "Mostrar interés en el uso de la lengua catalana.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.LPC.7",
+   "columna": "Segundo Ciclo",
+   "texto": "Ser consciente de la pertenencia a la comunidad lingüística del catalán.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.LPC.7",
+   "columna": "Segundo Ciclo",
+   "texto": "Mostrar interés en el uso de la lengua catalana.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.LPC.7",
+   "columna": "Segundo Ciclo",
+   "texto": "Conocer y valorar la diversidad lingüística en general y las tres lenguas de Aragón en particular.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.LPC.7",
+   "columna": "Tercer ciclo",
+   "texto": "Ser consciente de la pertenencia a la comunidad lingüística del catalán.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.LPC.7",
+   "columna": "Tercer ciclo",
+   "texto": "Mostrar interés en el uso de la lengua catalana.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.LPC.7",
+   "columna": "Tercer ciclo",
+   "texto": "Conocer y valorar la diversidad lingüística en general y las tres lenguas de Aragón en particular.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "7.4",
+   "competencia": "CE.LPC.7",
+   "columna": "Tercer ciclo",
+   "texto": "Diferenciar lengua e identidad y rechazar estereotipos y prejuicios lingüísticos.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "7.5",
+   "competencia": "CE.LPC.7",
+   "columna": "Tercer ciclo",
+   "texto": "Conocer las diferentes variedades dialectales del catalán y los residuos léxicos de lenguas hermanas (lengua aragonesa, lengua occitana, etc.) en el catalán de Aragón.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.LPC.8",
+   "columna": "Primer Ciclo",
+   "texto": "Ampliar su repertorio lingüístico de forma guiada y/o con ayuda.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.LPC.8",
+   "columna": "Segundo Ciclo",
+   "texto": "Ampliar su repertorio lingüístico.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.LPC.8",
+   "columna": "Segundo Ciclo",
+   "texto": "Conocer un léxico común o similar a/en otras lenguas.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.LPC.8",
+   "columna": "Tercer ciclo",
+   "texto": "Ampliar su repertorio lingüístico.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.LPC.8",
+   "columna": "Tercer ciclo",
+   "texto": "Conocer estructuras gramaticales o léxico común o similar a/en otras lenguas y realizar transferencias de forma consciente.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "8.3",
+   "competencia": "CE.LPC.8",
+   "columna": "Tercer ciclo",
+   "texto": "Satisfacer una necesidad comunicativa en un contexto plurilingüe.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.LPC.9",
+   "columna": "Primer Ciclo",
+   "texto": "Escribir correctamente palabras de uso frecuente.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.LPC.9",
+   "columna": "Primer Ciclo",
+   "texto": "Conocer algunas normas ortográficas básicas.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.LPC.9",
+   "columna": "Segundo Ciclo",
+   "texto": "Memorizar y escribir correctamente palabras de uso frecuente.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.LPC.9",
+   "columna": "Segundo Ciclo",
+   "texto": "Mostrar seguridad y respetar la mayoría de normas ortográficas básicas. 9.3.Conocer algún mecanismo de la lengua para crear significado (derivación, composición, sentido figurado, etc.). 9.4.Conocer la terminología gramatical básica.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.LPC.9",
+   "columna": "Tercer ciclo",
+   "texto": "Memorizar y escribir correctamente palabras de uso frecuente.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.LPC.9",
+   "columna": "Tercer ciclo",
+   "texto": "Mostrar seguridad y respetar las normas ortográficas básicas, incluyendo normas de excepción. 9.3.Conocer y aplicar los mecanismos de la lengua para crear significado (derivación, composición, sentido figurado, etc.). 9.4.Conocer la terminología gramatical básica y las funciones de los elementos de un enunciado.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "9.5",
+   "competencia": "CE.LPC.9",
+   "columna": "Tercer ciclo",
+   "texto": "Aplicar correctamente la acentuación gráfica en la mayoría de casos.",
+   "cursos": [
+    5,
+    6
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Primer ciclo de Educación Primaria",
+   "cursos": [
+    1,
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Dimensión oral",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Interacción grupal e individual en el contexto del aula.",
+        "Normas y restricciones propias de la comunicación oral.",
+        "Comprensión oral en diferentes contextos y de diferente formato.",
+        "Interés por participar en interacciones orales.",
+        "Estrategias de escucha activa, asertividad y empatía."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Dimensión escrita",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Comprensión del sentido global y específico de textos de diferente tipología con formatos y soportes variados.",
+        "Diferentes tipos de lectura.",
+        "Utilización de la biblioteca.",
+        "Interés por la lectura como fuente de información, aprendizaje y placer.",
+        "Estrategias para la producción de textos de tipología variada.",
+        "Organización y estructuración del texto según su tipología específica.",
+        "Normas de presentación de textos escritos y multimodales en diferentes formatos y de tipología diversa.",
+        "Interés en aplicar los conocimientos adquiridos en la producción de textos escritos o multimodales.",
+        "Valoración de los avances realizados en el proceso de escritura y conocimiento de sus límites.",
+        "Autoconfianza y esfuerzo para mejorar las producciones escritas o multimodales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Dimensión plurilingüe e intercultural",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Valoración del conocimiento de las lenguas para la comunicación y una mejor comprensión del resto de culturas y sociedades.",
+        "Valoración de la propia identidad lingüística y cultural.",
+        "Conocimiento de la propia variedad lingüística y de aquella cercana a su realidad.",
+        "Actitud respetuosa y empática hacia el resto de variantes dialectales de la lengua catalana y por extensión hacia el resto de lenguas distintas a la propia.",
+        "Uso del lenguaje de forma respetuosa y no discriminatoria.",
+        "Participación en actividades culturales y lingüísticas donde se utilicen diferentes lenguas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Dimensión de reflexión sobre la lengua",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Diferencias entre la dimensión oral y escrita de la lengua.",
+        "Elementos específicos básicos de textos digitales y audiovisuales.",
+        "Construcción de palabras, oraciones y textos.",
+        "Semántica y morfología de la lengua.",
+        "Coherencia y concordancia de los elementos de una oración.",
+        "Signos de puntuación.",
+        "Fonética básica catalana: Alfabet Fonètic Català.",
+        "Establecimiento de generalizaciones sobre aspectos lingüísticos elementales.",
+        "La autocorrección y el error como fuente de aprendizaje.",
+        "Confianza en la propia capacidad de aprendizaje.",
+        "Reflexión sobre el proceso de aprendizaje."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Dimensión literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Audición, lectura, memorización y recitación de todo tipo de textos literarios.",
+        "Contextualización de la obra y el autor o la autora.",
+        "La escritura como fuente de expresión de sentimientos, estados de ánimo o emociones de diversa índole.",
+        "Creación y utilización de juegos lingüísticos.",
+        "Datos básicos de un libro.",
+        "Gusto por la lectura y la escritura de textos literarios.",
+        "Valoración del texto literario como fuente de información y placer y como posibilidad para disfrutar de nuestro tiempo de ocio.",
+        "Expresión de impresiones tras la interacción con una obra."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Segundo ciclo de Educación Primaria",
+   "cursos": [
+    3,
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Dimensión oral",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Interacción grupal e individual en el contexto del aula.",
+        "Normas y restricciones propias de la comunicación oral.",
+        "Memorización y reproducción de textos orales.",
+        "Interacción oral.",
+        "Comprensión oral en diferentes contextos y de diferente formato.",
+        "Producción textual oral de diferente tipología, formato y contexto.",
+        "Adecuación del registro comunicativo a la situación comunicativa.",
+        "Análisis y valoración razonada de textos orales.",
+        "Interés por participar en interacciones orales.",
+        "Estrategias de escucha activa, asertividad y empatía.",
+        "Pronunciación y entonación adecuadas.",
+        "Autoconfianza en la producción oral."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Dimensión escrita",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Comprensión del sentido global y específico de textos de diferente tipología con formatos y soportes variados.",
+        "Realización de inferencias a través de la lectura de textos.",
+        "Estrategias de comprensión de lectura.",
+        "Interpretación de textos multimodales, esquemas, gráficos, mapas conceptuales, etc.",
+        "Estrategias para la búsqueda de información en fuentes impresas.",
+        "Estrategias de detección de la manipulación informativa.",
+        "Entonación, fluidez y velocidad en la lectura de textos.",
+        "Diferentes tipos de lectura.",
+        "Utilización de la biblioteca y búsqueda de referencias.",
+        "Consulta del catálogo digital de la biblioteca.",
+        "Utilización del diccionario.",
+        "Interés por la lectura como fuente de información, aprendizaje y placer.",
+        "Estrategias para la producción de textos de tipología variada.",
+        "Organización y estructuración del texto según su tipología específica.",
+        "Elaboración de resúmenes.",
+        "Escritura de textos escritos y multimodales en soporte digital, utilizando editores de textos y de edición gráfica.",
+        "Utilización de organizadores visuales, elementos gráficos y paratextuales.",
+        "Utilización de herramientas de consulta y revisión para la producción textual y multimodal.",
+        "Conocimiento de las convenciones y registros propios de la comunicación digital.",
+        "Normas de presentación de textos escritos y multimodales en diferentes formatos y de tipología diversa.",
+        "Interés en aplicar los conocimientos adquiridos en la producción de textos escritos o multimodales.",
+        "Valoración de los avances realizados en el proceso de escritura y conocimiento de sus límites.",
+        "Autoconfianza y esfuerzo para mejorar las producciones escritas o multimodales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Dimensión plurilingüe e intercultural",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Valoración del conocimiento de las lenguas para la comunicación y una mejor comprensión del resto de culturas y sociedades.",
+        "Aspectos socioculturales y sociolingüísticos básicos y habituales relativos a las costumbres, la vida cotidiana y las relaciones interpersonales, convenciones sociales básicas de uso común, lenguaje no verbal, cortesía lingüística y etiqueta digital (netiqueta).",
+        "Conocimiento y valoración de las lenguas que hay en el mundo y en especial, relativas al contexto social en el que se encuentra inmerso el alumnado.",
+        "Valoración de la propia identidad lingüística y cultural.",
+        "Variedades dialectales de la lengua catalana y lenguas afines.",
+        "Conocimiento de la propia variedad lingüística y de aquella cercana a su realidad.",
+        "Valoración positiva de la variante lingüística propia del contexto escolar, social y/o familiar, como elemento enriquecedor de la variedad estándar.",
+        "Actitud respetuosa y empática hacia el resto de variantes dialectales de la lengua catalana y por extensión hacia el resto de lenguas distintas a la propia.",
+        "Uso del lenguaje de forma respetuosa y no discriminatoria.",
+        "Transferencia de conocimientos entre lenguas y estrategias no verbales para superar bloqueos o resolver situaciones en contextos multilingües.",
+        "Participación en actividades culturales y lingüísticas donde se utilicen diferentes lenguas.",
+        "Léxico y expresiones de uso común para comprender enunciados y herramientas de comunicación y aprendizaje (metalenguaje)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Dimensión de reflexión sobre la lengua",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Aplicación de los conocimientos sobre el uso y funcionamiento de la lengua en la producción de textos escritos y multimodales.",
+        "Elementos básicos de contenido (tema, fórmulas fijas, léxico, inferencias de información) y forma (estructura, formato, título, imágenes, tipografía) y claves de la tipología textual básica.",
+        "Diferencias entre la dimensión oral y escrita de la lengua.",
+        "Elementos específicos básicos de textos digitales y audiovisuales.",
+        "Construcción de palabras, oraciones y textos.",
+        "Organización y estructuración del texto según la tipología concreta de texto.",
+        "Normas ortográficas constantes y de nueva introducción.",
+        "Normas de acentuación gráfica.",
+        "Semántica y morfología de la lengua.",
+        "Sinónimos, antónimos y palabras polisémicas.",
+        "Categorías gramaticales.",
+        "Coherencia y concordancia de los elementos de una oración.",
+        "Signos de puntuación.",
+        "Utilización de conectores.",
+        "Fonética básica catalana: Alfabet Fonètic Català.",
+        "Establecimiento de generalizaciones sobre aspectos lingüísticos elementales.",
+        "La autocorrección y el error como fuente de aprendizaje.",
+        "Confianza en la propia capacidad de aprendizaje.",
+        "Reflexión sobre el proceso de aprendizaje."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Dimensión literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Audición, lectura, memorización y recitación de todo tipo de textos literarios.",
+        "Contextualización de la obra y el autor o la autora.",
+        "Importancia y función de la ilustración y los elementos paratextuales.",
+        "Lectura expresiva y comprensiva.",
+        "Escritura de textos literarios de tipología diversa.",
+        "La escritura como fuente de expresión de sentimientos, estados de ánimo o emociones de diversa índole.",
+        "Creación y utilización de juegos lingüísticos.",
+        "Datos básicos de un libro.",
+        "Datos básicos de una producción audiovisual o teatral.",
+        "Gusto por la lectura y la escritura de textos literarios.",
+        "Valoración del texto literario como fuente de información y placer y como posibilidad para disfrutar de nuestro tiempo de ocio.",
+        "Expresión de impresiones tras la interacción con una obra."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Tercer ciclo de Educación Primaria",
+   "cursos": [
+    5,
+    6
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Dimensión oral",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Interacción grupal e individual en el contexto del aula.",
+        "Normas y restricciones propias de la comunicación oral.",
+        "Memorización y reproducción de textos orales.",
+        "Interacción oral.",
+        "Estrategias para la producción y la comprensión oral.",
+        "Comprensión oral en diferentes contextos y de diferente formato.",
+        "Producción textual oral de textos de diferente tipología, formato y contexto.",
+        "Adecuación del registro comunicativo a la situación comunicativa.",
+        "Uso no discriminatorio del lenguaje y respetuoso con las diferencias de género y variedad lingüística.",
+        "Reelaboración, síntesis y análisis de textos orales.",
+        "Análisis y valoración razonada de textos orales.",
+        "Interés por participar en interacciones orales.",
+        "Estrategias de escucha activa, asertividad y empatía.",
+        "Pronunciación y entonación adecuadas.",
+        "Autoconfianza en la producción oral."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Dimensión escrita",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Comprensión del sentido global y específico de textos de diferente tipología con formatos y soportes variados.",
+        "Realizar inferencias a través de la lectura de textos.",
+        "Estrategias de comprensión de lectura.",
+        "Interpretación de textos multimodales, esquemas, gráficos, mapas conceptuales, etc.",
+        "Extracción de ideas principales y secundarias de un texto.",
+        "Jerarquización y relación de los diferentes elementos de un texto.",
+        "Desarrollo de una actitud crítica ante documentos digitales e informativos.",
+        "Reelaboración de la información textual de un texto a partir de su análisis, estructuración y reformulación.",
+        "Estrategias para la búsqueda de información en fuentes impresas.",
+        "Estrategias de detección de la manipulación informativa.",
+        "Entonación, fluidez y velocidad en la lectura de textos.",
+        "Diferentes tipos de lectura.",
+        "Utilización de la biblioteca y búsqueda de referencias.",
+        "Consulta del catálogo digital de la biblioteca.",
+        "Utilización del diccionario.",
+        "Interés por la lectura como fuente de información, aprendizaje y placer.",
+        "Estrategias para la producción de textos de tipología variada.",
+        "Organización y estructuración del texto según su tipología específica.",
+        "Realización de esquemas, mapas conceptuales o demás estrategias de expresión sintética de la información.",
+        "Utilización de organizadores visuales, elementos gráficos y paratextuales.",
+        "Elaboración de resúmenes.",
+        "Escritura de textos escritos y multimodales en soporte digital, utilizando editores de textos y de edición gráfica.",
+        "Utilización de herramientas de consulta y revisión para la producción textual y multimodal.",
+        "Conocimiento de las convenciones y registros propios de la comunicación digital.",
+        "Normas de presentación de textos escritos y multimodales en diferentes formatos y de tipología diversa.",
+        "Interés en aplicar los conocimientos adquiridos en la producción de textos escritos o multimodales.",
+        "Valoración de los avances realizados en el proceso de escritura y conocimiento de sus límites.",
+        "Autoconfianza y esfuerzo para mejorar las producciones escritas o multimodales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Dimensión plurilingüe e intercultural",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Valoración del conocimiento de las lenguas para la comunicación y una mejor comprensión del resto de culturas y sociedades.",
+        "Aspectos socioculturales y sociolingüísticos básicos y habituales relativos a las costumbres, la vida cotidiana y las relaciones interpersonales, convenciones sociales básicas de uso común, lenguaje no verbal, cortesía lingüística y etiqueta digital (netiqueta).",
+        "Conocimiento y valoración de las lenguas que hay en el mundo y en especial, relativas al contexto social en el que se encuentra.",
+        "Valoración de la propia identidad lingüística y cultural.",
+        "Variedades dialectales de la lengua catalana y lenguas afines.",
+        "Interiorización del multilingüismo como realidad generalizada y no como excepción.",
+        "Conocimiento de la propia variedad lingüística y de aquella cercana a su realidad.",
+        "Valoración positiva de la variante lingüística propia del contexto escolar, social y/o familiar, como elemento enriquecedor de la variedad estándar.",
+        "Actitud respetuosa y empática hacia el resto de variantes dialectales de la lengua catalana y por extensión hacia el resto de lenguas distintas a la propia.",
+        "Actitud crítica ante mensajes discriminatorios y reproducción de estereotipos por cuestiones raciales, sexistas, lingüísticas o de diversa índole.",
+        "Uso del lenguaje de forma respetuosa y no discriminatoria.",
+        "Identificación de semejanzas y diferencias entre variedades dialectales y la variedad estándar así como entre diferentes lenguas afines.",
+        "Percepción de la dificultad para una comunicación plurilingüe.",
+        "Transferencia de conocimientos entre lenguas y estrategias no verbales para superar bloqueos o resolver situaciones en contextos multilingües.",
+        "Participación en actividades culturales y lingüísticas donde se utilicen diferentes lenguas.",
+        "Léxico y expresiones de uso común para comprender enunciados y herramientas de comunicación y aprendizaje (metalenguaje)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Dimensión de reflexión sobre la lengua",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Aplicación de los conocimientos sobre el uso y funcionamiento de la lengua en la producción de textos escritos y multimodales.",
+        "Elementos básicos de contenido (tema, fórmulas fijas, léxico, inferencias de información) y forma (estructura, formato, título, imágenes, tipografía) y claves de la tipología textual básica.",
+        "Diferencias entre la dimensión oral y escrita de la lengua.",
+        "Elementos específicos básicos de textos digitales y audiovisuales.",
+        "Construcción de palabras, oraciones y textos.",
+        "Organización y estructuración del texto según la tipología concreta de texto.",
+        "Normas ortográficas constantes y de nueva introducción.",
+        "Excepciones a las normas.",
+        "Escritura de palabras con dificultad ortográfica.",
+        "Normas de acentuación gráfica.",
+        "Semántica y morfología de la lengua.",
+        "Sinónimos, antónimos y palabras polisémicas.",
+        "Categorías gramaticales.",
+        "Coherencia y concordancia de los elementos de una oración.",
+        "Grupo nominal y grupo verbal.",
+        "Signos de puntuación.",
+        "Utilización de conectores.",
+        "Fonética básica catalana: Alfabet Fonètic Català.",
+        "Establecimiento de generalizaciones sobre aspectos lingüísticos elementales.",
+        "Aplicación de herramientas de revisión de los textos.",
+        "Revisión de textos en cuanto a estructura, organización, puntuación, léxico y morfosintaxis con algún tipo de soporte o herramienta.",
+        "La autocorrección y el error como fuente de aprendizaje.",
+        "Confianza en la propia capacidad de aprendizaje.",
+        "Reflexión sobre el proceso de aprendizaje.",
+        "Audición, lectura, memorización y recitación de todo tipo de textos literarios.",
+        "Interpretación del lenguaje literario.",
+        "Elementos clave de los textos literarios.",
+        "Contextualización de la obra y el autor o la autora.",
+        "Importancia y función de la ilustración y los elementos paratextuales.",
+        "Lectura expresiva y comprensiva.",
+        "Escritura de textos literarios de tipología diversa.",
+        "La escritura como fuente de expresión de sentimientos, estados de ánimo o emociones de diversa índole.",
+        "Creación y utilización de juegos lingüísticos.",
+        "Dramatización de textos literarios.",
+        "Datos básicos de un libro.",
+        "Datos básicos de una producción audiovisual o teatral.",
+        "Gusto por la lectura y la escritura de textos literarios.",
+        "Valoración del texto literario como fuente de información y placer y como posibilidad para disfrutar de nuestro tiempo de ocio.",
+        "Expresión de impresiones tras la interacción con una obra.",
+        "Adopción de una visión crítica y constructiva de forma razonada tras la interacción con una obra."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Lengua Propia: Catalán"
+}

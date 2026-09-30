@@ -1,0 +1,166 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "16 Economía, Emprendimiento y Actividad Empresarial.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.EEAE.1",
+   "texto": "Analizar de forma crítica y reflexiva las aportaciones de la ciencia económica, valorando su interrelación con otras disciplinas, para entender la realidad desde una visión integral y actuar como ciudadanos y como ciudadanas responsables, autónomos y comprometidos."
+  },
+  {
+   "codigo": "CE.EEAE.2",
+   "texto": "Analizar, desde un enfoque interdisciplinar, el comportamiento tanto individual como colectivo en la toma de decisiones económicas, evaluando el problema de la escasez y sus efectos, para comprender los cambios económicos y sociales derivados de dicho problema y actuar en consecuencia."
+  },
+  {
+   "codigo": "CE.EEAE.3",
+   "texto": "Establecer correspondencias entre los Objetivos de Desarrollo Sostenible y los aprendizajes adquiridos a través del estudio de casos, analizándolos con ayuda de herramientas económicas y empresariales para generar una actitud sensible y un comportamiento responsable y proactivo que contribuya a dar respuesta a los retos actuales.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.EEAE.4",
+   "texto": "Identificar y valorar habilidades y competencias que caracterizan a las personas emprendedoras dentro de la realidad actual, analizando sus perfiles y su forma de afrontar los retos, para reconocer y potenciar las destrezas emprendedoras propias y aplicarlas a situaciones reales de la vida."
+  },
+  {
+   "codigo": "CE.EEAE.5",
+   "texto": "Comprender las estrategias empresariales, analizando su evolución y distinguiendo los nuevos modelos de negocio desarrollados por entidades vinculadas a diferentes ámbitos y sectores, para identificar la filosofía de las empresas, reconocer las tendencias y poner en valor, con sentido crítico, su actividad en la sociedad actual.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.EEAE.6",
+   "texto": "Analizar la transformación económica y social y sus consecuencias, reconociendo la importancia que tienen la innovación y la revolución digital en la actividad empresarial, para comprender las respuestas que las empresas ofrecen a los desafíos actuales y proponer alternativas y nuevas soluciones a dichos desafíos."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.EEAE.1",
+   "columna": null,
+   "texto": "Entender la realidad partiendo del análisis crítico y reflexivo sobre las aportaciones que ofrece la ciencia económica, valorando su interrelación con otras disciplinas y adquiriendo una visión integral de la misma que favorezca la asunción de responsabilidades y compromisos.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.EEAE.2",
+   "columna": null,
+   "texto": "Comprender los cambios económicos y sociales desde un análisis interdisciplinar sobre el comportamiento humano en el proceso de toma de decisiones y evaluando el problema de la escasez y sus efectos, y estimulando al alumnado a actuar en consecuencia.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.EEAE.3",
+   "columna": null,
+   "texto": "Mostrar actitudes sensibles y comportamientos responsables y proactivos que contribuyan a dar respuesta a los retos actuales a partir del estudio de casos reales estableciendo correspondencias entre la realidad y los aprendizajes adquiridos.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.EEAE.3",
+   "columna": null,
+   "texto": "Tomar conciencia de problemas globales y locales analizándolos a través de herramientas económicas y empresariales y aportando posibles soluciones a los mismos.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.EEAE.4",
+   "columna": null,
+   "texto": "Reconocer y potenciar las destrezas emprendedoras propias, identificando y valorando previamente las habilidades que poseen personas emprendedoras cercanas y analizando sus competencias a la hora de afrontar los retos que se les presentan.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.EEAE.4",
+   "columna": null,
+   "texto": "Afrontar retos sencillos de la vida cotidiana aplicando las destrezas propias que caracterizan a una persona emprendedora.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.EEAE.5",
+   "columna": null,
+   "texto": "Reconocer las tendencias e identificar la filosofía de las empresas comprendiendo las estrategias empresariales llevadas a cabo por estas y analizando su evolución, así como los modelos de negocio desarrollados poniendo en valor, con sentido crítico, su actividad empresarial.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.EEAE.5",
+   "columna": null,
+   "texto": "Distinguir los nuevos modelos de negocio desarrollados por empresas pertenecientes a diversos sectores y ámbitos analizando sus posibilidades y limitaciones.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.EEAE.6",
+   "columna": null,
+   "texto": "Comprender las respuestas que ofrecen las empresas a los desafíos actuales, analizando la transformación económica y social que está experimentando la sociedad.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.EEAE.6",
+   "columna": null,
+   "texto": "Proponer alternativas y nuevas soluciones a los desafíos actuales, analizando los efectos de la transformación económica y social y reconociendo la importancia que tiene la innovación y revolución digital en la actividad empresarial.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La escasez y el problema económico. o La escasez y sus implicaciones. El coste de oportunidad. La escasez y la eficiencia. La paradoja del valor, el valor de uso y el valor de cambio de los bienes. o La escasez y los sistemas de asignación de recursos. El funcionamiento del mercado. o Los fallos del mercado y la intervención del sector público. Fallos del sector público y sus implicaciones. o El flujo circular de la renta. Oferta y demanda agregada. Análisis de las interrelaciones que existen entre los diversos elementos y agregados de la realidad económica. o El entorno financiero. Dinero y transacciones. Planificación y gestión de las finanzas personales: riesgo y beneficio. Los Objetivos de Desarrollo Sostenible (ODS) y los retos económicos actuales. Estudio de casos.",
+        "Economía y otras disciplinas. o La economía como ciencia social. Principales problemas para el análisis económico: la complejidad de la realidad y la incorporación de supuestos simplificadores. Dificultades para el establecimiento de leyes generales. La modelización matemática como herramienta para el análisis económico. o El análisis económico y el individualismo metodológico. Otras alternativas de análisis de la realidad social. Perspectiva sociológica: el grupo social como unidad de análisis económico. o Los individuos y el comportamiento racional. Fallos de la racionalidad. La economía del comportamiento, la psicología económica y la teoría de la decisión. o Los agentes económicos y la maximización de su utilidad. Filosofía y economía: el utilitarismo y la felicidad. La maximización del bienestar social y el debate eficiencia versus equidad desde un punto de vista ético. El bienestar social y la calidad de vida desde una perspectiva sociológica. El bienestar en la psicología positiva. o Ciencia económica y ecología: el cambio climático, el desarrollo sostenible y la economía circular"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Emprendimiento.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La persona emprendedora e intraemprendedora. Competencias, cualidades y hábitos. La inteligencia emocional y la inteligencia ejecutiva.",
+        "El espíritu emprendedor: búsqueda de necesidades y oportunidades. Entrenamiento de la creatividad y proactividad.",
+        "Creencias sobre emprendimiento. El miedo a emprender: la gestión del error como una oportunidad para aprender.",
+        "Competencias sociales. Tipos y aplicación. La gestión de grupos y la teoría de las relaciones humanas.",
+        "Autoevaluación de la persona emprendedora. Herramientas.",
+        "Misión y visión de la persona emprendedora. Creación y puesta en marcha de su proyecto emprendedor. Protección de la idea, el producto y la marca."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Actividad empresarial.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La revolución tecnológica. El poder de la tecnología. Los modelos de negocio.",
+        "Mercado y clientes. Marketing digital. Nuevos modelos de negocio.",
+        "Cultura empresarial y gestión del talento. El liderazgo. El papel de la mujer en la actividad empresarial.",
+        "El lugar de trabajo. La empresa del futuro. Tendencias.",
+        "Estrategia y gestión de la empresa. Transformación digital. Innovación. Sostenibilidad.",
+        "Análisis de casos: análisis interno y externo. DAFO."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 96.7,
+  "no_encontrados": [
+   "saber : La escasez y el problema económico. o La escasez y sus implicaciones. El coste de oportunidad. La escasez y la eficienci"
+  ]
+ },
+ "materia": "Economía, Emprendimiento y Actividad Empresarial"
+}

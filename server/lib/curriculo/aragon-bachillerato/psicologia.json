@@ -1,0 +1,353 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "53 Psicología.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.PS.1",
+   "texto": "Entender la Psicología como ciencia con entidad propia para favorecer el conocimiento del ser humano y analizar las bases neurofisiológicas del comportamiento."
+  },
+  {
+   "codigo": "CE.PS.2",
+   "texto": "Conocer las aplicaciones prácticas de la Psicología en los campos profesionales y las múltiples escuelas para analizar las semejanzas y diferencias entre las tradicionales y las actuales e identificarlas en los diferentes ámbitos de intervención profesional."
+  },
+  {
+   "codigo": "CE.PS.3",
+   "texto": "Comprender e interrelacionar los procesos psicológicos de la percepción, la atención, la memoria y las funciones ejecutivas como base de la expresión de la conducta humana para que el alumnado tome conciencia de sí mismo y de su entorno, así como para que planifique, resuelva problemas y tome decisiones."
+  },
+  {
+   "codigo": "CE.PS.4",
+   "texto": "Analizar la evolución del concepto de inteligencia y su vinculación inherente al contexto cambiante en el que el alumnado se desarrolla, apoyándose en la creatividad como herramienta para poner en valor las diferentes aptitudes del ser humano en la resolución de problemas."
+  },
+  {
+   "codigo": "CE.PS.5",
+   "texto": "Analizar y evaluar los procesos físicos y psicológicos implicados en la emoción, la motivación y el aprendizaje, analizando sus implicaciones en la conducta, en la gestión emocional y en el proceso de aprendizaje personal para lograr mayor control sobre las acciones y sus consecuencias en el ámbito personal, social y académico."
+  },
+  {
+   "codigo": "CE.PS.6",
+   "texto": "Identificar los diferentes procesos cognitivos, neuropsicológicos, corporales y emocionales que tienen lugar en el ser humano para poder cuidarse y anticiparse a las dificultades poniendo en marcha recursos propios o del entorno cuando éstas aparecen."
+  },
+  {
+   "codigo": "CE.PS.7",
+   "texto": "Comprender la influencia de los fenómenos sociales en el comportamiento humano y analizar el impacto de las redes sociales y de las distintas situaciones de vulnerabilidad existentes en la sociedad para generar actitudes y prevenir conductas de riesgo, facilitando la adopción de respuestas proactivas y prosociales."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.PS.1",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Reconocer las bases científicas de la Psicología y el marco teórico en el que se sustenta, así como su relación con otras disciplinas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.PS.1",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Conocer las bases fisiológicas y los procesos biológicos implicados en el funcionamiento neurológico y cerebral que regulan el pensamiento, el procesamiento de la información y la conducta humana.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.PS.1",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Identificar las aportaciones de la neurociencia a la Psicología y el modo en que ayuda a la comprensión del ser humano.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.PS.2",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Identificar y diferenciar las distintas corrientes y escuelas teóricas ubicándolas en una dimensión espacial y temporal concreta.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.PS.2",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Reflexionar sobre los diferentes ámbitos y/o campos de actuación y/o de intervención de la Psicología como disciplina potenciadora del bienestar y el rendimiento personal.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.PS.3",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Relacionar los diferentes procesos psicológicos mediante el conocimiento de algunas teorías explicativas de su naturaleza y desarrollo, distinguiendo así mismo los factores que influyen en ellos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.PS.3",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Comprender los procesos psicológicos como base fundamental del aprendizaje, del pensamiento y de la inteligencia, así como su relación con el desarrollo personal y académico.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.PS.3",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Reflexionar sobre el desarrollo de las funciones ejecutivas en la adolescencia y su vinculación con la planificación, con la toma de decisiones y con el modo de interrelación con los demás.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.PS.4",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Conocer la evolución del concepto de inteligencia hasta los planteamientos actuales y relacionarlo con la capacidad de adaptación al contexto cambiante.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.PS.4",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Entender el desarrollo del lenguaje, su relación con la expresión del pensamiento y su vinculación con la capacidad de formar y desarrollar ideas y representaciones acerca de uno mismo, los demás y el entorno.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.PS.4",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Aplicar la creatividad como herramienta en los planteamientos de resolución de problemas y de toma de decisiones para conseguir soluciones diversas y adaptadas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.PS.5",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Identificar los procesos físicos y psicológicos que intervienen en la emoción, explicando las diferentes teorías y su implicación en la conducta humana.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.PS.5",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Comprender cómo la motivación nos ayuda a esforzarnos y a lograr mantener unas conductas destinadas a lograr un objetivo.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.PS.5",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Profundizar en las diferentes estrategias de aprendizaje y comprender la influencia de la motivación en el logro de cualquier aprendizaje.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.4",
+   "competencia": "CE.PS.5",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Desarrollar capacidades para potenciar la tolerancia a la frustración y al estrés que les permita dar respuestas ajustadas a las demandas del entorno.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.PS.6",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Identificar diferentes actividades orientadas al desarrollo personal y el autocuidado, seleccionando aquéllas que mejor respondan a las necesidades, capacidades y características individuales en ese momento concreto.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.PS.6",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Comprender rasgos básicos de su carácter, temperamento y patrón emocional, diseñando estrategias para mejorar aspectos que el alumnado entiende que pueden ser limitantes para un desarrollo individual pleno.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.PS.6",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Identificar aspectos de sus hábitos saludables que deben mantenerse en el tiempo e identificar aquellos que no lo son, buscando alternativas que les ayuden a dar una respuesta más ajustada a sus necesidades.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.4",
+   "competencia": "CE.PS.6",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Conocer algunos trastornos y enfermedades mentales y diferenciarlos de reacciones ajustadas a los acontecimientos del entorno e identificar herramientas para responder de forma temprana a la aparición de síntomas y superar dificultades.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.PS.7",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Identificar la dimensión social del ser humano y valorar el proceso de socialización como la interiorización de las normas y valores y su influencia en la personalidad, en su vida afectiva, en las relaciones interpersonales y, en definitiva, en su conducta.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.PS.7",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Reconocer los procesos psicológicos de las masas, su naturaleza, características y pautas de comportamiento, con el fin de aplicar e integrar habilidades cooperativas y prosociales a las situaciones de vulnerabilidad de determinados grupos sociales.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.PS.7",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Explorar el impacto de las redes sociales virtuales en la sociedad, y en especial en la población adolescente, analizando las oportunidades que brindan y las amenazas, adoptando una actitud preventiva para la disminución del riesgo de un uso inadecuado.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.4",
+   "competencia": "CE.PS.7",
+   "columna": "Criterios de evaluación 2º de Bachillerato",
+   "texto": "Reflexionar sobre el grado de correlación entre las problemáticas que atraviesa la Comunidad de la que forman parte y los recursos existentes que tienen a su alcance.",
+   "cursos": [
+    2
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Definición, características, objetivos, ramas y dimensiones de la Psicología. Lo que NO es Psicología.",
+        "Relaciones con otras especialidades: Sociología, Psiquiatría, Psicopedagogía, Biología, Filosofía, Terapia Ocupacional.",
+        "El trabajo en equipo, multidisciplinar y en redes.",
+        "La profesión de Psicólogo/a: el Grado Universitario en Psicología y su perfil profesional.",
+        "Principales Teorías y escuelas psicológicas: estructuralismo, funcionalismo, escuela psicoanalítica, escuela gestalt, el conductismo, escuela humanista, la Psicología cognitiva y la Psicología cultural.",
+        "La Neuropsicología: genética y conducta, el genoma humano. Estructura, división y función del sistema nervioso: las neuronas y los neurotransmisores. El sistema endocrino. Las patologías cerebrales más comunes."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Los procesos psicológicos.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Los procesos psicológicos:",
+        "La percepción como proceso activo de construcción de la realidad. Elementos y teorías de la percepción. Influencia de los factores individuales y sociales.",
+        "La atención. Tipos de atención. Estimulación de la atención. Dificultades asociadas a la atención y su repercusión en los procesos cognitivos.",
+        "La memoria. Estructura y funcionamiento. Modelos y tipos de memoria. Recuperación de la información y el fenómeno del olvido. Alteraciones de la memoria.",
+        "Las funciones ejecutivas. Memoria de trabajo, inhibición y flexibilidad cognitiva. Razonamiento, planificación y resolución de problemas.",
+        "Lenguaje y pensamiento. Desarrollo y funciones del lenguaje y su relación con la expresión del pensamiento. El pensamiento como capacidad de formar y desarrollar ideas y representaciones acerca de uno mismo, los demás y el entorno. Tipos de pensamiento.",
+        "Inteligencia y creatividad. Breve recorrido histórico por el concepto de inteligencia y explicación de las teorías actuales. Cambio de paradigma y relación con la creatividad. Medida de la inteligencia"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Emoción, motivación y aprendizaje.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Las emociones: concepto, características, clasificación y diferentes teorías. Aprender a reconocer nuestras propias emociones y las de los/as demás. La gestión y expresión de nuestras emociones.",
+        "La motivación: naturaleza, concepto y teorías (reducción del impulso de Hull, teoría humanista de Maslow, teoría cognitiva, entre otras).",
+        "La motivación y el aprendizaje: relaciones mutuas. Estrategias a desarrollar en caso de frustración o estrés.",
+        "El aprendizaje: patrones innatos de conducta, el condicionamiento clásico y operante. Aprendizaje social y cognitivo. La taxonomía del aprendizaje. Decálogo del aprendizaje. El aprendizaje en la era digital. Los nuevos soportes de enseñanza, el Elearning, plataformas de educación a distancia, nuevas metodologías adaptadas a la tecnología. Nueva teoría de aprendizaje: el conectivismo, aprendizaje en una sociedad digital en evolución constante.",
+        "Algunas estrategias de aprendizaje: implementación en la formación académica del alumnado de Bachillerato. Aplicaciones digitales que ayudan en la planificación y en la motivación para alcanzar objetivos de rendimiento académico a corto y medio plazo."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Psicología social y comunitaria.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "1.- Dimensión social del ser humano: proceso de socialización y fenómenos interpersonales:",
+        "Actitudes. Su relación con el autoconcepto y la conducta. Desarrollo de actitudes explícitas e implícitas.",
+        "Persuasión y presión de grupo en la adolescencia. Habilidades asertivas de comunicación",
+        "Cognición social: estereotipos, prejuicios y discriminación. Atribuciones y sesgos de personalidad.",
+        "Disonancia cognitiva y cambio de actitud. 2.- Relaciones con los demás: atracción interpersonal, autopercepción y percepción social.",
+        "Influencia social y conformidad. Dinámicas de grupo.",
+        "Movimientos sociales e identidad social. Pensamiento grupal y polarización.",
+        "Situaciones de vulnerabilidad y desarrollo de habilidades prosociales. 3.- Redes sociales y cerebro",
+        "La influencia en el cerebro del uso de plataformas virtuales. Impacto emocional en la población adolescente",
+        "Análisis CAME y DAFO del uso de redes sociales.",
+        "Identidad social y marca personal.",
+        "Redes sociales universales. Globalización y presencia de redes sociales en el mundo. 4.- Psicología comunitaria orientada al estudio y a la transformación social.",
+        "Objetivos de la Psicología comunitaria 2.- Relaciones con los demás: atracción interpersonal, autopercepción y percepción social.",
+        "Principios y niveles de análisis del enfoque comunitario.",
+        "Conductas proactivas e intervención social.",
+        "Identificación de los recursos del entorno destinados a la promoción e intervención de la salud emocional y correlación con las necesidades detectadas"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. El cuidado personal y el bienestar emocional.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Procesos de desarrollo personal y autocuidado: terapias individuales y grupales. Terapias alternativas. Yoga, meditación y atención plena. Concepto, finalidad y análisis crítico.",
+        "Autoconocimiento: carácter, temperamento, apego, bases neuropsicológicas. El cuerpo y las emociones. Los juicios. Mensajes cognitivos. Posibilidades de cambio.",
+        "Hábitos saludables: El sueño: fases, neuropsicología, programas de higiene del sueño. Contenidos de los sueños y funciones. Educación afectivo sexual. Dependencia emocional. Relaciones sanas y respetuosas. Relaciones en entornos virtuales. Otros hábitos saludables que fomentan el autocuidado: Alimentación, deporte, ocio y tiempo libre…",
+        "Concepto de psicopatología. Enfermedades y trastornos mentales más habituales: estrés, ansiedad, depresión, adicciones (tecnologías, apuestas, medicamentos, drogas…). Neuropsicología de las diferentes alteraciones.",
+        "Recursos públicos y privados de la Comunidad Autónoma de Aragón. Acceso a los diferentes recursos"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 97.1,
+  "no_encontrados": [
+   "saber : La Neuropsicología: genética y conducta, el genoma humano. Estructura, división y función del sistema nervioso: las neur",
+   "saber : Objetivos de la Psicología comunitaria 2.- Relaciones con los demás: atracción interpersonal, autopercepción y percepció"
+  ]
+ },
+ "materia": "Psicología"
+}

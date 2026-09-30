@@ -1,0 +1,227 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "09 Cultura Audiovisual.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.CA.1",
+   "texto": "Analizar imágenesfotográficas fijas y producciones audiovisuales de distintos estilos, formatos, géneros y culturas, valorando sus cualidades plásticas, formales y semánticas y reflexionando sobre la historia de ambos medios, para desarrollar el criterio estético, valorar el patrimonio, ampliar las posibilidades de disfrute y enriquecer el imaginario propio."
+  },
+  {
+   "codigo": "CE.CA.2",
+   "texto": "Elaborar producciones audiovisuales individuales o colectivas, empleando la propia presencia en la imagen y la banda de sonido y evaluando el rigor ético y formal de los procedimientos, para expresar y comunicar ideas, opiniones y sentimientos y construir una personalidad creativa abierta, amplia y diversa."
+  },
+  {
+   "codigo": "CE.CA.3",
+   "texto": "Seleccionar y utilizar las técnicas, herramientas y convenciones del lenguaje y la producción audiovisual, teniendo en cuenta todos sus aspectos (guion, planificación, interpretación, grabación, edición, etc.), para realizar creaciones audiovisuales de forma colectiva y aprender a desenvolverse en circunstancias diversas."
+  },
+  {
+   "codigo": "CE.CA.4",
+   "texto": "Determinar el público destinatario de una producción audiovisual, analizando sus caracterıśticas y atendiendo al propósito de la obra, para adoptar el lenguaje, el formato y los medios técnicosmás adecuados y seleccionar las vıá s de difusiónmás oportunas."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.CA.1",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Explicar los aspectos esenciales de la evolución del lenguaje fotograf́ico y audiovisual, valorando los cambios que se han producido a lo largo de la historia del medio.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.CA.1",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Analizar las cualidades plásticas, formales y semánticas de producciones fotográficas y audiovisuales de distintos estilos, formatos, géneros y culturas, determinando las reglas y códigos por las que se rigen y valorando la flexibilidad de esas normas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.CA.1",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Proponer interpretaciones personales del patrimonio fotograf́ico y audiovisual, argumentando desde un criterio estético propio.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.CA.2",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Diseñar producciones audiovisuales creativas que representen las ideas, opiniones y sentimientos propios a partir de un tema o motivo previos, incorporando las experiencias personales y el acercamiento a otros medios de expresión.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.CA.2",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Evaluar el rigor ético y formal con el que se usan las herramientas de creación audiovisual, analizando diversas producciones, distinguiendo crıt́icamente los modos de presentar las informaciones y los mensajes, identificando su posible manipulación y reflexionando sobre la necesidad de respeto de la propiedad intelectual y los derechos de autor.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.CA.2",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Realizar producciones audiovisuales creativas que representen las ideas, opiniones y sentimientos propios a partir de un tema o motivo previos, utilizando la propia presencia en la imagen y la banda de sonido y empleando el lenguaje y los medios de producción con rigor ético y formal.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.CA.3",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Confeccionar adecuadamente los equipos de trabajo para producciones audiovisuales colectivas, identificando las diferentes habilidades requeridas y repartiendo las tareas con criterio.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.CA.3",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Planificar producciones audiovisuales determinando para cada una de sus fases los medios y habilidades necesarios, teniendo en cuenta todos sus aspectos (guion, planificación, interpretación, grabación, edición..., etc.), justificando razonadamente su elección y considerando los posibles imprevistos y la manera de resolverlos.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.CA.3",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Demostrar flexibilidad y habilidad para resolver los imprevistos propios de las producciones audiovisuales, teniéndolos en cuenta en su planificación y considerando de manera abierta las diferentes posibilidades para resolver un problema sobrevenido.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.CA.3",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Realizar producciones audiovisuales de manera creativa, utilizando correctamente las técnicas, herramientas y convenciones del lenguaje necesarias, valorando el trabajo colaborativo e intentando conseguir un resultado final ajustado al proyecto preparado previamente.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.CA.4",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Justificar la elección del lenguaje, el formato y los medios técnicos en producciones audiovisuales, considerando previamente el tipo de público al que se quieren dirigir.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.CA.4",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Seleccionar las vıás de difusiónmás adecuadas para producciones audiovisuales, teniendo en cuenta su propósito, valorando de manera crıt́ica e informada las posibilidades existentes, utilizando entornos seguros y respetando la propiedad intelectual y los derechos de autor.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.CA.4",
+   "columna": "Cultura audiovisual (1º BACHILLERATO)",
+   "texto": "Analizar de manera abierta y respetuosa la recepción de las producciones audiovisuales presentadas, comprobando la adecuación del lenguaje, el formato y los medios técnicos de la obra, ası ́como de las vıás de difusión, y extrayendo de ello un aprendizaje para el crecimiento creativo.",
+   "cursos": [
+    1
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Creación y evolución de la fotografıá y el lenguaje audiovisual.",
+        "Principales corrientes en fotografıá y cine.",
+        "La diversidad en las manifestaciones fotográficas y audiovisuales contemporáneas y del pasado.",
+        "Medios de comunicación convencionales e internet.",
+        "Principales formatos audiovisuales: corto, medio y largometraje de ficción, corto, medio y largometraje documental, serie, ensayo fıĺmico, formatos televisivos, videoclip, fashion film, spot, vıd́ eo educativo, video corporativo/institucional, formatos asociados a las redes sociales, etc.",
+        "Aspectos formales maś destacados."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Elementos formales y capacidad expresiva de la imagen fotográfica y el lenguaje audiovisual",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Plano (escala: valor expresivo) y toma, angulaciones y movimientos de cámara.",
+        "Exposición, enfoque, encuadre, profundidad de campo, campo y fuera de campo.",
+        "Conceptos baśicos sobre iluminación.",
+        "Composición para imagen fija y en movimiento.",
+        "Simbologıá y psicologıá del color. Ejemplos de aplicación en grandes obras del cine y la fotografıá.",
+        "Retoque digital.",
+        "Funciones de la imagen audiovisual."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Narrativa audiovisual",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El guion literario. Fases de elaboración. Escena y secuencia dramat́ica. La escaleta.",
+        "El guion técnico y el storyboard.",
+        "La puesta en escena: localizaciones, decorados (volumétricos y virtuales), caracterización, interpretación, iluminación, movimiento.",
+        "La banda de sonido: perspectiva sonora y posibilidades expresivas.",
+        "El montaje y la postproducción. Evolución y gramat́ica.",
+        "Los lenguajes de la televisión y la publicidad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. La producción audiovisual. Técnicas y procedimientos",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Equipos humanos de trabajo en la producción audiovisual: dirección, producción, cámara/fotografıá, sonido, arte, postproducción.",
+        "La distribución de tareas en la producción audiovisual: criterios de selección a partir de las habilidades requeridas.",
+        "Fases de trabajo: preproducción, rodaje y postproducción.",
+        "Estrategias de selección de técnicas, herramientas y convenciones audiovisuales.",
+        "Medios técnicos de realización: cámara y accesorios, microfonıá, equipo de iluminación.",
+        "Grabación de sonido, sincrónico y recreado.",
+        "Principales softwares de edición no lineal.",
+        "Difusión de contenidos audiovisuales: redes sociales, salas comerciales, espacios de exhibición alternativos, festivales cinematograf́icos en lıń ea y presenciales, etc.",
+        "Protección de datos, propiedad intelectual y derechos de autorıá.",
+        "Técnicas y estrategias de evaluación de las producciones audiovisuales."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Cultura Audiovisual"
+}

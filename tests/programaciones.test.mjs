@@ -7,15 +7,53 @@ const RAIZ = new URL("../", import.meta.url).pathname;
 // currículo de verdad, y el guardado (migración 130) con un cliente falso.
 export async function run({ test }) {
   const E = await import("../assets/shared/programacion/estructuraDeLaProgramacion.js");
-  const { APARTADOS, APARTADOS_DE_TEXTO } = await import("../assets/shared/programacion/apartadosLegales.js");
+  const { apartadosDe, apartadosDeTextoDe, referenciaDe } = await import("../assets/shared/programacion/apartadosLegales.js");
   const { curriculoDeCurso } = await import("../server/lib/curriculo/curriculoAragon.js");
   const P = await import("../server/lib/programaciones/programaciones.js");
   const { createApp } = await import("../server/app.js");
 
-  test("los 15 apartados del artículo 59.3, en orden, de la a) a la ñ)", () => {
-    assert.deepEqual(APARTADOS.map((a) => a.letra), ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "ñ"]);
-    assert.equal(APARTADOS_DE_TEXTO.length, 12);
-    assert.equal(APARTADOS[0].de, "curriculo");
+  test("ESO: los 15 apartados del artículo 59.3, en orden, de la a) a la ñ)", () => {
+    const eso = apartadosDe("matematicas");
+    assert.deepEqual(eso.map((a) => a.letra), ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "ñ"]);
+    assert.equal(apartadosDeTextoDe("matematicas").length, 12);
+    assert.equal(eso[0].de, "curriculo");
+    assert.match(referenciaDe("matematicas"), /59\.3 de la ORDEN ECD\/1172\/2022/);
+  });
+
+  test("PRIMARIA (art. 42.3, ECD/1112/2022) de la a) a la n); BACHILLERATO (art. 54.3, ECD/1173/2022) de la a) a la m)", () => {
+    const pri = apartadosDe("primaria-matematicas");
+    const bach = apartadosDe("bachillerato-fisica");
+    assert.deepEqual(pri.map((a) => a.letra).join(""), "abcdefghijklmn");
+    assert.deepEqual(bach.map((a) => a.letra).join(""), "abcdefghijklm");
+    assert.match(referenciaDe("primaria-matematicas"), /42\.3 de la ORDEN ECD\/1112\/2022.*ECD\/866\/2024/);
+    assert.match(referenciaDe("bachillerato-fisica"), /54\.3 de la ORDEN ECD\/1173\/2022/);
+    // La h) de Primaria, como la dejó la ECD/866/2024.
+    assert.match(pri.find((a) => a.letra === "h").titulo, /situaciones de aprendizaje/);
+    // Las letras no significan lo mismo: la g) de Bachillerato es la
+    // materia pendiente, que en ESO es la h); Bachillerato no tiene Plan Lector.
+    assert.equal(bach.find((a) => a.letra === "g").clave, "pendientes");
+    assert.equal(apartadosDe("matematicas").find((a) => a.letra === "h").clave, "pendientes");
+    assert.ok(!bach.some((a) => a.clave === "lector"));
+    // a, b y d salen del currículo, las unidades y los pesos en las tres.
+    for (const lista of [pri, bach]) {
+      assert.deepEqual(lista.filter((a) => a.de !== "texto").map((a) => `${a.letra}${a.de}`), ["acurriculo", "bunidades", "dcalificacion"]);
+    }
+  });
+
+  test("CURSO DE LA ETAPA: 6.º de Primaria sí; 5.º de ESO y 3.º de Bachillerato no", () => {
+    const vale = (materia_slug, curso) => P.CabeceraSchema.safeParse({ materia_slug, curso, titulo: "" }).success;
+    assert.equal(vale("primaria-matematicas", 6), true);
+    assert.equal(vale("matematicas", 4), true);
+    assert.equal(vale("matematicas", 5), false);
+    assert.equal(vale("bachillerato-matematicas-ii", 2), true);
+    assert.equal(vale("bachillerato-matematicas-ii", 3), false);
+    assert.equal(vale("primaria-matematicas", 7), false);
+  });
+
+  test("MIGRACIÓN 148: la tabla admite los cursos 1-6", () => {
+    const sql = fs.readFileSync(`${RAIZ}supabase/migrations/148_programaciones_primaria_bachillerato.sql`, "utf8");
+    assert.match(sql, /drop constraint if exists programaciones_curso_check/);
+    assert.match(sql, /check \(curso between 1 and 6\)/);
   });
 
   test("PROPUESTA: una unidad por bloque de Matemáticas 1.º, con TODO programado y las sesiones del curso", () => {

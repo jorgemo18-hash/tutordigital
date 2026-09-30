@@ -1,0 +1,182 @@
+[
+ {
+  "materia": "Ciencias de la Naturaleza",
+  "archivo": "ciencias-de-la-naturaleza",
+  "competencias": 5,
+  "criterios": 45,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 26,
+   "Segundo ciclo de Educación Primaria": 32,
+   "Tercer ciclo de Educación Primaria": 32
+  },
+  "literal": 99.3
+ },
+ {
+  "materia": "Ciencias Sociales",
+  "archivo": "ciencias-sociales",
+  "competencias": 6,
+  "criterios": 56,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 20,
+   "Segundo ciclo de Educación Primaria": 23,
+   "Tercer ciclo de Educación Primaria": 26
+  },
+  "literal": 98.5
+ },
+ {
+  "materia": "Educación en Valores Cívicos y Éticos",
+  "archivo": "educacion-en-valores-civicos-y-eticos",
+  "competencias": 4,
+  "criterios": 11,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Tercer ciclo de Educación Primaria": 22
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Educación Física",
+  "archivo": "educacion-fisica",
+  "competencias": 5,
+  "criterios": 51,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 29,
+   "Segundo ciclo de Educación Primaria": 31,
+   "Tercer ciclo de Educación Primaria": 54
+  },
+  "literal": 98.8
+ },
+ {
+  "materia": "Educación Plástica y Visual",
+  "archivo": "educacion-plastica-y-visual",
+  "competencias": 4,
+  "criterios": 28,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 15,
+   "Segundo ciclo de Educación Primaria": 19,
+   "Tercer ciclo de Educación Primaria": 22
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Lengua Extranjera: Alemán",
+  "archivo": "lengua-extranjera-aleman",
+  "competencias": 6,
+  "criterios": 43,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 19,
+   "Segundo ciclo de Educación Primaria": 24,
+   "Tercer ciclo de Educación Primaria": 26
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Lengua Castellana y Literatura",
+  "archivo": "lengua-castellana-y-literatura",
+  "competencias": 10,
+  "criterios": 51,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 42,
+   "Segundo ciclo de Educación Primaria": 45,
+   "Tercer ciclo de Educación Primaria": 49
+  },
+  "literal": 99.5
+ },
+ {
+  "materia": "Lengua Extranjera: Francés",
+  "archivo": "lengua-extranjera-frances",
+  "competencias": 6,
+  "criterios": 43,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 18,
+   "Segundo ciclo de Educación Primaria": 24,
+   "Tercer ciclo de Educación Primaria": 26
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Lengua Extranjera: Inglés",
+  "archivo": "lengua-extranjera-ingles",
+  "competencias": 6,
+  "criterios": 43,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 15,
+   "Segundo ciclo de Educación Primaria": 22,
+   "Tercer ciclo de Educación Primaria": 24
+  },
+  "literal": 98.3
+ },
+ {
+  "materia": "Lengua Propia: Aragonés",
+  "archivo": "lengua-propia-aragones",
+  "competencias": 6,
+  "criterios": 41,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 50,
+   "Segundo ciclo de Educación Primaria": 53,
+   "Tercer ciclo de Educación Primaria": 62
+  },
+  "literal": 95.8
+ },
+ {
+  "materia": "Lengua Propia: Catalán",
+  "archivo": "lengua-propia-catalan",
+  "competencias": 9,
+  "criterios": 53,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 40,
+   "Segundo ciclo de Educación Primaria": 78,
+   "Tercer ciclo de Educación Primaria": 99
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Matemáticas",
+  "archivo": "matematicas",
+  "competencias": 8,
+  "criterios": 54,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 44,
+   "Segundo ciclo de Educación Primaria": 57,
+   "Tercer ciclo de Educación Primaria": 62
+  },
+  "literal": 97.8
+ },
+ {
+  "materia": "Música y Danza",
+  "archivo": "musica-y-danza",
+  "competencias": 4,
+  "criterios": 28,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 17,
+   "Segundo ciclo de Educación Primaria": 21,
+   "Tercer ciclo de Educación Primaria": 23
+  },
+  "literal": 97.8
+ },
+ {
+  "materia": "Atención Educativa",
+  "archivo": "atencion-educativa",
+  "competencias": 3,
+  "criterios": 71,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer ciclo de Educación Primaria": 12,
+   "Segundo ciclo de Educación Primaria": 25,
+   "Tercer ciclo de Educación Primaria": 22
+  },
+  "literal": 100.0
+ }
+]

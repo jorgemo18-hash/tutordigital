@@ -1,0 +1,479 @@
+[
+ {
+  "slug": "artes-escenicas",
+  "materia": "Artes Escénicas",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 98.8
+ },
+ {
+  "slug": "analisis-musical",
+  "materia": "Análisis Musical",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "anatomia-aplicada",
+  "materia": "Anatomía Aplicada",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 98.9
+ },
+ {
+  "slug": "biologia",
+  "materia": "Biología",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "biologia-geologia-y-ciencias-ambientales",
+  "materia": "Biología, Geología y Ciencias Ambientales",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 98.5
+ },
+ {
+  "slug": "ciencias-de-la-tierra-y-del-medioambiente",
+  "materia": "Ciencias de la Tierra y del Medioambiente",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "ciencias-generales",
+  "materia": "Ciencias Generales",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "coro-y-tecnica-vocal",
+  "materia": "Coro y Técnica Vocal",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "cultura-audiovisual",
+  "materia": "Cultura Audiovisual",
+  "cursos": [
+   1
+  ],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "cultura-y-patrimonio-de-aragon",
+  "materia": "Cultura y Patrimonio de Aragón",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "dibujo-artistico",
+  "materia": "Dibujo Artístico",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "dibujo-tecnico",
+  "materia": "Dibujo Técnico",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "dibujo-tecnico-aplicado-a-las-artes-plasticas-y-al-diseno",
+  "materia": "Dibujo Técnico aplicado a las Artes Plásticas y al Diseño",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "diseno",
+  "materia": "Diseño",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "economia",
+  "materia": "Economía",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "economia-emprendimiento-y-actividad-empresarial",
+  "materia": "Economía, Emprendimiento y Actividad Empresarial",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 96.7
+ },
+ {
+  "slug": "educacion-fisica",
+  "materia": "Educación Física",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 98.1
+ },
+ {
+  "slug": "educacion-fisica-y-vida-activa",
+  "materia": "Educación Física y Vida Activa",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 94.7
+ },
+ {
+  "slug": "educacion-para-la-ciudadania-y-los-derechos-humanos",
+  "materia": "Educación para la Ciudadanía y los Derechos Humanos",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 95.2
+ },
+ {
+  "slug": "empresa-y-diseno-de-modelos-de-negocio",
+  "materia": "Empresa y Diseño de Modelos de Negocio",
+  "cursos": [
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "filosofia",
+  "materia": "Filosofía",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 98.2
+ },
+ {
+  "slug": "fisica",
+  "materia": "Física",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "fisica-y-quimica",
+  "materia": "Física y Química",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 97.8
+ },
+ {
+  "slug": "fundamentos-artisticos",
+  "materia": "Fundamentos Artísticos",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "fundamentos-de-administracion-y-gestion",
+  "materia": "Fundamentos de Administración y Gestión",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "geografia",
+  "materia": "Geografía",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "geologia-y-ciencias-ambientales",
+  "materia": "Geología y Ciencias Ambientales",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 98.2
+ },
+ {
+  "slug": "griego",
+  "materia": "Griego",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 99.3
+ },
+ {
+  "slug": "historia-de-espana",
+  "materia": "Historia de España",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 95.2
+ },
+ {
+  "slug": "historia-de-la-filosofia",
+  "materia": "Historia de la Filosofía",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 97.6
+ },
+ {
+  "slug": "historia-de-la-musica-y-de-la-danza",
+  "materia": "Historia de la Música y de la Danza",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "historia-del-arte",
+  "materia": "Historia del Arte",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "historia-del-mundo-contemporaneo",
+  "materia": "Historia del Mundo Contemporáneo",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 98.2
+ },
+ {
+  "slug": "imagen-y-sonido",
+  "materia": "Imagen y Sonido",
+  "cursos": [
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 98.4
+ },
+ {
+  "slug": "informatica",
+  "materia": "Informática",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 87.7
+ },
+ {
+  "slug": "latin",
+  "materia": "Latín",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "lengua-castellana-y-literatura",
+  "materia": "Lengua Castellana y Literatura",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 98.1
+ },
+ {
+  "slug": "lengua-extranjera-aleman",
+  "materia": "Lengua Extranjera: Alemán",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 97.7
+ },
+ {
+  "slug": "lengua-extranjera-frances",
+  "materia": "Lengua Extranjera: Francés",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "lengua-extranjera-ingles",
+  "materia": "Lengua Extranjera: Inglés",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 98.8
+ },
+ {
+  "slug": "lenguaje-y-practica-musical",
+  "materia": "Lenguaje y Práctica Musical",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "lenguas-propias-de-aragon-aragones",
+  "materia": "Lenguas Propias de Aragón: Aragonés",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "lenguas-propias-de-aragon-catalan",
+  "materia": "Lenguas Propias de Aragón: Catalán",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "literatura-dramatica",
+  "materia": "Literatura Dramática",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "literatura-universal",
+  "materia": "Literatura Universal",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 97.6
+ },
+ {
+  "slug": "matematicas",
+  "materia": "Matemáticas",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 99.2
+ },
+ {
+  "slug": "matematicas-aplicadas-a-las-ciencias-sociales",
+  "materia": "Matemáticas Aplicadas a las Ciencias Sociales",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 99.1
+ },
+ {
+  "slug": "matematicas-generales",
+  "materia": "Matemáticas Generales",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 98.3
+ },
+ {
+  "slug": "movimientos-culturales-y-artisticos",
+  "materia": "Movimientos Culturales y Artísticos",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "oratoria",
+  "materia": "Oratoria",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "proyectos-artisticos",
+  "materia": "Proyectos Artísticos",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "proyecto-de-investigacion-e-innovacion-integrado",
+  "materia": "Proyecto de Investigación e Innovación Integrado",
+  "cursos": [
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "psicologia",
+  "materia": "Psicología",
+  "cursos": [
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 97.1
+ },
+ {
+  "slug": "quimica",
+  "materia": "Química",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "sociedad-medioambiente-y-territorios-sostenibles",
+  "materia": "Sociedad, Medioambiente y Territorios Sostenibles",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "tecnicas-de-expresion-grafico-plastica",
+  "materia": "Técnicas de Expresión Gráfico-Plástica",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 100.0
+ },
+ {
+  "slug": "tecnologia-e-ingenieria",
+  "materia": "Tecnología e Ingeniería",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "Bachillerato",
+  "literal": 98.7
+ },
+ {
+  "slug": "union-europea",
+  "materia": "Unión Europea",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 94.7
+ },
+ {
+  "slug": "volumen",
+  "materia": "Volumen",
+  "cursos": [],
+  "etapa": "Bachillerato",
+  "literal": 97.9
+ }
+]

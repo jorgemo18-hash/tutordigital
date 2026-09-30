@@ -1,4 +1,5 @@
 import { saberesConId, criteriosDe, cobertura } from "../../../../assets/shared/programacion/estructuraDeLaProgramacion.js";
+import { quienRedacta } from "./quienRedacta.js";
 
 // LAS UNIDADES DIDÁCTICAS, PROPUESTAS POR LA IA (Recursos → Programación).
 //
@@ -41,9 +42,10 @@ const ESQUEMA = {
   required: ["unidades"],
 };
 
-export function promptDeUnidades({ materia, curso, sesionesTotales }) {
+export function promptDeUnidades({ materia, materiaSlug, curso, sesionesTotales }) {
+  const q = quienRedacta({ materia, materiaSlug, curso });
   return [
-    `Eres jefe de departamento de ${materia} en un instituto de Aragón y preparas la programación didáctica de ${curso ? `${curso}.º de ESO` : "ESO"} (LOMLOE, ORDEN ECD/1172/2022).`,
+    `${q.presentacion("preparas la programación didáctica")} (LOMLOE, ${q.norma}).`,
     "Agrupa los saberes básicos del currículo en unidades didácticas, como las de un libro de texto:",
     "- entre 6 y 12 unidades, con títulos cortos y concretos (no copies el nombre del bloque si es genérico);",
     "- en el orden en que se enseñan de verdad (lo que es base, antes);",
@@ -136,11 +138,11 @@ export function validaUnidades(curriculo, propuesta, { sesionesTotales = 0 } = {
   return { unidades, arreglos };
 }
 
-export async function proponUnidades({ client, model, curriculo, curso, sesionesTotales }) {
+export async function proponUnidades({ client, model, curriculo, materiaSlug, curso, sesionesTotales }) {
   const respuesta = await client.messages.create({
     model,
     max_tokens: 6000,
-    system: promptDeUnidades({ materia: curriculo.materia, curso, sesionesTotales }),
+    system: promptDeUnidades({ materia: curriculo.materia, materiaSlug, curso, sesionesTotales }),
     tools: [{ name: HERRAMIENTA, description: "Propón las unidades didácticas del curso.", input_schema: ESQUEMA }],
     tool_choice: { type: "tool", name: HERRAMIENTA },
     messages: [{ role: "user", content: mensajeDelCurriculo(curriculo) }],

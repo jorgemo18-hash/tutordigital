@@ -1,0 +1,194 @@
+[
+ {
+  "slug": "ciencias-de-la-naturaleza",
+  "materia": "Ciencias de la Naturaleza",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 99.3
+ },
+ {
+  "slug": "ciencias-sociales",
+  "materia": "Ciencias Sociales",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 98.5
+ },
+ {
+  "slug": "educacion-en-valores-civicos-y-eticos",
+  "materia": "Educación en Valores Cívicos y Éticos",
+  "cursos": [
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 100.0
+ },
+ {
+  "slug": "educacion-fisica",
+  "materia": "Educación Física",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 98.8
+ },
+ {
+  "slug": "educacion-plastica-y-visual",
+  "materia": "Educación Plástica y Visual",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 100.0
+ },
+ {
+  "slug": "lengua-extranjera-aleman",
+  "materia": "Lengua Extranjera: Alemán",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 100.0
+ },
+ {
+  "slug": "lengua-castellana-y-literatura",
+  "materia": "Lengua Castellana y Literatura",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 99.5
+ },
+ {
+  "slug": "lengua-extranjera-frances",
+  "materia": "Lengua Extranjera: Francés",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 100.0
+ },
+ {
+  "slug": "lengua-extranjera-ingles",
+  "materia": "Lengua Extranjera: Inglés",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 98.3
+ },
+ {
+  "slug": "lengua-propia-aragones",
+  "materia": "Lengua Propia: Aragonés",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 95.8
+ },
+ {
+  "slug": "lengua-propia-catalan",
+  "materia": "Lengua Propia: Catalán",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 100.0
+ },
+ {
+  "slug": "matematicas",
+  "materia": "Matemáticas",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 97.8
+ },
+ {
+  "slug": "musica-y-danza",
+  "materia": "Música y Danza",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 97.8
+ },
+ {
+  "slug": "atencion-educativa",
+  "materia": "Atención Educativa",
+  "cursos": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "etapa": "Primaria",
+  "literal": 100.0
+ }
+]

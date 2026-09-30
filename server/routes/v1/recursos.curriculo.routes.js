@@ -6,14 +6,17 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { listaDeMaterias, curriculoDeCurso } from "../../lib/curriculo/curriculoAragon.js";
 
-// RECURSOS → CURRÍCULO: el currículo oficial de ESO de Aragón para consultar
+// RECURSOS → CURRÍCULO: el currículo oficial de Aragón (Primaria, ESO y
+// Bachillerato) para consultar
 // (ver server/lib/curriculo/curriculoAragon.js).
 //   GET /api/v1/recursos/curriculo                 las materias
 //   GET /api/v1/recursos/curriculo/:materia?curso=  una materia, un curso
 // Es texto público (el BOA): se pide sesión igualmente, como todo Recursos.
 export const ROLES = ["teacher", "admin"];
 
-const Consulta = z.object({ curso: z.coerce.number().int().min(1).max(4).optional() });
+// 1-6: Primaria llega a 6.º (un curso que la materia no tiene da la lista
+// vacía, no un error: es texto público y no hay nada que proteger).
+const Consulta = z.object({ curso: z.coerce.number().int().min(1).max(6).optional() });
 
 export default async function recursosCurriculoRoutes(app) {
   const guard = makeTenantMembershipGuard();

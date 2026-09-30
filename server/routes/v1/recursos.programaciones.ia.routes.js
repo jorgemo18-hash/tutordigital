@@ -12,7 +12,8 @@ import { curriculoDeCurso } from "../../lib/curriculo/curriculoAragon.js";
 import { deLaVariante } from "../../../assets/shared/programacion/estructuraDeLaProgramacion.js";
 import { DatosSchema } from "../../lib/programaciones/programaciones.js";
 import { proponUnidades } from "../../lib/programaciones/ia/proponUnidades.js";
-import { redactaTextos, LETRAS_DE_TEXTO } from "../../lib/programaciones/ia/redactaTextos.js";
+import { redactaTextos, letrasDeTexto } from "../../lib/programaciones/ia/redactaTextos.js";
+import { CursoDeLaMateria } from "../../lib/programaciones/programaciones.js";
 
 // RECURSOS → PROGRAMACIÓN, EL BORRADOR CON IA (migración 132 para el gasto).
 //   POST /unidades  { materia_slug, curso, variante?, sesionesTotales }
@@ -26,14 +27,19 @@ export const LIMITE_POR_MINUTO = 6;
 
 const Base = {
   materia_slug: z.string().regex(/^[a-z0-9-]+$/).max(80),
-  curso: z.number().int().min(1).max(4).nullable(),
+  curso: z.number().int().min(1).max(6).nullable(),
   variante: z.string().max(200).nullable().optional(),
 };
-const PideUnidades = z.object({ ...Base, sesionesTotales: z.number().int().min(0).max(900) });
+// El curso tiene que existir en la etapa de la materia (no hay 5.º de ESO)
+// y las letras, en su programación (la ñ solo la tiene ESO).
+const PideUnidades = z.object({ ...Base, sesionesTotales: z.number().int().min(0).max(900) }).superRefine(CursoDeLaMateria);
 const PideTextos = z.object({
   ...Base,
   datos: DatosSchema,
-  letras: z.array(z.enum(LETRAS_DE_TEXTO)).min(1).max(LETRAS_DE_TEXTO.length),
+  letras: z.array(z.string().max(2)).min(1).max(20),
+}).superRefine(CursoDeLaMateria).superRefine((d, ctx) => {
+  const validas = letrasDeTexto(d.materia_slug);
+  if (!d.letras.every((l) => validas.includes(l))) ctx.addIssue({ code: "custom", path: ["letras"], message: "Letra que no está en la programación de esta etapa" });
 });
 
 export function crearRutasDeProgramacionIA({ clientFn = createAnthropicClient, adminFn = createSupabaseAdmin } = {}) {
@@ -65,7 +71,7 @@ export function crearRutasDeProgramacionIA({ clientFn = createAnthropicClient, a
       if (!c) return;
       try {
         const r = await proponUnidades({
-          client: c.client, model: SONNET_MODEL, curriculo: c.curriculo, curso: c.datos.curso, sesionesTotales: c.datos.sesionesTotales,
+          client: c.client, model: SONNET_MODEL, curriculo: c.curriculo, materiaSlug: c.datos.materia_slug, curso: c.datos.curso, sesionesTotales: c.datos.sesionesTotales,
         });
         apunta(c.auth, "programacion_unidades", r.usage);
         if (!r.unidades.length) return fail(reply, 502, "ia_sin_propuesta", "La IA no ha propuesto unidades. Prueba otra vez.", c.requestId);
@@ -82,7 +88,7 @@ export function crearRutasDeProgramacionIA({ clientFn = createAnthropicClient, a
       if (!c) return;
       try {
         const r = await redactaTextos({
-          client: c.client, model: SONNET_MODEL, curriculo: { ...c.curriculo, curso: c.datos.curso }, datos: c.datos.datos, letras: c.datos.letras,
+          client: c.client, model: SONNET_MODEL, curriculo: { ...c.curriculo, curso: c.datos.curso }, materiaSlug: c.datos.materia_slug, datos: c.datos.datos, letras: c.datos.letras,
         });
         apunta(c.auth, "programacion_textos", r.usage);
         return ok(reply, { textos: r.textos }, c.requestId);

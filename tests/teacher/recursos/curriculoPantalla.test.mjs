@@ -9,10 +9,13 @@ export async function run({ test, assert }) {
   const { createPantallaDeCurriculo } = await import("../../../assets/teacher/js/recursos/curriculo/pantallaDeCurriculo.js");
 
   const MATERIAS = [
+    // Primero la de Primaria, como la manda el servidor: aun así se abre la de ESO.
+    { slug: "primaria-matematicas", materia: "Matemáticas", cursos: [1, 2, 3, 4, 5, 6], etapa: "Primaria" },
     { slug: "matematicas", materia: "Matemáticas", cursos: [1, 2, 3, 4], etapa: "ESO" },
     { slug: "matematicas-para-la-toma-de-decisiones", materia: "Matemáticas para la toma de decisiones", cursos: [], etapa: "ESO" },
     { slug: "lengua-extranjera-ingles", materia: "Lengua Extranjera Inglés", cursos: [1, 2, 3, 4], etapa: "ESO" },
     { slug: "ambito-de-ciencias-aplicadas", materia: "Ámbito de Ciencias Aplicadas", cursos: [1, 2], etapa: "FP Básica" },
+    { slug: "bachillerato-matematicas-ii", materia: "Matemáticas II", cursos: [2], etapa: "Bachillerato" },
   ];
   const CUR = {
     materia: "Matemáticas", curso: 1, fuente: "ORDEN ECD/1172/2022, anexo II (Aragón)", literal: 99.7,
@@ -72,7 +75,7 @@ export async function run({ test, assert }) {
     assert.equal(m.raiz.querySelectorAll(".rc-cur__bloque").length, 2);
     assert.ok(m.raiz.querySelector(".rc-cur__fuente").textContent.includes("99,7 %"));
     // Los ámbitos de FP Básica, aparte.
-    assert.deepEqual([...m.raiz.querySelectorAll("optgroup")].map((g) => g.label), ["ESO", "FP Básica"]);
+    assert.deepEqual([...m.raiz.querySelectorAll("optgroup")].map((g) => g.label), ["Primaria", "ESO", "FP Básica", "Bachillerato"]);
   });
 
   test("cambiar de curso o de materia pide ese currículo; una materia sin cursos pide 'curso único'", async () => {
@@ -100,5 +103,23 @@ export async function run({ test, assert }) {
     assert.equal(m.raiz.querySelectorAll(".rc-cur__apartado").length, 1);
     assert.ok(m.raiz.querySelector(".rc-cur__vacio"), "sin competencias que coincidan, se dice");
     assert.equal(m.pedidas.length, antes);
+  });
+
+  test("PRIMARIA Y BACHILLERATO (30/9): sus cursos se llaman por su etapa; con tres «Matemáticas», abre la de ESO", async () => {
+    const m = montar("Matemáticas");
+    await m.pantalla.render(m.raiz);
+    const [materia, curso] = m.raiz.querySelectorAll(".rc-ctx select");
+    assert.equal(materia.value, "matematicas");
+    assert.equal(curso.options[0].textContent, "1.º ESO");
+    materia.value = "primaria-matematicas";
+    materia.dispatchEvent(new window.Event("change"));
+    await tick();
+    assert.deepEqual([...curso.options].map((o) => o.textContent), [1, 2, 3, 4, 5, 6].map((n) => `${n}.º de Primaria`));
+    assert.deepEqual(m.pedidas.at(-1), ["primaria-matematicas", 1]);
+    materia.value = "bachillerato-matematicas-ii";
+    materia.dispatchEvent(new window.Event("change"));
+    await tick();
+    assert.deepEqual(m.pedidas.at(-1), ["bachillerato-matematicas-ii", 2]);
+    assert.equal(m.raiz.querySelector(".rc-h1").textContent, "Currículo oficial de Aragón");
   });
 }

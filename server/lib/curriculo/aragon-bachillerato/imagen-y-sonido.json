@@ -1,0 +1,347 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "34 Imagen y Sonido.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.IS.1",
+   "texto": "Analizar y producir imágenes secuenciales de distintos medios, formatos, géneros y culturas, valorando sus cualidades plásticas, formales y semánticas; para elaborar proyectos, personales o colectivos, como vehículos de expresión y comunicación."
+  },
+  {
+   "codigo": "CE.IS.2",
+   "texto": "Escribir guion es para obras audiovisuales, dando una estructura dramática coherente a relatos, propios o ajenos, cuyas tramas y conflictos sirvan de vehículo a ideas, opiniones y emociones, manejando para ello las herramientas, recursos y convenciones propias de esta fase previa de la producción de audiovisuales."
+  },
+  {
+   "codigo": "CE.IS.3",
+   "texto": "Analizar y aplicar los códigos expresivos y comunicativos empleados para el diseño del sonido de productos audiovisuales, valorando la importancia de la función expresiva de la música y del sonido para elaborar bandas sonoras expresivas y lograr una producción sonora y una ambientación musical óptimas."
+  },
+  {
+   "codigo": "CE.IS.4",
+   "texto": "Conocer y utilizar las técnicas y procesos en la planificación, diseño y realización de un producto audiovisual, así como aplicar los procesos y recursos técnicos y humanos necesarios para la producción y el rodaje de un producto audiovisual."
+  },
+  {
+   "codigo": "CE.IS.5",
+   "texto": "Analizar y editar producciones audiovisuales, individuales o colectivas, que integren imágenes y sonidos de manera colaborativa, en base a estrategias expresivas narrativas y la consiguiente planificación de los recursos para expresar ideas y sentimientos, evaluando el rigor ético y la idoneidad técnica y formal de los procedimientos y recursos utilizados."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.IS.1",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Analizar las cualidades plásticas, formales y semań ticas de producciones fotográficas y de imágenes secuenciales de distintos estilos, formatos, géneros y culturas, determinando las reglas y códigos por las que se rigen y valorando la flexibilidad de esas normas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.IS.1",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Diseñar y crear narraciones mediante imágenes secuenciales creativas que representen las ideas, opiniones y sentimientos propios a partir de un tema o motivo previos, incorporando las experiencias personales y el acercamiento a distintos medios de expresión.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.IS.1",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Realizar el tratamiento y composición digital de imágenes, valorando caracterıśticas de color, contraste y formatos, empleando técnicas de generación, procesamiento y retoque de imagen fija, así como de maquetación de productos para impresión o multimedia.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.IS.1",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Evaluar el rigor ético y formal con el que se usan las herramientas de creación audiovisual, analizando diversas producciones, distinguiendo crıt́icamente los modos de presentar las informaciones y los mensajes, identificando su posible manipulación y reflexionando sobre la necesidad de respeto de la propiedad intelectual y los derechos de autor.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.IS.2",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Inventar y extraer de distintas fuentes conflictos e ideas motoras con potencial para desarrollar un guion audiovisual.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.IS.2",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Conocer y elaborar las distintas fases y documentos previos implicados en la génesis de un guion literario, desde las primeras ideas, logline, storyline, sinopsis, argumentos y escaletas, hasta el tratamiento y el scriptment.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.IS.2",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Construir personajes cuyo conflicto, función en la trama y evolución sirvan de vehículo para transmitir de manera óptima las ideas temáticas y dramáticas al público al que se dirige la obra.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.IS.2",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Elaborar guiones literarios para obras audiovisuales de ficción, con estructuras narrativas sólidas y coherentes con las posibilidades expresivas de la imagen, el sonido y la música.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.5",
+   "competencia": "CE.IS.2",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Desglosar un guion literario en storyboard o guion gráfico.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.IS.3",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Descubrir la interrelación entre sonido e imagen en las producciones audiovisuales, y analizar las funciones del sonido en esta relación.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.IS.3",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Conocer los recursos sonoros audiovisuales y la utilización narrativa del espacio sonoro.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.IS.3",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Analizar cómo la música entreteje la estructura narrativa de la obra audiovisual.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.IS.3",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Manejar las apps, software y bibliotecas de sonidos para realizar una banda sonora.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.IS.3",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Integrar los conocimientos sobre bandas sonoras, ambientación musical y producción sonora, en la consecución de un producto expresivo con unidad de sentido.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.IS.4",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Analizar y perfeccionar, ajustando a las posibilidades de producción, el guion, storyboard y animatic, desglosando los requisitos de las escenas o secuencias en hojas de desglose y fichas de producción: reparto, localizaciones, música y sonidos, vestuario, atrezzo, extras y otras necesidades.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.IS.4",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Crear los planos de planta, del plató o localizaciones en exteriores, a partir de los storyboards, animaticsy guiones técnicos, estableciendo una escaleta de planos significativos y expresivos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.IS.4",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Planificar el rodaje estableciendo un calendario y organizando las sesiones de grabación en fichas de producción.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.4",
+   "competencia": "CE.IS.4",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Diseñar y preparar la puesta en escena, así como su ambientación visual y sonora.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.5",
+   "competencia": "CE.IS.4",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Rodar secuencias cinematográficas y obtener grabaciones audiovisuales, aplicando las técnicas, herramientas y lenguajes necesarios, con flexibilidad y habilidad para resolver los imprevistos propios de las producciones audiovisuales y obtener así un resultado ajustado a los objetivos proyectados previamente.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.6",
+   "competencia": "CE.IS.4",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Buscar vías de financiación disponibles, tanto pública como privada, en función de las características de la obra audiovisual y el público al que va dirigida.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.7",
+   "competencia": "CE.IS.4",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Conocer, valorar y respetar los derechos de autor.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.IS.5",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Analizar montajes de obras audiovisuales, valorando las estrategias narrativas, expresivas estéticas o de continuidad para entender los distintos tipos de montaje y sus funciones.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.IS.5",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Editar secuencias audiovisuales, en forma de animatic, vídeo o cine, mediante aplicaciones informáticas de edición no lineal, articulando imágenes y sonidos con fines narrativos, expresivos o estéticos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.IS.5",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Realizar el tratamiento digital de imágenes en movimiento, valorando características de color, formatos y contraste y empleando técnicas de generación, procesamiento y retoque de imagen en movimiento.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.4",
+   "competencia": "CE.IS.5",
+   "columna": "Imagen y Sonido (2º BACHILLERATO)",
+   "texto": "Preparar proyectos y archivos audiovisuales con el formato, resolución y ajustes adecuados a distintos soportes y medios.",
+   "cursos": [
+    2
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Concreción de los saberes básicos Imagen y Sonido, 2º de Bachillerato",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Hitos y contemporaneidad de la fotografıá y el audiovisual. Formatos audiovisuales",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Tipos y formatos de imágenes secuenciales: Secuenciales fijas: cómic, libro ilustrado o fotografía secuenciada, entre otras; y secuenciales en movimiento: cine, animación o televisión, entre otras.",
+        "Los géneros cinematográficos.",
+        "Desarrollo del guion literario y sus formatos. las ideas, logline, storyline, sinopsis, argumento, escaletas, tratamientos y guion literario. Construcción de la trama y construcción de personajes: Función de los personajes en la trama, arquetipos y arco de transformación. Caracterización.",
+        "Tiempo, continuidad y ritmo.",
+        "El diálogo y sus funciones en las artes secuenciales.",
+        "El guion técnico y los guiones gráficos: storyboard, animatic y animática fotográfica.",
+        "Elementos formales y capacidad expresiva de la imagen fija y secuencial.",
+        "Herramientas de análisis de guion.",
+        "Edición, retoque y composición de imágenes fijas.",
+        "El guion como herramienta de trabajo en constante evolución y revisión: El guion de rodaje, guion técnico, storyboard, animatic.",
+        "Conseguir financiación. Instituciones públicas y privadas, Las coproducciones.",
+        "Introducción a la realización audiovisual",
+        "Crear equipos artísticos y seleccionar el reparto.",
+        "Diseño de producción. Dirección de fotografía, escenografía e iluminación, atrezzo, vestuario, peluquería y maquillaje, props…",
+        "Planificación y fichas de producción: Calendarios, localizaciones, interiores y exteriores, reparto y personal necesario, equipos. Diseño de efectos especiales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. El diseño de la banda sonora",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La ilusión audiovisual: la relación de interdependencia de entre Imagen y Sonido. El valor añadido de la música: subrayados expresivos, nuevos significados… Los recursos de la banda sonora:",
+        "La voz. Vococentrismo y verbocentrismo. Voz principal y voz de fondo. Voz con mensaje verbal: diálogos, voz pensamiento y voice-over o narración extradiegética. La voz sin mensaje verbal: voz conjunto (sonido confuso) y voz no verbal (gritos, gemidos…).",
+        "La música. La música como recurso expresivo y como parte de la narración: empatía y contraste. La fuerza poética y emocional de la música: música incidental. La música para evocar estados de ánimo.",
+        "El sonido ambiente. Los sonidos acción: “sonidos normales” (pasos, roces, abrir puertas y ventanas…) y “efectos especiales” (disparos, explosiones, puñetazos).",
+        "La fuerza expresiva del silencio. Funciones de la música en las bandas sonoras: modificar el sentido o el significado de la imagen, crear una impresión convincente de época y de lugar; crear o subrayar los estados psicológicos, los pensamientos y las implicaciones ocultas de un personaje o de una situación; unir planos y secuencias suavizando cortes en el montaje, servir de relleno neutro como fondo; ayudar a construir el sentido de continuidad en la película, anticipar o alargar la acción… El espacio sonoro: sonido diegético o realista, fuera de campo, en off, ambiente, interno o subjetivo y sonido en las ondas. La rítmica audiovisual. La influencia de la música en la percepción del tiempo, del movimiento y de la velocidad. Mickeymousing, sincronía y elipsis. Música y estructura narrativa.",
+        "Punto de partida y direccionalidad. El movimiento: la relación tensión / reposo; pregunta / respuesta. Progresión: entre lo esperado y la sorpresa. La conclusión: el gesto final.",
+        "El Leitmotiv: motivos, temas y personajes. Presentación y carácter de los temas. Desarrollo: puntos de vista sobre un mismo tema relacionados con el estado de ánimo o la acción. Combinación de temas.",
+        "Recursos compositivos orquestales para transmitir emociones positivas, amor, tristeza, suspense, fantasía, acción, terror, grandeza… El uso de otros timbres: coros, voces e instrumentos exóticos y sintetizadores. Componer para la imagen:",
+        "Música libre de derechos.",
+        "Creación a través de la experimentación con software de creación musical (DAW).",
+        "Bibliotecas de samples y loops orquestales.",
+        "Bibliotecas de sonidos ambiente y efectos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Producción audiovisual",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El equipo de trabajo de un rodaje. Equipos técnicos de grabación de imagen, sonido, iluminación y monitorización. La grabación del sonido directo. El montaje desde la dirección.",
+        "Composición, estática o dinámica, mediante el color y esquemas y trucos de iluminación.",
+        "Movimientos de la cámara.",
+        "El enfoque y la profundidad de campo.",
+        "Interpretación: La acción, movimientos, expresiones y diálogos del personaje. La figura del script o continuista: mantener la continuidad o raccordentre planos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Postproducción audiovisual",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Introducción al montaje y principales corrientes. El tiempo audiovisual. Recursos del lenguaje audiovisual. Introducción al entorno de trabajo, flujo de trabajo, herramientas y funciones básicas de los programas de edición de video. Continuidad y transiciones entre planos. La corrección de color y efectos especiales. Titulación y animaciones. Las funciones del sonido en el montaje. La experimentación de las posibilidades del sonido y la imagen más allá de la función narrativa: el arte audiovisual."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 98.4,
+  "no_encontrados": [
+   "saber : Recursos compositivos orquestales para transmitir emociones positivas, amor, tristeza, suspense, fantasía, acción, terro"
+  ]
+ },
+ "materia": "Imagen y Sonido"
+}

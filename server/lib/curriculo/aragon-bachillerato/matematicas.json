@@ -1,0 +1,720 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "46 Matemáticas.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.M.1",
+   "texto": "Modelizar y resolver problemas de la vida cotidiana y de la ciencia y la tecnología aplicando diferentes estrategias y formas de razonamiento para obtener posibles soluciones."
+  },
+  {
+   "codigo": "CE.M.2",
+   "texto": "Verificar la validez de las posibles soluciones de un problema empleando el razonamiento y la argumentación para contrastar su idoneidad."
+  },
+  {
+   "codigo": "CE.M.3",
+   "texto": "Formular o investigar conjeturas o problemas, utilizando el razonamiento, la argumentación, la creatividad y el uso de herramientas tecnológicas, para generar nuevo conocimiento matemático."
+  },
+  {
+   "codigo": "CE.M.4",
+   "texto": "Utilizar el pensamiento computacional de forma eficaz, modificando, creando y generalizando algoritmos que resuelvan problemas mediante el uso de las matemáticas, para modelizar y resolver situaciones de la vida cotidiana y del ámbito de la ciencia y la tecnología."
+  },
+  {
+   "codigo": "CE.M.5",
+   "texto": "Establecer, investigar y utilizar conexiones entre las diferentes ideas matemáticas estableciendo vínculos entre conceptos, procedimientos, argumentos y modelos para dar significado y estructurar el aprendizaje matemático."
+  },
+  {
+   "codigo": "CE.M.6",
+   "texto": "Descubrir los vínculos de las matemáticas con otras materias y profundizar en sus conexiones, interrelacionando conceptos y procedimientos, para modelizar, resolver problemas y desarrollar la capacidad crítica, creativa e innovadora en situaciones diversas."
+  },
+  {
+   "codigo": "CE.M.7",
+   "texto": "Representar conceptos, procedimientos e información matemáticos seleccionando diferentes tecnologías, para visualizar ideas y estructurar razonamientos matemáticos."
+  },
+  {
+   "codigo": "CE.M.8",
+   "texto": "Comunicar de forma individual y colectiva conceptos, procedimientos y argumentos matemáticos, usando lenguaje oral, escrito o gráfico, utilizando la terminología matemática apropiada, para dar significado y coherencia a las ideas matemáticas."
+  },
+  {
+   "codigo": "CE.M.9",
+   "texto": "Utilizar destrezas personales y sociales, identificando y gestionando las propias emociones, respetando las de los demás y organizando activamente el trabajo en equipos heterogéneos, aprendiendo del error como parte del proceso de aprendizaje y afrontando situaciones de incertidumbre, para perseverar en la consecución de objetivos en el aprendizaje de las matemáticas."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.M.1",
+   "columna": "Matemáticas I",
+   "texto": "Manejar algunas estrategias y herramientas, incluidas las digitales, en la modelización y resolución de problemas de la vida cotidiana y de la ciencia y la tecnología, evaluando su eficiencia en cada caso.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.M.1",
+   "columna": "Matemáticas I",
+   "texto": "Obtener todas las posibles soluciones matemáticas de problemas de la vida cotidiana y de la ciencia y la tecnología, describiendo el procedimiento utilizado.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.M.1",
+   "columna": "Matemáticas II",
+   "texto": "Manejar diferentes estrategias y herramientas, incluidas las digitales, que modelizan y resuelven problemas de la vida cotidiana y de la ciencia y la tecnología, seleccionando las más adecuadas según su eficiencia.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.M.1",
+   "columna": "Matemáticas II",
+   "texto": "Obtener todas las posibles soluciones matemáticas de problemas de la vida cotidiana y de la ciencia y la tecnología, describiendo el procedimiento utilizado.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.M.2",
+   "columna": "Matemáticas I",
+   "texto": "Seleccionar la solución más adecuada de un problema en función del contexto (de sostenibilidad, de consumo responsable, equidad), usando el razonamiento y la argumentación.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.M.2",
+   "columna": "Matemáticas II",
+   "texto": "Demostrar la validez matemática de las posibles soluciones de un problema utilizando el razonamiento y la argumentación.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.M.2",
+   "columna": "Matemáticas II",
+   "texto": "Seleccionar la solución más adecuada de un problema en función del contexto (de sostenibilidad, de consumo responsable, equidad...) usando el razonamiento y la argumentación.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.M.3",
+   "columna": "Matemáticas I",
+   "texto": "Adquirir nuevo conocimiento matemático a partir de la formulación de conjeturas y problemas de forma guiada.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.M.3",
+   "columna": "Matemáticas I",
+   "texto": "Emplear herramientas tecnológicas adecuadas en la formulación o investigación de conjeturas o problemas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.M.3",
+   "columna": "Matemáticas II",
+   "texto": "Adquirir nuevo conocimiento matemático mediante la formulación, razonamiento y justificación de conjeturas y problemas de forma autónoma.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.M.3",
+   "columna": "Matemáticas II",
+   "texto": "Integrar el uso de herramientas tecnológicas en la formulación o investigación de conjeturas y problemas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.M.4",
+   "columna": "Matemáticas I",
+   "texto": "Interpretar y resolver situaciones problematizadas de la vida cotidiana y de la ciencia y la tecnología, utilizando el pensamiento computacional, modificando y creando algoritmos.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.M.4",
+   "columna": "Matemáticas II",
+   "texto": "Interpretar, modelizar y resolver situaciones problematizadas de la vida cotidiana y de la ciencia y la tecnología, utilizando el pensamiento computacional, modificando, creando y generalizando algoritmos.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.M.5",
+   "columna": "Matemáticas I",
+   "texto": "Manifestar una visión matemática integrada, investigando y conectando las diferentes ideas matemáticas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.M.5",
+   "columna": "Matemáticas I",
+   "texto": "Resolver problemas en contextos matemáticos estableciendo y aplicando conexiones entre las diferentes ideas matemáticas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.M.5",
+   "columna": "Matemáticas II",
+   "texto": "Demostrar una visión matemática integrada, investigando y conectando las diferentes ideas matemáticas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.M.5",
+   "columna": "Matemáticas II",
+   "texto": "Resolver problemas en contextos matemáticos estableciendo y aplicando conexiones entre las diferentes ideas matemáticas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.M.6",
+   "columna": "Matemáticas I",
+   "texto": "Resolver problemas en situaciones diversas, utilizando procesos matemáticos, estableciendo y aplicando conexiones entre el mundo real, otras materias y las matemáticas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.M.6",
+   "columna": "Matemáticas I",
+   "texto": "Analizar la aportación de las matemáticas al progreso de la humanidad, reflexionando sobre su contribución en la propuesta de soluciones a situaciones complejas y a los retos científicos y tecnológicos que se plantean en la sociedad.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.M.6",
+   "columna": "Matemáticas II",
+   "texto": "Resolver problemas en situaciones diversas, utilizando procesos matemáticos, estableciendo y aplicando conexiones entre el mundo real, otras materias y las matemáticas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.M.6",
+   "columna": "Matemáticas II",
+   "texto": "Analizar la aportación de las matemáticas al progreso de la humanidad, reflexionando sobre su contribución en la propuesta de soluciones a situaciones complejas y a los retos científicos y tecnológicos que se plantean en la sociedad.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.M.7",
+   "columna": "Matemáticas I",
+   "texto": "Representar ideas matemáticas estructurando diferentes razonamientos matemáticos y seleccionando las tecnologías más adecuadas para la resolución de problemas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.M.7",
+   "columna": "Matemáticas I",
+   "texto": "Seleccionar y utilizar diversas formas de representación valorando su utilidad para compartir información.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.M.7",
+   "columna": "Matemáticas II",
+   "texto": "Representar ideas matemáticas estructurando diferentes razonamientos matemáticos y seleccionando las tecnologías más adecuadas para la resolución de problemas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.M.7",
+   "columna": "Matemáticas II",
+   "texto": "Seleccionar y utilizar diversas formas de representación valorando su utilidad para compartir información.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.M.8",
+   "columna": "Matemáticas I",
+   "texto": "Mostrar organización al comunicar las ideas matemáticas empleando el soporte, la terminología y el rigor apropiados.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.M.8",
+   "columna": "Matemáticas I",
+   "texto": "Reconocer y emplear el lenguaje matemático en diferentes contextos, comunicando la información con precisión y rigor.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.M.8",
+   "columna": "Matemáticas II",
+   "texto": "Mostrar organización al comunicar las ideas matemáticas empleando el soporte, la terminología y el rigor apropiados.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.M.8",
+   "columna": "Matemáticas II",
+   "texto": "Reconocer y emplear el lenguaje matemático en diferentes contextos, comunicando la información con precisión y rigor.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.M.9",
+   "columna": "Matemáticas I",
+   "texto": "Afrontar las situaciones de incertidumbre identificando y gestionando emociones y aceptando y aprendiendo del error como parte del proceso de aprendizaje de las matemáticas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.M.9",
+   "columna": "Matemáticas I",
+   "texto": "Mostrar una actitud positiva y perseverante, aceptando y aprendiendo de la crítica razonada al hacer frente a las diferentes situaciones de aprendizaje de las matemáticas.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "9.3",
+   "competencia": "CE.M.9",
+   "columna": "Matemáticas I",
+   "texto": "Participar en tareas matemáticas de forma activa en equipos heterogéneos, respetando las emociones y experiencias de los demás, escuchando su razonamiento, identificando las habilidades sociales más propicias y fomentando el bienestar grupal y las relaciones saludables.",
+   "cursos": [
+    1
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.M.9",
+   "columna": "Matemáticas II",
+   "texto": "Afrontar las situaciones de incertidumbre y tomar decisiones evaluando distintas opciones, identificando y gestionando emociones, y aceptando y aprendiendo del error como parte del proceso de aprendizaje de las matemáticas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.M.9",
+   "columna": "Matemáticas II",
+   "texto": "Mostrar una actitud positiva y perseverante, aceptando y aprendiendo de la crítica razonada al hacer frente a las diferentes situaciones de aprendizaje de las matemáticas.",
+   "cursos": [
+    2
+   ]
+  },
+  {
+   "codigo": "9.3",
+   "competencia": "CE.M.9",
+   "columna": "Matemáticas II",
+   "texto": "Trabajar en tareas matemáticas de forma activa en equipos heterogéneos, respetando las emociones y experiencias de los demás, escuchando su razonamiento, aplicando las habilidades sociales más propicias y fomentando el bienestar del equipo y las relaciones saludables.",
+   "cursos": [
+    2
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Matemáticas I",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Sentido numérico",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Sentido de las operaciones",
+       "saberes": [
+        "Adición y producto escalar de vectores: propiedades y representaciones.",
+        "Estrategias para operar con números reales y vectores: cálculo mental o escrito en los casos sencillos y con herramientas tecnológicas en los casos más complicados.",
+        "Logaritmos: comprensión y utilización de sus relaciones para simplificar y resolver problemas."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Relaciones",
+       "saberes": [
+        "Los números complejos como soluciones de ecuaciones polinómicas que carecen de raíces reales.",
+        "Conjuntos de vectores: estructura, comprensión y propiedades."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sentido de la medida",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Medición",
+       "saberes": [
+        "Cálculo de longitudes y medidas angulares: uso de la trigonometría."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Cambio",
+       "saberes": [
+        "Límites: estimación y cálculo a partir de una tabla, un gráfico o una expresión algebraica.",
+        "Continuidad de funciones: aplicación de límites en el estudio de la continuidad.",
+        "Derivada de una función: definición a partir del estudio del cambio en diferentes contextos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Sentido espacial",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Formas geométricas de dos dimensiones",
+       "saberes": [
+        "Objetos geométricos de dos dimensiones: análisis de las propiedades y determinación de sus atributos.",
+        "Resolución de problemas relativos a objetos geométricos en el plano representados con coordenadas cartesianas."
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Localización y sistemas de representación",
+       "saberes": [
+        "Relaciones de objetos geométricos en el plano: representación y exploración con ayuda de herramientas digitales.",
+        "Expresiones algebraicas de objetos geométricos: selección de la más adecuada en función de la situación a resolver."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Visualización, razonamiento y modelización geométrica",
+       "saberes": [
+        "Representación de objetos geométricos en el plano mediante herramientas digitales.",
+        "Modelos matemáticos (geométricos, algebraicos, grafos) en la resolución de problemas en el plano. Conexiones con otras disciplinas y áreas de interés.",
+        "Conjeturas geométricas en el plano: validación por medio de la deducción y la demostración de teoremas.",
+        "Modelización de la posición y el movimiento de un objeto en el plano mediante vectores."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Sentido algebraico",
+     "apartados": [
+      {
+       "codigo": "D.1",
+       "nombre": "Patrones",
+       "saberes": [
+        "Generalización de patrones en situaciones sencillas."
+       ]
+      },
+      {
+       "codigo": "D.2",
+       "nombre": "Modelo matemático",
+       "saberes": [
+        "Relaciones cuantitativas en situaciones sencillas: estrategias de identificación y determinación de la clase o clases de funciones que pueden modelizarlas.",
+        "Ecuaciones, inecuaciones y sistemas: modelización de situaciones en diversos contextos."
+       ]
+      },
+      {
+       "codigo": "D.3",
+       "nombre": "Igualdad y desigualdad",
+       "saberes": [
+        "Resolución de ecuaciones, inecuaciones y sistemas de ecuaciones e inecuaciones no lineales en diferentes contextos."
+       ]
+      },
+      {
+       "codigo": "D.4",
+       "nombre": "Relaciones y funciones",
+       "saberes": [
+        "Análisis, representación e interpretación de relaciones mediante herramientas tecnológicas.",
+        "Propiedades de las distintas clases de funciones, incluyendo, polinómicas, exponenciales, irracionales, racionales sencillas, logarítmicas, trigonométricas y a trozos: comprensión y comparación.",
+        "Álgebra simbólica en la representación y explicación de relaciones matemáticas de la Ciencia y la Tecnología. (a)"
+       ]
+      },
+      {
+       "codigo": "D.5",
+       "nombre": "Pensamiento computacional",
+       "saberes": [
+        "Formulación, resolución y análisis de problemas de la vida cotidiana y de la Ciencia y la Tecnología con las herramientas o los programas más adecuados.",
+        "Comparación de algoritmos alternativos para el mismo problema mediante el razonamiento lógico."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Sentido estocástico",
+     "apartados": [
+      {
+       "codigo": "E.1",
+       "nombre": "Organización y análisis de datos",
+       "saberes": [
+        "Organización de los datos procedentes de variables bidimensionales: distribución conjunta y distribuciones marginales y condicionadas. Análisis de la dependencia estadística.",
+        "Estudio de la relación entre dos variables mediante la regresión lineal o cuadrática: valoración gráfica de la pertinencia del ajuste.Diferencia entre correlación y causalidad",
+        "Coeficientes de correlación lineal y de determinación: cuantificación de la relación lineal, predicción y valoración de su fiabilidad en contextos científicos y tecnológicos.",
+        "Calculadora, hoja de cálculo o software específico en el análisis de datos estadísticos."
+       ]
+      },
+      {
+       "codigo": "E.2",
+       "nombre": "Incertidumbre",
+       "saberes": [
+        "La probabilidad como medida de la incertidumbre asociada a fenómenos aleatorios",
+        "Estimación de la probabilidad a partir del concepto de frecuencia relativa.",
+        "Cálculo de probabilidades en experimentos simples: la regla de Laplace en situaciones de equiprobabilidad y en combinación con diferentes técnicas de recuento."
+       ]
+      },
+      {
+       "codigo": "E.3",
+       "nombre": "Inferencia",
+       "saberes": [
+        "Análisis de muestras unidimensionales y bidimensionales con herramientas tecnológicas con el fin de emitir juicios y tomar decisiones."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Sentido socioafectivo",
+     "apartados": [
+      {
+       "codigo": "F.1",
+       "nombre": "Creencias, actitudes y emociones",
+       "saberes": [
+        "Destrezas de autoconciencia encaminadas a reconocer emociones propias, afrontando eventuales situaciones de estrés y ansiedad en el aprendizaje de las matemáticas.",
+        "Tratamiento del error, individual y colectivo como elemento movilizador de saberes previos adquiridos y generador de oportunidades de aprendizaje en el aula de matemáticas."
+       ]
+      },
+      {
+       "codigo": "F.2",
+       "nombre": "Trabajo en equipo, toma de decisiones, inclusión, respeto y diversidad",
+       "saberes": [
+        "Reconocimiento y aceptación de diversos planteamientos en la resolución de problemas y tareas matemáticas, transformando los enfoques de los demás en nuevas y mejoradas estrategias propias, mostrando empatía y respeto en el proceso.",
+        "Técnicas y estrategias de trabajo en equipo para la resolución de problemas y tareas matemáticas, en equipos heterogéneos.",
+        "Destrezas para desarrollar una comunicación efectiva: la escucha activa, la formulación de preguntas o solicitud y prestación de ayuda cuando sea necesario.",
+        "Valoración de la contribución de las matemáticas y el papel de matemáticos y matemáticas a lo largo de la historia en el avance de la ciencia y la tecnología."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Matemáticas II",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Sentido numérico",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Sentido de las operaciones",
+       "saberes": [
+        "Adición y producto de vectores y matrices: interpretación, comprensión y uso adecuado de las propiedades.",
+        "Estrategias para operar con números reales, vectores y matrices: cálculo mental o escrito en los casos sencillos y con herramientas tecnológicas en los casos más complicados."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Relaciones",
+       "saberes": [
+        "Conjuntos de vectores: estructura, comprensión y propiedades."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sentido de la medida",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Medición",
+       "saberes": [
+        "Resolución de problemas que impliquen medidas de longitud, superficie o volumen en un sistema de coordenadas cartesianas.",
+        "Interpretación de la integral definida como el área bajo una curva.",
+        "Cálculo de áreas bajo una curva: técnicas elementales para el cálculo de primitivas.",
+        "Técnicas para la aplicación del concepto de integral a la resolución de problemas que impliquen cálculo de superficies planas o volúmenes de revolución."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Cambio",
+       "saberes": [
+        "Derivadas: interpretación y aplicación al cálculo de límites.",
+        "Aplicación de los conceptos de límite, continuidad y derivabilidad a la representación y al estudio de situaciones susceptibles de ser modelizadas mediante funciones.",
+        "La derivada como razón de cambio en la resolución de problemas de optimización en contextos diversos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Sentido espacial",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Formas geométricas de dos y tres dimensiones",
+       "saberes": [
+        "Objetos geométricos de tres dimensiones: análisis de las propiedades y determinación de sus atributos.",
+        "Resolución de problemas relativos a objetos geométricos en el espacio representados con coordenadas cartesianas ."
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Localización y sistemas de representación",
+       "saberes": [
+        "Relaciones de objetos geométricos en el espacio: representación y exploración con ayuda de herramientas digitales.",
+        "Expresiones algebraicas de los objetos geométricos en el espacio: selección de la más adecuada en función de la situación a resolver."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Visualización, razonamiento y modelización geométrica",
+       "saberes": [
+        "Representación de objetos geométricos en el espacio mediante herramientas digitales.",
+        "Modelos matemáticos (geométricos, algebraicos...) para resolver problemas en el espacio. Conexiones con otras disciplinas y áreas de interés.",
+        "Conjeturas geométricas en el espacio: validación por medio de la deducción y la demostración de teoremas.",
+        "Modelización de la posición y el movimiento de un objeto en el espacio utilizando vectores."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Sentido algebraico",
+     "apartados": [
+      {
+       "codigo": "D.1",
+       "nombre": "Patrones",
+       "saberes": [
+        "Generalización de patrones en situaciones diversas. (a) (b) (c) (d)"
+       ]
+      },
+      {
+       "codigo": "D.2",
+       "nombre": "Modelo matemático",
+       "saberes": [
+        "Relaciones cuantitativas en situaciones complejas: estrategias de identificación y determinación de la clase o clases de funciones que pueden modelizarlas.",
+        "Sistemas de ecuaciones: modelización de situaciones en diversos contextos.",
+        "Técnicas y uso de matrices para, al menos, modelizar situaciones en las que aparezcan sistemas de ecuaciones lineales o grafos"
+       ]
+      },
+      {
+       "codigo": "D.3",
+       "nombre": "Igualdad y desigualdad",
+       "saberes": [
+        "Formas equivalentes de expresiones algebraicas en la resolución de sistemas de ecuaciones e inecuaciones, mediante cálculo mental, algoritmos de lápiz y papel, y con herramientas digitales.",
+        "Resolución de sistemas de ecuaciones en diferentes contextos."
+       ]
+      },
+      {
+       "codigo": "D.4",
+       "nombre": "Relaciones y funciones",
+       "saberes": [
+        "Representación, análisis e interpretación de funciones con herramientas digitales.",
+        "Propiedades de las distintas clases de funciones: comprensión y comparación."
+       ]
+      },
+      {
+       "codigo": "D.5",
+       "nombre": "Pensamiento computacional",
+       "saberes": [
+        "Formulación, resolución y análisis de problemas de la vida cotidiana y de la Ciencia y la Tecnología empleando las herramientas o los programas más adecuados.",
+        "Análisis algorítmico de las propiedades de las operaciones con matrices, los determinantes y la resolución de sistemas de ecuaciones lineales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Sentido estocástico",
+     "apartados": [
+      {
+       "codigo": "E.1",
+       "nombre": "Incertidumbre",
+       "saberes": [
+        "La probabilidad como medida de la incertidumbre asociada a fenómenos estocásticos: interpretación subjetiva, clásica y frecuentista",
+        "Cálculo de probabilidades en experimentos compuestos. Probabilidad condicionada e independencia entre sucesos aleatorios. Diagramas de árbol y tablas de contingencia.",
+        "Teoremas de la probabilidad total y de Bayes: resolución de problemas e interpretación del teorema de Bayes para actualizar la probabilidad a partir de la observación y la experimentación y la toma de decisiones en condiciones de incertidumbre."
+       ]
+      },
+      {
+       "codigo": "E.2",
+       "nombre": "Distribuciones de probabilidad",
+       "saberes": [
+        "Variables aleatorias discretas y continuas. Parámetros de la distribución.",
+        "Modelización de fenómenos estocásticos mediante las distribuciones de probabilidad binomial y normal. Cálculo de probabilidades asociadas mediante herramientas tecnológicas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Sentido socioafectivo",
+     "apartados": [
+      {
+       "codigo": "F.1",
+       "nombre": "Creencias, actitudes y emociones",
+       "saberes": [
+        "Destrezas de autoconciencia encaminadas a reconocer emociones propias, afrontando eventuales situaciones de estrés y ansiedad en el aprendizaje de las matemáticas.",
+        "Tratamiento del error, individual y colectivo como elemento movilizador de saberes previos adquiridos y generador de oportunidades de aprendizaje en el aula de matemáticas."
+       ]
+      },
+      {
+       "codigo": "F.2",
+       "nombre": "Trabajo en equipo, toma de decisiones, inclusión, respeto y diversidad",
+       "saberes": [
+        "Destrezas para evaluar diferentes opciones y tomar decisiones en la resolución de problemas y tareas matemáticas.",
+        "Destrezas sociales y de comunicación efectivas para el éxito en el aprendizaje de las matemáticas.",
+        "Valoración de la contribución de las matemáticas y el papel de matemáticos y matemáticas a lo largo de la historia en el avance de la ciencia y la tecnología."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 99.2,
+  "no_encontrados": [
+   "saber D.4: Álgebra simbólica en la representación y explicación de relaciones matemáticas de la Ciencia y la Tecnología. (a)"
+  ]
+ },
+ "materia": "Matemáticas"
+}

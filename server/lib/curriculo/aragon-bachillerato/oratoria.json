@@ -1,0 +1,222 @@
+{
+ "fuente": "ORDEN ECD/1173/2022, anexo II, con las modificaciones de las ÓRDENES ECD/886/2024 y ECD/739/2025 (Aragón)",
+ "archivo": "50 Oratoria.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.O.1",
+   "texto": "Comprender, interpretar y valorar discursos de los grandes oradores de la historia, pero también de contextos más cercanos al alumnado, analizando los elementos propios de la argumentación y de la comunicación verbal y no verbal, para constatar su carácter persuasivo, interdisciplinar, y su capacidad para influir y movilizar a la sociedad, especialmente mediante la difusión a través de los medios de comunicación de masas, y así generar debate y opinión dentro y fuera del aula."
+  },
+  {
+   "codigo": "CE.O.2",
+   "texto": "Consolidar e incorporar estrategias y herramientas para el dominio de la competencia verbal y no verbal, incorporándolas a la práctica personal y utilizando las técnicas y características propias del diálogo y la argumentación, para comunicar eficazmente en público, captar y mantener la atención y la benevolencia del auditorio, tanto en contextos de presentación oral individual como plural, formal o informal, en un entorno físico o virtual."
+  },
+  {
+   "codigo": "CE.O.3",
+   "texto": "Presentar oralmente, de forma clara, coherente, correcta y fluida, textos formales e informales, previa preparación y producción elaborada y consciente, atendiendo a las convenciones de la exposición y la argumentación, y con habilidad para adaptar lo escrito al estilo propio de la oralidad, para desarrollar la capacidad de estructurar los mensajes orales en consonancia con el contexto social en que se producen, transmitiendo y expresando las ideas, sin olvidar la improvisación y la creatividad."
+  },
+  {
+   "codigo": "CE.O.4",
+   "texto": "Conocer mejor, adquirir, analizar y emplear con espíritu crítico diferentes técnicas de búsqueda de información, de forma rigurosa y ética, utilizando las tecnologías de la información y los recursos propios del entorno digital, tanto en el proceso previo de preparación como en la posterior realización y difusión oral, evaluando y considerando su fiabilidad, pertinencia y autoría intelectual, para evitar los riesgos de la manipulación y de la desinformación y buscar la construcción de la verdad de forma conjunta."
+  },
+  {
+   "codigo": "CE.O.5",
+   "texto": "Gestionar y dominar de forma consciente las emociones, miedos e inseguridades surgidas ante diversas situaciones de presentación oral para un auditorio físico o virtual, promoviendo el empleo de diferentes técnicas y estrategias que contribuyan a lograr la autoconfianza y a vencer el miedo escénico, para favorecer el desarrollo personal, el cultivo de una personalidad y sello propios y la formación de ciudadanos o ciudadanas con pensamiento crítico, capaces y con criterio, con habilidades para defender sus posiciones, a través de argumentos razonados y documentados."
+  },
+  {
+   "codigo": "CE.O.6",
+   "texto": "Desarrollar y valorar la capacidad de trabajar en equipo, respetando el turno de palabra para defender ideas y argumentos con objetividad y respeto, así como las normas propias de la interacción comunicativa oral y las ideas de los demás en contextos plurales, tales como asambleas, debates o cumbres, para transmitir la importancia de la cooperación y promover los valores democráticos a través de la construcción de un sistema de valores basados en el respeto, la corresponsabilidad, la tolerancia, la solidaridad y la empatía."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.O.1",
+   "columna": null,
+   "texto": "Reconocer, diferenciar y valorar la comunicación oral y no verbal, sus elementos, características y usos aplicados en los discursos de grandes oradores de la historia y de la actualidad a partir del análisis de los elementos propios de la argumentación y de la persuasión, utilizando un lenguaje oral y/o escrito específico.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.O.1",
+   "columna": null,
+   "texto": "Comentar discursos persuasivos de manera crítica, de forma individual o colectiva, oral y/o escrita, apoyándose en distintos soportes, que sirvan, además, para generar conversaciones y debate en el aula que valoren la repercusión social de los mismos.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.O.1",
+   "columna": null,
+   "texto": "Valorar y analizar la influencia de la nueva oratoria digital, a través de casos y ejemplos extraídos de la red y de las redes sociales, y su poder para crear opinión y corrientes de pensamiento.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.O.2",
+   "columna": null,
+   "texto": "Expresarse oralmente de forma eficaz, por medio del diálogo y la argumentación razonada y documentada, pronunciando con corrección, claridad y expresividad, y apoyándose en un buen uso de la dicción a través del ritmo, el volumen o el tono, entre otros aspectos.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.O.2",
+   "columna": null,
+   "texto": "Utilizar el lenguaje corporal, el espacio y la presencia escénica como códigos comunicativos para ensalzar la expresividad y la eficacia del discurso ante un público.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.O.2",
+   "columna": null,
+   "texto": "Comunicar eficazmente ante un público en diversos contextos presenciales o virtuales, demostrando la capacidad de adaptación en cada caso dejando espacio también a la improvisación y espontaneidad para captar y mantener la atención del auditorio",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.O.3",
+   "columna": null,
+   "texto": "Elegir, estructurar, expresar y valorar, de forma crítica, ordenada y eficaz, las ideas, tipos de argumentos y estrategias argumentativas más convenientes en la preparación, producción y presentación del discurso.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.O.3",
+   "columna": null,
+   "texto": "Expresarse con propiedad, corrección, claridad y creatividad comunicando un mensaje breve y claro que funcione como núcleo del discurso.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.O.3",
+   "columna": null,
+   "texto": "Adecuar la creación y el diseño del discurso a las características del género textual escogido, fundamentalmente el argumentativo, a través de los elementos de la comunicación (emisor, receptor, mensaje, canal, código y contexto).",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.O.4",
+   "columna": null,
+   "texto": "Reconocer y seleccionar con espíritu crítico y ético distintas fuentes de información propias de un entorno analógico y/o digital, organizando y utilizando dicha información para profundizar en el conocimiento del tema del discurso.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.O.4",
+   "columna": null,
+   "texto": "Utilizar programas y aplicaciones informáticas y audiovisuales en la preparación, producción y presentación del discurso a fin de potenciar el significado y expresividad del mismo.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.O.4",
+   "columna": null,
+   "texto": "Citar y mencionar convenientemente las fuentes de procedencia de la información seleccionada y empleada en un discurso oral o escrito (bibliografía y webgrafía), respetando el autoría intelectual.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.O.5",
+   "columna": null,
+   "texto": "Comprender y valorar la capacidad del ser humano para influir de manera consciente y voluntaria en la construcción de su propia personalidad a través de la oratoria, conforme a valores éticos, potenciando la asertividad y mejorando su autoestima.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.O.5",
+   "columna": null,
+   "texto": "Favorecer las emociones positivas y controlar las emociones negativas en la exposición ante el público que pudieran derivar en miedo escénico.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.O.6",
+   "columna": null,
+   "texto": "Elaborar textos para intervenir en ámbitos de participación social, reales o simulados, cooperando y con respeto por las normas de convivencia y procurando la resolución pacífica de conflictos propios de una sociedad democrática.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.O.6",
+   "columna": null,
+   "texto": "Desarrollar las relaciones interpersonales a través de la cooperación, así como la propia personalidad gracias al uso cívico de la palabra.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.O.6",
+   "columna": null,
+   "texto": "Autoevaluar y coevaluar los discursos y producciones trabajados y elaborados en el aula que podrán ser objeto de revisiones, correcciones y mejoras.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Los orígenes de la Oratoria como arte. Oratoria y Retórica. Inventio, dispositio, elocutio, memoria y actio.",
+        "Historia y evolución de la Oratoria. Oralidad y oratoria en el mundo digital.",
+        "El proceso comunicativo. Asimilación de las claves básicas para ser un buen orador a través de un buen conocimiento y uso de los elementos de la comunicación. Consejos y errores frecuentes a través del análisis de ejemplos representativos de la buena y la mala oratoria en la actualidad.",
+        "La argumentación y sus características en textos orales y escritos. Tipos de argumentos. El discurso persuasivo y su estructura. Los recursos literarios al servicio de la oratoria.",
+        "Análisis, valoración y puesta en práctica de discursos persuasivos orales y escritos propios de situaciones formales e informales, individuales y plurales: presentaciones, asambleas, debates, modelo del Parlamento Europeo y de las Naciones Unidas, etc.",
+        "Análisis, interpretación y debate acerca de los discursos de grandes oradores de la historia y de la actualidad con especial atención a aquellos relacionados con momentos clave de la historia reciente."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Preparación, producción y presentación oral del discurso persuasivo",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "1. Preparación",
+        "Tipos de fuentes documentales. Estrategias de búsqueda, selección y gestión de información e ideas.",
+        "Alfabetización digital e Infoética: análisis de los problemas de la era de la (des)información: bulos, fakenews, clickbaits.",
+        "Conocimiento de soportes informáticos y audiovisuales para el apoyo del discurso y empleo autónomo de las nuevas tecnologías en una presentación oral.",
+        "Respeto de la propiedad intelectual y fomento del empleo de herramientas, recursos y software libres.",
+        "2. Producción",
+        "Conocimiento y empleo de diversas estrategias para la escritura de textos formales e informales pensando en su oralidad con especial atención al texto argumentativo o expositivo-argumentativo.",
+        "De la escritura a la oralidad. La redacción y el estilo propios de un texto pensando en su comunicación oral y pública.",
+        "3. Presentación 3.1. Memorización y estrategias para mejorar hablando en público",
+        "Memorización e interiorización. Reglas mnemotécnicas.",
+        "Capacidad de adaptación del discurso al contexto y al auditorio, así como al género textual elegido, el tiempo y el canal de comunicación",
+        "Práctica de la improvisación y la espontaneidad. Naturalidad frente a artificiosidad.",
+        "Estrategias para captar la atención y la benevolencia del auditorio. 3.2. La importancia del lenguaje verbal y no verbal en la comunicación.",
+        "Dicción: pronunciación, volumen, ritmo, tono, modulación, intensidad, pausas y silencios.",
+        "Kinésica: comunicación corporal",
+        "Proxémica: espacio escénico 3.3. Uso adecuado, eficaz y coherente de los medios informáticos y/o audiovisuales de apoyo."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Oratoria para la educación emocional y en valores",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Gestión emocional para hablar en público: autoconfianza, empatía y asertividad. Crecimiento personal y pérdida del miedo escénico.",
+        "El poder de la oratoria para mover a la sociedad o las sociedades y la necesidad de convertirla en una herramienta para el bien común desde una perspectiva ética.",
+        "Oratoria para la construcción de la veracidad del discurso y la participación activa en la democracia."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Oratoria"
+}

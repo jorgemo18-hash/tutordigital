@@ -1,0 +1,501 @@
+{
+ "fuente": "ORDEN ECD/1112/2022, anexo II, con las modificaciones de la ORDEN ECD/866/2024 (Aragón)",
+ "archivo": "13 Música y Danza.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.MD.1",
+   "texto": "Descubrir propuestas artísticas de diferentes géneros, estilos, épocas y culturas, a través de la recepción activa, para desarrollar la curiosidad y el respeto por la diversidad."
+  },
+  {
+   "codigo": "CE.MD.2",
+   "texto": "Investigar sobre manifestaciones culturales y artísticas y sus contextos, empleando diversos canales, medios y técnicas, para disfrutar de ellas, entender su valor y empezar a desarrollar una sensibilidad artística propia."
+  },
+  {
+   "codigo": "CE.MD.3",
+   "texto": "Expresar y comunicar de manera creativa ideas, sentimientos y emociones, experimentando con las posibilidades del sonido, la imagen, el cuerpo y los medios digitales, para producir obras propias."
+  },
+  {
+   "codigo": "CE.MD.4",
+   "texto": "Participar del diseño, la elaboración y la difusión de producciones culturales e individuales o colectivas, poniendo en valor el proceso y asumiendo diferentes funciones en la consecución de un resultado final, para desarrollar la creatividad, la noción de autoría y el sentido de pertenencia."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.MD.1",
+   "columna": "Primer Ciclo",
+   "texto": "Descubrir propuestas artísticas de diferentes géneros, estilos, épocas y culturas, a través de la recepción activa y mostrando curiosidad y respeto por las mismas.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.MD.1",
+   "columna": "Primer Ciclo",
+   "texto": "Describir manifestaciones culturales y artísticas del entorno próximo, explorando sus características con actitud abierta e interés.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.MD.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Reconocer propuestas artísticas de diferentes géneros, estilos, épocas y culturas, a través de la recepción activa y mostrando curiosidad y respeto por las mismas.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.MD.1",
+   "columna": "Segundo Ciclo",
+   "texto": "Describir manifestaciones culturales y artísticas, explorando sus características con actitud abierta e interés y estableciendo relaciones básicas entre ellas.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.MD.1",
+   "columna": "Tercer ciclo",
+   "texto": "Distinguir propuestas artísticas de diferentes géneros, estilos, épocas y culturas, a través de la recepción activa y mostrando curiosidad y respeto por las mismas.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.MD.1",
+   "columna": "Tercer ciclo",
+   "texto": "Describir manifestaciones culturales y artísticas, explorando sus características con actitud abierta e interés y estableciendo relaciones entre ellas y valorando la diversidad que las genera.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.MD.2",
+   "columna": "Primer Ciclo",
+   "texto": "Seleccionar y aplicar estrategias elementales para la búsqueda guiada de información sobre manifestaciones culturales y artísticas, a través de canales y medios de acceso sencillos, tanto de forma individual como cooperativa.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.MD.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Seleccionar y aplicar estrategias para la búsqueda guiada de información sobre manifestaciones culturales y artísticas, a través de canales y medios de acceso sencillos, tanto de forma individual como colectiva.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.MD.2",
+   "columna": "Tercer ciclo",
+   "texto": "Seleccionar y aplicar estrategias elementales para la búsqueda de información sobre manifestaciones culturales y artísticas, a través de canales y medios de acceso, tanto de forma individual como cooperativa.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.MD.2",
+   "columna": "Primer Ciclo",
+   "texto": "Reconocer elementos característicos básicos de distintas manifestaciones culturales y artísticas que forman parte del patrimonio, indicando los canales, medios y técnicas empleados e identificando diferencias y similitudes.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.MD.2",
+   "columna": "Segundo Ciclo",
+   "texto": "Distinguir elementos característicos básicos de manifestaciones culturales y artísticas que forman parte del patrimonio, indicando los canales, medios y técnicas utilizados, analizando sus diferencias y similitudes y reflexionando sobre las sensaciones producidas, con actitud de interés y respeto.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.MD.2",
+   "columna": "Tercer ciclo",
+   "texto": "Comparar el significado y los elementos característicos de distintas manifestaciones culturales y artísticas que forman parte del patrimonio, analizando los canales, medios y técnicas vinculados a ellas, así como sus diferencias y similitudes, y desarrollando criterios de valoración propios, con actitud abierta y respetuosa.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.MD.2",
+   "columna": "Tercer ciclo",
+   "texto": "Valorar las sensaciones y emociones producidas por diferentes manifestaciones culturales y artísticas, a partir del análisis y la comprensión de dichas manifestaciones.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.MD.3",
+   "columna": "Primer Ciclo",
+   "texto": "Producir obras propias de manera guiada, utilizando algunas de las posibilidades expresivas del cuerpo, el sonido, la imagen y los medios digitales básicos, y mostrando confianza en las capacidades propias.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.MD.3",
+   "columna": "Primer Ciclo",
+   "texto": "Expresar de forma guiada ideas, sentimientos y emociones a través de manifestaciones artísticas sencillas, experimentando con los diferentes lenguajes e instrumentos a su alcance.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.MD.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Producir obras propias básicas, utilizando las posibilidades expresivas del cuerpo, el sonido, la imagen y los medios digitales básicos, y mostrando confianza en las capacidades propias.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.MD.3",
+   "columna": "Segundo Ciclo",
+   "texto": "Expresar con creatividad ideas, sentimientos y emociones a través de manifestaciones artísticas básicas, experimentando con los diferentes lenguajes e instrumentos a su alcance.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.MD.3",
+   "columna": "Tercer ciclo",
+   "texto": "Producir obras propias básicas, utilizando las posibilidades expresivas del cuerpo, el sonido, la imagen y los medios digitales básicos, y mostrando confianza en las capacidades propias.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.MD.3",
+   "columna": "Tercer ciclo",
+   "texto": "Expresar con creatividad ideas, sentimientos y emociones a través de diversas manifestaciones artísticas, utilizando los diferentes lenguajes e instrumentos a su alcance, mostrando confianza en las propias capacidades y perfeccionando la ejecución.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.MD.4",
+   "columna": "Primer Ciclo",
+   "texto": "Participar de manera guiada en el diseño de producciones culturales y artísticas elementales, trabajando de forma cooperativa a partir de la igualdad y el respeto a la diversidad.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.MD.4",
+   "columna": "Primer Ciclo",
+   "texto": "Tomar parte en el proceso cooperativo de producciones culturales y artísticas de forma respetuosa y utilizando elementos básicos de diferentes lenguajes y técnicas artísticas.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.MD.4",
+   "columna": "Primer Ciclo",
+   "texto": "Compartir los proyectos creativos, explicando el proceso y el resultado final obtenido, y valorando las experiencias propias y las de los demás.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.MD.4",
+   "columna": "Segundo Ciclo",
+   "texto": "Participar de manera guiada en el diseño de producciones culturales y artísticas, trabajando de forma cooperativa en la consecución de un resultado final planificado y asumiendo diferentes funciones, desde la igualdad y el respeto a la diversidad.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.MD.4",
+   "columna": "Segundo Ciclo",
+   "texto": "Participar en el proceso cooperativo de producciones culturales y artísticas, de forma creativa y respetuosa, utilizando elementos básicos de diferentes lenguajes y técnicas artísticas.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.MD.4",
+   "columna": "Segundo Ciclo",
+   "texto": "Compartir los proyectos creativos, empleando estrategias comunicativas básicas, explicando el proceso y el resultado final obtenido, respetando y valorando las experiencias propias y las de los demás.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.MD.4",
+   "columna": "Tercer ciclo",
+   "texto": "Planificar y diseñar producciones culturales y artísticas colectivas, trabajando de forma cooperativa en la consecución de un resultado final planificado y asumiendo diferentes funciones, desde la igualdad y el respeto a la diversidad.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.MD.4",
+   "columna": "Tercer ciclo",
+   "texto": "Participar activamente en el proceso cooperativo de producciones culturales y artísticas, de forma creativa y respetuosa, utilizando elementos básicos de diferentes lenguajes y técnicas artísticas.",
+   "cursos": [
+    5,
+    6
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.MD.4",
+   "columna": "Tercer ciclo",
+   "texto": "Compartir los proyectos creativos, empleando diferentes estrategias comunicativas y a través de diversos medios, explicando el proceso y el resultado final obtenido, respetando y valorando las experiencias propias y las de los demás.",
+   "cursos": [
+    5,
+    6
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Primer ciclo de Educación Primaria",
+   "cursos": [
+    1,
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Recepción y análisis",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Principales propuestas artísticas de diferentes corrientes estéticas, procedencias y épocas producidas por creadores y creadoras locales, regionales y nacionales.",
+        "Estrategias de recepción activa.",
+        "Normas comunes de comportamiento en la recepción de propuestas artísticas en diferentes espacios. El silencio como elemento y condición indispensable para el mantenimiento de la atención durante la recepción.",
+        "Vocabulario específico básico de la música y las artes escénicas y performativas.",
+        "Recursos digitales básicos para la música y las artes escénicas y performativas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Creación e interpretación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Fases del proceso creativo: planificación guiada y experimentación.",
+        "Profesiones vinculadas con la música y las artes escénicas y performativas.",
+        "Interés tanto por el proceso como por el producto final en producciones musicales, escénicas y performativas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Música y artes escénicas y performativas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El sonido y sus cualidades básicas: discriminación auditiva, clasificación y representación de diversidad de sonidos y líneas melódicas a través de diferentes grafías.",
+        "La voz y los instrumentos musicales. Principales familias y agrupaciones. Discriminación visual y auditiva. Objetos sonoros. Cotidiáfonos.",
+        "El carácter y el tempo.",
+        "Práctica instrumental, vocal y corporal: aproximación a la experimentación creativa e interpretación a partir de las propias posibilidades sonoras y expresivas.",
+        "Construcción asistida de instrumentos con materiales del entorno.",
+        "Lenguajes musicales básicos: aplicación de sus conceptos elementales en la interpretación de propuestas musicales vocales e instrumentales.",
+        "El cuerpo y sus posibilidades motrices: interés por la experimentación y exploración a través de ejecuciones individuales y grupales vinculadas con el movimiento, la danza, la dramatización y la representación teatral como medio de comunicación y diversión.",
+        "Técnicas dramáticas y dancísticas elementales.",
+        "Capacidades expresivas y creativas básicas de la expresión corporal y dramática."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Segundo ciclo de Educación Primaria",
+   "cursos": [
+    3,
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Recepción y análisis",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Propuestas artísticas de diferentes corrientes estéticas, procedencias y épocas producidas por creadores y creadoras locales, regionales y nacionales.",
+        "Estrategias de recepción activa.",
+        "Normas comunes de comportamiento y actitud positiva en la recepción de propuestas artísticas en diferentes espacios. El silencio como elemento y condición indispensable para el mantenimiento de la atención durante la recepción.",
+        "Vocabulario específico básico de la música y las artes escénicas y performativas.",
+        "Recursos digitales básicos para la música y las artes escénicas y performativas.",
+        "Estrategias básicas de análisis de propuestas artísticas desde una perspectiva de género."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Creación e interpretación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "los elementos a trabajar.",
+        "Fases del proceso creativo: planificación, interpretación y experimentación.",
+        "Profesiones vinculadas con la música y las artes escénicas y performativas.",
+        "Interés y valoración tanto por el proceso como por el producto final en producciones musicales, escénicas y performativas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Música y artes escénicas y performativas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El sonido y sus cualidades: identificación visual y auditiva y representación elemental de diversidad de sonidos y estructuras rítmico- melódicas a través de diferentes grafías.",
+        "La voz y los instrumentos musicales. Agrupaciones y familias. Identificación visual y auditiva. Objetos sonoros. Cotidiáfonos.",
+        "El carácter, el tempo y el compás.",
+        "Práctica instrumental, vocal y corporal: experimentación, exploración creativa, interpretación e improvisación a partir de sus posibilidades sonoras y expresivas.",
+        "Construcción guiada de instrumentos.",
+        "Lenguajes musicales básicos: aplicación de sus conceptos básicos en la interpretación y en la improvisación de propuestas musicales vocales e instrumentales. El silencio como elemento fundamental de la música.",
+        "Aplicaciones informáticas básicas de grabación y edición de audio: utilización en la audición y conocimiento de obras diversas.",
+        "El cuerpo y sus posibilidades motrices y creativas: interés por la experimentación y la exploración a través de ejecuciones individuales y grupales vinculadas con el movimiento, la danza, la dramatización y la representación teatral como medio de comunicación y diversión.",
+        "Técnicas dramáticas y dancísticas de uso común. Lenguajes expresivos básicos. Actos performativos elementales. Improvisación guiada.",
+        "Capacidades expresivas y creativas de uso común de la expresión corporal y dramática.",
+        "Elementos básicos de la representación escénica: roles, materiales y espacios."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Tercer ciclo de Educación Primaria",
+   "cursos": [
+    5,
+    6
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Recepción y análisis",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Propuestas artísticas de diferentes corrientes estéticas, procedencias y épocas producidas por creadoras y creadores locales, regionales y nacionales e internacionales.",
+        "Estrategias de recepción activa.",
+        "Normas de comportamiento y actitud positiva en la recepción de propuestas artísticas en diferentes espacios. El silencio como elemento y condición indispensable para el mantenimiento de la atención durante la recepción.",
+        "Vocabulario específico de la música y las artes escénicas y performativas.",
+        "Recursos digitales básicos para la música y las artes escénicas y performativas.",
+        "Estrategias básicas de análisis de propuestas artísticas desde una perspectiva de género."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Creación e interpretación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "producciones propias y colaborativas. Se inculcará e",
+        "Fases del proceso creativo: planificación, interpretación, experimentación y evaluación.",
+        "Profesiones vinculadas con la música y las artes escénicas y performativas.",
+        "Evaluación, interés y valoración tanto por el proceso como por el producto final en producciones musicales, escénicas y performativas.",
+        "Uso responsable de bancos de imágenes y sonidos: respeto a las licencias de uso y distribución de contenidos generados por otros. Plagio y derechos de autor."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Música y artes escénicas y performativas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El sonido y sus cualidades: identificación visual y auditiva, clasificación y representación de diversidad de sonidos y estructuras rítmico-melódicas a través de diferentes grafías.",
+        "La voz y los instrumentos musicales. Familias y agrupaciones. Clasificación. Identificación visual y auditiva. Instrumentos digitales y no convencionales. Cotidiáfonos.",
+        "El carácter, el tempo, el compás, los géneros musicales, la textura, la armonía y la forma.",
+        "Práctica instrumental, vocal y corporal: experimentación, exploración creativa, interpretación, improvisación y composición a partir de sus posibilidades sonoras y expresivas.",
+        "Construcción de instrumentos con materiales del entorno.",
+        "Lenguajes musicales: aplicación de sus conceptos fundamentales en la interpretación y en la improvisación de propuestas musicales vocales e instrumentales. El silencio en la música.",
+        "Aplicaciones informáticas de grabación, edición de audio y edición de partituras: utilización en la audición, conocimiento, interpretación, grabación, reproducción, improvisación y creación de obras diversas.",
+        "El cuerpo y sus posibilidades motrices, dramáticas y creativas: interés en la experimentación y la exploración a través de ejecuciones individuales y grupales vinculadas con el movimiento, la danza, la dramatización y la representación teatral como medio de comunicación y diversión.",
+        "Técnicas dramáticas y dancísticas de uso común. Nociones elementales de biomecánica. Lenguajes expresivos. Introducción a los métodos interpretativos. Experimentación con actos performativos. Improvisación guiada y creativa.",
+        "Capacidades expresivas y creativas de la expresión corporal y dramática.",
+        "Elementos de la representación escénica: roles, materiales y espacios. Teatralidad. Estructura dramática básica.",
+        "Aproximación a los géneros escénicos. Valoración de la importancia de la interpretación dramática en el proceso artístico y del patrimonio vinculado a las artes escénicas."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 97.8,
+  "no_encontrados": [
+   "saber : El sonido y sus cualidades básicas: discriminación auditiva, clasificación y representación de diversidad de sonidos y l",
+   "saber : Técnicas dramáticas y dancísticas de uso común. Nociones elementales de biomecánica. Lenguajes expresivos. Introducción "
+  ]
+ },
+ "materia": "Música y Danza"
+}

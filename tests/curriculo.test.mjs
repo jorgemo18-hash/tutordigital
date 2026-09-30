@@ -6,9 +6,14 @@ export async function run({ test }) {
   const { CITAS, NOMBRE_DEL_SABER } = await import("../server/lib/generadorEjercicios/saberesBasicos.js");
   const { createApp } = await import("../server/app.js");
 
-  test("las 40 materias del anexo II están, y cada una tiene competencias, criterios y saberes", () => {
+  test("las materias del anexo II de las tres etapas están, y cada una tiene competencias, criterios y saberes", () => {
     const materias = listaDeMaterias();
-    assert.equal(materias.length, 40);
+    const cuantas = (etapa) => materias.filter((m) => m.etapa === etapa).length;
+    // ESO 40 (con los 4 ámbitos de FP Básica), Primaria 14, Bachillerato 59.
+    assert.equal(cuantas("ESO") + cuantas("FP Básica"), 40);
+    assert.equal(cuantas("Primaria"), 14);
+    assert.equal(cuantas("Bachillerato"), 59);
+    assert.equal(new Set(materias.map((m) => m.slug)).size, materias.length, "ningún slug repetido entre etapas");
     for (const m of materias) {
       const d = materiaPorSlug(m.slug);
       assert.ok(d, m.slug);
@@ -80,10 +85,84 @@ export async function run({ test }) {
     assert.equal(curriculoDeCurso("matematicas", 2).sesionesSemanales, 4);
   });
 
+  test("PRIMARIA (ECD/1112/2022 + ECD/866/2024): criterios y saberes por ciclo, literales del BOA", () => {
+    const m = materiaPorSlug("primaria-matematicas");
+    assert.match(m.fuente, /ECD\/1112\/2022.*ECD\/866\/2024/);
+    const tercero = curriculoDeCurso("primaria-matematicas", 3);
+    assert.equal(tercero.etapa, "primaria");
+    // 3.º es del segundo ciclo: su 1.1 es el del segundo ciclo, no el del primero.
+    assert.equal(tercero.competencias[0].criterios[0].texto,
+      "Interpretar, de forma verbal o gráfica, problemas cercanos y significativos para el alumnado, comprendiendo las preguntas planteadas a través de diferentes estrategias o herramientas.");
+    assert.equal(curriculoDeCurso("primaria-matematicas", 1).competencias[0].criterios[0].texto,
+      "Reconocer la información contenida en problemas en situaciones cercanas y significativas para el alumnado comprendiendo las preguntas planteadas a través de diferentes estrategias o herramientas.");
+    assert.deepEqual(tercero.saberes.map((s) => s.etiqueta), ["Segundo ciclo de Educación Primaria"]);
+    assert.deepEqual(listaDeMaterias().find((x) => x.slug === "primaria-matematicas").cursos, [1, 2, 3, 4, 5, 6]);
+    // Errata del BOA corregida a la vista (extrae_curriculo.py): Valores
+    // Cívicos es de 5.º y 6.º aunque su apartado diga "Primer ciclo".
+    const valores = materiaPorSlug("primaria-educacion-en-valores-civicos-y-eticos");
+    assert.deepEqual(valores.saberes.map((s) => [s.etiqueta, s.cursos]), [["Tercer ciclo de Educación Primaria", [5, 6]]]);
+    assert.equal(curriculoDeCurso("primaria-educacion-en-valores-civicos-y-eticos", 2).competencias.flatMap((c) => c.criterios).length, 0);
+    // Errata del BOA: en Ciencias Sociales, tercer ciclo, el "6.4" que va
+    // bajo CE.CS.2 es el 2.4; el 6.4 es "Presentar los resultados…".
+    const cs = curriculoDeCurso("primaria-ciencias-sociales", 5);
+    assert.deepEqual(cs.competencias.find((c) => c.codigo === "CE.CS.2").criterios.map((k) => k.codigo), ["2.1", "2.2", "2.3", "2.4"]);
+    assert.match(cs.competencias.find((c) => c.codigo === "CE.CS.6").criterios.find((k) => k.codigo === "6.4").texto, /^Presentar los resultados/);
+    // Ningún criterio repetido (mismo número, ciclo y texto) en Primaria ni Bachillerato.
+    for (const m of listaDeMaterias().filter((x) => x.etapa === "Primaria" || x.etapa === "Bachillerato")) {
+      const claves = materiaPorSlug(m.slug).criterios.map((c) => `${c.competencia} ${c.codigo} ${c.cursos} ${c.texto}`);
+      assert.equal(new Set(claves).size, claves.length, `${m.materia} (${m.etapa}): criterio repetido`);
+      // Ni uno cortado junto al completo (una celda leída en dos tablas).
+      const cs2 = materiaPorSlug(m.slug).criterios;
+      for (const a of cs2) {
+        const cortado = cs2.some((b) => b !== a && b.competencia === a.competencia && b.codigo === a.codigo && String(b.cursos) === String(a.cursos) && b.texto.length > a.texto.length && b.texto.startsWith(a.texto));
+        assert.ok(!cortado, `${m.materia}: ${a.codigo} cortado`);
+      }
+    }
+    // Cada ciclo con sus criterios (no se cuelan los de otro por un salto de página).
+    for (const slug of ["primaria-lengua-extranjera-ingles", "primaria-lengua-extranjera-frances"]) {
+      const porCiclo = [1, 3, 5].map((c) => curriculoDeCurso(slug, c).competencias.find((ce) => ce.codigo === "CE.LEF.3" || ce.codigo === "CE.LEI.3" || /\.3$/.test(ce.codigo)).criterios.map((k) => k.codigo));
+      for (const codigos of porCiclo) assert.equal(new Set(codigos).size, codigos.length, `${slug}: criterio repetido en un ciclo`);
+    }
+  });
+
+  test("BACHILLERATO (ECD/1173/2022 + ECD/886/2024): I y II separados; el horario de 2025 da el curso a las de un solo curso", () => {
+    const m2 = curriculoDeCurso("bachillerato-matematicas", 2);
+    assert.equal(m2.etapa, "bachillerato");
+    assert.deepEqual(m2.saberes.map((s) => s.etiqueta), ["Matemáticas II"]);
+    assert.equal(m2.competencias[0].criterios[0].texto,
+      "Manejar diferentes estrategias y herramientas, incluidas las digitales, que modelizan y resuelven problemas de la vida cotidiana y de la ciencia y la tecnología, seleccionando las más adecuadas según su eficiencia.");
+    const lista = listaDeMaterias().filter((x) => x.etapa === "Bachillerato");
+    for (const x of lista) assert.ok(x.cursos.length, `${x.materia}: sin curso`);
+    assert.deepEqual(lista.find((x) => x.slug === "bachillerato-fisica").cursos, [2]);
+    assert.deepEqual(lista.find((x) => x.slug === "bachillerato-filosofia").cursos, [1]);
+    assert.equal(sesionesSemanales("bachillerato-fisica", 2), 4);
+    assert.equal(sesionesSemanales("bachillerato-fisica", 1), null);
+    assert.equal(sesionesSemanales("bachillerato-lengua-castellana-y-literatura", 2), 4);
+    // Los criterios de la sección IV no se cuentan dos veces.
+    const pii = materiaPorSlug("bachillerato-proyecto-de-investigacion-e-innovacion-integrado");
+    assert.equal(new Set(pii.criterios.map((c) => `${c.competencia} ${c.codigo}`)).size, pii.criterios.length);
+    // Las modificadas en 2024 vienen de la versión nueva.
+    assert.match(materiaPorSlug("bachillerato-historia-de-espana").archivo, /Historia de España/);
+  });
+
+  test("HORARIOS DE PRIMARIA Y BACHILLERATO: cada materia existe; Primaria en sesiones de 45 minutos", () => {
+    const slugs = new Set(listaDeMaterias().map((m) => m.slug));
+    for (const [etapa, prefijo] of [["primaria", "primaria-"], ["bachillerato", "bachillerato-"]]) {
+      for (const slug of Object.keys(horario(etapa)).filter((k) => !k.startsWith("_"))) assert.ok(slugs.has(prefijo + slug), `${etapa}: ${slug}`);
+    }
+    assert.equal(horario("primaria")._minutos.matematicas["1"], 225);
+    assert.equal(sesionesSemanales("primaria-matematicas", 1), 5);
+    assert.equal(sesionesSemanales("primaria-educacion-fisica", 6), 3, "135 minutos en el tercer ciclo");
+    assert.equal(sesionesSemanales("primaria-educacion-en-valores-civicos-y-eticos", 4), null);
+    assert.equal(sesionesSemanales("matematicas", 1), 4, "ESO no cambia");
+  });
+
   test("una materia que no existe (o un nombre raro) no se busca en el disco", () => {
     assert.equal(materiaPorSlug("no-existe"), null);
     assert.equal(materiaPorSlug("../package"), null);
     assert.equal(curriculoDeCurso("no-existe", 1), null);
+    assert.equal(materiaPorSlug("primaria-no-existe"), null);
+    assert.equal(materiaPorSlug("bachillerato-../x"), null);
   });
 
   for (const url of ["/api/v1/recursos/curriculo", "/api/v1/recursos/curriculo/matematicas?curso=1"]) {
