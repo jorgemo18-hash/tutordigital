@@ -1,6 +1,7 @@
 import { createPantallaDeHojas } from "./pantallaDeHojas.js";
 import { createPantallaDeCurriculo } from "./curriculo/pantallaDeCurriculo.js";
 import { createPantallaDeProgramaciones } from "./programacion/pantallaDeProgramaciones.js";
+import { createPantallaDeHojasIA } from "./hojasIA/pantallaDeHojasIA.js";
 import { montarRecursosConPestanas } from "./recursosConPestanas.js";
 import { crearApiDeRecursos } from "./apiRecursos.js";
 import { EVENTO_ASIGNATURA } from "../features/eventoDeAsignatura.js";
@@ -10,7 +11,7 @@ import { avisarCambioDeTareas } from "../features/eventoDeTareas.js";
 // catálogo del generador y la primera hoja son peticiones que la mayoría de
 // visitas al panel (pasar lista, poner notas) no necesitan.
 //
-// Recursos: Hojas de ejercicios, Currículo y Programación
+// Recursos: Hojas de ejercicios, Hojas con IA, Currículo y Programación
 // (recursosConPestanas.js).
 //
 // `getAsignatura`: la que tiene elegida el profesor; si cambia, la pantalla
@@ -20,7 +21,7 @@ export function crearMontajeDeRecursos({
   raiz, centro = "", getAsignatura = () => "", getGrupos = () => [], getGrupoActivo = () => null,
   crearPantallaFn = createPantallaDeHojas,
   crearCurriculoFn = createPantallaDeCurriculo,
-  crearProgramacionesFn = createPantallaDeProgramaciones, doc = globalThis.document,
+  crearProgramacionesFn = createPantallaDeProgramaciones, crearHojasIAFn = createPantallaDeHojasIA, doc = globalThis.document,
 }) {
   let recursos = null;
   doc?.addEventListener?.(EVENTO_ASIGNATURA, () => recursos?.revisarAsignatura());
@@ -32,6 +33,7 @@ export function crearMontajeDeRecursos({
         hojas: () => crearPantallaFn({
           centro, getAsignatura, getGrupos, getGrupoActivo, onTareaCreada: () => avisarCambioDeTareas(doc),
         }),
+        hojasIA: () => crearHojasIAFn({ api: crearApiDeRecursos(), centro, doc }),
         curriculo: () => crearCurriculoFn({ api: crearApiDeRecursos(), getAsignatura, doc }),
         programacion: () => crearProgramacionesFn({ api: crearApiDeRecursos(), centro, getAsignatura, doc }),
       },

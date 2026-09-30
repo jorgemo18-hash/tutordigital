@@ -109,8 +109,8 @@ export async function run({ test, assert }) {
     return m;
   }
 
-  test("RECURSOS tiene una tercera pestaña: Programación", () => {
-    assert.deepEqual(PESTANAS.map(([c]) => c), ["hojas", "curriculo", "programacion"]);
+  test("RECURSOS tiene sus pestañas: Hojas, Hojas con IA, Currículo y Programación", () => {
+    assert.deepEqual(PESTANAS.map(([c]) => c), ["hojas", "hojasIA", "curriculo", "programacion"]);
   });
 
   test("LISTA vacía: lo dice; crear manda materia (la del profesor), curso y título, y abre el editor", async () => {

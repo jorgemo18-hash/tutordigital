@@ -389,8 +389,8 @@ export async function run({ test, assert }) {
     al(); al(); al();
     assert.equal(hojas, 1);
     assert.equal(curriculo, 0, "no se carga hasta que se abre");
-    raiz.querySelectorAll(".rc-subnav__btn")[1].click();
-    raiz.querySelectorAll(".rc-subnav__btn")[1].click();
+    raiz.querySelectorAll(".rc-subnav__btn")[2].click();
+    raiz.querySelectorAll(".rc-subnav__btn")[2].click();
     assert.equal(curriculo, 1);
     assert.equal(raiz.querySelector('[data-sub="hojas"]').hidden, true);
   });

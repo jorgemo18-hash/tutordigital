@@ -31,6 +31,16 @@ function lee(url) {
   return cache.get(clave);
 }
 
+// Qué etapas, materias y cursos tienen referencias: [{ etapa, materia, curso, temas }].
+export function cursosConReferencias() {
+  if (!existsSync(DATOS)) return [];
+  const dirs = (url) => readdirSync(url, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name).sort();
+  return dirs(DATOS).flatMap((etapa) => dirs(new URL(`${etapa}/`, DATOS)).flatMap((materia) =>
+    dirs(new URL(`${etapa}/${materia}/`, DATOS)).map((c) => ({
+      etapa, materia, curso: Number(c), temas: temasConReferencias({ etapa, materia, curso: Number(c) }).length,
+    }))));
+}
+
 // Los temas que tienen referencias en ese curso: [{ tema, titulo, saberes, ejercicios }].
 export function temasConReferencias(donde) {
   const dir = carpeta(donde);

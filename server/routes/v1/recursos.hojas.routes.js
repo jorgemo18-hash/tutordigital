@@ -1,6 +1,7 @@
 import { crearRutasDeHojas } from "./hojas/rutasDeHojas.js";
 import { crearRutaDeInterpretar } from "./hojas/rutaDeInterpretar.js";
 import { crearRutasDeHojasGuardadas } from "./hojas/rutasDeHojasGuardadas.js";
+import { crearRutasDeHojasIA } from "./hojas/rutasDeHojasIA.js";
 
 // El generador de hojas en RECURSOS del panel del profesor de instituto
 // (diseño de Claude Design, 23/9). Las mismas rutas que la academia
@@ -13,4 +14,6 @@ export default async function recursosHojasRoutes(app) {
   // Guardar con código y volver a abrir (paso 2). De momento solo en
   // Recursos: la sección de la academia sigue imprimiendo sin código.
   await app.register(crearRutasDeHojasGuardadas({ roles: ROLES }));
+  // Hojas escritas por la IA para los temas sin generador propio (fase 3).
+  await app.register(crearRutasDeHojasIA({ roles: ROLES }));
 }

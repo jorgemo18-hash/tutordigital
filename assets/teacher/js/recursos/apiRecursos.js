@@ -59,5 +59,9 @@ export function crearApiDeRecursos(deps) {
     creaTarea: (cuerpo) => callJsonFn("/api/v1/tasks", { method: "POST", headers: json, body: JSON.stringify(cuerpo) }),
     subeAdjunto: (cuerpo) => callJsonFn("/api/v1/attachments", { method: "POST", headers: json, body: JSON.stringify(cuerpo) }),
     abrir: (id) => callJsonFn(`${BASE_HOJAS}/guardadas/${encodeURIComponent(id)}`),
+    // Hojas escritas por la IA (server/lib/hojasIA/), para los temas sin generador.
+    disponiblesIA: () => callJsonFn(`${BASE_HOJAS}/ia/disponibles`),
+    temasIA: ({ etapa, materia, curso }) => callJsonFn(`${BASE_HOJAS}/ia/temas?etapa=${encodeURIComponent(etapa)}&materia=${encodeURIComponent(materia)}&curso=${curso}`),
+    generaHojaIA: (cuerpo) => callJsonFn(`${BASE_HOJAS}/ia/generar`, { method: "POST", headers: json, body: JSON.stringify(cuerpo) }),
   };
 }

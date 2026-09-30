@@ -50,9 +50,9 @@ export async function run({ test, assert }) {
       assert.equal(creadas[0].centro, "IES");
       assert.equal(creadas[0].getAsignatura(), "Música");
       assert.equal(revisada, 1, "al volver a la pestaña se revisa la asignatura");
-      // Tres pestañas dentro de Recursos: Hojas (abierta), Currículo y Programación.
+      // Cuatro pestañas dentro de Recursos: Hojas (abierta), Hojas con IA, Currículo y Programación.
       const pestanas = [...pageEl.querySelectorAll(".rc-subnav__btn")].map((b) => b.textContent);
-      assert.deepEqual(pestanas, ["Hojas de ejercicios", "Currículo", "Programación"]);
+      assert.deepEqual(pestanas, ["Hojas de ejercicios", "Hojas con IA", "Currículo", "Programación"]);
     } finally {
       globalThis.window = prev.window;
       globalThis.document = prev.document;
