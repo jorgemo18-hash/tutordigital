@@ -1,4 +1,5 @@
 import { confirmarYEjecutar } from "../confirmarYEjecutar.js";
+import { alumnosDelInforme } from "../alumnosDelInforme.js";
 
 function formatFecha(iso) {
   return new Date(iso).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -58,7 +59,7 @@ export async function regenerarFamilia(opcion, {
   }
 
   if (opcion.tipo !== "solo_recibo") {
-    for (const alumno of item.alumnos_activos) {
+    for (const alumno of alumnosDelInforme(item)) {
       resultado.informes.push(
         await confirmarYEjecutar(
           (confirmar) => generarInformeFn({ alumno_id: alumno.id, ...periodoInforme, forzar: true, confirmar }),

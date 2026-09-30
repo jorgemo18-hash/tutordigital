@@ -1,4 +1,5 @@
 import { buildDiasTable } from "./diasTable.js";
+import { nombreConBaja } from "./alumnosDelInforme.js";
 import { buildRegenerarBoton } from "./regenerarBoton.js";
 
 function buildBtn(texto, claseExtra) {
@@ -28,7 +29,7 @@ export function buildInformeCard(alumno, { mes, anio, api }) {
 
   const nombre = document.createElement("div");
   nombre.className = "ef-informe-card-nombre";
-  nombre.textContent = alumno.curso ? `${alumno.nombre} · ${alumno.curso}` : alumno.nombre;
+  nombre.textContent = alumno.curso ? `${nombreConBaja(alumno)} · ${alumno.curso}` : nombreConBaja(alumno);
   card.appendChild(nombre);
 
   const cuerpo = document.createElement("div");

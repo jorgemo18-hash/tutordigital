@@ -16,6 +16,7 @@ import { evaluarConfirmacionEnvioFamilia } from "./confirmacionEnvioFamilia.js";
 import { estadoTrasEnvio } from "../academiaRecibos/estadoEnvio.js";
 import { buildRemitente } from "./remitente.js";
 import { periodoDelInforme } from "../../../assets/shared/js/periodosDeEnvio.js";
+import { fetchBajasDelPeriodo } from "../academiaInformes/alumnosDeBaja.js";
 
 const TEXTO_POR_TIPO = {
   completo: { campo: "email_texto_completo", fallback: DEFAULT_TEXTO_COMPLETO },
@@ -79,7 +80,11 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   // modos, así que no puede "requerir confirmación".
   const informesElegibles = [];
   if (incluyeInformes) {
-    for (const alumno of alumnosActivos) {
+    // Los de baja desde el mes del informe también reciben el suyo: es un mes
+    // de clases que la familia pagó (ver academiaInformes/alumnosDeBaja.js).
+    const { porFamilia: bajas, error: bajasErr } = await fetchBajasDelPeriodo(admin, tenantId, periodoInforme, { familiaId });
+    if (bajasErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo comprobar los informes." };
+    for (const alumno of [...alumnosActivos, ...(bajas[familiaId] || [])]) {
       const { informe: existente, error: informeErr } = await fetchInformeExistente(admin, tenantId, alumno.id, periodoInforme);
       if (informeErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo comprobar los informes." };
       if (!existente?.comentario) continue;

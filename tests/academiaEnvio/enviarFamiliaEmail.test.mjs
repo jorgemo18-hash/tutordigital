@@ -416,4 +416,17 @@ export async function run({ test, assert }) {
     assert.deepEqual(periodoDelInforme({ mes: 10, anio: 2026 }, "mismo_mes"), { mes: 10, anio: 2026 });
     assert.deepEqual(periodoDelInforme({ mes: 10, anio: 2026 }, "otra cosa"), { mes: 9, anio: 2026 }, "un valor raro cae al modo por defecto");
   });
+  test("un alumno de baja desde el mes del informe recibe su informe; sin él el informe no saldría", async () => {
+    const admin = fixture({ modoEnvio: "informe_mes_anterior", mesInformes: 6, informesDeAlumnos: { a2: "Comentario de Luis" } });
+    const luis = admin._state.tables.academia_alumnos.find((a) => a.id === "a2");
+    Object.assign(luis, { activo: false, fecha_baja: "2026-06-30" });
+    admin._state.tables.academia_sesiones.push({ id: "s-luis", tenant_id: TENANT_ID, alumno_id: "a2", tipo: "clase", fecha: "2026-06-15" });
+    const fakes = fakesOk();
+    const resultado = await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test", ...fakes,
+    });
+    assert.equal(resultado.ok, true, resultado.motivo);
+    assert.equal(resultado.informesAdjuntados, 1);
+    assert.ok(fakes.llamadas.email[0].attachments.some((a) => a.filename.includes("luis")), "va el informe de junio de Luis");
+  });
 }

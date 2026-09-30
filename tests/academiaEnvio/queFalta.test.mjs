@@ -58,4 +58,17 @@ export async function run({ test, assert }) {
     assert.equal(item.alumnos_activos[0].informe_redactado, true);
     assert.deepEqual(queFalta([item], ctx).map((c) => c.clave), ["recibos"]);
   });
+  test("una familia cuyo único alumno se dio de baja sigue en la lista si tiene informe, y su informe cuenta como pendiente", async () => {
+    const { separarPorAlumnosActivos } = await import("../../assets/academia/admin/js/sections/envioFamilias/familiasSinActivos.js");
+    const soloBaja = {
+      familia_id: "f9", familia_nombre: "Gil", recibo: null, alumnos_activos: [],
+      alumnos_informe: [alumno("a9", "Nora", { de_baja: true })],
+    };
+    const { conActivos, sinActivos } = separarPorAlumnosActivos([soloBaja]);
+    assert.equal(conActivos.length, 1);
+    assert.equal(sinActivos.length, 0);
+    const categorias = queFalta([soloBaja], ctx);
+    assert.deepEqual(categorias.find((c) => c.clave === "informes").personas.map((p) => p.etiqueta), ["Nora (Gil)"]);
+    assert.equal(categorias.find((c) => c.clave === "recibos"), undefined, "sin alumnos activos no le falta ningún recibo");
+  });
 }

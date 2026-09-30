@@ -1,4 +1,5 @@
 import { compararNombres } from "../../../../../shared/js/ordenAlumnos.js";
+import { alumnosDelInforme } from "./alumnosDelInforme.js";
 
 // "LO QUE FALTA" PARA PODER HACER EL ENVÍO DEL MES, en Envío a familias.
 //
@@ -30,10 +31,12 @@ const MESES = [
 export function queFalta(familias = [], { mes, periodoInforme } = {}) {
   const mesInforme = (periodoInforme || { mes }).mes;
   const sinRecibo = familias
-    .filter((f) => !f.recibo)
+    // Sin alumnos activos no hay recibo que crear (una familia que solo
+    // está por el informe de un alumno de baja, ver alumnosDelInforme.js).
+    .filter((f) => !f.recibo && (f.alumnos_activos || []).length)
     .map((f) => ({ familiaId: f.familia_id, etiqueta: f.familia_nombre || "(sin nombre)" }));
   const sinInforme = familias.flatMap((f) =>
-    (f.alumnos_activos || [])
+    alumnosDelInforme(f)
       .filter((a) => a.tiene_sesiones && !a.informe_redactado && !a.informe_enviado_at)
       .map((a) => ({ familiaId: f.familia_id, etiqueta: `${a.nombre} (${f.familia_nombre || "sin familia"})` }))
   );

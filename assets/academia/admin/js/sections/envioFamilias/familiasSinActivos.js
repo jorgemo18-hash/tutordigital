@@ -1,3 +1,4 @@
+import { alumnosDelInforme } from "./alumnosDelInforme.js";
 // LAS FAMILIAS QUE NO PUEDEN RECIBIR NADA ESTE MES, fuera de la lista.
 //
 // EL PROBLEMA (Jorge, 12/09/2026): *"en envío a familias no tiene sentido que
@@ -33,7 +34,9 @@ export function separarPorAlumnosActivos(items = []) {
   const conActivos = [];
   const sinActivos = [];
   for (const item of items || []) {
-    ((item?.alumnos_activos || []).length ? conActivos : sinActivos).push(item);
+    // Con alumno de baja cuyo informe falta por mandar, también es
+    // accionable: sin recibo, pero con informe (ver alumnosDelInforme.js).
+    ((item?.alumnos_activos || []).length || alumnosDelInforme(item).length ? conActivos : sinActivos).push(item);
   }
   return { conActivos, sinActivos };
 }

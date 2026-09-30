@@ -1,5 +1,6 @@
 import { buildIcon } from "../../icons.js";
 import { calcularEstadoFamilia, claseDotEstado } from "./estadoFamilia.js";
+import { alumnosDelInforme, nombreConBaja } from "./alumnosDelInforme.js";
 
 // LOS NOMBRES DE LOS ALUMNOS, NO LOS CURSOS. Jorge, 23/09: *"aparece el
 // nombre de la familia para mandar los informes y recibos, pero yo conozco el
@@ -11,7 +12,7 @@ import { calcularEstadoFamilia, claseDotEstado } from "./estadoFamilia.js";
 // distinguir familias con el mismo apellido y para eso el nombre del alumno
 // sirve mejor. Los cursos siguen estando en el panel de la derecha.
 function alumnosDeFamilia(item) {
-  return item.alumnos_activos.map((a) => a.nombre).filter(Boolean).join(", ");
+  return alumnosDelInforme(item).map(nombreConBaja).filter(Boolean).join(", ");
 }
 
 function buildFila(item, { selected, onSelect, tieneError }) {

@@ -1,4 +1,5 @@
 import { explicarMotivoEntrega } from "./motivoEntrega.js";
+import { alumnosDelInforme } from "./alumnosDelInforme.js";
 import { esProblemaDeEntrega } from "../../../../../shared/js/estadosEntrega.js";
 
 const MESES_CORTOS = [null, "ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
@@ -28,7 +29,7 @@ function formatFechaCorta(iso) {
 // `fecha_envio` es el único dato que dice si el email salió — es lo que ya
 // usa marcarPago.js para decidir el estado al desmarcar un cobro.
 export function pendientesDeFamilia(item) {
-  const alumnosConSesiones = item.alumnos_activos.filter((a) => a.tiene_sesiones);
+  const alumnosConSesiones = alumnosDelInforme(item).filter((a) => a.tiene_sesiones);
   return {
     reciboPendiente: Boolean(item.recibo) && !item.recibo.fecha_envio,
     alumnosInformePendientes: alumnosConSesiones.filter((a) => !a.informe_enviado_at),

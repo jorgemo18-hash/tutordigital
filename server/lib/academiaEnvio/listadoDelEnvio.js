@@ -3,13 +3,20 @@ import {
 } from "../academiaRecibos/consultas.js";
 import { fetchUltimoEnvioPorFamilia } from "./consultasEnvios.js";
 import { fetchPeriodoDelInforme } from "./consultas.js";
+import { fetchBajasDelPeriodo } from "../academiaInformes/alumnosDeBaja.js";
 
 // Exportado para los tests: lo que se arma aquí lo lee el panel por el
 // nombre de cada clave, y una clave que se renombra o se olvida no da
 // ningún error — la pantalla simplemente deja de pintar ese dato. Es el
 // mismo fallo silencioso que el `reply_to` que no llegaba a Resend, así que
 // el viaje se comprueba de punta a punta (ver tests/academiaEnvio).
-export function buildListItem({ familia, alumnosActivos, recibo, conSesiones, informesEnviados, informesRedactados = new Set(), ultimoEnvio = null }) {
+export function buildListItem({ familia, alumnosActivos, bajas = [], recibo, conSesiones, informesEnviados, informesRedactados = new Set(), ultimoEnvio = null }) {
+  const conInforme = (a) => ({
+    ...a,
+    tiene_sesiones: conSesiones.has(a.id),
+    informe_enviado_at: informesEnviados[a.id] || null,
+    informe_redactado: informesRedactados.has(a.id),
+  });
   return {
     familia_id: familia.id,
     familia_nombre: familia.nombre,
@@ -18,12 +25,11 @@ export function buildListItem({ familia, alumnosActivos, recibo, conSesiones, in
     recibo: recibo
       ? { id: recibo.id, estado: recibo.estado, total_neto: recibo.total_neto, fecha_envio: recibo.fecha_envio }
       : null,
-    alumnos_activos: alumnosActivos.map((a) => ({
-      ...a,
-      tiene_sesiones: conSesiones.has(a.id),
-      informe_enviado_at: informesEnviados[a.id] || null,
-      informe_redactado: informesRedactados.has(a.id),
-    })),
+    // Los del RECIBO: activos que ya han empezado.
+    alumnos_activos: alumnosActivos.map(conInforme),
+    // Los del INFORME: los mismos más los que se dieron de baja en el mes
+    // del informe o después (ver academiaInformes/alumnosDeBaja.js).
+    alumnos_informe: [...alumnosActivos, ...bajas].map(conInforme),
     tiene_hermanos: alumnosActivos.length > 1,
     // El ÚLTIMO email que le mandamos a esta familia y si llegó (migración
     // 122). null = no hay ninguno registrado, que es lo normal en todo lo
@@ -52,8 +58,10 @@ export async function fetchListadoDelEnvio(admin, tenantId, { mes, anio }, { log
     fetchPeriodoDelInforme(admin, tenantId, { mes, anio }),
   ]);
   if (itemsErr || recibosErr) return { error: itemsErr || recibosErr };
+  const { porFamilia: bajasPorFamilia, error: bajasErr } = await fetchBajasDelPeriodo(admin, tenantId, periodoInforme);
+  if (bajasErr) return { error: bajasErr };
 
-  const alumnoIds = items.flatMap((item) => item.alumnosActivos.map((a) => a.id));
+  const alumnoIds = items.flatMap((item) => [...item.alumnosActivos, ...(bajasPorFamilia[item.familia.id] || [])].map((a) => a.id));
   const [{ conSesiones, error: sesionesErr }, { porAlumno: informesEnviados, redactados: informesRedactados, error: informesErr }] = await Promise.all([
     fetchAlumnosConSesionesMes(admin, tenantId, alumnoIds, periodoInforme),
     fetchInformesEnviadosMes(admin, tenantId, alumnoIds, periodoInforme),
@@ -68,6 +76,7 @@ export async function fetchListadoDelEnvio(admin, tenantId, { mes, anio }, { log
   const lista = items.map((item) =>
     buildListItem({
       ...item,
+      bajas: bajasPorFamilia[item.familia.id] || [],
       recibo: porFamilia[item.familia.id] || null,
       conSesiones,
       informesEnviados,

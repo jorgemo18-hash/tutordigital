@@ -1,4 +1,5 @@
 import { buildRegenerarBoton } from "../regenerarBoton.js";
+import { alumnosDelInforme } from "../alumnosDelInforme.js";
 import { elegirAccion } from "../elegirAccionDialog.js";
 import { opcionesFamilia } from "./opcionesAccion.js";
 import { regenerarFamilia, enviarFamiliaAccion } from "./accionesFamilia.js";
@@ -28,7 +29,7 @@ export function buildAccionesFamilia(item, { mes, anio, periodoInforme, api, onA
     textoOk: "✓ Regenerado",
     claseExtra: "copper",
     ejecutar: async () => {
-      const opcion = await elegirAccionFn({ titulo: "¿Qué quieres regenerar?", opciones: opcionesFamilia("Regenerar", item.alumnos_activos) });
+      const opcion = await elegirAccionFn({ titulo: "¿Qué quieres regenerar?", opciones: opcionesFamilia("Regenerar", alumnosDelInforme(item)) });
       if (!opcion) throw cancelado();
       const resultado = await regenerarFamilia(opcion, {
         item, mes, anio, periodoInforme,
@@ -48,7 +49,7 @@ export function buildAccionesFamilia(item, { mes, anio, periodoInforme, api, onA
     textoOk: "✓ Enviado",
     claseExtra: "primary",
     ejecutar: async () => {
-      const opcion = await elegirAccionFn({ titulo: "¿Qué quieres enviar?", opciones: opcionesFamilia("Enviar", item.alumnos_activos) });
+      const opcion = await elegirAccionFn({ titulo: "¿Qué quieres enviar?", opciones: opcionesFamilia("Enviar", alumnosDelInforme(item)) });
       if (!opcion) throw cancelado();
       const resultado = await enviarFamiliaAccion(opcion, {
         item, mes, anio, periodoInforme,

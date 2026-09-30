@@ -11,6 +11,7 @@ import { editarComentarioInforme } from "../../lib/academiaInformes/editarComent
 import { fetchInformePreview } from "../../lib/academiaInformes/preview.js";
 import { fetchInformeExistente } from "../../lib/academiaInformes/consultas.js";
 import { evaluarConfirmacionInformes } from "../../lib/academiaInformes/confirmacionRegenerar.js";
+import { fetchBajasDelPeriodo } from "../../lib/academiaInformes/alumnosDeBaja.js";
 import { fetchFamiliasConAlumnos, fetchInformesEnviadosMes } from "../../lib/academiaRecibos/consultas.js";
 import { getPdfServiceUrl } from "../../lib/pdfService/url.js";
 
@@ -164,7 +165,17 @@ export default async function academiaInformesRoutes(app) {
       req.log.error({ err: itemsErr, requestId }, "academia informes regenerar: fetch familias failed");
       return fail(reply, 500, "informes_fetch_failed", "Failed to fetch familias", requestId);
     }
-    const alumnoIds = items.flatMap(({ alumnosActivos }) => alumnosActivos.map((a) => a.id));
+    // Con los que se dieron de baja ese mes o después: también tienen su
+    // informe (ver academiaInformes/alumnosDeBaja.js).
+    const { porFamilia: bajas, error: bajasErr } = await fetchBajasDelPeriodo(admin, tenantId, { mes, anio });
+    if (bajasErr) {
+      req.log.error({ err: bajasErr, requestId }, "academia informes regenerar: fetch bajas failed");
+      return fail(reply, 500, "informes_fetch_failed", "Failed to fetch familias", requestId);
+    }
+    const alumnoIds = [
+      ...items.flatMap(({ alumnosActivos }) => alumnosActivos.map((a) => a.id)),
+      ...Object.values(bajas).flat().map((a) => a.id),
+    ];
 
     const { porAlumno: informesEnviados, error: informesErr } = await fetchInformesEnviadosMes(admin, tenantId, alumnoIds, { mes, anio });
     if (informesErr) {

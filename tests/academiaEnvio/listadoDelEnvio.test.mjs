@@ -35,4 +35,26 @@ export async function run({ test, assert }) {
     assert.equal(lista[0].alumnos_activos[0].tiene_sesiones, false);
     assert.equal(lista[0].alumnos_activos[0].informe_enviado_at, null);
   });
+  // BAJAS A FINAL DE MES (30/09/2026): quien se va al acabar septiembre sigue
+  // teniendo su informe de septiembre en el envío de octubre, pero no recibo.
+  test("un alumno de baja desde el mes del informe sale en el informe, no en el recibo", async () => {
+    const admin = mundo("informe_mes_anterior");
+    const t = admin._state.tables;
+    t.academia_alumnos.push(
+      { id: "a2", tenant_id: "t1", nombre: "Nora", curso: "3.º ESO", familia_id: "f1", fecha_alta: "2025-09-01", activo: false, fecha_baja: "2026-10-02" },
+      { id: "a3", tenant_id: "t1", nombre: "Vieja", curso: "4.º ESO", familia_id: "f1", fecha_alta: "2024-09-01", activo: false, fecha_baja: "2026-08-20" },
+      { id: "a4", tenant_id: "t1", nombre: "Pendiente", curso: "1.º ESO", familia_id: "f1", fecha_alta: "2026-09-01", activo: false, fecha_baja: null },
+      // Archivada en septiembre sin una sola clase (una limpieza de fichas):
+      // no tiene informe que recibir.
+      { id: "a5", tenant_id: "t1", nombre: "Sin clases", curso: "2.º ESO", familia_id: "f1", fecha_alta: "2026-09-01", activo: false, fecha_baja: "2026-09-16" },
+    );
+    t.academia_sesiones.push({ id: "s2", tenant_id: "t1", alumno_id: "a2", tipo: "clase", fecha: "2026-09-20" });
+    const { lista } = await fetchListadoDelEnvio(admin, "t1", { mes: 10, anio: 2026 });
+    const [familia] = lista;
+    assert.deepEqual(familia.alumnos_activos.map((a) => a.nombre), ["Eric"]);
+    assert.deepEqual(familia.alumnos_informe.map((a) => a.nombre), ["Eric", "Nora"]);
+    const nora = familia.alumnos_informe.find((a) => a.nombre === "Nora");
+    assert.equal(nora.de_baja, true);
+    assert.equal(nora.tiene_sesiones, true);
+  });
 }
