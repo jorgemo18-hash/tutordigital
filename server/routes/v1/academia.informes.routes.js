@@ -258,6 +258,7 @@ export default async function academiaInformesRoutes(app) {
       apiKey,
       pdfServiceUrl,
       confirmar: parsed.data.confirmar,
+      logWarnFn: (obj, msg) => req.log.warn({ ...obj, requestId }, msg),
     });
 
     if (!resultado.ok) {

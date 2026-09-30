@@ -206,6 +206,22 @@ export async function fetchImpactoHorario({ franja_inicio, franja_fin, franja_in
 // según el modo del centro (ver assets/shared/js/periodosDeEnvio.js). Lo
 // decide el servidor y el panel lo usa tal cual, para que la pantalla y el
 // correo nunca hablen de meses distintos.
+// Los PDF exactos que recibió una familia (migración 147), del último al
+// primero, y el archivo de uno de ellos.
+export async function fetchDocumentosEnviados({ familia_id, tipo, mes, anio, alumno_id = null }) {
+  const params = new URLSearchParams({ familia_id, tipo, mes: String(mes), anio: String(anio) });
+  if (alumno_id) params.set("alumno_id", alumno_id);
+  const data = await callJson(`/api/v1/academia/recibos/enviados?${params.toString()}`);
+  return data.documentos || [];
+}
+
+export async function descargarDocumentoEnviado(id) {
+  const res = await apiFetch(`/api/v1/academia/recibos/enviados/${id}/archivo`);
+  if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
+  if (!res.ok) throw new Error("No se pudo abrir el PDF enviado.");
+  return res.blob();
+}
+
 export async function fetchRecibos({ mes, anio }) {
   const data = await callJson(`/api/v1/academia/recibos?mes=${mes}&anio=${anio}`);
   return { recibos: data.recibos || [], periodoInforme: data.periodo_informe || { mes, anio } };

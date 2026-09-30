@@ -17,6 +17,7 @@ import { estadoTrasEnvio } from "../academiaRecibos/estadoEnvio.js";
 import { buildRemitente } from "./remitente.js";
 import { periodoDelInforme } from "../../../assets/shared/js/periodosDeEnvio.js";
 import { fetchBajasDelPeriodo } from "../academiaInformes/alumnosDeBaja.js";
+import { guardarDocumentosEnviados } from "./documentosEnviados.js";
 
 const TEXTO_POR_TIPO = {
   completo: { campo: "email_texto_completo", fallback: DEFAULT_TEXTO_COMPLETO },
@@ -44,6 +45,7 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   generarInformePdfFn = generarInformePdf,
   enviarEmailFn = sendReciboEmail,
   registrarEnvioEmailFn = registrarEnvioEmail,
+  guardarDocumentosEnviadosFn = guardarDocumentosEnviados,
   // Un fallo al registrar el envío no es un aviso para el admin (él no
   // puede hacer nada y el email ya salió), pero tampoco puede quedar
   // mudo: quien llama pasa su logger.
@@ -179,7 +181,7 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   // 200 de Resend significa "aceptado", no "entregado", y el rebote llega
   // después por webhook — pero solo se puede atribuir a este recibo si el
   // id que devolvió Resend queda guardado aquí.
-  const { error: registroErr } = await registrarEnvioEmailFn(admin, {
+  const { envioId, error: registroErr } = await registrarEnvioEmailFn(admin, {
     tenantId,
     resendEmailId: enviado?.id || null,
     destinatario: familia.email,
@@ -191,6 +193,19 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   // No es un aviso para el admin: él no puede hacer nada con esto y el
   // email salió bien. Es una pérdida de trazabilidad, y va al log.
   if (registroErr) logWarnFn({ err: registroErr }, "envio de email no registrado");
+
+  // El PDF EXACTO que ha recibido la familia (migración 147). Tampoco puede
+  // deshacer nada: si falla, al log.
+  const documentos = [
+    ...(reciboBuffer ? [{ tipo: "recibo", buffer: reciboBuffer, nombreArchivo: attachments[0].filename, mes, anio, reciboId: recibo.id }] : []),
+    ...informesAdjuntados.map((inf) => ({
+      tipo: "informe", buffer: inf.buffer, nombreArchivo: nombreArchivoInforme(inf.nombre, periodoInforme.mes, periodoInforme.anio),
+      mes: periodoInforme.mes, anio: periodoInforme.anio, alumnoId: inf.alumnoId,
+    })),
+  ];
+  const guardado = await guardarDocumentosEnviadosFn(admin, { tenantId, envioId: envioId || null, familiaId: familia.id, destinatario: familia.email, documentos })
+    .catch((err) => ({ errores: [{ error: err }] }));
+  if (guardado?.errores?.length) logWarnFn({ errores: guardado.errores }, "pdf enviado no guardado");
 
   if (reciboBuffer) {
     const { error: reciboUpdErr } = await admin

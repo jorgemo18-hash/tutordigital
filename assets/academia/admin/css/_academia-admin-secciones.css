@@ -561,3 +561,10 @@ select.ac-fiscal-selector-trimestre, select.ac-fiscal-selector-anio { width: aut
 /* Lo cobrado de verdad ese mes, bajo el tick de la cuadrícula de Ingresos
    (ver finanzas/ingresos/vistaHistorial.js). */
 .ac-ingreso-celda-importe { font-size: 11px; opacity: .7; margin-top: 2px; white-space: nowrap; }
+
+/* "Enviado el 5 oct. a las 10:32 · Ver el PDF enviado" (ver
+   envioFamilias/pdfEnviado.js). Vacío mientras no haya envíos. */
+.ef-pdf-enviado { margin: 0; font-size: 12.5px; opacity: .85; }
+.ef-pdf-enviado:empty { display: none; }
+.ef-pdf-enviado-ver { font: inherit; background: none; border: 0; padding: 0; color: var(--copper-soft, #d99c66); text-decoration: underline; cursor: pointer; }
+.ac-claro .ef-pdf-enviado-ver { color: #8b5722; }

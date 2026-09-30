@@ -8,6 +8,7 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 import { fetchHermanosConDescuentosActivos } from "../../lib/academiaDescuentos/consultas.js";
 import { marcarBajaYCerrarHorario, restaurarAlumno } from "../../lib/academiaAlumnoHelpers.js";
 import { borrarArchivoPrivado } from "../../lib/academiaStorage/archivoPrivado.js";
+import { quitarInformesEnviadosDelAlumno } from "../../lib/academiaEnvio/documentosEnviados.js";
 
 const ParamsSchema = z.object({ id: z.string().uuid() });
 
@@ -171,6 +172,14 @@ export default async function academiaAlumnosArchivarRoutes(app) {
       return fail(reply, 409, "alumno_not_archived", "Solo se puede eliminar definitivamente un alumno ya archivado", requestId);
     }
 
+    // Los PDF de sus informes enviados (migración 147): las filas antes de
+    // borrar al alumno, porque después su alumno_id ya sería null.
+    const { rutas: informesEnviados, error: enviadosErr } = await quitarInformesEnviadosDelAlumno(admin, auth.tenant.id, parsedParams.data.id);
+    if (enviadosErr) {
+      req.log.error({ err: enviadosErr, requestId }, "academia alumno delete: informes enviados failed");
+      return fail(reply, 500, "alumno_delete_failed", "Failed to delete alumno", requestId);
+    }
+
     const { error } = await admin
       .from("academia_alumnos")
       .delete()
@@ -191,6 +200,7 @@ export default async function academiaAlumnosArchivarRoutes(app) {
     // Va después del delete y sin bloquear la respuesta si falla: la fila ya
     // no existe, y devolver un error aquí haría pensar que el alumno sigue.
     await borrarArchivoPrivado(admin, alumnoCheck.alumno.ficha_path);
+    for (const ruta of informesEnviados) await borrarArchivoPrivado(admin, ruta);
 
     return ok(reply, { deleted: true, id: parsedParams.data.id }, requestId);
   });

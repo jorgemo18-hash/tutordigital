@@ -29,7 +29,7 @@ export function mensajeEliminarAlumno(nombre) {
   return [
     `¿Eliminar definitivamente a ${nombre}?`,
     "",
-    "Se borrará TODO su historial: el diario de clases, sus informes, sus notas de examen, sus pagos y su histórico de precios. También su ficha de inscripción escaneada.",
+    "Se borrará TODO su historial: el diario de clases, sus informes (también los PDF que se enviaron a la familia), sus notas de examen, sus pagos y su histórico de precios. También su ficha de inscripción escaneada.",
     "",
     "Los recibos y facturas ya emitidos se conservan, pero dejarán de estar asociados a su nombre.",
     "",

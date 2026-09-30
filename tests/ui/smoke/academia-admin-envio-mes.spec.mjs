@@ -27,6 +27,10 @@ async function abrir(browser, { width = 1440, height = 900, seccion = "envio_fam
     "**/api/v1/academia/recibos/meses-enviados*": { data: { meses: [] } },
     "**/api/v1/academia/informes/*": { data: { dias: [], tieneSesionesClase: true, comentario: null, enviadoAt: null } },
     "**/api/v1/academia/config": { data: { config } },
+    "**/api/v1/academia/recibos/enviados?*": { data: { documentos: [
+      { id: "d2", enviado_at: "2026-10-05T11:00:00", nombre_archivo: "informe.pdf" },
+      { id: "d1", enviado_at: "2026-10-05T10:32:00", nombre_archivo: "informe.pdf" },
+    ] } },
   } });
   await page.goto(`/assets/academia/admin/index.html#${seccion}`, { waitUntil: "networkidle" });
   return { context, page };
@@ -45,7 +49,7 @@ test.describe("academia admin — envío del mes", () => {
     await expect(informes.locator("summary")).toHaveText("2 informes de septiembre sin redactar");
     await informes.locator("summary").click();
     const pedidas = [];
-    page.on("request", (r) => { if (r.url().includes("/academia/informes/")) pedidas.push(new URL(r.url()).searchParams.get("mes")); });
+    page.on("request", (r) => { if (r.method() === "GET" && r.url().includes("/academia/informes/")) pedidas.push(new URL(r.url()).searchParams.get("mes")); });
     await informes.getByRole("button", { name: "Aarón Val (Familia Val)" }).click();
     await expect(page.locator(".ef-tabs-row")).toBeVisible();
     // Los informes que enseña el panel son los de SEPTIEMBRE, no los de octubre.
@@ -92,6 +96,19 @@ test.describe("academia admin — envío del mes", () => {
     const { context, page } = await abrir(browser, { seccion: "finanzas" });
     await page.waitForTimeout(300);
     await expect(page.locator(".ac-aviso-envio")).toHaveCount(0);
+    await context.close();
+  });
+
+  // EL PDF EXACTO QUE SE ENVIÓ (migración 147): bajo cada informe, cuándo y
+  // cuántas veces, con un botón para verlo.
+  test("bajo el informe se lee cuándo se envió y se puede abrir el PDF enviado", async ({ browser }) => {
+    const { context, page } = await abrir(browser);
+    await page.locator('.ef-que-falta-categoria[data-clave="informes"] summary').click();
+    await page.getByRole("button", { name: "Aarón Val (Familia Val)" }).click();
+    const linea = page.locator(".ef-informe-card .ef-pdf-enviado").first();
+    await expect(linea).toContainText("Enviado el 5 oct. a las 11:00 (se ha enviado 2 veces; este es el último)");
+    await expect(linea.getByRole("button", { name: "Ver el PDF enviado" })).toBeVisible();
+    if (process.env.CAPTURAS) await page.screenshot({ path: `${process.env.CAPTURAS}/pdf-enviado.png` });
     await context.close();
   });
 });

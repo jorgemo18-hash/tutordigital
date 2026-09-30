@@ -1,4 +1,5 @@
 import { buildReciboEditor } from "./reciboEditor.js";
+import { buildPdfEnviado } from "./pdfEnviado.js";
 import { buildReciboPreview } from "./reciboPreview.js";
 import { buildRegenerarBoton } from "./regenerarBoton.js";
 import { buildCambiosDelRecibo } from "./historial/cambiosDelRecibo.js";
@@ -54,6 +55,7 @@ export function buildTabRecibo(item, { mes, anio, api, branding, onCambio }) {
         onGuardar: async (payload) => { await api.updateRecibo(recibo.id, payload); await cargar(recibo.id); onCambio(); },
       })
     );
+    wrap.appendChild(buildPdfEnviado({ api, familiaId: recibo.familia_id, tipo: "recibo", mes: recibo.mes, anio: recibo.anio }));
     wrap.appendChild(buildReciboPreview(recibo, { ...branding, textosExencion }));
     wrap.appendChild(buildCambiosDelRecibo({
       familiaId: recibo.familia_id, mes: recibo.mes, anio: recibo.anio, reciboId: recibo.id,

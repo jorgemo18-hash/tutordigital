@@ -103,4 +103,20 @@ export async function run({ test, assert }) {
     assert.equal(resultado.code, "pdf_failed");
     assert.equal(fakes.llamadas.email.length, 0);
   });
+  test("el informe enviado suelto también deja su PDF guardado y su correo registrado (para saber si rebota)", async () => {
+    const admin = fixture();
+    const fakes = fakesOk();
+    const guardados = [];
+    const registrados = [];
+    const resultado = await enviarInformeDeAlumno(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", alumnoId: ALUMNO_ID, mes: 7, anio: 2026,
+      apiKey: "no-se-usa-sin-sesiones", pdfServiceUrl: "http://pdf.test", ...fakes,
+      registrarEnvioEmailFn: async (_a, datos) => { registrados.push(datos); return { envioId: "e9", error: null }; },
+      guardarDocumentosEnviadosFn: async (_a, datos) => { guardados.push(datos); return { guardados: 1, errores: [] }; },
+    });
+    assert.equal(resultado.ok, true, resultado.motivo);
+    assert.equal(registrados[0].tipo, "informe");
+    assert.equal(guardados[0].envioId, "e9");
+    assert.deepEqual(guardados[0].documentos.map((d) => [d.tipo, d.mes, d.anio, d.alumnoId]), [["informe", 7, 2026, ALUMNO_ID]]);
+  });
 }

@@ -24,7 +24,7 @@ export function buildTabInforme(item, { mes, anio, periodoInforme, api }) {
   }
 
   for (const alumno of alumnos) {
-    wrap.appendChild(buildInformeCard(alumno, { mes: informe.mes, anio: informe.anio, api }));
+    wrap.appendChild(buildInformeCard(alumno, { mes: informe.mes, anio: informe.anio, api, familiaId: item.familia_id }));
   }
   return wrap;
 }

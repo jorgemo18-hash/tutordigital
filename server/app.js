@@ -73,6 +73,7 @@ import academiaRecibosListadoRoutes from "./routes/v1/academia-recibos/listado.r
 import academiaRecibosGenerarRoutes from "./routes/v1/academia-recibos/generar.routes.js";
 import academiaRecibosEditarRoutes from "./routes/v1/academia-recibos/editar.routes.js";
 import academiaRecibosEnviarRoutes from "./routes/v1/academia-recibos/enviar.routes.js";
+import academiaRecibosEnviadosRoutes from "./routes/v1/academia-recibos/enviados.routes.js";
 import academiaRecibosMarcarPagoRoutes from "./routes/v1/academia-recibos/marcarPago.routes.js";
 import academiaRecibosHistorialRoutes from "./routes/v1/academia-recibos/historial.routes.js";
 import academiaFichajesFicharRoutes from "./routes/v1/academia-fichajes/fichar.routes.js";
@@ -289,6 +290,7 @@ export async function createApp() {
   app.register(academiaRecibosGenerarRoutes, { prefix: "/api/v1/academia/recibos" });
   app.register(academiaRecibosEditarRoutes, { prefix: "/api/v1/academia/recibos" });
   app.register(academiaRecibosEnviarRoutes, { prefix: "/api/v1/academia/recibos" });
+  app.register(academiaRecibosEnviadosRoutes, { prefix: "/api/v1/academia/recibos" });
   app.register(academiaRecibosMarcarPagoRoutes, { prefix: "/api/v1/academia/recibos" });
   app.register(academiaRecibosHistorialRoutes, { prefix: "/api/v1/academia/recibos" });
   app.register(academiaFichajesFicharRoutes, { prefix: "/api/v1/academia/fichajes" });

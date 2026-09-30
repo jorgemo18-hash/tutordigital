@@ -1,7 +1,7 @@
 import {
   fetchRecibos, fetchRecibo, generarRecibos, generarReciboFamilia, regenerarRecibos, regenerarRecibo, regenerarInformes,
   updateRecibo, enviarFamilia, enviarInforme, generarInforme, editarComentarioInforme,
-  fetchInformePreview, fetchMesesEnviados, fetchTextosLegales,
+  fetchInformePreview, fetchMesesEnviados, fetchTextosLegales, fetchDocumentosEnviados, descargarDocumentoEnviado,
 } from "../api.js";
 import { buildCabecera } from "./envioFamilias/cabecera.js";
 import { buildFamiliasLista } from "./envioFamilias/familiasLista.js";
@@ -19,6 +19,7 @@ import { llevarAlPanelEnMovil } from "../utils/llevarAlPanelEnMovil.js";
 const API = {
   fetchRecibo, updateRecibo, enviarFamilia, regenerarRecibo, generarReciboFamilia,
   fetchTextosLegales, enviarInforme, generarInforme, editarComentarioInforme, fetchInformePreview,
+  fetchDocumentosEnviados, descargarDocumentoEnviado,
 };
 
 function periodoActual() {

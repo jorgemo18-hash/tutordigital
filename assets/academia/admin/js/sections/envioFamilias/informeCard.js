@@ -1,5 +1,6 @@
 import { buildDiasTable } from "./diasTable.js";
 import { nombreConBaja } from "./alumnosDelInforme.js";
+import { buildPdfEnviado } from "./pdfEnviado.js";
 import { buildRegenerarBoton } from "./regenerarBoton.js";
 
 function buildBtn(texto, claseExtra) {
@@ -23,7 +24,7 @@ function formatFecha(iso) {
 // llamadas que necesita (fetchInformePreview/generarInforme/
 // editarComentarioInforme), pasadas explícitas por el llamador (ver
 // tabInforme.js).
-export function buildInformeCard(alumno, { mes, anio, api }) {
+export function buildInformeCard(alumno, { mes, anio, api, familiaId = null }) {
   const card = document.createElement("div");
   card.className = "ac-panel ef-informe-card";
 
@@ -31,6 +32,7 @@ export function buildInformeCard(alumno, { mes, anio, api }) {
   nombre.className = "ef-informe-card-nombre";
   nombre.textContent = alumno.curso ? `${nombreConBaja(alumno)} · ${alumno.curso}` : nombreConBaja(alumno);
   card.appendChild(nombre);
+  card.appendChild(buildPdfEnviado({ api, familiaId, tipo: "informe", mes, anio, alumnoId: alumno.id }));
 
   const cuerpo = document.createElement("div");
   card.appendChild(cuerpo);

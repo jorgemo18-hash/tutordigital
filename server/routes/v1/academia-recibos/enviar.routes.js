@@ -51,6 +51,7 @@ export default async function academiaRecibosEnviarRoutes(app) {
       anio: parsedBody.data.anio,
       tipoEnvio: parsedBody.data.tipo,
       confirmar: parsedBody.data.confirmar,
+      logWarnFn: (obj, msg) => req.log.warn({ ...obj, requestId }, msg),
     });
 
     if (!resultado.ok) {

@@ -10,6 +10,8 @@ import { nombreArchivoInforme } from "./nombresArchivo.js";
 import { sustituirVariables, MESES, DEFAULT_TEXTO_SOLO_INFORME } from "./textoAcompanamiento.js";
 import { buildCuerpoHtml, capitaliza } from "./cuerpoEmail.js";
 import { buildRemitente } from "./remitente.js";
+import { registrarEnvioEmail } from "./registroEnvio.js";
+import { guardarDocumentosEnviados } from "./documentosEnviados.js";
 
 // Envío individual de informe (Parte 4): solo el informe de ESE alumno,
 // sin recibo, email aparte del envío por familia. Política forward-only:
@@ -20,6 +22,9 @@ export async function enviarInformeDeAlumno(admin, {
   tenantId, tenantNombre, alumnoId, mes, anio, apiKey, pdfServiceUrl, confirmar = false,
   generarInformePdfFn = generarInformePdf,
   enviarEmailFn = sendReciboEmail,
+  registrarEnvioEmailFn = registrarEnvioEmail,
+  guardarDocumentosEnviadosFn = guardarDocumentosEnviados,
+  logWarnFn = () => {},
 }) {
   const { alumno, error: alumnoErr } = await fetchAlumnoConFamilia(admin, tenantId, alumnoId);
   if (alumnoErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo leer el alumno." };
@@ -59,10 +64,12 @@ export async function enviarInformeDeAlumno(admin, {
   const html = buildCuerpoHtml(cuerpo, textosLopd);
   const attachments = [{ filename: nombreArchivoInforme(alumno.nombre, mes, anio), content: resultado.buffer }];
 
+  const asunto = `${tenantNombre} · ${capitaliza(MESES[mes])} ${anio}`;
+  let enviado;
   try {
-    await enviarEmailFn({
+    enviado = await enviarEmailFn({
       to: alumno.familia.email,
-      subject: `${tenantNombre} · ${capitaliza(MESES[mes])} ${anio}`,
+      subject: asunto,
       html,
       attachments,
       ...buildRemitente(config, tenantNombre),
@@ -70,6 +77,19 @@ export async function enviarInformeDeAlumno(admin, {
   } catch (err) {
     return { ok: false, code: "send_failed", motivo: err.message || "Fallo al enviar el email." };
   }
+
+  // El correo ya salió: registrarlo (para saber si rebota) y guardar el PDF
+  // exacto (migración 147) no pueden deshacerlo. Si fallan, al log.
+  const familiaId = alumno.familia?.id || alumno.familia_id || null;
+  const { envioId, error: registroErr } = await registrarEnvioEmailFn(admin, {
+    tenantId, resendEmailId: enviado?.id || null, destinatario: alumno.familia.email, asunto, familiaId, tipo: "informe",
+  });
+  if (registroErr) logWarnFn({ err: registroErr }, "envio de email no registrado");
+  const guardado = await guardarDocumentosEnviadosFn(admin, {
+    tenantId, envioId: envioId || null, familiaId, destinatario: alumno.familia.email,
+    documentos: [{ tipo: "informe", buffer: resultado.buffer, nombreArchivo: attachments[0].filename, mes, anio, alumnoId }],
+  }).catch((err) => ({ errores: [{ error: err }] }));
+  if (guardado?.errores?.length) logWarnFn({ errores: guardado.errores }, "pdf enviado no guardado");
 
   const { error: updateErr } = await admin
     .from("academia_informes")
