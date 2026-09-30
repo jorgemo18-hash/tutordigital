@@ -115,16 +115,21 @@ export async function fetchAlumnosConSesionesMes(admin, tenantId, alumnoIds, { m
 // estadoFamilia.js en el frontend: pendiente hasta que recibo E informes
 // de todos los alumnos con sesiones estén enviados).
 export async function fetchInformesEnviadosMes(admin, tenantId, alumnoIds, { mes, anio }) {
-  if (!alumnoIds.length) return { porAlumno: {} };
+  if (!alumnoIds.length) return { porAlumno: {}, redactados: new Set() };
   const { data, error } = await admin
     .from("academia_informes")
-    .select("alumno_id, enviado_at")
+    .select("alumno_id, enviado_at, comentario")
     .eq("tenant_id", tenantId)
     .in("alumno_id", alumnoIds)
     .eq("mes", mes)
     .eq("anio", anio);
   if (error) return { error };
-  return { porAlumno: Object.fromEntries((data || []).map((i) => [i.alumno_id, i.enviado_at])) };
+  // `redactados`: los que ya tienen comentario, o sea, los que se pueden
+  // enviar. Lo usa la lista de "lo que falta" de Envío a familias.
+  return {
+    porAlumno: Object.fromEntries((data || []).map((i) => [i.alumno_id, i.enviado_at])),
+    redactados: new Set((data || []).filter((i) => String(i.comentario || "").trim()).map((i) => i.alumno_id)),
+  };
 }
 
 export async function fetchRecibosDelMes(admin, tenantId, { mes, anio }) {

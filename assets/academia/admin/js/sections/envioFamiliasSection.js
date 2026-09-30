@@ -12,6 +12,7 @@ import { regenerarLote } from "./envioFamilias/acciones/accionesLote.js";
 import { resumenDeRecibos } from "./envioFamilias/acciones/resumenDeRecibos.js";
 import { buildResultadoEnvioTodos, clasificarEnvio } from "./envioFamilias/resultadoEnvio.js";
 import { buildAvisoSinPrecio } from "./envioFamilias/alumnosSinPrecio.js";
+import { buildQueFalta } from "./envioFamilias/queFalta.js";
 import { buildAvisoSinEmail } from "./envioFamilias/familiasSinEmail.js";
 import { llevarAlPanelEnMovil } from "../utils/llevarAlPanelEnMovil.js";
 
@@ -79,6 +80,9 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   // resumen en uno: son dos problemas con dos arreglos distintos.
   function renderAviso() {
     avisoSlotEl.innerHTML = "";
+    // Primero, lo que falta para poder enviar (ver envioFamilias/queFalta.js);
+    // debajo, los avisos de datos que explican qué pasará con cada caso.
+    avisoSlotEl.appendChild(buildQueFalta(familias, { mes, periodoInforme, onSelect: seleccionarFamilia }));
     for (const aviso of [buildAvisoSinPrecio(familias), buildAvisoSinEmail(familias)]) {
       if (aviso) avisoSlotEl.appendChild(aviso);
     }

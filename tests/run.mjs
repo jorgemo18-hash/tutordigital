@@ -277,6 +277,7 @@ async function loadTests() {
     "./academiaFinanzas/porEmitir.test.mjs",
     "./academiaRecibos/empiezaEnElMes.test.mjs",
     "./academiaEnvio/listadoDelEnvio.test.mjs",
+    "./academiaEnvio/queFalta.test.mjs",
     "./academiaFinanzas/sinReciboDrawer.test.mjs",
     "./academiaRecibos/regenerarSinPerderPagos.test.mjs",
     "./academiaRecibos/historialDeRecibos.test.mjs",

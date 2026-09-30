@@ -9,7 +9,7 @@ import { fetchPeriodoDelInforme } from "./consultas.js";
 // ningún error — la pantalla simplemente deja de pintar ese dato. Es el
 // mismo fallo silencioso que el `reply_to` que no llegaba a Resend, así que
 // el viaje se comprueba de punta a punta (ver tests/academiaEnvio).
-export function buildListItem({ familia, alumnosActivos, recibo, conSesiones, informesEnviados, ultimoEnvio = null }) {
+export function buildListItem({ familia, alumnosActivos, recibo, conSesiones, informesEnviados, informesRedactados = new Set(), ultimoEnvio = null }) {
   return {
     familia_id: familia.id,
     familia_nombre: familia.nombre,
@@ -22,6 +22,7 @@ export function buildListItem({ familia, alumnosActivos, recibo, conSesiones, in
       ...a,
       tiene_sesiones: conSesiones.has(a.id),
       informe_enviado_at: informesEnviados[a.id] || null,
+      informe_redactado: informesRedactados.has(a.id),
     })),
     tiene_hermanos: alumnosActivos.length > 1,
     // El ÚLTIMO email que le mandamos a esta familia y si llegó (migración
@@ -53,7 +54,7 @@ export async function fetchListadoDelEnvio(admin, tenantId, { mes, anio }, { log
   if (itemsErr || recibosErr) return { error: itemsErr || recibosErr };
 
   const alumnoIds = items.flatMap((item) => item.alumnosActivos.map((a) => a.id));
-  const [{ conSesiones, error: sesionesErr }, { porAlumno: informesEnviados, error: informesErr }] = await Promise.all([
+  const [{ conSesiones, error: sesionesErr }, { porAlumno: informesEnviados, redactados: informesRedactados, error: informesErr }] = await Promise.all([
     fetchAlumnosConSesionesMes(admin, tenantId, alumnoIds, periodoInforme),
     fetchInformesEnviadosMes(admin, tenantId, alumnoIds, periodoInforme),
   ]);
@@ -70,6 +71,7 @@ export async function fetchListadoDelEnvio(admin, tenantId, { mes, anio }, { log
       recibo: porFamilia[item.familia.id] || null,
       conSesiones,
       informesEnviados,
+      informesRedactados,
       ultimoEnvio: enviosPorFamilia?.[item.familia.id] || null,
     })
   );

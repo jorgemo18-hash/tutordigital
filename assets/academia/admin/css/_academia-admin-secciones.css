@@ -195,6 +195,17 @@ select.ac-legal-tipo-select { width: auto; flex-shrink: 0; font-size: 11px; padd
    envioFamilias/cabecera.js y shared/js/periodosDeEnvio.js). */
 .ef-que-se-envia { margin: 6px 0 0; font-size: 13px; color: rgba(242, 237, 229, 0.7); }
 .ac-claro .ef-que-se-envia { color: #6b5d4f; }
+/* Lo que falta para poder enviar (ver envioFamilias/queFalta.js). */
+.ef-que-falta { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.ef-que-falta-listo { margin: 0; font-size: 13px; color: #8fbf8a; }
+.ac-claro .ef-que-falta-listo { color: #3d7a37; }
+.ef-que-falta-categoria { border: 1px solid rgba(217, 156, 102, 0.35); border-radius: 8px; padding: 6px 10px; font-size: 13px; }
+.ef-que-falta-categoria > summary { cursor: pointer; color: var(--copper-soft, #d99c66); }
+.ac-claro .ef-que-falta-categoria > summary { color: #8b5722; }
+.ef-que-falta-personas { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 8px; }
+.ef-que-falta-persona { font: inherit; font-size: 12.5px; padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(242, 237, 229, 0.25); background: transparent; color: inherit; cursor: pointer; }
+.ef-que-falta-persona:hover { border-color: var(--copper-soft, #d99c66); }
+.ac-claro .ef-que-falta-persona { border-color: rgba(42, 34, 26, 0.25); }
 .ef-periodo-selector { display: flex; align-items: center; gap: 12px; }
 /* select.* (no solo .clase) por el mismo motivo que select.ac-legal-tipo-select
    arriba: .ac-select pone width:100% y gana el empate de especificidad por
