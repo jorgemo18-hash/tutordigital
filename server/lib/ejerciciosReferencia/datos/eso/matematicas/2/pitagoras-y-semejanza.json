@@ -1,0 +1,498 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 2,
+ "tema": "pitagoras-y-semejanza",
+ "titulo": "Teorema de Pitágoras, Thales y semejanza",
+ "saberes": [
+  "B.2",
+  "C.1"
+ ],
+ "fuentes": {
+  "mv2": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 2.º ESO (LOMLOE)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/2ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m2-pit-001",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "¿Se puede construir un triángulo rectángulo de catetos 10 cm y 6 cm e hipotenusa 15 cm? Razona.",
+   "solucion": "No: $10^{2}+6^{2} = 136 \\neq 225 = 15^{2}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "10**2+6**2",
+     "respuesta": "136"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "15**2",
+     "respuesta": "225"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 1",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-002",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula la hipotenusa de los triángulos rectángulos de catetos: a) 16 cm y 12 cm   b) 40 m y 30 m   c) 5 dm y 9,4 dm   d) 2,9 km y 6,3 km",
+   "solucion": "a) 20 cm   b) 50 m   c) ≈ 10,65 dm   d) ≈ 6,94 km",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(16**2+12**2)",
+     "respuesta": "20",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(40**2+30**2)",
+     "respuesta": "50",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(5**2+9.4**2)",
+     "respuesta": "10.65",
+     "apartado": "c",
+     "tolerancia": 0.01
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(2.9**2+6.3**2)",
+     "respuesta": "6.94",
+     "apartado": "d",
+     "tolerancia": 0.01
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-003",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula el cateto que falta, conocidos la hipotenusa y un cateto: a) 25 cm y 15 cm   b) 35 m y 21 m   c) 42 dm y 25 dm   d) 6,1 km y 4,2 km",
+   "solucion": "a) 20 cm   b) 28 m   c) ≈ 33,75 dm   d) ≈ 4,42 km",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(25**2-15**2)",
+     "respuesta": "20",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(35**2-21**2)",
+     "respuesta": "28",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(42**2-25**2)",
+     "respuesta": "33.75",
+     "apartado": "c",
+     "tolerancia": 0.01
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(6.1**2-4.2**2)",
+     "respuesta": "4.42",
+     "apartado": "d",
+     "tolerancia": 0.01
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 6",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-004",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "¿Cuánto mide la diagonal de un rectángulo de 8,2 cm por 6,9 cm?",
+   "solucion": "≈ 10,72 cm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(8.2**2+6.9**2)",
+     "respuesta": "10.72",
+     "tolerancia": 0.01
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 4",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-005",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula la diagonal de un cuadrado de 8 m de lado.",
+   "solucion": "$8\\sqrt{2} \\approx 11{,}31$ m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(8**2+8**2)",
+     "respuesta": "8*sqrt(2)"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 7",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-006",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Un triángulo rectángulo tiene un cateto de 6 cm y la hipotenusa de 10 cm. ¿Cuál es su perímetro? ¿Y su área?",
+   "solucion": "El otro cateto mide 8 cm: perímetro 24 cm, área 24 cm²",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "6+10+sqrt(10**2-6**2)",
+     "respuesta": "24",
+     "apartado": "perímetro"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "6*sqrt(10**2-6**2)/2",
+     "respuesta": "24",
+     "apartado": "área"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 9",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-007",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Para sujetar un árbol se ata una cuerda a 2,5 m de altura y se fija al suelo a 3 m del tronco. ¿Cuánta cuerda hace falta?",
+   "solucion": "≈ 3,91 m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(2.5**2+3**2)",
+     "respuesta": "3.91",
+     "tolerancia": 0.01
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 27",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-008",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Una cometa tiene una cuerda de 15 m y está justo encima de una farola que está a 5 m de Javier. ¿A qué altura está la cometa?",
+   "solucion": "$10\\sqrt{2} \\approx 14{,}14$ m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(15**2-5**2)",
+     "respuesta": "10*sqrt(2)"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 28",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-009",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Una escalera debe alcanzar 7 m de altura y se separa 2 m de la pared. ¿Cuánto mide?",
+   "solucion": "$\\sqrt{53} \\approx 7{,}28$ m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(7**2+2**2)",
+     "respuesta": "sqrt(53)"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 36",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-010",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "¿Cuánto debe medir el travesaño diagonal de una ventana de 1,2 m de ancho y 1,5 m de alto?",
+   "solucion": "≈ 1,92 m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(1.2**2+1.5**2)",
+     "respuesta": "1.92",
+     "tolerancia": 0.01
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 39",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-011",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 3,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Un cubo tiene 8 cm de arista. Calcula la diagonal de una cara y la diagonal del cubo.",
+   "solucion": "Cara: $8\\sqrt{2} \\approx 11{,}31$ cm; cubo: $8\\sqrt{3} \\approx 13{,}86$ cm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(8**2+8**2)",
+     "respuesta": "8*sqrt(2)",
+     "apartado": "cara"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(3*8**2)",
+     "respuesta": "8*sqrt(3)",
+     "apartado": "cubo"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 41",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-012",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 3,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Un cono tiene 10 cm de altura y 12 cm de generatriz. ¿Cuánto mide el radio de la base?",
+   "solucion": "$2\\sqrt{11} \\approx 6{,}63$ cm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(12**2-10**2)",
+     "respuesta": "2*sqrt(11)"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 43",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-013",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 3,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "La pirámide de Keops tiene unos 230 m de lado de base y la altura de una cara mide unos 180 m. ¿Cuánto mide la altura de la pirámide?",
+   "solucion": "≈ 138,5 m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(180**2-115**2)",
+     "respuesta": "138.47",
+     "tolerancia": 0.01
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 40",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-014",
+   "tipo": "semejanza y Thales",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "¿Son semejantes? a) Un triángulo con ángulos de 30° y 20° y otro con ángulos de 120° y 20°.   b) Un isósceles con ángulo desigual de 80° y otro isósceles con un ángulo igual de 50°.   c) $A = 40°$, $b = 8$, $c = 12$ y $A' = 40°$, $b' = 4$, $c' = 6$.   d) Lados 3, 4, 6 y 12, 16, 24 cm.",
+   "solucion": "a) Sí (130°, 30°, 20° en los dos)   b) Sí (80°, 50°, 50°)   c) Sí (ángulo igual y lados proporcionales, razón 2)   d) Sí (razón 4)",
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 10",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m2-pit-015",
+   "tipo": "semejanza y Thales",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula el dato que falta para que los triángulos sean semejantes: a) $a = 15$, $b = 9$, $c = 12$ cm; $a' = 10$, $b' = 4$ cm, ¿$c'$?   b) $A = 50°$, $b = 3$, $c = 7$; $A' = 50°$, $b' = 18$, ¿$c'$?",
+   "solucion": "b) $c' = 42$ cm (razón 6). En a) los datos no son proporcionales ($10/15 \\neq 4/9$): no hay $c'$ que los haga semejantes",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "7*18/3",
+     "respuesta": "42",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-016",
+   "tipo": "semejanza y Thales",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Los lados de un triángulo miden 12, 14 y 14 cm. Otro semejante tiene 80 cm de perímetro. ¿Cuánto miden sus lados?",
+   "solucion": "24, 28 y 28 cm (razón 2)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "12*80/40",
+     "respuesta": "24",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "14*80/40",
+     "respuesta": "28",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-017",
+   "tipo": "semejanza y Thales",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "La sombra de un edificio mide 15 m y la del primer piso 2 m. Si el primer piso mide 3 m de alto, ¿cuánto mide el edificio?",
+   "solucion": "22,5 m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "15*3/2",
+     "respuesta": "22.5"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-018",
+   "tipo": "semejanza y Thales",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Un triángulo rectángulo de altura 6 cm y base 15 cm es semejante a otro de base 30 cm. Calcula la altura del nuevo triángulo y las áreas de ambos.",
+   "solucion": "Altura 12 cm; áreas 45 cm² y 180 cm² (se multiplica por $2^{2}$)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "6*30/15",
+     "respuesta": "12",
+     "apartado": "altura"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "15*6/2",
+     "respuesta": "45",
+     "apartado": "área 1"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "30*12/2",
+     "respuesta": "180",
+     "apartado": "área 2"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 20",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pit-019",
+   "tipo": "semejanza y Thales",
+   "dificultad": 3,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "En un mapa a escala 1 : 5 000 000 un pueblo ocupa 700 cm². ¿Cuál es su superficie real?",
+   "solucion": "1 750 000 km² (el área se multiplica por el cuadrado de la escala). El dato es poco realista: sale más grande que España",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "700*5000000**2/10**10",
+     "respuesta": "1750000"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 6, ej. 18",
+   "verificacion": "comprobada"
+  }
+ ]
+}

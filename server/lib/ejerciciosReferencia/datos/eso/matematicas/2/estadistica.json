@@ -1,0 +1,610 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 2,
+ "tema": "estadistica",
+ "titulo": "Estadística: tablas, gráficos y medidas de centralización",
+ "saberes": [
+  "E.1",
+  "E.3"
+ ],
+ "fuentes": {
+  "mv2": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 2.º ESO (LOMLOE)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/2ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m2-est-001",
+   "tipo": "media, mediana y moda",
+   "dificultad": 2,
+   "saberes": [
+    "E.1"
+   ],
+   "enunciado": "Pepa ha tirado un dado 25 veces: 1, 2, 5, 6, 3, 1, 4, 5, 6, 1, 3, 1, 2, 2, 1, 6, 2, 2, 4, 3, 4, 6, 6, 1, 4. a) Haz la tabla de frecuencias absolutas y relativas. b) Calcula la media, la mediana y la moda. ¿Es única la moda?",
+   "solucion": "a) 1: 6 (0,24); 2: 5 (0,2); 3: 3 (0,12); 4: 4 (0,16); 5: 2 (0,08); 6: 5 (0,2).   b) Media 81/25 = 3,24; mediana 3; moda 1 (única)",
+   "comprobar": [
+    {
+     "tipo": "estadistica",
+     "apartado": "media",
+     "datos": [
+      1,
+      2,
+      5,
+      6,
+      3,
+      1,
+      4,
+      5,
+      6,
+      1,
+      3,
+      1,
+      2,
+      2,
+      1,
+      6,
+      2,
+      2,
+      4,
+      3,
+      4,
+      6,
+      6,
+      1,
+      4
+     ],
+     "medida": "media",
+     "respuesta": "81/25"
+    },
+    {
+     "tipo": "estadistica",
+     "apartado": "mediana",
+     "datos": [
+      1,
+      2,
+      5,
+      6,
+      3,
+      1,
+      4,
+      5,
+      6,
+      1,
+      3,
+      1,
+      2,
+      2,
+      1,
+      6,
+      2,
+      2,
+      4,
+      3,
+      4,
+      6,
+      6,
+      1,
+      4
+     ],
+     "medida": "mediana",
+     "respuesta": "3"
+    },
+    {
+     "tipo": "estadistica",
+     "apartado": "moda",
+     "datos": [
+      1,
+      2,
+      5,
+      6,
+      3,
+      1,
+      4,
+      5,
+      6,
+      1,
+      3,
+      1,
+      2,
+      2,
+      1,
+      6,
+      2,
+      2,
+      4,
+      3,
+      4,
+      6,
+      6,
+      1,
+      4
+     ],
+     "medida": "moda",
+     "respuesta": [
+      "1"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 12, ej. 3 y 17",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-est-002",
+   "tipo": "media",
+   "dificultad": 1,
+   "saberes": [
+    "E.1"
+   ],
+   "enunciado": "Javier ha tirado un dado 10 veces: 6, 3, 1, 4, 2, 2, 1, 4, 3, 4. Calcula la media aritmética.",
+   "solucion": "3",
+   "comprobar": [
+    {
+     "tipo": "estadistica",
+     "apartado": "media",
+     "datos": [
+      6,
+      3,
+      1,
+      4,
+      2,
+      2,
+      1,
+      4,
+      3,
+      4
+     ],
+     "medida": "media",
+     "respuesta": "3"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 12, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-est-003",
+   "tipo": "media",
+   "dificultad": 1,
+   "saberes": [
+    "E.1"
+   ],
+   "enunciado": "Las notas de Lengua de Raquel son 7, 5, 6, 4, 7, 10 y 7. Calcula la media.",
+   "solucion": "46/7 ≈ 6,57",
+   "comprobar": [
+    {
+     "tipo": "estadistica",
+     "apartado": "media",
+     "datos": [
+      7,
+      5,
+      6,
+      4,
+      7,
+      10,
+      7
+     ],
+     "medida": "media",
+     "respuesta": "46/7"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 12, ej. 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-est-004",
+   "tipo": "media, mediana y moda",
+   "dificultad": 1,
+   "saberes": [
+    "E.1"
+   ],
+   "enunciado": "Sara ha sacado en Matemáticas 9, 7, 8, 6, 9, 10 y 9. Calcula la media, la mediana y la moda.",
+   "solucion": "Media 58/7 ≈ 8,29; mediana 9; moda 9",
+   "comprobar": [
+    {
+     "tipo": "estadistica",
+     "apartado": "media",
+     "datos": [
+      9,
+      7,
+      8,
+      6,
+      9,
+      10,
+      9
+     ],
+     "medida": "media",
+     "respuesta": "58/7"
+    },
+    {
+     "tipo": "estadistica",
+     "apartado": "mediana",
+     "datos": [
+      9,
+      7,
+      8,
+      6,
+      9,
+      10,
+      9
+     ],
+     "medida": "mediana",
+     "respuesta": "9"
+    },
+    {
+     "tipo": "estadistica",
+     "apartado": "moda",
+     "datos": [
+      9,
+      7,
+      8,
+      6,
+      9,
+      10,
+      9
+     ],
+     "medida": "moda",
+     "respuesta": [
+      "9"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 12, ej. 18",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-est-005",
+   "tipo": "media, mediana y moda",
+   "dificultad": 2,
+   "saberes": [
+    "E.1"
+   ],
+   "enunciado": "Diez familias tienen estas mascotas: 0, 1, 0, 2, 1, 4, 3, 0, 0, 1. Calcula la media, la mediana y la moda.",
+   "solucion": "Media 1,2; mediana 1; moda 0",
+   "comprobar": [
+    {
+     "tipo": "estadistica",
+     "apartado": "media",
+     "datos": [
+      0,
+      1,
+      0,
+      2,
+      1,
+      4,
+      3,
+      0,
+      0,
+      1
+     ],
+     "medida": "media",
+     "respuesta": "1.2"
+    },
+    {
+     "tipo": "estadistica",
+     "apartado": "mediana",
+     "datos": [
+      0,
+      1,
+      0,
+      2,
+      1,
+      4,
+      3,
+      0,
+      0,
+      1
+     ],
+     "medida": "mediana",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "estadistica",
+     "apartado": "moda",
+     "datos": [
+      0,
+      1,
+      0,
+      2,
+      1,
+      4,
+      3,
+      0,
+      0,
+      1
+     ],
+     "medida": "moda",
+     "respuesta": [
+      "0"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 12, ej. 21",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-est-006",
+   "tipo": "media, mediana y moda",
+   "dificultad": 2,
+   "saberes": [
+    "E.1"
+   ],
+   "enunciado": "Edades de un equipo de balonmano: 12, 14, 13, 12, 15, 11, 12, 12, 13, 14, 11, 12, 12. Calcula la media, la mediana y la moda.",
+   "solucion": "Media 163/13 ≈ 12,54; mediana 12; moda 12",
+   "comprobar": [
+    {
+     "tipo": "estadistica",
+     "apartado": "media",
+     "datos": [
+      12,
+      14,
+      13,
+      12,
+      15,
+      11,
+      12,
+      12,
+      13,
+      14,
+      11,
+      12,
+      12
+     ],
+     "medida": "media",
+     "respuesta": "163/13"
+    },
+    {
+     "tipo": "estadistica",
+     "apartado": "mediana",
+     "datos": [
+      12,
+      14,
+      13,
+      12,
+      15,
+      11,
+      12,
+      12,
+      13,
+      14,
+      11,
+      12,
+      12
+     ],
+     "medida": "mediana",
+     "respuesta": "12"
+    },
+    {
+     "tipo": "estadistica",
+     "apartado": "moda",
+     "datos": [
+      12,
+      14,
+      13,
+      12,
+      15,
+      11,
+      12,
+      12,
+      13,
+      14,
+      11,
+      12,
+      12
+     ],
+     "medida": "moda",
+     "respuesta": [
+      "12"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 12, ej. 22",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-est-007",
+   "tipo": "media, mediana y moda",
+   "dificultad": 3,
+   "saberes": [
+    "E.1"
+   ],
+   "enunciado": "El tamaño de la mano (cm) de los alumnos de una clase es: 19, 18, 20, 19, 18, 21, 19, 17, 16, 20, 16, 19, 20, 21, 18, 17, 20, 19, 22, 21, 23, 21, 17, 18, 17, 19, 21, 20, 16, 19. Calcula la media, la mediana y la moda.",
+   "solucion": "Media 571/30 ≈ 19,03 cm; mediana 19; moda 19",
+   "comprobar": [
+    {
+     "tipo": "estadistica",
+     "apartado": "media",
+     "datos": [
+      19,
+      18,
+      20,
+      19,
+      18,
+      21,
+      19,
+      17,
+      16,
+      20,
+      16,
+      19,
+      20,
+      21,
+      18,
+      17,
+      20,
+      19,
+      22,
+      21,
+      23,
+      21,
+      17,
+      18,
+      17,
+      19,
+      21,
+      20,
+      16,
+      19
+     ],
+     "medida": "media",
+     "respuesta": "571/30"
+    },
+    {
+     "tipo": "estadistica",
+     "apartado": "mediana",
+     "datos": [
+      19,
+      18,
+      20,
+      19,
+      18,
+      21,
+      19,
+      17,
+      16,
+      20,
+      16,
+      19,
+      20,
+      21,
+      18,
+      17,
+      20,
+      19,
+      22,
+      21,
+      23,
+      21,
+      17,
+      18,
+      17,
+      19,
+      21,
+      20,
+      16,
+      19
+     ],
+     "medida": "mediana",
+     "respuesta": "19"
+    },
+    {
+     "tipo": "estadistica",
+     "apartado": "moda",
+     "datos": [
+      19,
+      18,
+      20,
+      19,
+      18,
+      21,
+      19,
+      17,
+      16,
+      20,
+      16,
+      19,
+      20,
+      21,
+      18,
+      17,
+      20,
+      19,
+      22,
+      21,
+      23,
+      21,
+      17,
+      18,
+      17,
+      19,
+      21,
+      20,
+      16,
+      19
+     ],
+     "medida": "moda",
+     "respuesta": [
+      "19"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 12, ej. 19",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-est-008",
+   "tipo": "frecuencias",
+   "dificultad": 2,
+   "saberes": [
+    "E.1"
+   ],
+   "enunciado": "Se pregunta a unos jóvenes cuántas veces van al cine al mes: 0 veces, 1 joven; 1 vez, 7; 2 veces, 9; 3 veces, 5; 4 veces, 2; 5 veces, 1. Calcula las frecuencias relativas y el ángulo de cada sector en un diagrama de sectores.",
+   "solucion": "Total 25. Frecuencias relativas 0,04; 0,28; 0,36; 0,2; 0,08; 0,04. Ángulos 14,4°; 100,8°; 129,6°; 72°; 28,8°; 14,4°",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1+7+9+5+2+1",
+     "respuesta": "25",
+     "apartado": "total"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "9/25",
+     "respuesta": "0.36",
+     "apartado": "fr(2)"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "9/25*360",
+     "respuesta": "129.6",
+     "apartado": "ángulo(2)"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 12, ej. 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-est-009",
+   "tipo": "problema de medias",
+   "dificultad": 3,
+   "saberes": [
+    "E.1"
+   ],
+   "enunciado": "La media de seis números es 5. Se añaden dos números más y la media sigue siendo 5. ¿Cuánto suman los dos nuevos?",
+   "solucion": "Suman 10",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "8*5-6*5",
+     "respuesta": "10"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 12, ej. 32",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-est-010",
+   "tipo": "leer gráficos con sentido crítico",
+   "dificultad": 2,
+   "saberes": [
+    "E.1",
+    "E.3"
+   ],
+   "enunciado": "Las ventas de una empresa pasan de 83 451 en enero a 86 316 en diciembre. En una gráfica con el eje vertical de 0 a 100 000 parecen constantes; en otra, con el eje de 83 000 a 86 500, parece que suben mucho. Las dos son correctas: explica por qué dan impresiones tan distintas.",
+   "solucion": "El eje vertical no empieza en el mismo sitio: cortarlo (empezar en 83 000) exagera una subida que es de solo un 3,4 %",
+   "fuente": "mv2",
+   "ref": "cap. 12, ej. 27",
+   "verificacion": "sin_verificar"
+  }
+ ]
+}

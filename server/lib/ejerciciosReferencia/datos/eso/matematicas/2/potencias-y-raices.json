@@ -1,0 +1,615 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 2,
+ "tema": "potencias-y-raices",
+ "titulo": "Potencias, raíces cuadradas y notación científica",
+ "saberes": [
+  "A.2",
+  "A.3",
+  "A.4"
+ ],
+ "fuentes": {
+  "mv2": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 2.º ESO (LOMLOE)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/2ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m2-pot-001",
+   "tipo": "calcular potencias",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula:\n\na) $25^{0}$   b) $5 \\cdot 10^{4}$   c) $2^{4}$   d) $4^{2}$   e) $6^{3}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "25**0",
+     "enunciado": "25^{0}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "5*10**4",
+     "enunciado": "5 \\cdot 10^{4}",
+     "respuesta": "50000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "2**4",
+     "enunciado": "2^{4}",
+     "respuesta": "16"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "4**2",
+     "enunciado": "4^{2}",
+     "respuesta": "16"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "6**3",
+     "enunciado": "6^{3}",
+     "respuesta": "216"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 2",
+   "verificacion": "comprobada",
+   "solucion": "a) $1$; b) $50000$; c) $16$; d) $16$; e) $216$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-pot-002",
+   "tipo": "potencias de 10",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Escribe como potencia de 10: a) un millón; b) un billón; c) una centena de millar.",
+   "solucion": "a) $10^{6}$   b) $10^{12}$   c) $10^{5}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "10**6",
+     "respuesta": "1000000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "10**12",
+     "respuesta": "1000000000000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "10**5",
+     "respuesta": "100000"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 1",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pot-003",
+   "tipo": "notación científica",
+   "dificultad": 2,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Escribe de forma abreviada (número por potencia de 10): a) $600\\,000\\,000$   b) $250\\,000\\,000$   c) $914\\,000\\,000\\,000$   d) La distancia de la Tierra al Sol, $150\\,000\\,000$ km.",
+   "solucion": "a) $6 \\cdot 10^{8}$   b) $2{,}5 \\cdot 10^{8}$   c) $9{,}14 \\cdot 10^{11}$   d) $1{,}5 \\cdot 10^{8}$ km",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "6*10**8",
+     "respuesta": "600000000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "2.5*10**8",
+     "respuesta": "250000000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "9.14*10**11",
+     "respuesta": "914000000000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "1.5*10**8",
+     "respuesta": "150000000"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 3–4",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pot-004",
+   "tipo": "propiedades de las potencias",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula aplicando las propiedades de las potencias:\n\na) $(2^{5} : 2)^{3} \\cdot 2^{4}$   b) $(7^{4})^{2}$   c) $6^{5} : 3^{5}$   d) $(15 : 5)^{3}$   e) $(75 : 5)^{4}$   f) $8^{2} : 2^{5}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(2**5/2)**3*2**4",
+     "enunciado": "(2^{5} : 2)^{3} \\cdot 2^{4}",
+     "respuesta": "2**16"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(7**4)**2",
+     "enunciado": "(7^{4})^{2}",
+     "respuesta": "7**8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "6**5/3**5",
+     "enunciado": "6^{5} : 3^{5}",
+     "respuesta": "2**5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(15/5)**3",
+     "enunciado": "(15 : 5)^{3}",
+     "respuesta": "27"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(75/5)**4",
+     "enunciado": "(75 : 5)^{4}",
+     "respuesta": "15**4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "8**2/2**5",
+     "enunciado": "8^{2} : 2^{5}",
+     "respuesta": "2"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 5",
+   "verificacion": "comprobada",
+   "solucion": "a) $65536$; b) $5764801$; c) $32$; d) $27$; e) $50625$; f) $2$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-pot-005",
+   "tipo": "potencia de un producto no es la suma",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "a) Calcula $(2+3)^{2}$ y $2^{2}+3^{2}$. ¿Son iguales?   b) Calcula $6^{2}+8^{2}$ y $(6+8)^{2}$. ¿Son iguales?",
+   "solucion": "a) 25 y 13: no son iguales (diferencia 12)   b) 100 y 196: no (diferencia 96)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(2+3)**2-(2**2+3**2)",
+     "respuesta": "12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(6+8)**2-(6**2+8**2)",
+     "respuesta": "96"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 9",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pot-006",
+   "tipo": "una sola potencia",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Da el resultado como una única potencia:\n\na) $(5^{3} \\cdot 5^{2})^{3}$   b) $(16^{2} : 4^{3})^{3}$   c) $(9^{2} : 3^{3})^{2}$   d) $9^{4} \\cdot 27^{2}$   e) $(5^{10} \\cdot 5^{2})^{2}$   f) $(9^{5} \\cdot 81^{2})^{3}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(5**3*5**2)**3",
+     "enunciado": "(5^{3} \\cdot 5^{2})^{3}",
+     "respuesta": "5**15"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(16**2/4**3)**3",
+     "enunciado": "(16^{2} : 4^{3})^{3}",
+     "respuesta": "4**3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(9**2/3**3)**2",
+     "enunciado": "(9^{2} : 3^{3})^{2}",
+     "respuesta": "3**2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "9**4*27**2",
+     "enunciado": "9^{4} \\cdot 27^{2}",
+     "respuesta": "3**14"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(5**10*5**2)**2",
+     "enunciado": "(5^{10} \\cdot 5^{2})^{2}",
+     "respuesta": "5**24"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(9**5*81**2)**3",
+     "enunciado": "(9^{5} \\cdot 81^{2})^{3}",
+     "respuesta": "3**54"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 15–16",
+   "verificacion": "comprobada",
+   "solucion": "a) $30517578125$; b) $64$; c) $9$; d) $4782969$; e) $59604644775390625$; f) $58149737003040059690390169$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-pot-007",
+   "tipo": "factorizar con potencias",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Descompón en factores primos usando potencias: 12, 36, 48, 100, 1000 y 144.",
+   "solucion": "$12 = 2^{2} \\cdot 3$; $36 = 2^{2} \\cdot 3^{2}$; $48 = 2^{4} \\cdot 3$; $100 = 2^{2} \\cdot 5^{2}$; $1000 = 2^{3} \\cdot 5^{3}$; $144 = 2^{4} \\cdot 3^{2}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "2**2*3",
+     "respuesta": "12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "2**2*3**2",
+     "respuesta": "36"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "2**4*3",
+     "respuesta": "48"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "2**2*5**2",
+     "respuesta": "100"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "2**3*5**3",
+     "respuesta": "1000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "2**4*3**2",
+     "respuesta": "144"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pot-008",
+   "tipo": "raíces cuadradas exactas",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Halla:\n\na) $\\sqrt{121}$   b) $\\sqrt{49}$   c) $\\sqrt{1}$   d) $\\sqrt{0}$   e) $\\sqrt{169}$   f) $\\sqrt{196}$   g) $\\sqrt{36}$   h) $\\sqrt{144}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "sqrt(121)",
+     "enunciado": "\\sqrt{121}",
+     "respuesta": "11"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "sqrt(49)",
+     "enunciado": "\\sqrt{49}",
+     "respuesta": "7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "sqrt(1)",
+     "enunciado": "\\sqrt{1}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "sqrt(0)",
+     "enunciado": "\\sqrt{0}",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "sqrt(169)",
+     "enunciado": "\\sqrt{169}",
+     "respuesta": "13"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "sqrt(196)",
+     "enunciado": "\\sqrt{196}",
+     "respuesta": "14"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "sqrt(36)",
+     "enunciado": "\\sqrt{36}",
+     "respuesta": "6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "sqrt(144)",
+     "enunciado": "\\sqrt{144}",
+     "respuesta": "12"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 20",
+   "verificacion": "comprobada",
+   "solucion": "a) $11$; b) $7$; c) $1$; d) $0$; e) $13$; f) $14$; g) $6$; h) $12$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-pot-009",
+   "tipo": "la raíz de una suma",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Escribe $=$ o $\\neq$: a) $\\sqrt{64+36}\\ \\square\\ \\sqrt{64}+\\sqrt{36}$   b) $\\sqrt{9+16}\\ \\square\\ \\sqrt{9}+\\sqrt{16}$",
+   "solucion": "a) $\\neq$ (10 frente a 14)   b) $\\neq$ (5 frente a 7)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "sqrt(64)+sqrt(36)-sqrt(64+36)",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "sqrt(9)+sqrt(16)-sqrt(9+16)",
+     "respuesta": "2"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 26",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pot-010",
+   "tipo": "operaciones combinadas con potencias y raíces",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula:\n\na) $5 \\cdot \\sqrt{16} - 32 : 2^{3} + 2\\sqrt{144} + \\sqrt{49}$   b) $3 \\cdot 10^{2} - 5 \\cdot \\sqrt{64} + 7^{0}$   c) $5 \\cdot 3^{2} - 2 \\cdot (1 + \\sqrt{36}) - 2$   d) $32 : 2^{3} - 2 \\cdot \\sqrt{25} + 2^{2}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "5*sqrt(16)-32/2**3+2*sqrt(144)+sqrt(49)",
+     "enunciado": "5 \\cdot \\sqrt{16} - 32 : 2^{3} + 2\\sqrt{144} + \\sqrt{49}",
+     "respuesta": "47"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "3*10**2-5*sqrt(64)+7**0",
+     "enunciado": "3 \\cdot 10^{2} - 5 \\cdot \\sqrt{64} + 7^{0}",
+     "respuesta": "261"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "5*3**2-2*(1+sqrt(36))-2",
+     "enunciado": "5 \\cdot 3^{2} - 2 \\cdot (1 + \\sqrt{36}) - 2",
+     "respuesta": "29"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "32/2**3-2*sqrt(25)+2**2",
+     "enunciado": "32 : 2^{3} - 2 \\cdot \\sqrt{25} + 2^{2}",
+     "respuesta": "-2"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 28",
+   "verificacion": "comprobada",
+   "solucion": "a) $47$; b) $261$; c) $29$; d) $-2$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-pot-011",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Un chalé está sobre una parcela cuadrada de 7225 m². ¿Cuánto mide el lado?",
+   "solucion": "85 m (la solución $-85$ no vale para un lado)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x^2 = 7225",
+     "respuesta": [
+      "-85",
+      "85"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 29",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pot-012",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "La cara de un cubo mide 36 cm². ¿Cuál es su volumen?",
+   "solucion": "216 cm³ (la arista mide 6 cm)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 6**3",
+     "respuesta": [
+      "216"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pot-013",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Un campo cuadrado mide 3600 m². ¿Cuántos metros de valla hacen falta para vallarlo?",
+   "solucion": "240 m",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 4*sqrt(3600)",
+     "respuesta": [
+      "240"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 17",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pot-014",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Una parcela cuadrada mide 8100 m². Halla el área de otra cuyo lado sea el doble.",
+   "solucion": "32 400 m² (cuatro veces más)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = (2*sqrt(8100))**2",
+     "respuesta": [
+      "32400"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 33",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pot-015",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 2,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "La luz del Sol, que viaja a unos 300 000 km/s, tarda 8,25 minutos en llegar a la Tierra. ¿Qué distancia hay, en notación científica?",
+   "solucion": "$1{,}485 \\cdot 10^{8}$ km (148500000 km)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 300000*8.25*60",
+     "respuesta": [
+      "148500000"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 31",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pot-016",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 3,
+   "saberes": [
+    "A.3",
+    "D.2"
+   ],
+   "enunciado": "Juan quiere plantar formando un cuadrado: con sus plantas le sobran 4, y para hacer un cuadrado con una planta más por lado le faltan 9. ¿Cuántas plantas tiene?",
+   "solucion": "40 plantas (lado 6: $6^{2}+4 = 40$)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x^2+4 = (x+1)^2-9",
+     "respuesta": [
+      "6"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 3, ej. 35",
+   "verificacion": "comprobada"
+  }
+ ]
+}

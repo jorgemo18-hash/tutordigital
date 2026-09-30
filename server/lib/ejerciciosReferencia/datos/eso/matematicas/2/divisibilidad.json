@@ -1,0 +1,477 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 2,
+ "tema": "divisibilidad",
+ "titulo": "Divisibilidad: múltiplos, divisores, m.c.m. y M.C.D.",
+ "saberes": [
+  "A.4"
+ ],
+ "fuentes": {
+  "mv2": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 2.º ESO (LOMLOE)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/2ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m2-div-001",
+   "tipo": "m.c.m. y M.C.D. mental",
+   "dificultad": 1,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Calcula mentalmente el m.c.m. y el M.C.D.:\n\na) 4 y 8   b) 2 y 3   c) 3 y 12   d) 7 y 10   e) 6 y 12   f) 6 y 9   g) 10 y 15   h) 2 y 5   i) 4 y 6   j) 4 y 1   k) 3 y 7",
+   "solucion": "a) m.c.m. 8, M.C.D. 4; b) m.c.m. 6, M.C.D. 1; c) m.c.m. 12, M.C.D. 3; d) m.c.m. 70, M.C.D. 1; e) m.c.m. 12, M.C.D. 6; f) m.c.m. 18, M.C.D. 3; g) m.c.m. 30, M.C.D. 5; h) m.c.m. 10, M.C.D. 1; i) m.c.m. 12, M.C.D. 2; j) m.c.m. 4, M.C.D. 1; k) m.c.m. 21, M.C.D. 1",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "lcm(4,8)",
+     "respuesta": "8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "gcd(4,8)",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "lcm(2,3)",
+     "respuesta": "6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "gcd(2,3)",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "lcm(3,12)",
+     "respuesta": "12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "gcd(3,12)",
+     "respuesta": "3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "lcm(7,10)",
+     "respuesta": "70"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "gcd(7,10)",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "lcm(6,12)",
+     "respuesta": "12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "gcd(6,12)",
+     "respuesta": "6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "lcm(6,9)",
+     "respuesta": "18"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "gcd(6,9)",
+     "respuesta": "3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "lcm(10,15)",
+     "respuesta": "30"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "gcd(10,15)",
+     "respuesta": "5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "lcm(2,5)",
+     "respuesta": "10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "gcd(2,5)",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "i",
+     "expresion": "lcm(4,6)",
+     "respuesta": "12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "i",
+     "expresion": "gcd(4,6)",
+     "respuesta": "2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "j",
+     "expresion": "lcm(4,1)",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "j",
+     "expresion": "gcd(4,1)",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "k",
+     "expresion": "lcm(3,7)",
+     "respuesta": "21"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "k",
+     "expresion": "gcd(3,7)",
+     "respuesta": "1"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 4, ej. 9",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-div-002",
+   "tipo": "m.c.m. y M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Calcula el m.c.m. y el M.C.D. de: a) 8 y 40   b) 15 y 35   c) 84 y 360",
+   "solucion": "a) m.c.m. 40, M.C.D. 8; b) m.c.m. 105, M.C.D. 5; c) m.c.m. 2520, M.C.D. 12",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "lcm(8,40)",
+     "respuesta": "40"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "gcd(8,40)",
+     "respuesta": "8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "lcm(15,35)",
+     "respuesta": "105"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "gcd(15,35)",
+     "respuesta": "5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "lcm(84,360)",
+     "respuesta": "2520"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "gcd(84,360)",
+     "respuesta": "12"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 4, ej. 10",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-div-003",
+   "tipo": "m.c.m. y M.C.D. factorizados",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Calcula el m.c.m. y el M.C.D. sin calcular los números:\n\na) $m = 2 \\cdot 2 \\cdot 2 \\cdot 3$, $n = 2 \\cdot 3 \\cdot 3 \\cdot 5$   b) $m = 3 \\cdot 5$, $n = 2 \\cdot 7$   c) $m = 2^{2} \\cdot 3 \\cdot 5^{2}$, $n = 2^{2} \\cdot 3^{2}$   d) $m = 3 \\cdot 5 \\cdot 7^{2}$, $n = 2 \\cdot 5^{2} \\cdot 7$",
+   "solucion": "a) m.c.m. $2^{3} \\cdot 3^{2} \\cdot 5 = 360$, M.C.D. $2 \\cdot 3 = 6$   b) m.c.m. 210, M.C.D. 1   c) m.c.m. $2^{2} \\cdot 3^{2} \\cdot 5^{2} = 900$, M.C.D. $2^{2} \\cdot 3 = 12$   d) m.c.m. $2 \\cdot 3 \\cdot 5^{2} \\cdot 7^{2} = 7350$, M.C.D. $5 \\cdot 7 = 35$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "lcm(24,90)",
+     "respuesta": "360"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "gcd(24,90)",
+     "respuesta": "6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "lcm(15,14)",
+     "respuesta": "210"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "gcd(15,14)",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "lcm(300,36)",
+     "respuesta": "900"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "gcd(300,36)",
+     "respuesta": "12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "lcm(735,350)",
+     "respuesta": "7350"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "gcd(735,350)",
+     "respuesta": "35"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 4, ej. 7",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-div-004",
+   "tipo": "divisores",
+   "dificultad": 1,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Busca todos los divisores de 210.",
+   "solucion": "1, 2, 3, 5, 6, 7, 10, 14, 15, 21, 30, 35, 42, 70, 105 y 210 (16 divisores)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "divisor_count(210)",
+     "respuesta": "16"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 4, ej. 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-div-005",
+   "tipo": "criterios de divisibilidad",
+   "dificultad": 1,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Sustituye $A$ por una cifra para que: a) $24A75$ sea múltiplo de 5   b) $1107A$ sea múltiplo de 3   c) $5A439$ sea múltiplo de 6",
+   "solucion": "a) Cualquier cifra (acaba en 5)   b) $A = 0$, 3, 6 o 9   c) Imposible: acaba en 9, es impar y no puede ser múltiplo de 6",
+   "fuente": "mv2",
+   "ref": "cap. 4, ej. 3",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m2-div-006",
+   "tipo": "criterios de divisibilidad",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "¿Verdadero o falso? 30 087 es divisible por 3; 78 344 es divisible por 6; 87 300 es múltiplo de 11; 2 985 644 es múltiplo de 4; 1 es divisor de 13; 98 es divisor de 3.",
+   "solucion": "V, F, F, V, V, F",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "30087 % 3",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "78344 % 6",
+     "respuesta": "2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "87300 % 11",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "2985644 % 4",
+     "respuesta": "0"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 4, ej. 6",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-div-007",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Un artesano tiene 32 piedras de coral, 88 de turquesa, 56 perlas y 66 de azabache. Quiere hacer el mayor número posible de collares iguales usándolas todas. ¿Cuántos puede hacer?",
+   "solucion": "2 collares (M.C.D. = 2)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(32,88),gcd(56,66))",
+     "respuesta": "2"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 4, ej. 13",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-div-008",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "El ordenador de Lucía pasa el antivirus cada 180 minutos y se actualiza cada 240. ¿Cada cuántos minutos hace las dos cosas a la vez?",
+   "solucion": "Cada 720 minutos (12 horas)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "lcm(180,240)",
+     "respuesta": "720"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 4, ej. 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-div-009",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "En una carretera hay un teléfono de emergencia cada 10 km, un pozo cada 15 km y una gasolinera cada 20 km. ¿Cada cuánto coinciden los tres?",
+   "solucion": "Cada 60 km",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(10,15),20)",
+     "respuesta": "60"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 4, ej. 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-div-010",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Sonia tiene 12 gorritos, 6 collares, 18 anillos y 36 caramelos, y quiere hacer bolsas iguales con todo. ¿Para cuántos amigos le alcanza? ¿Qué lleva cada bolsa?",
+   "solucion": "6 bolsas: 2 gorritos, 1 collar, 3 anillos y 6 caramelos cada una",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(12,6),gcd(18,36))",
+     "respuesta": "6"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 4, ej. 16",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-div-011",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 3,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Tres farolas se encienden cada 12, 18 y 60 segundos. A las 18:30 coinciden encendidas. ¿Cuántas veces coincidirán en los 5 minutos siguientes?",
+   "solucion": "Coinciden cada 180 s: 1 vez (a las 18:33)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(12,18),60)",
+     "respuesta": "180"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "floor(300/180)",
+     "respuesta": "1"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 4, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-div-012",
+   "tipo": "números primos",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Comprueba si 2047 es primo probando los divisores primos menores que su raíz cuadrada.",
+   "solucion": "No es primo: $2047 = 23 \\cdot 89$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "23*89",
+     "respuesta": "2047"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 4, ej. 18",
+   "verificacion": "comprobada"
+  }
+ ]
+}

@@ -1,0 +1,669 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 2,
+ "tema": "ecuaciones-segundo-grado",
+ "titulo": "Ecuaciones de segundo grado",
+ "saberes": [
+  "D.4"
+ ],
+ "fuentes": {
+  "mv2": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 2.º ESO (LOMLOE)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/2ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "ag2": {
+   "nombre": "Alfonso González, IES Fernando de Mena: ejercicios de 2.º ESO",
+   "url": "https://www.alfonsogonzalez.es/asignaturas/2_eso/ejercicios_2_eso_propuestos.php",
+   "licencia": "CC BY-NC"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m2-ec2-001",
+   "tipo": "incompleta",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve las siguientes ecuaciones de segundo grado incompletas:\n\na) $3x^{2} + 9x = 0$   b) $2x^{2} - 8 = 0$   c) $x^{2} - 81 = 0$   d) $2x^{2} + 5x = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "3*x^2+9*x = 0",
+     "enunciado": "3x^{2} + 9x = 0",
+     "respuesta": [
+      "-3",
+      "0"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "2*x^2-8 = 0",
+     "enunciado": "2x^{2} - 8 = 0",
+     "respuesta": [
+      "-2",
+      "2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "x^2-81 = 0",
+     "enunciado": "x^{2} - 81 = 0",
+     "respuesta": [
+      "-9",
+      "9"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "2*x^2+5*x = 0",
+     "enunciado": "2x^{2} + 5x = 0",
+     "respuesta": [
+      "-5/2",
+      "0"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 35",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -3$, $x = 0$; b) $x = -2$, $x = 2$; c) $x = -9$, $x = 9$; d) $x = - \\frac{5}{2}$, $x = 0$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec2-002",
+   "tipo": "incompleta",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve sin usar la fórmula general:\n\na) $x^{2} - 5x = 0$   b) $x^{2} - 16 = 0$   c) $2x^{2} - 18 = 0$   d) $5x^{2} + x = 0$   e) $x^{2} = x$   f) $4x^{2} - 1 = 0$   g) $9x^{2} - 4 = 0$   h) $x^{2} + 16 = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x^2-5*x = 0",
+     "enunciado": "x^{2} - 5x = 0",
+     "respuesta": [
+      "0",
+      "5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "x^2-16 = 0",
+     "enunciado": "x^{2} - 16 = 0",
+     "respuesta": [
+      "-4",
+      "4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "2*x^2-18 = 0",
+     "enunciado": "2x^{2} - 18 = 0",
+     "respuesta": [
+      "-3",
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "5*x^2+x = 0",
+     "enunciado": "5x^{2} + x = 0",
+     "respuesta": [
+      "-1/5",
+      "0"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "x^2 = x",
+     "enunciado": "x^{2} = x",
+     "respuesta": [
+      "0",
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "4*x^2-1 = 0",
+     "enunciado": "4x^{2} - 1 = 0",
+     "respuesta": [
+      "-1/2",
+      "1/2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "g",
+     "ecuacion": "9*x^2-4 = 0",
+     "enunciado": "9x^{2} - 4 = 0",
+     "respuesta": [
+      "-2/3",
+      "2/3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "h",
+     "ecuacion": "x^2+16 = 0",
+     "enunciado": "x^{2} + 16 = 0",
+     "respuesta": "sin solución"
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 2, ej. 1",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 0$, $x = 5$; b) $x = -4$, $x = 4$; c) $x = -3$, $x = 3$; d) $x = - \\frac{1}{5}$, $x = 0$; e) $x = 0$, $x = 1$; f) $x = - \\frac{1}{2}$, $x = \\frac{1}{2}$; g) $x = - \\frac{2}{3}$, $x = \\frac{2}{3}$; h) sin solución",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec2-003",
+   "tipo": "incompleta",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $x \\cdot (x + 2) = 0$   b) $25x^{2} - 9 = 0$   c) $x \\cdot (x - 1) - 2x =-6x$   d) $(x + 1) \\cdot (x - 1) = 2(x^{2} - 13)$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x*(x+2) = 0",
+     "enunciado": "x \\cdot (x + 2) = 0",
+     "respuesta": [
+      "-2",
+      "0"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "25*x^2-9 = 0",
+     "enunciado": "25x^{2} - 9 = 0",
+     "respuesta": [
+      "-3/5",
+      "3/5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "x*(x-1)-2*x = -6*x",
+     "enunciado": "x \\cdot (x - 1) - 2x =-6x",
+     "respuesta": [
+      "-3",
+      "0"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "(x+1)*(x-1) = 2*(x^2-13)",
+     "enunciado": "(x + 1) \\cdot (x - 1) = 2(x^{2} - 13)",
+     "respuesta": [
+      "-5",
+      "5"
+     ]
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 2, ej. 1",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -2$, $x = 0$; b) $x = - \\frac{3}{5}$, $x = \\frac{3}{5}$; c) $x = -3$, $x = 0$; d) $x = -5$, $x = 5$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec2-004",
+   "tipo": "completa",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve las siguientes ecuaciones de segundo grado completas:\n\na) $x^{2} - 5x + 6 = 0$   b) $2x^{2} + 5x - 7 = 0$   c) $3x^{2} - 8x + 2 = 0$   d) $x^{2} - x - 12 = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x^2-5*x+6 = 0",
+     "enunciado": "x^{2} - 5x + 6 = 0",
+     "respuesta": [
+      "2",
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "2*x^2+5*x-7 = 0",
+     "enunciado": "2x^{2} + 5x - 7 = 0",
+     "respuesta": [
+      "-7/2",
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "3*x^2-8*x+2 = 0",
+     "enunciado": "3x^{2} - 8x + 2 = 0",
+     "respuesta": [
+      "4/3 - sqrt(10)/3",
+      "sqrt(10)/3 + 4/3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "x^2-x-12 = 0",
+     "enunciado": "x^{2} - x - 12 = 0",
+     "respuesta": [
+      "-3",
+      "4"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 36",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 2$, $x = 3$; b) $x = - \\frac{7}{2}$, $x = 1$; c) $x = \\frac{4}{3} - \\frac{\\sqrt{10}}{3}$, $x = \\frac{\\sqrt{10}}{3} + \\frac{4}{3}$; d) $x = -3$, $x = 4$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec2-005",
+   "tipo": "completa",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve con la fórmula general:\n\na) $x^{2} - 6x + 8 = 0$   b) $x^{2} - 4x + 4 = 0$   c) $x^{2} - 4x + 21 = 0$   d) $x^{2} - 2x - 3 = 0$   e) $3x^{2} - 10x + 7 = 0$   f) $6x^{2} - 5x - 6 = 0$   g) $x^{2} + x - 1 = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x^2-6*x+8 = 0",
+     "enunciado": "x^{2} - 6x + 8 = 0",
+     "respuesta": [
+      "2",
+      "4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "x^2-4*x+4 = 0",
+     "enunciado": "x^{2} - 4x + 4 = 0",
+     "respuesta": [
+      "2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "x^2-4*x+21 = 0",
+     "enunciado": "x^{2} - 4x + 21 = 0",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "x^2-2*x-3 = 0",
+     "enunciado": "x^{2} - 2x - 3 = 0",
+     "respuesta": [
+      "-1",
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "3*x^2-10*x+7 = 0",
+     "enunciado": "3x^{2} - 10x + 7 = 0",
+     "respuesta": [
+      "1",
+      "7/3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "6*x^2-5*x-6 = 0",
+     "enunciado": "6x^{2} - 5x - 6 = 0",
+     "respuesta": [
+      "-2/3",
+      "3/2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "g",
+     "ecuacion": "x^2+x-1 = 0",
+     "enunciado": "x^{2} + x - 1 = 0",
+     "respuesta": [
+      "-sqrt(5)/2 - 1/2",
+      "-1/2 + sqrt(5)/2"
+     ]
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 2, ej. 2",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 2$, $x = 4$; b) $x = 2$; c) sin solución; d) $x = -1$, $x = 3$; e) $x = 1$, $x = \\frac{7}{3}$; f) $x = - \\frac{2}{3}$, $x = \\frac{3}{2}$; g) $x = - \\frac{\\sqrt{5}}{2} - \\frac{1}{2}$, $x = - \\frac{1}{2} + \\frac{\\sqrt{5}}{2}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec2-006",
+   "tipo": "completa",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $x^{2} + 5x - 6 = 0$   b) $7x^{2} + 12x = 0$   c) $3x^{2} + 75 = 0$   d) $x^{2} - 2x + 7 = 0$   e) $6x^{2} - 5x - 7 = 0$   f) $x^{2} - 9 = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x^2+5*x-6 = 0",
+     "enunciado": "x^{2} + 5x - 6 = 0",
+     "respuesta": [
+      "-6",
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "7*x^2+12*x = 0",
+     "enunciado": "7x^{2} + 12x = 0",
+     "respuesta": [
+      "-12/7",
+      "0"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "3*x^2+75 = 0",
+     "enunciado": "3x^{2} + 75 = 0",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "x^2-2*x+7 = 0",
+     "enunciado": "x^{2} - 2x + 7 = 0",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "6*x^2-5*x-7 = 0",
+     "enunciado": "6x^{2} - 5x - 7 = 0",
+     "respuesta": [
+      "5/12 - sqrt(193)/12",
+      "5/12 + sqrt(193)/12"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "x^2-9 = 0",
+     "enunciado": "x^{2} - 9 = 0",
+     "respuesta": [
+      "-3",
+      "3"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 43",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -6$, $x = 1$; b) $x = - \\frac{12}{7}$, $x = 0$; c) sin solución; d) sin solución; e) $x = \\frac{5}{12} - \\frac{\\sqrt{193}}{12}$, $x = \\frac{5}{12} + \\frac{\\sqrt{193}}{12}$; f) $x = -3$, $x = 3$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec2-007",
+   "tipo": "con coeficientes fraccionarios",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $\\frac{x^{2}}{2} - x - 4 = 0$   b) $\\frac{2x^{2}}{3} - \\frac{8x}{3} + 2 = 0$   c) $x^{2} - \\frac{5x}{2} + 1 = 0$   d) $\\frac{x^{2}}{9} - x + 2 = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x^2/2-x-4 = 0",
+     "enunciado": "\\frac{x^{2}}{2} - x - 4 = 0",
+     "respuesta": [
+      "-2",
+      "4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "2*x^2/3-8*x/3+2 = 0",
+     "enunciado": "\\frac{2x^{2}}{3} - \\frac{8x}{3} + 2 = 0",
+     "respuesta": [
+      "1",
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "x^2-5*x/2+1 = 0",
+     "enunciado": "x^{2} - \\frac{5x}{2} + 1 = 0",
+     "respuesta": [
+      "1/2",
+      "2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "x^2/9-x+2 = 0",
+     "enunciado": "\\frac{x^{2}}{9} - x + 2 = 0",
+     "respuesta": [
+      "3",
+      "6"
+     ]
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 2, ej. 2",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -2$, $x = 4$; b) $x = 1$, $x = 3$; c) $x = \\frac{1}{2}$, $x = 2$; d) $x = 3$, $x = 6$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec2-008",
+   "tipo": "pasar a la forma general",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Opera hasta llegar a la forma general y resuelve:\n\na) $2x^{2} + 5x = 5 + 3x - x^{2}$   b) $4x \\cdot (x + 1) = 15$   c) $-x \\cdot (x + 2) + 3 = 0$   d) $(2x - 3)^{2} = 1$   e) $(4 - 3x)^{2} - 64 = 0$   f) $(x - 1) \\cdot (x - 2) = 6$   g) $x \\cdot (x + 2) = 3(x + 2)$   h) $(x + 3) \\cdot (x - 3) = 3x - 11$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "2*x^2+5*x = 5+3*x-x^2",
+     "enunciado": "2x^{2} + 5x = 5 + 3x - x^{2}",
+     "respuesta": [
+      "-5/3",
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "4*x*(x+1) = 15",
+     "enunciado": "4x \\cdot (x + 1) = 15",
+     "respuesta": [
+      "-5/2",
+      "3/2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "-x*(x+2)+3 = 0",
+     "enunciado": "-x \\cdot (x + 2) + 3 = 0",
+     "respuesta": [
+      "-3",
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "(2*x-3)^2 = 1",
+     "enunciado": "(2x - 3)^{2} = 1",
+     "respuesta": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "(4-3*x)^2-64 = 0",
+     "enunciado": "(4 - 3x)^{2} - 64 = 0",
+     "respuesta": [
+      "-4/3",
+      "4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "(x-1)*(x-2) = 6",
+     "enunciado": "(x - 1) \\cdot (x - 2) = 6",
+     "respuesta": [
+      "-1",
+      "4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "g",
+     "ecuacion": "x*(x+2) = 3*(x+2)",
+     "enunciado": "x \\cdot (x + 2) = 3(x + 2)",
+     "respuesta": [
+      "-2",
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "h",
+     "ecuacion": "(x+3)*(x-3) = 3*x-11",
+     "enunciado": "(x + 3) \\cdot (x - 3) = 3x - 11",
+     "respuesta": [
+      "1",
+      "2"
+     ]
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 2, ej. 7",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = - \\frac{5}{3}$, $x = 1$; b) $x = - \\frac{5}{2}$, $x = \\frac{3}{2}$; c) $x = -3$, $x = 1$; d) $x = 1$, $x = 2$; e) $x = - \\frac{4}{3}$, $x = 4$; f) $x = -1$, $x = 4$; g) $x = -2$, $x = 3$; h) $x = 1$, $x = 2$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec2-009",
+   "tipo": "factorizada",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve sin desarrollar los productos:\n\na) $(x + 2) \\cdot (x - 5) = 0$   b) $(x - 3) \\cdot (x - 1) = 0$   c) $(4x - 8) \\cdot (x + 1) = 0$   d) $(2x - 4) \\cdot 3x = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "(x+2)*(x-5) = 0",
+     "enunciado": "(x + 2) \\cdot (x - 5) = 0",
+     "respuesta": [
+      "-2",
+      "5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "(x-3)*(x-1) = 0",
+     "enunciado": "(x - 3) \\cdot (x - 1) = 0",
+     "respuesta": [
+      "1",
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "(4*x-8)*(x+1) = 0",
+     "enunciado": "(4x - 8) \\cdot (x + 1) = 0",
+     "respuesta": [
+      "-1",
+      "2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "(2*x-4)*3*x = 0",
+     "enunciado": "(2x - 4) \\cdot 3x = 0",
+     "respuesta": [
+      "0",
+      "2"
+     ]
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 2, ej. 2",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -2$, $x = 5$; b) $x = 1$, $x = 3$; c) $x = -1$, $x = 2$; d) $x = 0$, $x = 2$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec2-010",
+   "tipo": "problema",
+   "dificultad": 3,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Se aumenta el lado de una baldosa cuadrada en 9 cm y su área queda multiplicada por 16. ¿Qué lado tenía la baldosa?",
+   "solucion": "3 cm (la otra solución, $-\\frac{9}{5}$, no vale para una longitud)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "(x+9)^2 = 16*x^2",
+     "respuesta": [
+      "-9/5",
+      "3"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, 4 (actividad resuelta)",
+   "verificacion": "comprobada"
+  }
+ ]
+}

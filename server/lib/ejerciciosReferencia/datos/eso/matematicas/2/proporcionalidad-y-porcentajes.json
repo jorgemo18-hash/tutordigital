@@ -1,0 +1,481 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 2,
+ "tema": "proporcionalidad-y-porcentajes",
+ "titulo": "Proporcionalidad y porcentajes",
+ "saberes": [
+  "A.5",
+  "A.6"
+ ],
+ "fuentes": {
+  "mv2": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 2.º ESO (LOMLOE)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/2ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m2-pro-001",
+   "tipo": "proporcionalidad directa",
+   "dificultad": 1,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Con 8 kg de harina hemos hecho 15 pasteles. ¿Cuántos podemos hacer con 30 kg?",
+   "solucion": "$56{,}25$: 56 pasteles",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x/30 = 15/8",
+     "respuesta": [
+      "225/4"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 3",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-002",
+   "tipo": "proporcionalidad directa",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Completa la tabla de proporcionalidad directa y calcula la constante:\n\n| Litros de gasolina | 8 | 25 | | 4 | |\n|---|---|---|---|---|---|\n| Euros | 11,36 | | 56,8 | | 25,56 |",
+   "solucion": "Constante 1,42 €/l. Faltan: 35,5 €; 40 l; 5,68 €; 18 l",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "k",
+     "expresion": "11.36/8",
+     "respuesta": "1.42"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "25*1.42",
+     "respuesta": "35.5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "56.8/1.42",
+     "respuesta": "40"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "4*1.42",
+     "respuesta": "5.68"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "25.56/1.42",
+     "respuesta": "18"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 4",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-003",
+   "tipo": "proporcionalidad directa",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Cada gominola cuesta 5 céntimos y pesa 4 g. Compramos una bolsa de 100 g. ¿Cuántas gominolas trae y cuánto cuesta?",
+   "solucion": "25 gominolas, 1,25 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 100/4",
+     "respuesta": [
+      "25"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 10",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-004",
+   "tipo": "proporcionalidad directa",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Expresa en euros 1400 $, si cada euro cotiza a 1,26 $.",
+   "solucion": "$1111{,}11$ € (= 10000/9)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "1.26*x = 1400",
+     "respuesta": [
+      "10000/9"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 13",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-005",
+   "tipo": "proporcionalidad inversa",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Con 48 € puedo comprar 20 piezas de madera. Si costaran 1,50 € cada una, ¿cuántas podría comprar?",
+   "solucion": "32 piezas",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "1.5*x = 48",
+     "respuesta": [
+      "32"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 6",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-006",
+   "tipo": "proporcionalidad inversa",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Tenemos pienso para 45 vacas durante 30 días. Si vendemos 9 vacas, ¿para cuántos días tendremos?",
+   "solucion": "37,5 días",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "36*x = 45*30",
+     "respuesta": [
+      "75/2"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 8",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-007",
+   "tipo": "proporcionalidad inversa",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Completa la tabla de proporcionalidad inversa:\n\n| Velocidad (km/h) | 90 | 120 | | 75 | |\n|---|---|---|---|---|---|\n| Tiempo (h) | 4,5 | | 10 | | 3 |",
+   "solucion": "Producto constante 405. Faltan: 3,375 h; 40,5 km/h; 5,4 h; 135 km/h",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "k",
+     "expresion": "90*4.5",
+     "respuesta": "405"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "405/120",
+     "respuesta": "3.375"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "405/10",
+     "respuesta": "40.5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "405/75",
+     "respuesta": "5.4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "405/3",
+     "respuesta": "135"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 9",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-008",
+   "tipo": "proporcionalidad inversa",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Con dos grifos un depósito se llena en 4 horas y media. ¿Cuánto tardarán cinco grifos iguales?",
+   "solucion": "1,8 h (1 h 48 min)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "5*x = 2*4.5",
+     "respuesta": [
+      "1.8"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-009",
+   "tipo": "proporcionalidad inversa",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Para vaciar un depósito se han usado 17 cubos de 22 litros. ¿Cuántos cubos de 34 litros harían falta?",
+   "solucion": "11 cubos",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "34*x = 17*22",
+     "respuesta": [
+      "11"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 18",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-010",
+   "tipo": "directa o inversa",
+   "dificultad": 1,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "¿Directa o inversamente proporcionales? a) Árboles talados y kilos de leña. b) Velocidad del tren y tiempo que tarda. c) Tamaño de la bolsa y número de bolsas para la compra. d) Distancia recorrida y gasolina gastada. e) Invitados y tamaño del trozo de tarta. f) Radio de una circunferencia y su longitud.",
+   "solucion": "a) directa   b) inversa   c) inversa   d) directa   e) inversa   f) directa",
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 17",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m2-pro-011",
+   "tipo": "porcentajes",
+   "dificultad": 1,
+   "saberes": [
+    "A.5",
+    "A.6"
+   ],
+   "enunciado": "Una batidora vale 110 € + IVA (21 %). ¿Cuál es el precio final?",
+   "solucion": "133,10 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 110*1.21",
+     "respuesta": [
+      "133.1"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-012",
+   "tipo": "porcentajes",
+   "dificultad": 2,
+   "saberes": [
+    "A.5",
+    "A.6"
+   ],
+   "enunciado": "Un pantalón costaba 36 € y en rebajas se vende a 28 €. ¿Qué porcentaje han rebajado?",
+   "solucion": "Un 22,2 % (= 200/9 %)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "36*(1-x/100) = 28",
+     "respuesta": [
+      "200/9"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-013",
+   "tipo": "porcentajes",
+   "dificultad": 2,
+   "saberes": [
+    "A.5",
+    "A.6"
+   ],
+   "enunciado": "Una televisión cuesta 847 € con el IVA (21 %) incluido. ¿Cuál es el precio sin IVA?",
+   "solucion": "700 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "1.21*x = 847",
+     "respuesta": [
+      "700"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 16",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-014",
+   "tipo": "porcentajes",
+   "dificultad": 2,
+   "saberes": [
+    "A.5",
+    "A.6"
+   ],
+   "enunciado": "El agua al congelarse aumenta un 10 % su volumen. ¿Cuántos litros de agua hacen falta para una barra de hielo de 75 dm³?",
+   "solucion": "68,18 litros (= 750/11)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "1.1*x = 75",
+     "respuesta": [
+      "750/11"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-015",
+   "tipo": "porcentajes",
+   "dificultad": 2,
+   "saberes": [
+    "A.5",
+    "A.6"
+   ],
+   "enunciado": "Un portátil cuesta 899 € con el IVA (21 %) incluido. ¿Cuál es su precio sin IVA?",
+   "solucion": "742,98 € (= 89900/121)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "1.21*x = 899",
+     "respuesta": [
+      "89900/121"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 23",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-016",
+   "tipo": "porcentajes",
+   "dificultad": 3,
+   "saberes": [
+    "A.5",
+    "A.6"
+   ],
+   "enunciado": "Un empleado que gana 1154 € netos al mes sufre un recorte del 5 %. ¿Cuánto deja de ganar en un trimestre?",
+   "solucion": "173,10 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 3*1154*0.05",
+     "respuesta": [
+      "173.1"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 21",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-017",
+   "tipo": "escalas",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "En un mapa a escala 1 : 250 000, la distancia entre dos puntos es de 0,15 m. ¿Cuál es la distancia real en km?",
+   "solucion": "37,5 km",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 0.15*250000/1000",
+     "respuesta": [
+      "37.5"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 26",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-018",
+   "tipo": "escalas",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "En un dibujo el campo de fútbol mide 24 cm por 16 cm. El campo real mide 90 m de largo. ¿Cuánto mide de ancho? ¿A qué escala está dibujado?",
+   "solucion": "60 m de ancho; escala 1 : 375",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x/16 = 90/24",
+     "respuesta": [
+      "60"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 25",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-pro-019",
+   "tipo": "proporcionalidad compuesta",
+   "dificultad": 3,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Con 840 kg de pienso se alimenta a 12 animales durante 8 días. ¿Cuántos animales se podrían alimentar con 2130 kg durante 15 días?",
+   "solucion": "16,2: 16 animales",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 12*(2130/840)*(8/15)",
+     "respuesta": [
+      "568/35"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 9, ej. 28",
+   "verificacion": "comprobada"
+  }
+ ]
+}

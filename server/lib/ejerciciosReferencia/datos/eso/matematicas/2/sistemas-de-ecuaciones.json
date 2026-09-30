@@ -1,0 +1,686 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 2,
+ "tema": "sistemas-de-ecuaciones",
+ "titulo": "Sistemas de ecuaciones lineales",
+ "saberes": [
+  "D.4"
+ ],
+ "fuentes": {
+  "mv2": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 2.º ESO (LOMLOE)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/2ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "ag2": {
+   "nombre": "Alfonso González, IES Fernando de Mena: ejercicios de 2.º ESO",
+   "url": "https://www.alfonsogonzalez.es/asignaturas/2_eso/ejercicios_2_eso_propuestos.php",
+   "licencia": "CC BY-NC"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m2-sis-001",
+   "tipo": "sustitución",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve por el método de sustitución:\n\na) $\\begin{cases} 2x + 4y =-5 \\\\ 3x - 6y = 7 \\end{cases}$   b) $\\begin{cases} 2x + 4y = 0 \\\\ 3x + 6y = 11 \\end{cases}$   c) $\\begin{cases} 5x - 7y = 1 \\\\ 8x + 7y = 10 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "2*x+4*y = -5",
+      "3*x-6*y = 7"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2x + 4y =-5 \\\\ 3x - 6y = 7 \\end{cases}",
+     "respuesta": {
+      "x": "-1/12",
+      "y": "-29/24"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "2*x+4*y = 0",
+      "3*x+6*y = 11"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2x + 4y = 0 \\\\ 3x + 6y = 11 \\end{cases}",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "5*x-7*y = 1",
+      "8*x+7*y = 10"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 5x - 7y = 1 \\\\ 8x + 7y = 10 \\end{cases}",
+     "respuesta": {
+      "x": "11/13",
+      "y": "6/13"
+     }
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 38",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = - \\frac{1}{12}$, $y = - \\frac{29}{24}$; b) sin solución; c) $x = \\frac{11}{13}$, $y = \\frac{6}{13}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-sis-002",
+   "tipo": "igualación",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve por el método de igualación:\n\na) $\\begin{cases} 6x + 7y = 8 \\\\ -2x + 3y =-4 \\end{cases}$   b) $\\begin{cases} 2x - 3y =-5 \\\\ 4x + 2y = 14 \\end{cases}$   c) $\\begin{cases} 7x - 4y = 3 \\\\ 3x + 2y = 5 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "6*x+7*y = 8",
+      "-2*x+3*y = -4"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 6x + 7y = 8 \\\\ -2x + 3y =-4 \\end{cases}",
+     "respuesta": {
+      "x": "13/8",
+      "y": "-1/4"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "2*x-3*y = -5",
+      "4*x+2*y = 14"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2x - 3y =-5 \\\\ 4x + 2y = 14 \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "3"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "7*x-4*y = 3",
+      "3*x+2*y = 5"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 7x - 4y = 3 \\\\ 3x + 2y = 5 \\end{cases}",
+     "respuesta": {
+      "x": "1",
+      "y": "1"
+     }
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 39",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = \\frac{13}{8}$, $y = - \\frac{1}{4}$; b) $x = 2$, $y = 3$; c) $x = 1$, $y = 1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-sis-003",
+   "tipo": "reducción",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve por el método de reducción:\n\na) $\\begin{cases} 3x + y = 4 \\\\ 2x - 5y = 14 \\end{cases}$   b) $\\begin{cases} 5x + 3y = 2 \\\\ 4x + y = 7 \\end{cases}$   c) $\\begin{cases} 2x + 3y = 0 \\\\ 3x - 2y = 13 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "3*x+y = 4",
+      "2*x-5*y = 14"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x + y = 4 \\\\ 2x - 5y = 14 \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "-2"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "5*x+3*y = 2",
+      "4*x+y = 7"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 5x + 3y = 2 \\\\ 4x + y = 7 \\end{cases}",
+     "respuesta": {
+      "x": "19/7",
+      "y": "-27/7"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "2*x+3*y = 0",
+      "3*x-2*y = 13"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2x + 3y = 0 \\\\ 3x - 2y = 13 \\end{cases}",
+     "respuesta": {
+      "x": "3",
+      "y": "-2"
+     }
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 40",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 2$, $y = -2$; b) $x = \\frac{19}{7}$, $y = - \\frac{27}{7}$; c) $x = 3$, $y = -2$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-sis-004",
+   "tipo": "tipos de sistema",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve por sustitución e indica si alguno no tiene solución o tiene infinitas:\n\na) $\\begin{cases} 3x - 2y =-4 \\\\ 6x - 4y =-8 \\end{cases}$   b) $\\begin{cases} 3x - 2y =-4 \\\\ 9x - 6y = 1 \\end{cases}$   c) $\\begin{cases} 3x - 2y =-4 \\\\ 2x + 3y = 1 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "3*x-2*y = -4",
+      "6*x-4*y = -8"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x - 2y =-4 \\\\ 6x - 4y =-8 \\end{cases}",
+     "respuesta": "infinitas"
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "3*x-2*y = -4",
+      "9*x-6*y = 1"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x - 2y =-4 \\\\ 9x - 6y = 1 \\end{cases}",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "3*x-2*y = -4",
+      "2*x+3*y = 1"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x - 2y =-4 \\\\ 2x + 3y = 1 \\end{cases}",
+     "respuesta": {
+      "x": "-10/13",
+      "y": "11/13"
+     }
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 45",
+   "verificacion": "comprobada",
+   "solucion": "a) infinitas; b) sin solución; c) $x = - \\frac{10}{13}$, $y = \\frac{11}{13}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-sis-005",
+   "tipo": "sustitución",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve por sustitución:\n\na) $\\begin{cases} x + y = 12 \\\\ x - y = 2 \\end{cases}$   b) $\\begin{cases} x + 3y =-2 \\\\ 2x - y = 3 \\end{cases}$   c) $\\begin{cases} 3x - 4y =-6 \\\\ x + 2y = 8 \\end{cases}$   d) $\\begin{cases} x + 2y = 0 \\\\ 2x - y = 5 \\end{cases}$   e) $\\begin{cases} 2x - y =-2 \\\\ 4x + y = 5 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "x+y = 12",
+      "x-y = 2"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} x + y = 12 \\\\ x - y = 2 \\end{cases}",
+     "respuesta": {
+      "x": "7",
+      "y": "5"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "x+3*y = -2",
+      "2*x-y = 3"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} x + 3y =-2 \\\\ 2x - y = 3 \\end{cases}",
+     "respuesta": {
+      "x": "1",
+      "y": "-1"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "3*x-4*y = -6",
+      "x+2*y = 8"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x - 4y =-6 \\\\ x + 2y = 8 \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "3"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "d",
+     "ecuaciones": [
+      "x+2*y = 0",
+      "2*x-y = 5"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} x + 2y = 0 \\\\ 2x - y = 5 \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "-1"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "e",
+     "ecuaciones": [
+      "2*x-y = -2",
+      "4*x+y = 5"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2x - y =-2 \\\\ 4x + y = 5 \\end{cases}",
+     "respuesta": {
+      "x": "1/2",
+      "y": "3"
+     }
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 3, ej. 1",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 7$, $y = 5$; b) $x = 1$, $y = -1$; c) $x = 2$, $y = 3$; d) $x = 2$, $y = -1$; e) $x = \\frac{1}{2}$, $y = 3$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-sis-006",
+   "tipo": "igualación",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve por igualación:\n\na) $\\begin{cases} 3x - y = 10 \\\\ 2x + y = 10 \\end{cases}$   b) $\\begin{cases} x - 2y =-8 \\\\ -x + 3y = 10 \\end{cases}$   c) $\\begin{cases} 3y + 10x =-3 \\\\ -5x - 6y = 0 \\end{cases}$   d) $\\begin{cases} x + 3y = 25 \\\\ y - 9x = 27 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "3*x-y = 10",
+      "2*x+y = 10"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x - y = 10 \\\\ 2x + y = 10 \\end{cases}",
+     "respuesta": {
+      "x": "4",
+      "y": "2"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "x-2*y = -8",
+      "-x+3*y = 10"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} x - 2y =-8 \\\\ -x + 3y = 10 \\end{cases}",
+     "respuesta": {
+      "x": "-4",
+      "y": "2"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "3*y+10*x = -3",
+      "-5*x-6*y = 0"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3y + 10x =-3 \\\\ -5x - 6y = 0 \\end{cases}",
+     "respuesta": {
+      "x": "-2/5",
+      "y": "1/3"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "d",
+     "ecuaciones": [
+      "x+3*y = 25",
+      "y-9*x = 27"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} x + 3y = 25 \\\\ y - 9x = 27 \\end{cases}",
+     "respuesta": {
+      "x": "-2",
+      "y": "9"
+     }
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 3, ej. 2",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 4$, $y = 2$; b) $x = -4$, $y = 2$; c) $x = - \\frac{2}{5}$, $y = \\frac{1}{3}$; d) $x = -2$, $y = 9$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-sis-007",
+   "tipo": "reducción",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve por reducción:\n\na) $\\begin{cases} x + y = 2 \\\\ x - y = 6 \\end{cases}$   b) $\\begin{cases} 3x - 4y =-1 \\\\ x - 3y =-7 \\end{cases}$   c) $\\begin{cases} 8x + 9y = 60 \\\\ 10x - 3y = 18 \\end{cases}$   d) $\\begin{cases} 2x + 3y = 8 \\\\ x = 2y \\end{cases}$   e) $\\begin{cases} 2y + 3x = 6 \\\\ 5x - 10 = 5y \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "x+y = 2",
+      "x-y = 6"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} x + y = 2 \\\\ x - y = 6 \\end{cases}",
+     "respuesta": {
+      "x": "4",
+      "y": "-2"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "3*x-4*y = -1",
+      "x-3*y = -7"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x - 4y =-1 \\\\ x - 3y =-7 \\end{cases}",
+     "respuesta": {
+      "x": "5",
+      "y": "4"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "8*x+9*y = 60",
+      "10*x-3*y = 18"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 8x + 9y = 60 \\\\ 10x - 3y = 18 \\end{cases}",
+     "respuesta": {
+      "x": "3",
+      "y": "4"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "d",
+     "ecuaciones": [
+      "2*x+3*y = 8",
+      "x = 2*y"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2x + 3y = 8 \\\\ x = 2y \\end{cases}",
+     "respuesta": {
+      "x": "16/7",
+      "y": "8/7"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "e",
+     "ecuaciones": [
+      "2*y+3*x = 6",
+      "5*x-10 = 5*y"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2y + 3x = 6 \\\\ 5x - 10 = 5y \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "0"
+     }
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 3, ej. 3",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 4$, $y = -2$; b) $x = 5$, $y = 4$; c) $x = 3$, $y = 4$; d) $x = \\frac{16}{7}$, $y = \\frac{8}{7}$; e) $x = 2$, $y = 0$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-sis-008",
+   "tipo": "con denominadores",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve por el método que prefieras:\n\na) $\\begin{cases} \\frac{x}{2} + 2y = 10 \\\\ x - 3y = 6 \\end{cases}$   b) $\\begin{cases} \\frac{2x}{3} - \\frac{3y}{2} = 1 \\\\ x + y = 4 \\end{cases}$   c) $\\begin{cases} x - \\frac{y + 1}{4} = 3 \\\\ \\frac{x}{2} + 4 =-y \\end{cases}$   d) $\\begin{cases} 3 \\cdot \\frac{x - 2}{4} + 2 \\cdot \\frac{y - 3}{5} = \\frac{2}{5} \\\\ 2 \\cdot \\frac{y - 4}{3} + 3 \\cdot \\frac{x - 1}{2} = \\frac{3}{2} \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "x/2+2*y = 10",
+      "x-3*y = 6"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} \\frac{x}{2} + 2y = 10 \\\\ x - 3y = 6 \\end{cases}",
+     "respuesta": {
+      "x": "12",
+      "y": "2"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "2*x/3-3*y/2 = 1",
+      "x+y = 4"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} \\frac{2x}{3} - \\frac{3y}{2} = 1 \\\\ x + y = 4 \\end{cases}",
+     "respuesta": {
+      "x": "42/13",
+      "y": "10/13"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "x-(y+1)/4 = 3",
+      "x/2+4 = -y"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} x - \\frac{y + 1}{4} = 3 \\\\ \\frac{x}{2} + 4 =-y \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "-5"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "d",
+     "ecuaciones": [
+      "3*(x-2)/4+2*(y-3)/5 = 2/5",
+      "2*(y-4)/3+3*(x-1)/2 = 3/2"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3 \\cdot \\frac{x - 2}{4} + 2 \\cdot \\frac{y - 3}{5} = \\frac{2}{5} \\\\ 2 \\cdot \\frac{y - 4}{3} + 3 \\cdot \\frac{x - 1}{2} = \\frac{3}{2} \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "4"
+     }
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 3, ej. 8",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 12$, $y = 2$; b) $x = \\frac{42}{13}$, $y = \\frac{10}{13}$; c) $x = 2$, $y = -5$; d) $x = 2$, $y = 4$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-sis-009",
+   "tipo": "con paréntesis",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $\\begin{cases} 1 - \\frac{x}{2} = 3y - 3 \\\\ 2(3 - x) = \\frac{14y + 14}{3} \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "1-x/2 = 3*y-3",
+      "2*(3-x) = (14*y+14)/3"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 1 - \\frac{x}{2} = 3y - 3 \\\\ 2(3 - x) = \\frac{14y + 14}{3} \\end{cases}",
+     "respuesta": {
+      "x": "-4",
+      "y": "2"
+     }
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 3, ej. 4",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -4$, $y = 2$",
+   "solucion_generada": true
+  }
+ ]
+}

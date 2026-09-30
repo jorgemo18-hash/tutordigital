@@ -1,0 +1,1309 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 2,
+ "tema": "ecuaciones-primer-grado",
+ "titulo": "Ecuaciones de primer grado",
+ "saberes": [
+  "D.2",
+  "D.4"
+ ],
+ "fuentes": {
+  "mv2": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 2.º ESO (LOMLOE)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/2ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "ag2": {
+   "nombre": "Alfonso González, IES Fernando de Mena: ejercicios de 2.º ESO",
+   "url": "https://www.alfonsogonzalez.es/asignaturas/2_eso/ejercicios_2_eso_propuestos.php",
+   "licencia": "CC BY-NC"
+  },
+  "oja": {
+   "nombre": "Departamento de Matemáticas, IES Oja",
+   "url": "https://matematicasiesoja.wordpress.com/",
+   "licencia": "sin indicar"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m2-ec1-001",
+   "tipo": "ecuación de un paso",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve mentalmente:\n\na) $x + 3 = 2$   b) $x - 2 = 3$   c) $\\frac{x}{5} = 1$   d) $\\frac{x}{3} + \\frac{2}{3} = \\frac{4}{3}$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x+3 = 2",
+     "enunciado": "x + 3 = 2",
+     "respuesta": [
+      "-1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "x-2 = 3",
+     "enunciado": "x - 2 = 3",
+     "respuesta": [
+      "5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "x/5 = 1",
+     "enunciado": "\\frac{x}{5} = 1",
+     "respuesta": [
+      "5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "x/3+2/3 = 4/3",
+     "enunciado": "\\frac{x}{3} + \\frac{2}{3} = \\frac{4}{3}",
+     "respuesta": [
+      "2"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 11",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -1$; b) $x = 5$; c) $x = 5$; d) $x = 2$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-002",
+   "tipo": "ecuación de un paso",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $x + 6 = 3$   b) $15 = 11 + x$   c) $7 - x = 2$   d) $3 = 9 - x$   e) $-12 = 3x$   f) $4x = 11$   g) $\\frac{x}{-2} = 3$   h) $\\frac{x}{7} = \\frac{3}{14}$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x+6 = 3",
+     "enunciado": "x + 6 = 3",
+     "respuesta": [
+      "-3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "15 = 11+x",
+     "enunciado": "15 = 11 + x",
+     "respuesta": [
+      "4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "7-x = 2",
+     "enunciado": "7 - x = 2",
+     "respuesta": [
+      "5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "3 = 9-x",
+     "enunciado": "3 = 9 - x",
+     "respuesta": [
+      "6"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "-12 = 3*x",
+     "enunciado": "-12 = 3x",
+     "respuesta": [
+      "-4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "4*x = 11",
+     "enunciado": "4x = 11",
+     "respuesta": [
+      "11/4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "g",
+     "ecuacion": "x/(-2) = 3",
+     "enunciado": "\\frac{x}{-2} = 3",
+     "respuesta": [
+      "-6"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "h",
+     "ecuacion": "x/7 = 3/14",
+     "enunciado": "\\frac{x}{7} = \\frac{3}{14}",
+     "respuesta": [
+      "3/2"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 22 (series 1–4)",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -3$; b) $x = 4$; c) $x = 5$; d) $x = 6$; e) $x = -4$; f) $x = \\frac{11}{4}$; g) $x = -6$; h) $x = \\frac{3}{2}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-003",
+   "tipo": "x en los dos miembros",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve las siguientes ecuaciones:\n\na) $2x - 5 = 4x - 7$   b) $x - 12 = 7x + 6$   c) $x - 1 = x + 5x + 9$   d) $x + 9 = 3x - 3$   e) $5x - x + 7 = 2x + 15$   f) $2x - 27 = x$   g) $3x - 4 + x = 8$   h) $3 - 10 = x + 1$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "2*x-5 = 4*x-7",
+     "enunciado": "2x - 5 = 4x - 7",
+     "respuesta": [
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "x-12 = 7*x+6",
+     "enunciado": "x - 12 = 7x + 6",
+     "respuesta": [
+      "-3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "x-1 = x+5*x+9",
+     "enunciado": "x - 1 = x + 5x + 9",
+     "respuesta": [
+      "-2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "x+9 = 3*x-3",
+     "enunciado": "x + 9 = 3x - 3",
+     "respuesta": [
+      "6"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "5*x-x+7 = 2*x+15",
+     "enunciado": "5x - x + 7 = 2x + 15",
+     "respuesta": [
+      "4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "2*x-27 = x",
+     "enunciado": "2x - 27 = x",
+     "respuesta": [
+      "27"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "g",
+     "ecuacion": "3*x-4+x = 8",
+     "enunciado": "3x - 4 + x = 8",
+     "respuesta": [
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "h",
+     "ecuacion": "3-10 = x+1",
+     "enunciado": "3 - 10 = x + 1",
+     "respuesta": [
+      "-8"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 13",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 1$; b) $x = -3$; c) $x = -2$; d) $x = 6$; e) $x = 4$; f) $x = 27$; g) $x = 3$; h) $x = -8$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-004",
+   "tipo": "x en los dos miembros",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $x + 3x = 16$   b) $3x - 2 + 4x = 3 - 3x + 1$   c) $4x - 3 + x = 3x + 7$   d) $x + 4 + 4x = 2 - 2x + 5$   e) $6x + 4 - 2x = 3 + 2x - 7$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x+3*x = 16",
+     "enunciado": "x + 3x = 16",
+     "respuesta": [
+      "4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "3*x-2+4*x = 3-3*x+1",
+     "enunciado": "3x - 2 + 4x = 3 - 3x + 1",
+     "respuesta": [
+      "3/5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "4*x-3+x = 3*x+7",
+     "enunciado": "4x - 3 + x = 3x + 7",
+     "respuesta": [
+      "5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "x+4+4*x = 2-2*x+5",
+     "enunciado": "x + 4 + 4x = 2 - 2x + 5",
+     "respuesta": [
+      "3/7"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "6*x+4-2*x = 3+2*x-7",
+     "enunciado": "6x + 4 - 2x = 3 + 2x - 7",
+     "respuesta": [
+      "-4"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 22 (5.ª serie)",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 4$; b) $x = \\frac{3}{5}$; c) $x = 5$; d) $x = \\frac{3}{7}$; e) $x = -4$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-005",
+   "tipo": "con paréntesis",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $5(x - 2) = 70$   b) $-2(3x - 4) = 2x + 5$   c) $2(x + 7) = x$   d) $3(x + 3x) = x + 50$   e) $2x - (2x - 3) + x = 4$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "5*(x-2) = 70",
+     "enunciado": "5(x - 2) = 70",
+     "respuesta": [
+      "16"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "-2*(3*x-4) = 2*x+5",
+     "enunciado": "-2(3x - 4) = 2x + 5",
+     "respuesta": [
+      "3/8"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "2*(x+7) = x",
+     "enunciado": "2(x + 7) = x",
+     "respuesta": [
+      "-14"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "3*(x+3*x) = x+50",
+     "enunciado": "3(x + 3x) = x + 50",
+     "respuesta": [
+      "50/11"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "2*x-(2*x-3)+x = 4",
+     "enunciado": "2x - (2x - 3) + x = 4",
+     "respuesta": [
+      "1"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 17–20",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 16$; b) $x = \\frac{3}{8}$; c) $x = -14$; d) $x = \\frac{50}{11}$; e) $x = 1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-006",
+   "tipo": "con paréntesis",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $3 + 4(2 - x) = 9 - 2x$   b) $13 + 3(2x + 5) = 2(x + 3) - 1$   c) $7 - 2(3x - 5) = 13 - 2(4x - 7)$   d) $5x - 3(2x - 4) = 36 - 3(4x + 6)$   e) $2(x + 4) + 3x =-34 - 3(5x + 6)$   f) $3x - 4(x - 1) = 8 - 5x$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "3+4*(2-x) = 9-2*x",
+     "enunciado": "3 + 4(2 - x) = 9 - 2x",
+     "respuesta": [
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "13+3*(2*x+5) = 2*(x+3)-1",
+     "enunciado": "13 + 3(2x + 5) = 2(x + 3) - 1",
+     "respuesta": [
+      "-23/4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "7-2*(3*x-5) = 13-2*(4*x-7)",
+     "enunciado": "7 - 2(3x - 5) = 13 - 2(4x - 7)",
+     "respuesta": [
+      "5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "5*x-3*(2*x-4) = 36-3*(4*x+6)",
+     "enunciado": "5x - 3(2x - 4) = 36 - 3(4x + 6)",
+     "respuesta": [
+      "6/11"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "2*(x+4)+3*x = -34-3*(5*x+6)",
+     "enunciado": "2(x + 4) + 3x =-34 - 3(5x + 6)",
+     "respuesta": [
+      "-3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "3*x-4*(x-1) = 8-5*x",
+     "enunciado": "3x - 4(x - 1) = 8 - 5x",
+     "respuesta": [
+      "1"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 22 (7.ª serie)",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 1$; b) $x = - \\frac{23}{4}$; c) $x = 5$; d) $x = \\frac{6}{11}$; e) $x = -3$; f) $x = 1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-007",
+   "tipo": "con denominadores",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $\\frac{x}{3} - 2 = 4$   b) $\\frac{3x}{5} + 4 = 3$   c) $\\frac{x}{2} + \\frac{x}{2} + 3 = 5$   d) $x + \\frac{x}{5} = 7$   e) $\\frac{x}{3} + \\frac{x}{6} = 12$   f) $\\frac{x}{6} + \\frac{x}{3} + \\frac{x}{2} = 5$   g) $\\frac{x - 3}{5} = x$   h) $\\frac{4x}{3} + \\frac{5x}{6} = \\frac{x}{3} + 2$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x/3-2 = 4",
+     "enunciado": "\\frac{x}{3} - 2 = 4",
+     "respuesta": [
+      "18"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "3*x/5+4 = 3",
+     "enunciado": "\\frac{3x}{5} + 4 = 3",
+     "respuesta": [
+      "-5/3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "x/2+x/2+3 = 5",
+     "enunciado": "\\frac{x}{2} + \\frac{x}{2} + 3 = 5",
+     "respuesta": [
+      "2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "x+x/5 = 7",
+     "enunciado": "x + \\frac{x}{5} = 7",
+     "respuesta": [
+      "35/6"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "x/3+x/6 = 12",
+     "enunciado": "\\frac{x}{3} + \\frac{x}{6} = 12",
+     "respuesta": [
+      "24"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "x/6+x/3+x/2 = 5",
+     "enunciado": "\\frac{x}{6} + \\frac{x}{3} + \\frac{x}{2} = 5",
+     "respuesta": [
+      "5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "g",
+     "ecuacion": "(x-3)/5 = x",
+     "enunciado": "\\frac{x - 3}{5} = x",
+     "respuesta": [
+      "-3/4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "h",
+     "ecuacion": "4*x/3+5*x/6 = x/3+2",
+     "enunciado": "\\frac{4x}{3} + \\frac{5x}{6} = \\frac{x}{3} + 2",
+     "respuesta": [
+      "12/11"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 22 (6.ª y 8.ª serie)",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 18$; b) $x = - \\frac{5}{3}$; c) $x = 2$; d) $x = \\frac{35}{6}$; e) $x = 24$; f) $x = 5$; g) $x = - \\frac{3}{4}$; h) $x = \\frac{12}{11}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-008",
+   "tipo": "con paréntesis",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve e indica si alguna es una identidad o no tiene solución:\n\na) $2(x - 1) = 4(2x - 3)$   b) $6(x + 3) = 2(5x - 8)$   c) $5(x - 1) = 5(x + 2)$   d) $2(3x + 2) - 3(2x - 1) = 7$   e) $5(2x - 3) - 8(4x - 9) = 6$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "2*(x-1) = 4*(2*x-3)",
+     "enunciado": "2(x - 1) = 4(2x - 3)",
+     "respuesta": [
+      "5/3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "6*(x+3) = 2*(5*x-8)",
+     "enunciado": "6(x + 3) = 2(5x - 8)",
+     "respuesta": [
+      "17/2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "5*(x-1) = 5*(x+2)",
+     "enunciado": "5(x - 1) = 5(x + 2)",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "2*(3*x+2)-3*(2*x-1) = 7",
+     "enunciado": "2(3x + 2) - 3(2x - 1) = 7",
+     "respuesta": "identidad"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "5*(2*x-3)-8*(4*x-9) = 6",
+     "enunciado": "5(2x - 3) - 8(4x - 9) = 6",
+     "respuesta": [
+      "51/22"
+     ]
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 1, ej. 3",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = \\frac{5}{3}$; b) $x = \\frac{17}{2}$; c) sin solución; d) identidad; e) $x = \\frac{51}{22}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-009",
+   "tipo": "paréntesis anidados",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $5(2x - 4(3x + 1)) =-10x + 20$   b) $x - 13 = 4(3x - 4(x - 2))$   c) $3(6x - 5(x - 3)) = 15 - 3(x - 5)$   d) $3 - 2x + 4(3 + 5(x + 1)) = 10x - 7$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "5*(2*x-4*(3*x+1)) = -10*x+20",
+     "enunciado": "5(2x - 4(3x + 1)) =-10x + 20",
+     "respuesta": [
+      "-1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "x-13 = 4*(3*x-4*(x-2))",
+     "enunciado": "x - 13 = 4(3x - 4(x - 2))",
+     "respuesta": [
+      "9"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "3*(6*x-5*(x-3)) = 15-3*(x-5)",
+     "enunciado": "3(6x - 5(x - 3)) = 15 - 3(x - 5)",
+     "respuesta": [
+      "-5/2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "3-2*x+4*(3+5*(x+1)) = 10*x-7",
+     "enunciado": "3 - 2x + 4(3 + 5(x + 1)) = 10x - 7",
+     "respuesta": [
+      "-21/4"
+     ]
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 1, ej. 4",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -1$; b) $x = 9$; c) $x = - \\frac{5}{2}$; d) $x = - \\frac{21}{4}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-010",
+   "tipo": "con denominadores",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve quitando denominadores:\n\na) $\\frac{x - 1}{2} + \\frac{x + 1}{4} = 2$   b) $\\frac{2x - 1}{3} + \\frac{x + 3}{5} = 2$   c) $\\frac{x + 2}{6} - \\frac{x}{2} = 3$   d) $1 + \\frac{x + 1}{3} = \\frac{x}{4}$   e) $\\frac{3x + 8}{3} = \\frac{2x - 1}{6}$   f) $\\frac{5x - 9}{4} - \\frac{3x + 5}{4} = \\frac{2}{3}$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "(x-1)/2+(x+1)/4 = 2",
+     "enunciado": "\\frac{x - 1}{2} + \\frac{x + 1}{4} = 2",
+     "respuesta": [
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "(2*x-1)/3+(x+3)/5 = 2",
+     "enunciado": "\\frac{2x - 1}{3} + \\frac{x + 3}{5} = 2",
+     "respuesta": [
+      "2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "(x+2)/6-x/2 = 3",
+     "enunciado": "\\frac{x + 2}{6} - \\frac{x}{2} = 3",
+     "respuesta": [
+      "-8"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "1+(x+1)/3 = x/4",
+     "enunciado": "1 + \\frac{x + 1}{3} = \\frac{x}{4}",
+     "respuesta": [
+      "-16"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "(3*x+8)/3 = (2*x-1)/6",
+     "enunciado": "\\frac{3x + 8}{3} = \\frac{2x - 1}{6}",
+     "respuesta": [
+      "-17/4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "(5*x-9)/4-(3*x+5)/4 = 2/3",
+     "enunciado": "\\frac{5x - 9}{4} - \\frac{3x + 5}{4} = \\frac{2}{3}",
+     "respuesta": [
+      "25/3"
+     ]
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 1, ej. 5",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 3$; b) $x = 2$; c) $x = -8$; d) $x = -16$; e) $x = - \\frac{17}{4}$; f) $x = \\frac{25}{3}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-011",
+   "tipo": "con denominadores",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $x - 2(x - 1) = \\frac{x}{2} - \\frac{x + 1}{3}$   b) $\\frac{5 - x}{15} - \\frac{9}{5} =-x - \\frac{1 - x}{3}$   c) $\\frac{2}{3}(2(x + 1) - \\frac{x + 1}{2}) = 5(\\frac{x}{2} - \\frac{2x - 1}{6})$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x-2*(x-1) = x/2-(x+1)/3",
+     "enunciado": "x - 2(x - 1) = \\frac{x}{2} - \\frac{x + 1}{3}",
+     "respuesta": [
+      "2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "(5-x)/15-9/5 = -x-(1-x)/3",
+     "enunciado": "\\frac{5 - x}{15} - \\frac{9}{5} =-x - \\frac{1 - x}{3}",
+     "respuesta": [
+      "17/9"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "Rational(2,3)*(2*(x+1)-(x+1)/2) = 5*(x/2-(2*x-1)/6)",
+     "enunciado": "\\frac{2}{3}(2(x + 1) - \\frac{x + 1}{2}) = 5(\\frac{x}{2} - \\frac{2x - 1}{6})",
+     "respuesta": [
+      "-1"
+     ]
+    }
+   ],
+   "fuente": "ag2",
+   "ref": "ficha 1, ej. 5",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 2$; b) $x = \\frac{17}{9}$; c) $x = -1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-012",
+   "tipo": "con paréntesis",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $3(x - 6) =-5(2 - x)$   b) $1 - 2(x - 4) = 4x - 3(2 - 5x)$   c) $-4(x - 2) = 3(2 - x)$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "3*(x-6) = -5*(2-x)",
+     "enunciado": "3(x - 6) =-5(2 - x)",
+     "respuesta": [
+      "-4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "1-2*(x-4) = 4*x-3*(2-5*x)",
+     "enunciado": "1 - 2(x - 4) = 4x - 3(2 - 5x)",
+     "respuesta": [
+      "5/7"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "-4*(x-2) = 3*(2-x)",
+     "enunciado": "-4(x - 2) = 3(2 - x)",
+     "respuesta": [
+      "2"
+     ]
+    }
+   ],
+   "fuente": "oja",
+   "ref": "ej. 2",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -4$; b) $x = \\frac{5}{7}$; c) $x = 2$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-013",
+   "tipo": "con denominadores",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $2x + 1 = \\frac{x - 6}{5}$   b) $\\frac{x}{2} - 4 = \\frac{x}{3} + 3$   c) $\\frac{x}{4} + \\frac{5}{3} = \\frac{x}{6} - \\frac{1}{2}$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "2*x+1 = (x-6)/5",
+     "enunciado": "2x + 1 = \\frac{x - 6}{5}",
+     "respuesta": [
+      "-11/9"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "x/2-4 = x/3+3",
+     "enunciado": "\\frac{x}{2} - 4 = \\frac{x}{3} + 3",
+     "respuesta": [
+      "42"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "x/4+5/3 = x/6-1/2",
+     "enunciado": "\\frac{x}{4} + \\frac{5}{3} = \\frac{x}{6} - \\frac{1}{2}",
+     "respuesta": [
+      "-26"
+     ]
+    }
+   ],
+   "fuente": "oja",
+   "ref": "ej. 3",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = - \\frac{11}{9}$; b) $x = 42$; c) $x = -26$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ec1-014",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Si un repartidor ha dejado los 2/5 de los paquetes que llevaba en la primera casa y aún le quedan 99 kg por repartir, ¿cuántos kilos tenía al principio?",
+   "solucion": "165 kg",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x-2*x/5 = 99",
+     "respuesta": [
+      "165"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 23",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-015",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "En una granja hay 70 animales entre gallinas y conejos, y entre todos suman 180 patas. ¿Cuántas gallinas hay?",
+   "solucion": "50 gallinas (y 20 conejos)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "2*x+4*(70-x) = 180",
+     "respuesta": [
+      "50"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 25",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-016",
+   "tipo": "problema",
+   "dificultad": 1,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Halla el número tal que su doble más tres sea igual que su triple menos dos.",
+   "solucion": "5",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "2*x+3 = 3*x-2",
+     "respuesta": [
+      "5"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 26",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-017",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Repartimos 150 € entre tres personas de forma que la primera recibe el doble que la segunda y esta el triple que la tercera. ¿Cuánto le corresponde a cada una?",
+   "solucion": "90 €, 45 € y 15 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "6*x+3*x+x = 150",
+     "respuesta": [
+      "15"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 27",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-018",
+   "tipo": "problema",
+   "dificultad": 3,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "El ángulo mayor de un triángulo mide el doble que el menor, y este mide 20° menos que el mediano. ¿Cuánto mide cada ángulo? (Los tres suman 180°.)",
+   "solucion": "40°, 60° y 80°",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x+(x+20)+2*x = 180",
+     "respuesta": [
+      "40"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 28",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-019",
+   "tipo": "problema",
+   "dificultad": 1,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Si al quíntuplo de un número le restas dos, obtienes 27. ¿Cuál es el número?",
+   "solucion": "29/5 = 5,8",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "5*x-2 = 27",
+     "respuesta": [
+      "29/5"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 29",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-020",
+   "tipo": "problema",
+   "dificultad": 1,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Un número y su siguiente suman 87. ¿Cuáles son?",
+   "solucion": "43 y 44",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x+(x+1) = 87",
+     "respuesta": [
+      "43"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 30",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-021",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Un bolígrafo cuesta el triple que un lápiz. Cinco lápices y cuatro bolígrafos me han costado 2,55 €. ¿Cuánto cuesta cada uno?",
+   "solucion": "Lápiz 0,15 €; bolígrafo 0,45 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "5*x+4*3*x = 2.55",
+     "respuesta": [
+      "0.15"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 31",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-022",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "En el monedero llevo diez monedas, unas de 50 céntimos y otras de 20 céntimos. Si tengo 2,90 € en total, ¿cuántas monedas hay de cada tipo?",
+   "solucion": "3 de 50 céntimos y 7 de 20 céntimos",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "50*x+20*(10-x) = 290",
+     "respuesta": [
+      "3"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 32",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-023",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "El perímetro de un rectángulo es de 120 m y la altura mide 24 m más que la base. ¿Cuánto miden la base y la altura?",
+   "solucion": "Base 18 m; altura 42 m",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "2*x+2*(x+24) = 120",
+     "respuesta": [
+      "18"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 33",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-024",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Laura dice que si al triple de su edad le restas la mitad, el resultado es 30. ¿Qué edad tiene Laura?",
+   "solucion": "20 años",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "3*x-3*x/2 = 30",
+     "respuesta": [
+      "20"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 34",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-025",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Un hijo tiene 12 años y su padre 35. ¿Cuántos años deben pasar para que la edad del padre sea el doble que la del hijo?",
+   "solucion": "11 años",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "35+t = 2*(12+t)",
+     "respuesta": [
+      "11"
+     ],
+     "var": "t"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 35",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-026",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Calcula los lados de un triángulo isósceles de perímetro 18 cm, sabiendo que cada lado igual mide 3 cm más que el desigual.",
+   "solucion": "Lado desigual 4 cm; lados iguales 7 cm",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x+2*(x+3) = 18",
+     "respuesta": [
+      "4"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 37",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-027",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Si a la tercera parte de un número le sumas dos, obtienes lo mismo que si al número le sumas uno y divides entre dos. ¿Qué número es?",
+   "solucion": "9",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x/3+2 = (x+1)/2",
+     "respuesta": [
+      "9"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 38",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-028",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Hemos comprado 12 artículos entre mesas y sillas. Cada mesa cuesta 130 €, cada silla 60 € y en total hemos pagado 860 €. ¿Cuántas mesas y cuántas sillas hemos comprado?",
+   "solucion": "2 mesas y 10 sillas",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "130*x+60*(12-x) = 860",
+     "respuesta": [
+      "2"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 40",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-029",
+   "tipo": "problema",
+   "dificultad": 3,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Epitafio de Diofanto: su infancia fue la sexta parte de su vida; una duodécima parte después le salió barba; tras una séptima parte se casó; cinco años después nació su hijo, que vivió la mitad que su padre; y Diofanto murió cuatro años después que su hijo. a) Escribe la ecuación. b) ¿Cuántos años vivió?",
+   "solucion": "a) $\\frac{x}{6}+\\frac{x}{12}+\\frac{x}{7}+5+\\frac{x}{2}+4 = x$; b) 84 años",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x/6+x/12+x/7+5+x/2+4 = x",
+     "respuesta": [
+      "84"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 10, ej. 42",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-030",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Juan tiene 50 años y su hijo Manuel 30. ¿Hace cuántos años la edad del hijo era la mitad de la del padre?",
+   "solucion": "Hace 10 años",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "30-t = (50-t)/2",
+     "respuesta": [
+      "10"
+     ],
+     "var": "t"
+    }
+   ],
+   "fuente": "oja",
+   "ref": "ej. 10",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-031",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Paula tiene 12 años y su madre 44. ¿Cuántos años tienen que pasar para que la edad de la madre sea el triple de la de su hija?",
+   "solucion": "4 años",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "44+t = 3*(12+t)",
+     "respuesta": [
+      "4"
+     ],
+     "var": "t"
+    }
+   ],
+   "fuente": "oja",
+   "ref": "ej. 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-032",
+   "tipo": "problema",
+   "dificultad": 3,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Un recipiente está lleno de agua. Si sacamos primero la mitad de su contenido y después la mitad de lo que quedaba, aún quedan 400 litros. ¿Qué capacidad tiene?",
+   "solucion": "1600 litros",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x-x/2-x/4 = 400",
+     "respuesta": [
+      "1600"
+     ]
+    }
+   ],
+   "fuente": "oja",
+   "ref": "ej. 16",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ec1-033",
+   "tipo": "problema",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Encuentra un número cuya mitad, más su cuarta parte, más 1, sea igual al propio número.",
+   "solucion": "4",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x/2+x/4+1 = x",
+     "respuesta": [
+      "4"
+     ]
+    }
+   ],
+   "fuente": "oja",
+   "ref": "ej. 13",
+   "verificacion": "comprobada"
+  }
+ ]
+}

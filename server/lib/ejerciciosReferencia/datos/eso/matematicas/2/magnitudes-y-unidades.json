@@ -1,0 +1,398 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 2,
+ "tema": "magnitudes-y-unidades",
+ "titulo": "Magnitudes y unidades de medida",
+ "saberes": [
+  "A.5",
+  "B.1",
+  "B.3"
+ ],
+ "fuentes": {
+  "mv2": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 2.º ESO (LOMLOE)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/2ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m2-med-001",
+   "tipo": "cambio de unidades de longitud",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Completa: a) $50$ m $= \\square$ hm $= 5000\\ \\square$   b) $300$ hm $= 30\\ \\square = \\square$ m   c) $\\square$ dm $= \\square$ m $= 2300$ mm   d) $40$ km $= 4000\\ \\square = \\square$ dm",
+   "solucion": "a) 0,5 hm = 5000 cm   b) 30 km = 30000 m   c) 23 dm = 2,3 m   d) 4000 dam = 400000 dm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "50/100",
+     "respuesta": "0.5",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "300*100",
+     "respuesta": "30000",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2300/100",
+     "respuesta": "23",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "40*10000",
+     "respuesta": "400000",
+     "apartado": "d"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 2",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-002",
+   "tipo": "ordenar medidas",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Ordena de menor a mayor: 2,7 m; 30 cm; 0,005 km; 2600 mm; 0,024 hm; 26 dm.",
+   "solucion": "30 cm < 0,024 hm (2,4 m) < 2600 mm = 26 dm (2,6 m) < 2,7 m < 0,005 km (5 m)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "0.024*100",
+     "respuesta": "2.4",
+     "apartado": "en m"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 3",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-003",
+   "tipo": "problema de longitudes",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Unos amigos van a recorrer 400 km a pie, a 5 km por hora y 6 horas al día. ¿Cuántos días tardarán?",
+   "solucion": "$\\frac{40}{3} \\approx 13{,}3$: 14 días",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "400/(5*6)",
+     "respuesta": "40/3"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-004",
+   "tipo": "problema de longitudes",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Un paquete de 500 folios mide 6 cm de grosor. ¿Cuánto mide un folio? ¿Cuántos folios hay en una caja de 21 cm de alto?",
+   "solucion": "Un folio mide 0,012 cm (0,12 mm); en la caja caben 1750 folios",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "6/500",
+     "respuesta": "0.012",
+     "apartado": "folio"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "21/0.012",
+     "respuesta": "1750",
+     "apartado": "caja"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 6",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-005",
+   "tipo": "problema de longitudes",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Un parque rectangular mide 100 m de largo y 75 m de ancho. ¿Cuántas vueltas debe dar Juan para correr 5 km?",
+   "solucion": "Cada vuelta mide 350 m: $\\frac{100}{7} \\approx 14{,}3$ vueltas",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "5000/(2*(100+75))",
+     "respuesta": "100/7"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 7",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-006",
+   "tipo": "cambio de unidades de superficie",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Completa: a) $3{,}5$ dam² $= \\square$ m² $= \\square$ dm²   b) $0{,}08$ km² $= \\square$ m² $= \\square$ cm²   c) $6075$ m² $= \\square$ dm² $= \\square$ hm²",
+   "solucion": "a) 350 m² = 35000 dm²   b) 80000 m² = 800000000 cm²   c) 607500 dm² = 0,6075 hm²",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "3.5*100",
+     "respuesta": "350",
+     "apartado": "a1"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "350*100",
+     "respuesta": "35000",
+     "apartado": "a2"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "0.08*10**6",
+     "respuesta": "80000",
+     "apartado": "b1"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "80000*10**4",
+     "respuesta": "800000000",
+     "apartado": "b2"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "6075*100",
+     "respuesta": "607500",
+     "apartado": "c1"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "6075/10**4",
+     "respuesta": "0.6075",
+     "apartado": "c2"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 9",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-007",
+   "tipo": "superficies agrarias",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "El padre de Juan quiere comprar un terreno de 7,3 ha a 3,2 € el m². ¿Cuánto le costará?",
+   "solucion": "233 600 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "7.3*10000*3.2",
+     "respuesta": "233600"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-008",
+   "tipo": "volumen y capacidad",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Completa: a) $2$ m³ $= \\square$ L   b) $33$ cL $= \\square$ dm³   c) $500$ mm³ $= \\square$ mL   d) $0{,}02$ hm³ $= \\square$ L",
+   "solucion": "a) 2000 L   b) 0,33 dm³   c) 0,5 mL   d) 20 000 000 L",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2*1000",
+     "respuesta": "2000",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "33/100",
+     "respuesta": "0.33",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "500/1000",
+     "respuesta": "0.5",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "0.02*10**9",
+     "respuesta": "20000000",
+     "apartado": "d"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 19",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-009",
+   "tipo": "volumen y capacidad",
+   "dificultad": 3,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "En una urbanización de 42 familias se recogen cada semana 27 m³ de residuos. ¿Cuántos litros produce cada familia al día?",
+   "solucion": "≈ 91,8 litros por familia y día",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "27000/(42*7)",
+     "respuesta": "91.84",
+     "tolerancia": 0.01
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 20",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-010",
+   "tipo": "masa",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Expresa en gramos: a) 2,7 dag   b) 51,3 kg   c) 3 dag 5 g 26,29 dg",
+   "solucion": "a) 27 g   b) 51 300 g   c) 37,629 g",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2.7*10",
+     "respuesta": "27",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "51.3*1000",
+     "respuesta": "51300",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "30+5+2.629",
+     "respuesta": "37.629",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 22",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-011",
+   "tipo": "densidad",
+   "dificultad": 2,
+   "saberes": [
+    "B.1",
+    "B.3"
+   ],
+   "enunciado": "La densidad del oro es 19,3 y la de la plata 10,5 (g/cm³). Dos pulseras tienen la misma masa, una de oro y otra de plata. ¿Cuál tiene mayor volumen?",
+   "solucion": "La de plata: su volumen es unas 1,84 veces el de la de oro",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "19.3/10.5",
+     "respuesta": "1.84",
+     "apartado": "razón",
+     "tolerancia": 0.01
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 25",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-012",
+   "tipo": "tiempo",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Joaquín tarda 15 minutos en ir a la escuela. Si el curso tiene 50 semanas de lunes a viernes, ¿cuánto tiempo pasa al año en ese trayecto (solo ida)?",
+   "solucion": "3750 minutos = 62,5 horas",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "15*5*50/60",
+     "respuesta": "62.5"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 29",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-013",
+   "tipo": "tiempo",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Siete guardas se reparten por igual un servicio de 24 horas. ¿Cuánto tiempo vigila cada uno, en horas y minutos?",
+   "solucion": "$\\frac{1440}{7} \\approx 205{,}7$ min: unas 3 h 26 min",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "24*60/7",
+     "respuesta": "1440/7"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 33",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-med-014",
+   "tipo": "cambio de moneda",
+   "dificultad": 2,
+   "saberes": [
+    "B.1",
+    "A.5"
+   ],
+   "enunciado": "Con 1 € = 1,3 \\$ = 0,86 £ = 131 ¥ (yenes), un móvil cuesta 500 € en España, 500 \\$ + 50 \\$ de envío en EE. UU. ¿Dónde es más barato?",
+   "solucion": "En EE. UU.: 550 \\$ ≈ 423,08 €, menos que 500 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "550/1.3",
+     "respuesta": "423.08",
+     "apartado": "EE. UU. en €",
+     "tolerancia": 0.01
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 5, ej. 38 (adaptado: sin la opción de China, porque el enunciado confunde yenes y yuanes)",
+   "verificacion": "comprobada"
+  }
+ ]
+}

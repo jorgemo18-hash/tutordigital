@@ -1,0 +1,546 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 2,
+ "tema": "numeros-enteros",
+ "titulo": "Números enteros y operaciones",
+ "saberes": [
+  "A.2",
+  "A.3",
+  "A.4"
+ ],
+ "fuentes": {
+  "mv2": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 2.º ESO (LOMLOE)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/2ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m2-ent-001",
+   "tipo": "jerarquía de operaciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Realiza las operaciones:\n\na) $(34 + 52) \\cdot 5$   b) $89 \\cdot 2 + 12$   c) $55 + 67 \\cdot 3 + 13$   d) $280 - 110 \\cdot 2 + 90$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(34+52)*5",
+     "enunciado": "(34 + 52) \\cdot 5",
+     "respuesta": "430"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "89*2+12",
+     "enunciado": "89 \\cdot 2 + 12",
+     "respuesta": "190"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "55+67*3+13",
+     "enunciado": "55 + 67 \\cdot 3 + 13",
+     "respuesta": "269"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "280-110*2+90",
+     "enunciado": "280 - 110 \\cdot 2 + 90",
+     "respuesta": "150"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 1",
+   "verificacion": "comprobada",
+   "solucion": "a) $430$; b) $190$; c) $269$; d) $150$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ent-002",
+   "tipo": "jerarquía de operaciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Realiza las operaciones:\n\na) $23 \\cdot 6 + (35 - 13) : 11 - 4 \\cdot 7$   b) $48 : 4 \\cdot 8 : 2 - (3 \\cdot 12) : 6$   c) $357 - 23 \\cdot 7 + 280 : 14$   d) $20 \\cdot 9 - 11 \\cdot 7 + 265 : 53$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "23*6+(35-13)/11-4*7",
+     "enunciado": "23 \\cdot 6 + (35 - 13) : 11 - 4 \\cdot 7",
+     "respuesta": "112"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "48/4*8/2-(3*12)/6",
+     "enunciado": "48 : 4 \\cdot 8 : 2 - (3 \\cdot 12) : 6",
+     "respuesta": "42"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "357-23*7+280/14",
+     "enunciado": "357 - 23 \\cdot 7 + 280 : 14",
+     "respuesta": "216"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "20*9-11*7+265/53",
+     "enunciado": "20 \\cdot 9 - 11 \\cdot 7 + 265 : 53",
+     "respuesta": "108"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 4",
+   "verificacion": "comprobada",
+   "solucion": "a) $112$; b) $42$; c) $216$; d) $108$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ent-003",
+   "tipo": "sumas y restas con paréntesis",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Efectúa:\n\na) $6 - (8 + 10 - 1 - 2)$   b) $7 + (2 - 8 - 1) - (8 - 1 + 6)$   c) $(10 - 2 - 7) - (1 - 9 - 16)$   d) $-(9 - 6 - 8) - (-7 - 10 + 2)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "6-(8+10-1-2)",
+     "enunciado": "6 - (8 + 10 - 1 - 2)",
+     "respuesta": "-9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "7+(2-8-1)-(8-1+6)",
+     "enunciado": "7 + (2 - 8 - 1) - (8 - 1 + 6)",
+     "respuesta": "-13"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(10-2-7)-(1-9-16)",
+     "enunciado": "(10 - 2 - 7) - (1 - 9 - 16)",
+     "respuesta": "25"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "-(9-6-8)-(-7-10+2)",
+     "enunciado": "-(9 - 6 - 8) - (-7 - 10 + 2)",
+     "respuesta": "20"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 5",
+   "verificacion": "comprobada",
+   "solucion": "a) $-9$; b) $-13$; c) $25$; d) $20$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ent-004",
+   "tipo": "paréntesis y corchetes",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Quita paréntesis y efectúa:\n\na) $15 + [2 - 8 - (10 - 3)]$   b) $7 - [(5 - 8) - (6 - 12)]$   c) $(5 - 14) - [2 - (2 - 4 - 3)]$   d) $(1 - 11 + 6) - [(3 - 2) - (4 - 16)]$   e) $[8 - (4 - 16)] - [10 - (5 - 12)]$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "15+(2-8-(10-3))",
+     "enunciado": "15 + [2 - 8 - (10 - 3)]",
+     "respuesta": "2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "7-((5-8)-(6-12))",
+     "enunciado": "7 - [(5 - 8) - (6 - 12)]",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(5-14)-(2-(2-4-3))",
+     "enunciado": "(5 - 14) - [2 - (2 - 4 - 3)]",
+     "respuesta": "-16"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(1-11+6)-((3-2)-(4-16))",
+     "enunciado": "(1 - 11 + 6) - [(3 - 2) - (4 - 16)]",
+     "respuesta": "-17"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(8-(4-16))-(10-(5-12))",
+     "enunciado": "[8 - (4 - 16)] - [10 - (5 - 12)]",
+     "respuesta": "3"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 6",
+   "verificacion": "comprobada",
+   "solucion": "a) $2$; b) $4$; c) $-16$; d) $-17$; e) $3$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ent-005",
+   "tipo": "regla de los signos",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Aplica la regla de los signos:\n\na) $(+4) \\cdot (+8)$   b) $(-11) \\cdot (-5)$   c) $(+12) \\cdot (-6)$   d) $(-11) \\cdot (-10)$   e) $(+16) : (+4)$   f) $(-12) : (+6)$   g) $(+24) : (-3)$   h) $(-81) : (-9)$   i) $(-63) : (+7)$   j) $(-30) : (-10)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "4*8",
+     "enunciado": "(+4) \\cdot (+8)",
+     "respuesta": "32"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(-11)*(-5)",
+     "enunciado": "(-11) \\cdot (-5)",
+     "respuesta": "55"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "12*(-6)",
+     "enunciado": "(+12) \\cdot (-6)",
+     "respuesta": "-72"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(-11)*(-10)",
+     "enunciado": "(-11) \\cdot (-10)",
+     "respuesta": "110"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "16/4",
+     "enunciado": "(+16) : (+4)",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(-12)/6",
+     "enunciado": "(-12) : (+6)",
+     "respuesta": "-2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "24/(-3)",
+     "enunciado": "(+24) : (-3)",
+     "respuesta": "-8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "(-81)/(-9)",
+     "enunciado": "(-81) : (-9)",
+     "respuesta": "9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "i",
+     "expresion": "(-63)/7",
+     "enunciado": "(-63) : (+7)",
+     "respuesta": "-9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "j",
+     "expresion": "(-30)/(-10)",
+     "enunciado": "(-30) : (-10)",
+     "respuesta": "3"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 7",
+   "verificacion": "comprobada",
+   "solucion": "a) $32$; b) $55$; c) $-72$; d) $110$; e) $4$; f) $-2$; g) $-8$; h) $9$; i) $-9$; j) $3$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ent-006",
+   "tipo": "posición de los paréntesis",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Efectúa y compara cómo cambia el resultado según los paréntesis:\n\na) $18 - 7 \\cdot 3$   b) $(18 - 7) \\cdot 3$   c) $(-12) - 4 \\cdot (-8)$   d) $[(-12) - 4] \\cdot (-8)$   e) $(-5) \\cdot (+7) + (-3)$   f) $(-5) \\cdot [(+7) + (-3)]$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "18-7*3",
+     "enunciado": "18 - 7 \\cdot 3",
+     "respuesta": "-3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(18-7)*3",
+     "enunciado": "(18 - 7) \\cdot 3",
+     "respuesta": "33"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-12)-4*(-8)",
+     "enunciado": "(-12) - 4 \\cdot (-8)",
+     "respuesta": "20"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "((-12)-4)*(-8)",
+     "enunciado": "[(-12) - 4] \\cdot (-8)",
+     "respuesta": "128"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(-5)*7+(-3)",
+     "enunciado": "(-5) \\cdot (+7) + (-3)",
+     "respuesta": "-38"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(-5)*(7+(-3))",
+     "enunciado": "(-5) \\cdot [(+7) + (-3)]",
+     "respuesta": "-20"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 8",
+   "verificacion": "comprobada",
+   "solucion": "a) $-3$; b) $33$; c) $20$; d) $128$; e) $-38$; f) $-20$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-ent-007",
+   "tipo": "ordenar, opuesto y valor absoluto",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "Ordena de mayor a menor y halla el opuesto y el valor absoluto de: $-5,\\ 7,\\ -3,\\ 0,\\ -6,\\ 1,\\ 2$",
+   "solucion": "$7 > 2 > 1 > 0 > -3 > -5 > -6$. Opuestos: $5, -7, 3, 0, 6, -1, -2$. Valores absolutos: $5, 7, 3, 0, 6, 1, 2$",
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 9",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m2-ent-008",
+   "tipo": "problema de enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "¿De qué planta ha salido un ascensor que, después de subir 7 pisos, llega al piso 4?",
+   "solucion": "Del sótano 3 (planta $-3$)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x+7 = 4",
+     "respuesta": [
+      "-3"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ent-009",
+   "tipo": "problema de enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Jaime ha empezado un negocio y de momento pierde 100 € cada día. Comparado con su situación actual, ¿cuál era su situación hace 5 días?",
+   "solucion": "Tenía 500 € más que ahora",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 5*100",
+     "respuesta": [
+      "500"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ent-010",
+   "tipo": "problema de enteros",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "¿A qué edad se casó una persona que nació en el año 9 antes de Cristo y se casó en el año 19 después de Cristo? (No existe el año 0.)",
+   "solucion": "27 años",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 19+9-1",
+     "respuesta": [
+      "27"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ent-011",
+   "tipo": "problema de enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Hace una hora el termómetro marcaba $-5$ °C y ahora marca $5$ °C. ¿Ha subido o bajado la temperatura? ¿Cuánto?",
+   "solucion": "Ha subido 10 °C",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 5-(-5)",
+     "respuesta": [
+      "10"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 17",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ent-012",
+   "tipo": "problema de enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Por la mañana un termómetro marcaba 7 grados bajo cero y la temperatura baja 12 °C a lo largo de la mañana. ¿Qué marca al mediodía?",
+   "solucion": "$-19$ °C",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = -7-12",
+     "respuesta": [
+      "-19"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 18",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ent-013",
+   "tipo": "problema de enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "¿A qué planta llega un ascensor que estaba en el sótano 2 y sube 7 pisos?",
+   "solucion": "A la planta 5",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = -2+7",
+     "respuesta": [
+      "5"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 19",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ent-014",
+   "tipo": "problema de enteros",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Antonio tenía 15 € el lunes por la mañana. Lunes: le devuelven 10 €. Martes: vende sellos por 5 €. Miércoles: compra cromos por 3 €. Jueves: se toma un helado de 1 €. ¿Cuánto tiene al final? ¿Cuánto ha variado su dinero?",
+   "solucion": "26 €: ha aumentado 11 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 15+10+5-3-1",
+     "respuesta": [
+      "26"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 10",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-ent-015",
+   "tipo": "problema de enteros",
+   "dificultad": 3,
+   "saberes": [
+    "A.3",
+    "D.2"
+   ],
+   "enunciado": "El diablo le promete a un hombre duplicarle el dinero cada vez que cruce un puente, a cambio de darle 24 € al otro lado. Tras cruzar tres veces, al pagar los 24 € se queda sin nada. ¿Cuánto dinero tenía al principio?",
+   "solucion": "21 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "2*(2*(2*x-24)-24)-24 = 0",
+     "respuesta": [
+      "21"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 21",
+   "verificacion": "comprobada"
+  }
+ ]
+}

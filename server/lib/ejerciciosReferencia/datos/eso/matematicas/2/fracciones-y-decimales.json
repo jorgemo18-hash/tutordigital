@@ -1,0 +1,396 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 2,
+ "tema": "fracciones-y-decimales",
+ "titulo": "Fracciones y decimales",
+ "saberes": [
+  "A.2",
+  "A.3",
+  "A.4"
+ ],
+ "fuentes": {
+  "mv2": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 2.º ESO (LOMLOE)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/2ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m2-fra-001",
+   "tipo": "operaciones combinadas con fracciones",
+   "dificultad": 3,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Realiza los cálculos:\n\na) $\\frac{\\frac{5}{2} + \\frac{2}{3}}{5} \\cdot \\frac{1}{8}$   b) $\\frac{4}{\\frac{3}{5} - \\frac{2}{3}} + 1$   c) $\\frac{\\frac{1}{3} - \\frac{4}{9}}{\\frac{5}{3} - \\frac{9}{2}} - 2$   d) $\\left(\\frac{4}{3} \\cdot \\frac{9}{8}\\right) : \\left(\\frac{5}{6} + \\frac{9}{8}\\right)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(Rational(5,2)+Rational(2,3))/5*Rational(1,8)",
+     "enunciado": "\\frac{\\frac{5}{2} + \\frac{2}{3}}{5} \\cdot \\frac{1}{8}",
+     "respuesta": "19/240"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "Rational(4,1)/(Rational(3,5)-Rational(2,3))+1",
+     "enunciado": "\\frac{4}{\\frac{3}{5} - \\frac{2}{3}} + 1",
+     "respuesta": "-59"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(Rational(1,3)-Rational(4,9))/(Rational(5,3)-Rational(9,2))-2",
+     "enunciado": "\\frac{\\frac{1}{3} - \\frac{4}{9}}{\\frac{5}{3} - \\frac{9}{2}} - 2",
+     "respuesta": "-100/51"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(Rational(4,3)*Rational(9,8))/(Rational(5,6)+Rational(9,8))",
+     "enunciado": "\\left(\\frac{4}{3} \\cdot \\frac{9}{8}\\right) : \\left(\\frac{5}{6} + \\frac{9}{8}\\right)",
+     "respuesta": "36/47"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 22",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{19}{240}$; b) $-59$; c) $- \\frac{100}{51}$; d) $\\frac{36}{47}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-fra-002",
+   "tipo": "producto y cociente de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Calcula y simplifica:\n\na) $\\frac{4}{3} \\cdot \\frac{9}{8}$   b) $\\frac{4}{5} \\cdot \\frac{2}{6}$   c) $\\frac{5}{6} : \\frac{2}{3}$   d) $\\frac{3}{16} : \\frac{3}{10}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "Rational(4,3)*Rational(9,8)",
+     "enunciado": "\\frac{4}{3} \\cdot \\frac{9}{8}",
+     "respuesta": "3/2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "Rational(4,5)*Rational(2,6)",
+     "enunciado": "\\frac{4}{5} \\cdot \\frac{2}{6}",
+     "respuesta": "4/15"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "Rational(5,6)/Rational(2,3)",
+     "enunciado": "\\frac{5}{6} : \\frac{2}{3}",
+     "respuesta": "5/4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "Rational(3,16)/Rational(3,10)",
+     "enunciado": "\\frac{3}{16} : \\frac{3}{10}",
+     "respuesta": "5/8"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 38",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{3}{2}$; b) $\\frac{4}{15}$; c) $\\frac{5}{4}$; d) $\\frac{5}{8}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-fra-003",
+   "tipo": "suma y resta de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Completa y calcula:\n\na) $\\frac{7}{6} + \\frac{5}{3} = \\frac{7}{6} + \\frac{\\square}{6}$   b) $\\frac{7}{10} - \\frac{5}{14} = \\frac{\\square}{70} - \\frac{\\square}{70}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "Rational(7,6)+Rational(5,3)",
+     "enunciado": "\\frac{7}{6} + \\frac{5}{3} = \\frac{7}{6} + \\frac{\\square}{6}",
+     "respuesta": "17/6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "Rational(7,10)-Rational(5,14)",
+     "enunciado": "\\frac{7}{10} - \\frac{5}{14} = \\frac{\\square}{70} - \\frac{\\square}{70}",
+     "respuesta": "12/35"
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 33",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{17}{6}$; b) $\\frac{12}{35}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m2-fra-004",
+   "tipo": "fracciones propias e impropias",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Indica cuáles son propias y cuáles impropias, y escribe las impropias como número mixto: $\\frac{8}{3},\\ \\frac{2}{5},\\ \\frac{5}{2},\\ \\frac{16}{7},\\ \\frac{21}{4},\\ \\frac{5}{6}$",
+   "solucion": "Propias: $\\frac{2}{5}$ y $\\frac{5}{6}$. Impropias: $\\frac{8}{3} = 2\\frac{2}{3}$, $\\frac{5}{2} = 2\\frac{1}{2}$, $\\frac{16}{7} = 2\\frac{2}{7}$, $\\frac{21}{4} = 5\\frac{1}{4}$",
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 26–27",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m2-fra-005",
+   "tipo": "problema de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Si una persona vive 80 años y se pasa durmiendo un tercio de su vida, ¿cuánto ha dormido?",
+   "solucion": "$\\frac{80}{3} \\approx 26{,}7$ años",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 80/3",
+     "respuesta": [
+      "80/3"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 25",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-fra-006",
+   "tipo": "problema de fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3",
+    "D.2"
+   ],
+   "enunciado": "María es 70 cm más alta que la mitad de su altura. ¿Qué estatura tiene?",
+   "solucion": "140 cm",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = x/2+70",
+     "respuesta": [
+      "140"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 24",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-fra-007",
+   "tipo": "problema de fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Un iceberg tiene sumergidas nueve décimas partes de su volumen. Si emergen 318 km³, ¿cuál es el volumen sumergido? ¿Y el total?",
+   "solucion": "Total 3180 km³; sumergido 2862 km³",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x/10 = 318",
+     "respuesta": [
+      "3180"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 30",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-fra-008",
+   "tipo": "problema de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "En un bosque hay pinos, robles y encinas. Los pinos ocupan los 3/7 y los robles 1/3. ¿Qué parte ocupan las encinas?",
+   "solucion": "$\\frac{5}{21}$ del bosque",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 1-Rational(3,7)-Rational(1,3)",
+     "respuesta": [
+      "5/21"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 31",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-fra-009",
+   "tipo": "problema de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Una familia gasta 1/3 de sus ingresos en recibos y 3/7 en comida. ¿Qué parte le queda?",
+   "solucion": "$\\frac{5}{21}$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 1-Rational(1,3)-Rational(3,7)",
+     "respuesta": [
+      "5/21"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 34",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-fra-010",
+   "tipo": "problema de fracciones",
+   "dificultad": 3,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Se gastan 250 litros de agua por persona y día, y los hogares consumen los 3/20. Si se desperdicia 1/7 de lo que consume un hogar, ¿cuántos litros se desperdician al día en una casa de 5 habitantes?",
+   "solucion": "$\\frac{375}{14} \\approx 26{,}8$ litros",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 250*5*Rational(3,20)*Rational(1,7)",
+     "respuesta": [
+      "375/14"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 35",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-fra-011",
+   "tipo": "problema de fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Un profesor lleva 5 horas corrigiendo exámenes y aún le queda 1/4 sin corregir. ¿Cuánto tiempo más necesitará?",
+   "solucion": "El total son $\\frac{20}{3}$ h; le quedan $\\frac{5}{3}$ h = 1 h 40 min",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "Rational(3,4)*x = 5",
+     "respuesta": [
+      "20/3"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 36",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-fra-012",
+   "tipo": "problema de fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "En un teatro de 500 localidades dicen que se han vendido los 5/4 de las entradas. ¿Cuántas serían? ¿Tiene sentido?",
+   "solucion": "625: no tiene sentido, es más que el aforo",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = Rational(5,4)*500",
+     "respuesta": [
+      "625"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 29",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-fra-013",
+   "tipo": "redondeo y truncamiento",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "a) Aproxima por truncamiento a las décimas y a las centésimas: $9{,}235$ y $57{,}0001$.   b) Redondea a las décimas y a las centésimas: $8{,}9351$ y $77{,}992$.",
+   "solucion": "a) $9{,}2$ y $9{,}23$; $57{,}0$ y $57{,}00$.   b) $8{,}9$ y $8{,}94$; $78{,}0$ y $77{,}99$",
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 42–43",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m2-fra-014",
+   "tipo": "problema de decimales",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Vicente compró 15 bolígrafos a 0,72 € y 8 lapiceros a 0,57 €. ¿Cuánto gastó?",
+   "solucion": "15,36 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 15*0.72+8*0.57",
+     "respuesta": [
+      "15.36"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 45",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m2-fra-015",
+   "tipo": "problema de decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Pilar compró tres bolígrafos iguales por 1,53 € y un cuaderno que cuesta cuatro veces más que cada bolígrafo. ¿Cuánto cuesta el cuaderno?",
+   "solucion": "2,04 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 4*1.53/3",
+     "respuesta": [
+      "2.04"
+     ]
+    }
+   ],
+   "fuente": "mv2",
+   "ref": "cap. 2, ej. 46",
+   "verificacion": "comprobada"
+  }
+ ]
+}
