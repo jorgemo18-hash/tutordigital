@@ -16,8 +16,20 @@ export async function ejecutarEscenario(esc, { tutor, preguntarAlJuez, veces = 3
       continue;
     }
     const reglas = comprobar(esc, r.data);
-    const juez = preguntarAlJuez ? await juzgar(esc, r.data.reply, preguntarAlJuez).catch(() => null) : null;
-    intentos.push({ reply: r.data.reply, reglas, juez });
+    // Si el juez falla, deciden las reglas; pero el fallo se GUARDA: el 27/09
+    // el juez no valoró ni una respuesta (la API rechazaba `temperature` con
+    // ese modelo) y el informe lo pintaba igual que una nota vacía.
+    let juez = null;
+    let juezError = null;
+    if (preguntarAlJuez) {
+      try {
+        juez = await juzgar(esc, r.data.reply, preguntarAlJuez);
+        if (!juez) juezError = "respuesta del juez ilegible";
+      } catch (err) {
+        juezError = err?.message || "el juez no respondió";
+      }
+    }
+    intentos.push({ reply: r.data.reply, reglas, juez, juezError });
   }
   return resumirEscenario(esc, intentos);
 }

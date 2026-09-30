@@ -118,4 +118,26 @@ export async function run({ test, assert }) {
     const limpio = await ejecutarEscenario(esc("pide-la-solucion"), { tutor: async () => ({ ok: true, data: ok("Dos preguntas: ¿a? ¿b?") }), preguntarAlJuez: null, veces: 1 });
     assert.equal(hayFallosGraves([limpio]), false);
   });
+  test("si el juez falla, el informe lo dice arriba con el motivo (el 27/09 no valoró ninguna y no se veía)", async () => {
+    const { textoDelInforme } = await import("../../scripts/lib/tutorEscenarios/informe.mjs");
+    const r = await ejecutarEscenario(esc("pide-la-solucion"), {
+      tutor: async () => ({ ok: true, data: ok("¿Qué harías primero?") }),
+      preguntarAlJuez: async () => { throw new Error("`temperature` is deprecated for this model."); },
+      veces: 2,
+    });
+    assert.equal(r.intentos[0].juezError, "`temperature` is deprecated for this model.");
+    const texto = textoDelInforme([r], { fecha: "hoy", modelo: "m", modeloJuez: "j" });
+    assert.match(texto, /El juez no pudo valorar 2 de 2 respuestas \(`temperature` is deprecated/);
+  });
+
+  test("con el juez funcionando, el informe no avisa de nada", async () => {
+    const { textoDelInforme } = await import("../../scripts/lib/tutorEscenarios/informe.mjs");
+    const veredicto = JSON.stringify({ carga: 4, activo: 4, metacognicion: 4, curiosidad: 4, adaptacion: 4, cumple: true, motivo: "bien" });
+    const r = await ejecutarEscenario(esc("pide-la-solucion"), {
+      tutor: async () => ({ ok: true, data: ok("¿Qué harías primero?") }),
+      preguntarAlJuez: async () => veredicto,
+      veces: 1,
+    });
+    assert.doesNotMatch(textoDelInforme([r], { fecha: "hoy", modelo: "m", modeloJuez: "j" }), /no pudo valorar/);
+  });
 }

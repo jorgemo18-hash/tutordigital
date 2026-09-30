@@ -9,6 +9,17 @@ function nota(n) {
   return n == null ? "—" : n.toFixed(1).replace(".", ",");
 }
 
+// Si el juez no pudo valorar alguna respuesta, se dice ARRIBA y con el
+// motivo: una columna de "—" parece "sin nota" y en realidad es "sin juez",
+// y entonces el "bien" solo lo deciden las reglas.
+export function avisoDelJuez(resultados) {
+  const fallos = resultados.flatMap((r) => r.intentos.filter((t) => t.juezError).map((t) => t.juezError));
+  if (!fallos.length) return [];
+  const total = resultados.reduce((s, r) => s + r.intentos.filter((t) => !t.error).length, 0);
+  const motivos = [...new Set(fallos)].slice(0, 3).join(" · ");
+  return [`> ⚠️ El juez no pudo valorar ${fallos.length} de ${total} respuestas (${motivos}). En esas, "bien" solo lo deciden las reglas.`, ""];
+}
+
 export function textoDelInforme(resultados, { fecha, modelo, modeloJuez }) {
   const total = resultados.reduce((s, r) => s + r.veces, 0);
   const bien = resultados.reduce((s, r) => s + r.bien, 0);
@@ -17,6 +28,7 @@ export function textoDelInforme(resultados, { fecha, modelo, modeloJuez }) {
     "",
     `Tutor: \`${modelo}\` · Juez: \`${modeloJuez || "sin juez"}\` · ${bien} de ${total} respuestas bien.`,
     "",
+    ...avisoDelJuez(resultados),
     `| Escenario | Bien | ${DIMENSIONES.map((d) => NOMBRE_DIM[d]).join(" | ")} |`,
     `|---|---|${DIMENSIONES.map(() => "---").join("|")}|`,
   ];

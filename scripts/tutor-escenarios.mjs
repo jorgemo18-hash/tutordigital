@@ -31,7 +31,7 @@ import { fileURLToPath } from "node:url";
 import { cargarEnv } from "./lib/cargarEnv.mjs";
 import { ESCENARIOS } from "./lib/tutorEscenarios/escenarios.mjs";
 import { ejecutarTodos } from "./lib/tutorEscenarios/ejecutar.mjs";
-import { textoDelInforme, hayFallosGraves } from "./lib/tutorEscenarios/informe.mjs";
+import { textoDelInforme, hayFallosGraves, avisoDelJuez } from "./lib/tutorEscenarios/informe.mjs";
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -65,7 +65,9 @@ if (!escenarios.length) {
 
 const cliente = createAnthropicClient(apiKey);
 async function preguntarAlJuez(prompt) {
-  const r = await cliente.messages.create({ model: OPUS_MODEL, max_tokens: 400, temperature: 0, messages: [{ role: "user", content: prompt }] });
+  // Sin `temperature`: con este modelo la API la rechaza (400) y el juez no
+  // valoraba nada (informe del 27/09/2026).
+  const r = await cliente.messages.create({ model: OPUS_MODEL, max_tokens: 400, messages: [{ role: "user", content: prompt }] });
   return r.content.find((b) => b.type === "text")?.text || "";
 }
 
@@ -81,6 +83,7 @@ const fecha = ahora.toLocaleString("sv-SE", { timeZone: "Europe/Madrid" }).slice
 const dir = resolve(RAIZ, "informes/tutor-escenarios");
 mkdirSync(dir, { recursive: true });
 const ruta = resolve(dir, `${fecha.replace(/[: ]/g, "-")}.md`);
+for (const linea of avisoDelJuez(resultados)) if (linea) console.error(`\n${linea.replace(/^> /, "")}`);
 writeFileSync(ruta, textoDelInforme(resultados, { fecha, modelo, modeloJuez: conJuez ? OPUS_MODEL : null }));
 console.log(`\nInforme: ${ruta}`);
 
