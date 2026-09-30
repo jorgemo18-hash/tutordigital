@@ -68,4 +68,26 @@ export async function run({ test, assert }) {
     const result = await fetchPendientesAgrupados(admin, "t1", { mes: 1, anio: 2026 });
     assert.deepEqual(result.grupos, []);
   });
+  test("cuadrícula anual: cada mes enseña lo que dice el recibo, no la tarifa", async () => {
+    const { fetchGridIngresos } = await import("../server/lib/academiaFinanzas/ingresosConsultas.js");
+    const admin = makeFakeSupabaseAdmin({
+      academia_alumnos: [{ id: "a1", tenant_id: "t1", nombre: "Ana", familia_id: "f1", activo: true, familia: { nombre: "F" } }],
+      academia_tarifas: [{ alumno_id: "a1", tenant_id: "t1", precio_neto: 100, fecha_fin: null }],
+      academia_recibos: [
+        { id: "r9", tenant_id: "t1", mes: 9, anio: 2026, estado: "pagado", total_bruto: 100, total_neto: 50 },
+        { id: "r10", tenant_id: "t1", mes: 10, anio: 2026, estado: "borrador", total_bruto: 100, total_neto: 100 },
+      ],
+      academia_recibos_lineas: [
+        { id: "l9", recibo_id: "r9", alumno_id: "a1", precio_bruto: 100, descuentos_recurrentes: [] },
+        { id: "l10", recibo_id: "r10", alumno_id: "a1", precio_bruto: 100, descuentos_recurrentes: [] },
+      ],
+    });
+    const { filas, error } = await fetchGridIngresos(admin, "t1", { mes: 10, anio: 2026 });
+    assert.equal(error, undefined);
+    const mes = (m) => filas[0].meses.find((c) => c.mes === m);
+    assert.equal(filas[0].cuota, 100, "la tarifa de referencia sigue siendo la tarifa");
+    assert.equal(mes(9).importe, 50, "septiembre con su 50 % puntual");
+    assert.equal(mes(10).importe, 100);
+    assert.equal(mes(11).importe, null, "sin recibo, sin importe");
+  });
 }

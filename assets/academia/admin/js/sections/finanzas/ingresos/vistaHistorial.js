@@ -33,9 +33,19 @@ function buildSelectAnio(anioSeleccionado) {
 
 // Celda gris (sin recibo) vs. checkbox clicable (con recibo) — el tick
 // reutiliza la misma lógica de marcar-pagado/pendiente que "Pendientes".
+//
+// Debajo del tick, LO QUE DICE EL RECIBO de ese alumno ese mes (30/09/2026):
+// con un descuento puntual el mes no vale la tarifa, y la cuadrícula tiene
+// que dejar ver qué se cobró de verdad.
 function buildCeldaMes(celda, onCambiado) {
   const td = document.createElement("td");
   td.appendChild(buildTickCheckbox({ reciboId: celda.recibo_id, estado: celda.estado, onCambiado }));
+  if (celda.recibo_id && celda.importe != null) {
+    const importe = document.createElement("div");
+    importe.className = "ac-ingreso-celda-importe";
+    importe.textContent = formatoEuros(celda.importe);
+    td.appendChild(importe);
+  }
   return td;
 }
 
@@ -47,7 +57,9 @@ function buildGridTable(filas, onCambiado) {
 
   const thead = document.createElement("thead");
   const trHead = document.createElement("tr");
-  trHead.innerHTML = "<th>Familia</th><th>Alumno</th><th>Cuota</th>";
+  // "Tarifa": la cuota de referencia de hoy. Lo cobrado cada mes va en su
+  // celda, porque puede no coincidir (descuentos, meses empezados a medias).
+  trHead.innerHTML = "<th>Familia</th><th>Alumno</th><th>Tarifa</th>";
   for (const c of filas[0]?.meses || []) {
     const th = document.createElement("th");
     th.textContent = MESES[c.mes - 1];

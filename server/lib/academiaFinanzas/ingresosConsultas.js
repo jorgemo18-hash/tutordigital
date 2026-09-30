@@ -75,7 +75,7 @@ export async function fetchGridIngresos(admin, tenantId, { mes, anio }) {
     alumnoIds.length
       ? admin.from("academia_tarifas").select("alumno_id, precio_neto").eq("tenant_id", tenantId).in("alumno_id", alumnoIds).is("fecha_fin", null)
       : Promise.resolve({ data: [] }),
-    admin.from("academia_recibos").select("id, mes, anio, estado").eq("tenant_id", tenantId).in("anio", aniosCurso),
+    admin.from("academia_recibos").select("id, mes, anio, estado, total_neto").eq("tenant_id", tenantId).in("anio", aniosCurso),
   ]);
   if (errTarifas || errRecibos) return { error: errTarifas || errRecibos };
 
@@ -85,9 +85,20 @@ export async function fetchGridIngresos(admin, tenantId, { mes, anio }) {
     .map((r) => r.id);
 
   const { data: lineas, error: errLineas } = reciboIdsCurso.length
-    ? await admin.from("academia_recibos_lineas").select("alumno_id, recibo_id").in("recibo_id", reciboIdsCurso)
+    ? await admin.from("academia_recibos_lineas").select("alumno_id, recibo_id, precio_bruto, descuentos_recurrentes").in("recibo_id", reciboIdsCurso)
     : { data: [] };
   if (errLineas) return { error: errLineas };
+
+  // Lo que dice el recibo de cada alumno ese mes (ver importePorLinea.js): la
+  // columna de la tarifa es la referencia, y cada mes enseña lo que se le
+  // cobró de verdad, con descuentos incluidos.
+  const lineasPorRecibo = {};
+  for (const l of lineas || []) (lineasPorRecibo[l.recibo_id] ||= []).push(l);
+  const importePorLinea = new Map();
+  for (const [reciboId, suyas] of Object.entries(lineasPorRecibo)) {
+    const importes = importesPorLinea(recibosPorId[reciboId] || {}, suyas);
+    suyas.forEach((l, i) => importePorLinea.set(l, importes[i]));
+  }
 
   // alumno_id -> { "anio-mes": {recibo_id, estado} } — el id hace falta
   // para que el frontend pueda llamar a marcar-pagado/pendiente sobre ESE
@@ -99,6 +110,7 @@ export async function fetchGridIngresos(admin, tenantId, { mes, anio }) {
     (reciboPorAlumnoYMes[linea.alumno_id] ||= {})[claveMesAnio(recibo.mes, recibo.anio)] = {
       recibo_id: recibo.id,
       estado: recibo.estado,
+      importe: importePorLinea.get(linea) ?? null,
     };
   }
 
@@ -111,7 +123,7 @@ export async function fetchGridIngresos(admin, tenantId, { mes, anio }) {
     cuota: cuotaPorAlumno[a.id] || 0,
     meses: curso.map((c) => {
       const entrada = reciboPorAlumnoYMes[a.id]?.[claveMesAnio(c.mes, c.anio)];
-      return { mes: c.mes, anio: c.anio, recibo_id: entrada?.recibo_id || null, estado: entrada?.estado || null };
+      return { mes: c.mes, anio: c.anio, recibo_id: entrada?.recibo_id || null, estado: entrada?.estado || null, importe: entrada?.importe ?? null };
     }),
   }));
 

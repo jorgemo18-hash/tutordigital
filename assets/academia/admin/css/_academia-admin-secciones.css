@@ -557,3 +557,7 @@ select.ac-fiscal-selector-trimestre, select.ac-fiscal-selector-anio { width: aut
 .ac-claro .ef-cambios-borrado { color: #a4432e; }
 .ef-cambios-vacio { margin: 0; font-size: 12.5px; opacity: .65; }
 .ef-cambios-recuperar { align-items: center; justify-content: space-between; }
+
+/* Lo cobrado de verdad ese mes, bajo el tick de la cuadrícula de Ingresos
+   (ver finanzas/ingresos/vistaHistorial.js). */
+.ac-ingreso-celda-importe { font-size: 11px; opacity: .7; margin-top: 2px; white-space: nowrap; }
