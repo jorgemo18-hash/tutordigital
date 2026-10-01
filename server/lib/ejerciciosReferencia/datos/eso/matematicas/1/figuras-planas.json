@@ -1,0 +1,949 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 1,
+ "tema": "figuras-planas",
+ "titulo": "Figuras planas: rectas, ángulos, polígonos y circunferencia",
+ "saberes": [
+  "B.2",
+  "C.1",
+  "D.6"
+ ],
+ "fuentes": {
+  "mv1": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 1.º ESO (LOMLOE): libro y «Soluciones de ejercicios y problemas»",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/1ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "edad1": {
+   "nombre": "Proyecto ED@D (CIDEAD, Ministerio de Educación): Matemáticas 1.º ESO, «Para practicar»",
+   "url": "http://recursostic.educacion.es/secundaria/edad/1esomatematicas/",
+   "licencia": "CC BY-NC-SA 3.0 ES"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m1-fig-001",
+   "tipo": "elementos del plano",
+   "dificultad": 1,
+   "saberes": [
+    "C.1"
+   ],
+   "enunciado": "Dibuja cuatro rectas de modo que haya dos paralelas, dos perpendiculares y dos secantes no perpendiculares.",
+   "solucion": "Abierta. Por ejemplo: dos rectas horizontales (paralelas), una vertical que las corta (perpendicular a las dos) y una oblicua (secante no perpendicular)",
+   "fuente": "mv1",
+   "ref": "cap. 8, ej. 6",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-fig-002",
+   "tipo": "posiciones de rectas",
+   "dificultad": 1,
+   "saberes": [
+    "C.1"
+   ],
+   "enunciado": "Si dos rectas r y s son perpendiculares y trazas una tercera recta p paralela a una de ellas, por ejemplo a r, ¿cómo son las rectas s y p? Haz un dibujo.",
+   "solucion": "s y p son perpendiculares",
+   "fuente": "mv1",
+   "ref": "cap. 8, ejercicios y problemas, ej. 4",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-fig-003",
+   "tipo": "posiciones de rectas",
+   "dificultad": 1,
+   "saberes": [
+    "C.1"
+   ],
+   "enunciado": "Si dos rectas tienen un punto en común, ¿cuál es su posición relativa? ¿Y si son dos puntos comunes? ¿Y si no tienen ninguno?",
+   "solucion": "Un punto común: secantes. Dos puntos comunes: coincidentes. Ninguno: paralelas",
+   "fuente": "edad1",
+   "ref": "quincena 8, para practicar, ej. 1",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-fig-004",
+   "tipo": "mediatriz",
+   "dificultad": 2,
+   "saberes": [
+    "C.1"
+   ],
+   "enunciado": "Si m es la mediatriz del segmento AB y D es un punto de la recta m, ¿cuál es la distancia de D a A, sabiendo que la distancia de D a B es 5,52?",
+   "solucion": "5,52: todo punto de la mediatriz está a la misma distancia de los extremos del segmento",
+   "fuente": "edad1",
+   "ref": "quincena 8, para practicar, ej. 2",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-fig-005",
+   "tipo": "clasificar ángulos",
+   "dificultad": 1,
+   "saberes": [
+    "B.2"
+   ],
+   "enunciado": "Clasifica los ángulos de 0°, 45°, 90°, 135°, 180° y 225° según su amplitud y según su comparación con los ángulos agudo y llano.",
+   "solucion": "0°: nulo, convexo. 45°: agudo, convexo. 90°: recto, convexo. 135°: obtuso, convexo. 180°: llano. 225°: cóncavo",
+   "fuente": "edad1",
+   "ref": "quincena 8, para practicar, ej. 3",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-fig-006",
+   "tipo": "forma compleja e incompleja",
+   "dificultad": 1,
+   "saberes": [
+    "B.2"
+   ],
+   "enunciado": "a) Pasa a forma compleja los siguientes ángulos: 12 500″; 83′; 230″; 17 600″.   b) Pasa de forma compleja a forma incompleja (en segundos): $12^{\\circ}\\,34'\\,40''$; $13^{\\circ}\\,23'\\,7''$; $49^{\\circ}\\,56'\\,32''$; $1^{\\circ}\\,25'\\,27''$.",
+   "solucion": "a) $3^{\\circ}\\,28'\\,20''$; $1^{\\circ}\\,23'$; $3'\\,50''$; $4^{\\circ}\\,53'\\,20''$   b) 45 280″ (la fuente da 45 250″: está mal); 48 187″; 179 792″; 5 127″",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a1",
+     "expresion": "12500",
+     "respuesta": "(3*3600+28*60+20)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "a2",
+     "expresion": "83*60",
+     "respuesta": "(1*3600+23*60+0)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "a3",
+     "expresion": "230",
+     "respuesta": "(0*3600+3*60+50)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "a4",
+     "expresion": "17600",
+     "respuesta": "(4*3600+53*60+20)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b1",
+     "expresion": "(12*3600+34*60+40)",
+     "respuesta": "45280"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b2",
+     "expresion": "(13*3600+23*60+7)",
+     "respuesta": "48187"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b3",
+     "expresion": "(49*3600+56*60+32)",
+     "respuesta": "179792"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b4",
+     "expresion": "(1*3600+25*60+27)",
+     "respuesta": "5127"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ej. 10 y 11 (la fuente da mal el primero del 11)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-007",
+   "tipo": "forma compleja e incompleja",
+   "dificultad": 2,
+   "saberes": [
+    "B.2"
+   ],
+   "enunciado": "Completa la tabla: a) 8 465″ en minutos y segundos, y en grados, minutos y segundos.   b) $245'\\,32''$ en segundos, y en grados, minutos y segundos.   c) $31^{\\circ}\\,3'\\,55''$ en segundos, y en minutos y segundos.",
+   "solucion": "a) $141'\\,5''$ y $2^{\\circ}\\,21'\\,5''$   b) 14 732″ y $4^{\\circ}\\,5'\\,32''$   c) 111 835″ y $1863'\\,55''$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "8465",
+     "respuesta": "(2*3600+21*60+5)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "245*60+32",
+     "respuesta": "14732"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b2",
+     "expresion": "245*60+32",
+     "respuesta": "(4*3600+5*60+32)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(31*3600+3*60+55)",
+     "respuesta": "111835"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c2",
+     "expresion": "(31*3600+3*60+55)",
+     "respuesta": "1863*60+55"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ej. 12 (adaptado: la tabla, en texto)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-008",
+   "tipo": "operaciones con ángulos",
+   "dificultad": 2,
+   "saberes": [
+    "B.2"
+   ],
+   "enunciado": "Calcula:\n\na) $34^{\\circ}\\,45'\\,30'' + 12^{\\circ}\\,27'\\,15''$   b) $16^{\\circ}\\,30'\\,1'' + 12^{\\circ}\\,13'\\,12'' + 2^{\\circ}\\,1'\\,0''$   c) $16^{\\circ}\\,45'\\,0'' + 23^{\\circ}\\,0'\\,13'' + 30^{\\circ}\\,20'\\,30''$   d) $65^{\\circ}\\,48'\\,56'' - 12^{\\circ}\\,33'\\,25''$   e) $35^{\\circ}\\,54'\\,23'' - 15^{\\circ}\\,1'\\,35''$   f) $43^{\\circ}\\,32'\\,1'' - 15^{\\circ}\\,50'\\,50''$",
+   "solucion": "a) $47^{\\circ}\\,12'\\,45''$   b) $30^{\\circ}\\,44'\\,13''$   c) $70^{\\circ}\\,5'\\,43''$   d) $53^{\\circ}\\,15'\\,31''$   e) $20^{\\circ}\\,52'\\,48''$   f) $27^{\\circ}\\,41'\\,11''$ (en el b la fuente da $30^{\\circ}\\,14'\\,14''$: está mal)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(34*3600+45*60+30)+(12*3600+27*60+15)",
+     "respuesta": "(47*3600+12*60+45)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(16*3600+30*60+1)+(12*3600+13*60+12)+(2*3600+1*60+0)",
+     "respuesta": "(30*3600+44*60+13)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(16*3600+45*60+0)+(23*3600+0*60+13)+(30*3600+20*60+30)",
+     "respuesta": "(70*3600+5*60+43)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(65*3600+48*60+56)-(12*3600+33*60+25)",
+     "respuesta": "(53*3600+15*60+31)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(35*3600+54*60+23)-(15*3600+1*60+35)",
+     "respuesta": "(20*3600+52*60+48)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(43*3600+32*60+1)-(15*3600+50*60+50)",
+     "respuesta": "(27*3600+41*60+11)"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ej. 13 (la fuente da 30° 14′ 14″ en el b: está mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-009",
+   "tipo": "operaciones con ángulos",
+   "dificultad": 2,
+   "saberes": [
+    "B.2"
+   ],
+   "enunciado": "Calcula:\n\na) $54^{\\circ}\\,25'\\,10'' + 32^{\\circ}\\,17'\\,14''$   b) $14^{\\circ}\\,30'\\,15'' + 62^{\\circ}\\,1'\\,16'' + 42^{\\circ}\\,0'\\,1''$   c) $15^{\\circ}\\,23'\\,0'' + 73^{\\circ}\\,0'\\,10'' + 70^{\\circ}\\,28'\\,38''$   d) $67^{\\circ}\\,4'\\,23'' - 15^{\\circ}\\,4'\\,37''$   e) $33^{\\circ}\\,32'\\,1'' - 15^{\\circ}\\,35'\\,20''$",
+   "solucion": "a) $86^{\\circ}\\,42'\\,24''$   b) $118^{\\circ}\\,31'\\,32''$   c) $158^{\\circ}\\,51'\\,48''$   d) $51^{\\circ}\\,59'\\,46''$   e) $17^{\\circ}\\,56'\\,41''$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(54*3600+25*60+10)+(32*3600+17*60+14)",
+     "respuesta": "(86*3600+42*60+24)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(14*3600+30*60+15)+(62*3600+1*60+16)+(42*3600+0*60+1)",
+     "respuesta": "(118*3600+31*60+32)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(15*3600+23*60+0)+(73*3600+0*60+10)+(70*3600+28*60+38)",
+     "respuesta": "(158*3600+51*60+48)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(67*3600+4*60+23)-(15*3600+4*60+37)",
+     "respuesta": "(51*3600+59*60+46)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(33*3600+32*60+1)-(15*3600+35*60+20)",
+     "respuesta": "(17*3600+56*60+41)"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ejercicios y problemas, ej. 6 a, b, c, e, f",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-010",
+   "tipo": "operaciones con ángulos",
+   "dificultad": 2,
+   "saberes": [
+    "B.2"
+   ],
+   "enunciado": "Realiza las siguientes operaciones:\n\na) $128^{\\circ}\\,28'\\,23'' + 91^{\\circ}\\,32'\\,49''$   b) $330^{\\circ}\\,32'\\,43'' - 83^{\\circ}\\,56'\\,47''$",
+   "solucion": "a) $220^{\\circ}\\,1'\\,12''$   b) $246^{\\circ}\\,35'\\,56''$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(128*3600+28*60+23)+(91*3600+32*60+49)",
+     "respuesta": "(220*3600+1*60+12)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(330*3600+32*60+43)-(83*3600+56*60+47)",
+     "respuesta": "(246*3600+35*60+56)"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 8, para practicar, ej. 9 y 10",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-011",
+   "tipo": "operaciones con ángulos",
+   "dificultad": 3,
+   "saberes": [
+    "B.2"
+   ],
+   "enunciado": "Realiza las siguientes operaciones: a) $31^{\\circ}\\,38'\\,9'' \\cdot 7$   b) $117^{\\circ}\\,15'\\,34'' : 8$   c) $3 \\cdot 27^{\\circ} + 5 \\cdot 19^{\\circ}$   d) $52^{\\circ} : 4$",
+   "solucion": "a) $221^{\\circ}\\,27'\\,3''$   b) $14^{\\circ}\\,39'\\,26''$ y resto 6″   c) $176^{\\circ}$   d) $13^{\\circ}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(31*3600+38*60+9)*7",
+     "respuesta": "(221*3600+27*60+3)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(117*3600+15*60+34)",
+     "respuesta": "(14*3600+39*60+26)*8+6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "3*27+5*19",
+     "respuesta": "176"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "52/4",
+     "respuesta": "13"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 8, para practicar, ej. 7, 8, 11 y 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-012",
+   "tipo": "ángulo en forma compleja",
+   "dificultad": 1,
+   "saberes": [
+    "B.2"
+   ],
+   "enunciado": "Un ángulo mide 3/4 de recto. Expresa esta medida en grados, minutos y segundos.",
+   "solucion": "$67^{\\circ}\\,30'$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "3/4*90*3600",
+     "respuesta": "(67*3600+30*60+0)"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ejercicios y problemas, ej. 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-013",
+   "tipo": "ángulo en forma compleja",
+   "dificultad": 2,
+   "saberes": [
+    "B.2"
+   ],
+   "enunciado": "La suma de dos ángulos es $125^{\\circ}\\,46'\\,35''$. Si uno de ellos mide $57^{\\circ}\\,55'\\,47''$, ¿cuánto mide el otro?",
+   "solucion": "$67^{\\circ}\\,50'\\,48''$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(125*3600+46*60+35)-(57*3600+55*60+47)",
+     "respuesta": "(67*3600+50*60+48)"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ejercicios y problemas, ej. 7",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-014",
+   "tipo": "complementario y suplementario",
+   "dificultad": 2,
+   "saberes": [
+    "B.2"
+   ],
+   "enunciado": "Calcula los ángulos complementario y suplementario de: a) $35^{\\circ}\\,54'\\,23''$   b) $65^{\\circ}\\,48'\\,56''$   c) $43^{\\circ}\\,32'\\,1''$   d) $30^{\\circ}\\,20'\\,30''$",
+   "solucion": "Complementarios: a) $54^{\\circ}\\,5'\\,37''$   b) $24^{\\circ}\\,11'\\,4''$   c) $46^{\\circ}\\,27'\\,59''$   d) $59^{\\circ}\\,39'\\,30''$. Suplementarios: a) $144^{\\circ}\\,5'\\,37''$   b) $114^{\\circ}\\,11'\\,4''$   c) $136^{\\circ}\\,27'\\,59''$   d) $149^{\\circ}\\,39'\\,30''$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a compl.",
+     "expresion": "90*3600-(35*3600+54*60+23)",
+     "respuesta": "(54*3600+5*60+37)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "a supl.",
+     "expresion": "180*3600-(35*3600+54*60+23)",
+     "respuesta": "(144*3600+5*60+37)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b compl.",
+     "expresion": "90*3600-(65*3600+48*60+56)",
+     "respuesta": "(24*3600+11*60+4)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b supl.",
+     "expresion": "180*3600-(65*3600+48*60+56)",
+     "respuesta": "(114*3600+11*60+4)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c compl.",
+     "expresion": "90*3600-(43*3600+32*60+1)",
+     "respuesta": "(46*3600+27*60+59)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c supl.",
+     "expresion": "180*3600-(43*3600+32*60+1)",
+     "respuesta": "(136*3600+27*60+59)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d compl.",
+     "expresion": "90*3600-(30*3600+20*60+30)",
+     "respuesta": "(59*3600+39*60+30)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d supl.",
+     "expresion": "180*3600-(30*3600+20*60+30)",
+     "respuesta": "(149*3600+39*60+30)"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ej. 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-015",
+   "tipo": "complementario y suplementario",
+   "dificultad": 2,
+   "saberes": [
+    "B.2"
+   ],
+   "enunciado": "Indica si las siguientes parejas de ángulos son complementarios, suplementarios o ninguna de las dos cosas: a) $15^{\\circ}\\,34'\\,20''$ y $164^{\\circ}\\,25'\\,40''$   b) $65^{\\circ}\\,48'\\,56''$ y $24^{\\circ}\\,12'\\,4''$   c) $43^{\\circ}\\,32'\\,1''$ y $30^{\\circ}\\,26'\\,59''$",
+   "solucion": "a) Suman 180°: suplementarios   b) Suman $90^{\\circ}\\,1'$: ninguna de las dos cosas   c) Suman $73^{\\circ}\\,59'$: ninguna",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(15*3600+34*60+20)+(164*3600+25*60+40)",
+     "respuesta": "(180*3600+0*60+0)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(65*3600+48*60+56)+(24*3600+12*60+4)",
+     "respuesta": "(90*3600+1*60+0)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(43*3600+32*60+1)+(30*3600+26*60+59)",
+     "respuesta": "(73*3600+59*60+0)"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ej. 16",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-016",
+   "tipo": "complementario y suplementario",
+   "dificultad": 1,
+   "saberes": [
+    "B.2"
+   ],
+   "enunciado": "Dado un ángulo de amplitud 37°, ¿cuál es la amplitud de su complementario? ¿Y la de su suplementario? ¿De qué amplitud son los cuatro ángulos que se obtienen al trazar la recta bisectriz de un ángulo de 170°?",
+   "solucion": "Complementario 53° y suplementario 143°. Con la bisectriz de 170° salen dos ángulos de 85° y otros dos de 95°",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "90-37",
+     "respuesta": "53",
+     "apartado": "compl."
+    },
+    {
+     "tipo": "valor",
+     "expresion": "180-37",
+     "respuesta": "143",
+     "apartado": "supl."
+    },
+    {
+     "tipo": "valor",
+     "expresion": "170/2",
+     "respuesta": "85",
+     "apartado": "bisectriz"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "180-85",
+     "respuesta": "95",
+     "apartado": "los otros dos"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 8, para practicar, ej. 4 y 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-017",
+   "tipo": "ángulos de un triángulo",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula el valor del tercer ángulo de un triángulo si dos de ellos miden respectivamente: a) 30° y 80°   b) 20° y 50°   c) 15° y 75°   d) $40^{\\circ}\\,30'$ y $63^{\\circ}\\,45'$. Clasifica después, según sus ángulos, los cuatro triángulos.",
+   "solucion": "a) 70°, acutángulo   b) 110°, obtusángulo   c) 90°, rectángulo   d) $75^{\\circ}\\,45'$, acutángulo",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "180-30-80",
+     "respuesta": "70",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "180-20-50",
+     "respuesta": "110",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "180-15-75",
+     "respuesta": "90",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "180*60-(40*60+30)-(63*60+45)",
+     "respuesta": "75*60+45",
+     "apartado": "d"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ej. 39 y 40",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-018",
+   "tipo": "construir triángulos",
+   "dificultad": 1,
+   "saberes": [
+    "C.1"
+   ],
+   "enunciado": "Indica razonadamente si es posible construir un triángulo cuyos lados midan: a) 5 cm, 4 cm y 3 cm   b) 10 cm, 2 cm y 5 cm   c) 2 dm, 2 dm y 4 dm   d) 13 m, 12 m y 5 m",
+   "solucion": "a) Sí   b) No: 10 > 2 + 5   c) No: 4 = 2 + 2   d) Sí. Cada lado tiene que ser menor que la suma de los otros dos",
+   "fuente": "mv1",
+   "ref": "cap. 8, ej. 42",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-fig-019",
+   "tipo": "ángulos de un triángulo",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "¿Se puede construir un triángulo de modo que sus ángulos midan 105°, 45° y 35°? Razona tu respuesta.",
+   "solucion": "No: 105° + 45° + 35° = 185°, más de 180°",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "105+45+35",
+     "respuesta": "185"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ejercicios y problemas, ej. 16",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-020",
+   "tipo": "ángulos de un triángulo",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula los ángulos que faltan en estos triángulos: a) ABC, con $A = 42^{\\circ}$ y $C = 66^{\\circ}$; halla B.   b) DEF, con $D = 102^{\\circ}$ y $E = 22^{\\circ}$; halla F.   c) GHI, con $H = 32^{\\circ}$ e $I = 40^{\\circ}$; halla G.   d) JKL, con $J = 70^{\\circ}$ y $L = 42^{\\circ}$; halla K.",
+   "solucion": "$B = 72^{\\circ}$, $F = 56^{\\circ}$, $G = 108^{\\circ}$, $K = 68^{\\circ}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "180-42-66",
+     "respuesta": "72",
+     "apartado": "B"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "180-102-22",
+     "respuesta": "56",
+     "apartado": "F"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "180-32-40",
+     "respuesta": "108",
+     "apartado": "G"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "180-70-42",
+     "respuesta": "68",
+     "apartado": "K"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ejercicios y problemas, ej. 18 (adaptado: los dibujos, con los datos en texto)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-021",
+   "tipo": "ángulos de un triángulo",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Si uno de los ángulos de un triángulo rectángulo es de 50°, indica el valor de los demás. Dibuja un triángulo rectángulo con estos ángulos y un cateto de 5 cm.",
+   "solucion": "Los otros dos miden 90° y 40°",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "180-90-50",
+     "respuesta": "40"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ejercicios y problemas, ej. 21",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-022",
+   "tipo": "ángulos de un triángulo",
+   "dificultad": 3,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Si dos de los ángulos de un triángulo miden 30° y 70°, ¿cuánto mide el menor de los ángulos que forman las bisectrices correspondientes?",
+   "solucion": "Las bisectrices forman con el lado común un triángulo de ángulos 15° y 35°, así que se cortan formando 130° y su suplementario, 50°: el menor mide 50°",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "180-(180-15-35)",
+     "respuesta": "50"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ejercicios y problemas, ej. 22",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-023",
+   "tipo": "puntos notables",
+   "dificultad": 2,
+   "saberes": [
+    "C.1"
+   ],
+   "enunciado": "a) ¿Dónde se encuentra el circuncentro de un triángulo rectángulo?   b) ¿En qué punto colocarías un pozo para que tres casas de campo no alineadas estén a la misma distancia del mismo?",
+   "solucion": "a) En la hipotenusa (en su punto medio)   b) En el circuncentro del triángulo cuyos vértices son las casas",
+   "fuente": "mv1",
+   "ref": "cap. 8, ej. 44 y ejercicios y problemas, ej. 25",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-fig-024",
+   "tipo": "clasificar cuadriláteros",
+   "dificultad": 2,
+   "saberes": [
+    "C.1"
+   ],
+   "enunciado": "Señala si las siguientes afirmaciones son verdaderas: «Si las diagonales de un cuadrilátero son perpendiculares, se trata de un rombo». «Los trapecios rectángulos tienen todos sus ángulos iguales». «Los rectángulos son polígonos equiángulos». «Las diagonales de un paralelogramo se cortan en el punto medio». Justifica tus respuestas.",
+   "solucion": "Falsa: solo es un rombo si además se cortan en su punto medio. Falsa: tienen dos ángulos rectos, uno agudo y otro obtuso. Verdadera. Verdadera",
+   "fuente": "mv1",
+   "ref": "cap. 8, ejercicios y problemas, ej. 28",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-fig-025",
+   "tipo": "cuadriláteros",
+   "dificultad": 2,
+   "saberes": [
+    "C.1"
+   ],
+   "enunciado": "Averigua qué tipo de paralelogramo aparece si se unen los puntos medios de: a) un cuadrado   b) un rombo   c) un rectángulo",
+   "solucion": "a) Un cuadrado   b) un rectángulo   c) un rombo",
+   "fuente": "mv1",
+   "ref": "cap. 8, ej. 48 a–c",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-fig-026",
+   "tipo": "ángulos de un cuadrilátero",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Los dos ángulos agudos de un romboide miden 32°. ¿Cuánto mide cada uno de los ángulos obtusos?",
+   "solucion": "148°",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(360-2*32)/2",
+     "respuesta": "148"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ej. 49",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-027",
+   "tipo": "ángulos de un polígono",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Desde uno de los vértices de un hexágono se trazan tres diagonales que dividen al polígono en cuatro triángulos. a) Calcula la suma de los ángulos del hexágono. b) Si el hexágono es regular, calcula el valor de cada uno de sus ángulos interiores. c) En el mismo supuesto, calcula el valor del ángulo central.",
+   "solucion": "a) 720°   b) 120°   c) 60°",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4*180",
+     "respuesta": "720",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "720/6",
+     "respuesta": "120",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "360/6",
+     "respuesta": "60",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ejercicios y problemas, ej. 26",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-028",
+   "tipo": "ángulos de un polígono",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Dibuja un polígono de 9 lados. ¿Cómo se llama? a) ¿Cuántos triángulos puedes formar al trazar todas las diagonales que parten de un vértice? b) ¿Cuánto vale la suma de los ángulos del polígono inicial?",
+   "solucion": "Eneágono. a) 7 triángulos   b) 1260°",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "9-2",
+     "respuesta": "7",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "7*180",
+     "respuesta": "1260",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ejercicios y problemas, ej. 27",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-029",
+   "tipo": "ángulos de un polígono",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "¿Cuánto valen los ángulos interior y exterior de un pentágono regular? ¿Cuánto mide el ángulo central y el ángulo interior de un octógono regular?",
+   "solucion": "Pentágono: interior 108°, exterior 72°. Octógono: central 45°, interior 135°",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "3*180/5",
+     "respuesta": "108",
+     "apartado": "interior pentágono"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "360/5",
+     "respuesta": "72",
+     "apartado": "exterior pentágono"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "360/8",
+     "respuesta": "45",
+     "apartado": "central octógono"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "6*180/8",
+     "respuesta": "135",
+     "apartado": "interior octógono"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, autoevaluación, ej. 3, y ejercicios y problemas, ej. 10 d",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-030",
+   "tipo": "diagonales de un polígono",
+   "dificultad": 2,
+   "saberes": [
+    "C.1",
+    "D.6"
+   ],
+   "enunciado": "Calcula el número de diagonales que tienen los siguientes polígonos: a) rombo   b) trapecio   c) trapezoide   d) cuadrado   e) rectángulo   f) hexágono",
+   "solucion": "Los cuadriláteros (a–e) tienen 2 diagonales; el hexágono, 9",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4*(4-3)/2",
+     "respuesta": "2",
+     "apartado": "cuadriláteros"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "6*(6-3)/2",
+     "respuesta": "9",
+     "apartado": "hexágono"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 8, ejercicios y problemas, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-031",
+   "tipo": "circunferencia",
+   "dificultad": 2,
+   "saberes": [
+    "C.1"
+   ],
+   "enunciado": "a) En una circunferencia de radio 7,6, ¿cuál es la distancia entre el centro y cualquiera de sus puntos? ¿Cuánto mide el diámetro?   b) En una circunferencia de radio 4,6, ¿es posible trazar una cuerda de longitud 9,6?   c) Si una recta se encuentra a distancia 2,8 del centro de una circunferencia de radio 8,8, ¿cuáles son sus posiciones relativas?   d) Si los centros de dos circunferencias están a una distancia de 9,9 y una de ellas tiene radio 2,1, ¿cómo deberá ser el radio de la otra para que sean exteriores?",
+   "solucion": "a) 7,6; el diámetro, 15,2   b) No: la cuerda más larga es el diámetro, 9,2   c) Secantes (la distancia es menor que el radio)   d) Menor que 9,9 − 2,1: R < 7,8",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "2*7.6",
+     "respuesta": "15.2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "2*4.6",
+     "respuesta": "9.2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "9.9-2.1",
+     "respuesta": "7.8"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 10, para practicar, ej. 1, 2, 4 y 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fig-032",
+   "tipo": "ángulos en la circunferencia",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "a) Si el ángulo central de una circunferencia tiene una amplitud de 160°, ¿cuál será la amplitud del ángulo inscrito correspondiente?   b) ¿Cuál será la amplitud del ángulo central si su ángulo inscrito tiene amplitud 27°? ¿Qué figura se forma cuando el ángulo inscrito es recto?   c) Si una circunferencia tiene longitud 45 y un arco tiene longitud 25, ¿qué amplitud tendrá el ángulo central correspondiente a ese arco?",
+   "solucion": "a) 80°   b) 54°; si el inscrito es recto, el central es llano y se forma un triángulo rectángulo (su hipotenusa es un diámetro)   c) 200°",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "160/2",
+     "respuesta": "80"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "2*27",
+     "respuesta": "54"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "25/45*360",
+     "respuesta": "200"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 10, para practicar, ej. 3, 6 y 7",
+   "verificacion": "comprobada"
+  }
+ ]
+}

@@ -1,0 +1,1296 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 1,
+ "tema": "fracciones",
+ "titulo": "Fracciones",
+ "saberes": [
+  "A.2",
+  "A.3",
+  "A.4",
+  "A.6",
+  "D.2"
+ ],
+ "fuentes": {
+  "mv1": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 1.º ESO (LOMLOE): libro y «Soluciones de ejercicios y problemas»",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/1ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "edad1": {
+   "nombre": "Proyecto ED@D (CIDEAD, Ministerio de Educación): Matemáticas 1.º ESO, «Para practicar»",
+   "url": "http://recursostic.educacion.es/secundaria/edad/1esomatematicas/",
+   "licencia": "CC BY-NC-SA 3.0 ES"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m1-fra-001",
+   "tipo": "fracción de una figura",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Una caja de quesitos tiene 8 porciones iguales. Escribe la fracción que representan los quesitos que quedan en la caja cuando hay: a) 8 quesitos   b) 3 quesitos   c) 5 quesitos   d) 1 quesito.",
+   "solucion": "a) $\\frac{8}{8}$   b) $\\frac{3}{8}$   c) $\\frac{5}{8}$   d) $\\frac{1}{8}$",
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 1 (adaptado: las fotos de la caja, descritas con palabras)",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-fra-002",
+   "tipo": "fracción de una figura",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Expresa mediante una fracción la parte coloreada de cada figura: a) un rectángulo dividido en 4 partes iguales con 1 coloreada   b) uno dividido en 5 partes con 2 coloreadas   c) uno dividido en 2 partes con 1 coloreada   d) uno dividido en 3 partes con 2 coloreadas.",
+   "solucion": "a) $\\frac{1}{4}$   b) $\\frac{2}{5}$   c) $\\frac{1}{2}$   d) $\\frac{2}{3}$",
+   "fuente": "mv1",
+   "ref": "cap. 5, ejercicios y problemas, ej. 8 (adaptado: las figuras, descritas con palabras)",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-fra-003",
+   "tipo": "fracción de un número",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula: a) $\\frac{1}{13}$ de 39   b) $\\frac{1}{10}$ de 50   c) $\\frac{1}{7}$ de 35   d) $\\frac{1}{3}$ de 21",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(1/13)*39",
+     "respuesta": "3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(1/10)*50",
+     "respuesta": "5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(1/7)*35",
+     "respuesta": "5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(1/3)*21",
+     "respuesta": "7"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ejercicios y problemas, ej. 9",
+   "verificacion": "comprobada",
+   "solucion": "a) $3$; b) $5$; c) $5$; d) $7$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-fra-004",
+   "tipo": "fracciones equivalentes",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "Decide si las siguientes parejas de fracciones son o no equivalentes: a) $\\frac{4}{3}$ y $\\frac{12}{9}$   b) $\\frac{2}{5}$ y $\\frac{10}{15}$   c) $\\frac{4}{8}$ y $\\frac{3}{6}$   d) $\\frac{3}{7}$ y $\\frac{4}{9}$   e) $\\frac{5}{8}$ y $\\frac{105}{168}$",
+   "solucion": "a) Sí   b) No ($2 \\cdot 15 \\neq 5 \\cdot 10$)   c) Sí   d) No   e) Sí (los productos cruzados son iguales)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "4*9-3*12",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "4*6-8*3",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "5*168-8*105",
+     "respuesta": "0"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 8 y 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-005",
+   "tipo": "fracciones equivalentes",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "Decide calculando mentalmente cuáles de las siguientes fracciones son equivalentes a $\\frac{1}{3}$: a) $\\frac{2}{6}$   b) $\\frac{-1}{-3}$   c) $\\frac{1}{2}$   d) $\\frac{7}{21}$   e) $\\frac{5}{15}$",
+   "solucion": "a), b), d) y e)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "2/6",
+     "respuesta": "1/3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(-1)/(-3)",
+     "respuesta": "1/3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "7/21",
+     "respuesta": "1/3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "5/15",
+     "respuesta": "1/3"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ejercicios y problemas, ej. 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-006",
+   "tipo": "simplificar fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "Reduce las siguientes fracciones a su expresión irreducible:\n\na) $\\frac{48}{18}$   b) $\\frac{14}{49}$   c) $\\frac{8}{8}$   d) $\\frac{60}{148}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(48/18)",
+     "enunciado": "\\frac{48}{18}",
+     "respuesta": "8/3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(14/49)",
+     "enunciado": "\\frac{14}{49}",
+     "respuesta": "2/7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(8/8)",
+     "enunciado": "\\frac{8}{8}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(60/148)",
+     "enunciado": "\\frac{60}{148}",
+     "respuesta": "15/37"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 13",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{8}{3}$; b) $\\frac{2}{7}$; c) $1$; d) $\\frac{15}{37}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-fra-007",
+   "tipo": "fracción irreducible de una cantidad",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Escribe en forma de fracción irreducible las cantidades: a) 30 minutos de una hora   b) 45 minutos de una hora   c) 4 meses de un año   d) 6 meses de un año   e) 3 días de una semana   f) 6 horas de un día",
+   "solucion": "a) $\\frac{1}{2}$   b) $\\frac{3}{4}$   c) $\\frac{1}{3}$   d) $\\frac{1}{2}$   e) $\\frac{3}{7}$   f) $\\frac{1}{4}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "30/60",
+     "respuesta": "1/2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "45/60",
+     "respuesta": "3/4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "4/12",
+     "respuesta": "1/3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "6/12",
+     "respuesta": "1/2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "3/7",
+     "respuesta": "3/7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "6/24",
+     "respuesta": "1/4"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ejercicios y problemas, ej. 20",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-008",
+   "tipo": "número mixto",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Convierte en fracción los siguientes números mixtos: a) $4\\frac{1}{3}$   b) $5\\frac{2}{9}$   c) $3\\frac{4}{7}$   d) $2\\frac{1}{4}$   e) $7\\frac{3}{11}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "4+(1/3)",
+     "respuesta": "13/3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "5+(2/9)",
+     "respuesta": "47/9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "3+(4/7)",
+     "respuesta": "25/7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "2+(1/4)",
+     "respuesta": "9/4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "7+(3/11)",
+     "respuesta": "80/11"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ejercicios y problemas, ej. 10",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{13}{3}$; b) $\\frac{47}{9}$; c) $\\frac{25}{7}$; d) $\\frac{9}{4}$; e) $\\frac{80}{11}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-fra-009",
+   "tipo": "número mixto",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Escribe como número mixto las fracciones: a) $\\frac{11}{6}$   b) $\\frac{34}{5}$",
+   "solucion": "a) $1\\frac{5}{6}$   b) $6\\frac{4}{5}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "1+5/6",
+     "respuesta": "11/6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "6+4/5",
+     "respuesta": "34/5"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 24",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-010",
+   "tipo": "comparar fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "En cada uno de los siguientes pares de fracciones, indica cuál es la mayor: a) $\\frac{7}{8}$ y $\\frac{3}{2}$   b) $\\frac{7}{8}$ y $\\frac{10}{11}$   c) $\\frac{2}{3}$ y $\\frac{14}{21}$   d) $\\frac{11}{18}$ y $\\frac{14}{21}$",
+   "solucion": "a) $\\frac{7}{8} < \\frac{3}{2}$   b) $\\frac{7}{8} < \\frac{10}{11}$   c) Son iguales: $\\frac{14}{21} = \\frac{2}{3}$ (la fuente pone <)   d) $\\frac{11}{18} < \\frac{14}{21}$ (la fuente pone >)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "3/2-7/8",
+     "respuesta": "5/8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "10/11-7/8",
+     "respuesta": "3/88"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "14/21-2/3",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "14/21-11/18",
+     "respuesta": "1/18"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 22 (la fuente se equivoca en el c y el d)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-011",
+   "tipo": "ordenar fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "Ordena las siguientes fracciones de menor a mayor: $\\frac{12}{7}$, $\\frac{4}{7}$, $\\frac{8}{5}$, $\\frac{6}{11}$",
+   "solucion": "$\\frac{6}{11} < \\frac{4}{7} < \\frac{8}{5} < \\frac{12}{7}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "1.º < 2.º",
+     "expresion": "4/7-6/11",
+     "respuesta": "2/77"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "3.º < 4.º",
+     "expresion": "12/7-8/5",
+     "respuesta": "4/35"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 23",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-012",
+   "tipo": "suma y resta de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula:\n\na) $\\frac{5}{9}+\\frac{2}{9}$   b) $\\frac{4}{13}+\\frac{6}{13}$   c) $\\frac{3}{5}+\\frac{6}{5}$   d) $\\frac{7}{1}+\\frac{2}{1}$   e) $4+\\frac{8}{1}$   f) $1+\\frac{2}{5}$   g) $\\frac{5}{6}-\\frac{1}{6}$   h) $1-\\frac{4}{7}$   i) $\\frac{8}{3}-1$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(5/9)+(2/9)",
+     "enunciado": "\\frac{5}{9}+\\frac{2}{9}",
+     "respuesta": "7/9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(4/13)+(6/13)",
+     "enunciado": "\\frac{4}{13}+\\frac{6}{13}",
+     "respuesta": "10/13"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(3/5)+(6/5)",
+     "enunciado": "\\frac{3}{5}+\\frac{6}{5}",
+     "respuesta": "9/5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(7/1)+(2/1)",
+     "enunciado": "\\frac{7}{1}+\\frac{2}{1}",
+     "respuesta": "9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "4+(8/1)",
+     "enunciado": "4+\\frac{8}{1}",
+     "respuesta": "12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "1+(2/5)",
+     "enunciado": "1+\\frac{2}{5}",
+     "respuesta": "7/5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "(5/6)-(1/6)",
+     "enunciado": "\\frac{5}{6}-\\frac{1}{6}",
+     "respuesta": "2/3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "1-(4/7)",
+     "enunciado": "1-\\frac{4}{7}",
+     "respuesta": "3/7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "i",
+     "expresion": "(8/3)-1",
+     "enunciado": "\\frac{8}{3}-1",
+     "respuesta": "5/3"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 5 y 6",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{7}{9}$; b) $\\frac{10}{13}$; c) $\\frac{9}{5}$; d) $9$; e) $12$; f) $\\frac{7}{5}$; g) $\\frac{2}{3}$; h) $\\frac{3}{7}$; i) $\\frac{5}{3}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-fra-013",
+   "tipo": "suma y resta de fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Realiza las siguientes sumas y restas de fracciones:\n\na) $\\frac{4}{5}+\\frac{2}{3}$   b) $\\frac{5}{6}+\\frac{2}{9}$   c) $\\frac{7}{8}+\\frac{3}{2}$   d) $\\frac{13}{100}+\\frac{17}{24}$   e) $\\frac{3}{14}-\\frac{1}{6}$   f) $\\frac{5}{6}-\\frac{3}{5}$   g) $\\frac{11}{10}-\\frac{11}{24}$   h) $\\frac{10}{21}-\\frac{1}{3}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(4/5)+(2/3)",
+     "enunciado": "\\frac{4}{5}+\\frac{2}{3}",
+     "respuesta": "22/15"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(5/6)+(2/9)",
+     "enunciado": "\\frac{5}{6}+\\frac{2}{9}",
+     "respuesta": "19/18"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(7/8)+(3/2)",
+     "enunciado": "\\frac{7}{8}+\\frac{3}{2}",
+     "respuesta": "19/8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(13/100)+(17/24)",
+     "enunciado": "\\frac{13}{100}+\\frac{17}{24}",
+     "respuesta": "503/600"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(3/14)-(1/6)",
+     "enunciado": "\\frac{3}{14}-\\frac{1}{6}",
+     "respuesta": "1/21"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(5/6)-(3/5)",
+     "enunciado": "\\frac{5}{6}-\\frac{3}{5}",
+     "respuesta": "7/30"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "(11/10)-(11/24)",
+     "enunciado": "\\frac{11}{10}-\\frac{11}{24}",
+     "respuesta": "77/120"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "(10/21)-(1/3)",
+     "enunciado": "\\frac{10}{21}-\\frac{1}{3}",
+     "respuesta": "1/7"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 9 y 10",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{22}{15}$; b) $\\frac{19}{18}$; c) $\\frac{19}{8}$; d) $\\frac{503}{600}$; e) $\\frac{1}{21}$; f) $\\frac{7}{30}$; g) $\\frac{77}{120}$; h) $\\frac{1}{7}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-fra-014",
+   "tipo": "suma y resta de fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula:\n\na) $\\frac{1}{2}+\\frac{1}{3}+\\frac{1}{4}$   b) $\\frac{3}{2}+\\frac{5}{6}+\\frac{5}{3}$   c) $\\frac{1}{2}+\\frac{1}{3}+\\frac{1}{6}$   d) $\\frac{7}{6}+\\frac{3}{10}+\\frac{1}{4}$   e) $\\frac{11}{8}+\\frac{5}{6}-\\frac{4}{3}$   f) $\\frac{11}{3}-\\frac{5}{12}+\\frac{13}{18}$   g) $\\frac{15}{6}-\\frac{4}{9}-\\frac{1}{2}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(1/2)+(1/3)+(1/4)",
+     "enunciado": "\\frac{1}{2}+\\frac{1}{3}+\\frac{1}{4}",
+     "respuesta": "13/12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(3/2)+(5/6)+(5/3)",
+     "enunciado": "\\frac{3}{2}+\\frac{5}{6}+\\frac{5}{3}",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(1/2)+(1/3)+(1/6)",
+     "enunciado": "\\frac{1}{2}+\\frac{1}{3}+\\frac{1}{6}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(7/6)+(3/10)+(1/4)",
+     "enunciado": "\\frac{7}{6}+\\frac{3}{10}+\\frac{1}{4}",
+     "respuesta": "103/60"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(11/8)+(5/6)-(4/3)",
+     "enunciado": "\\frac{11}{8}+\\frac{5}{6}-\\frac{4}{3}",
+     "respuesta": "7/8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(11/3)-(5/12)+(13/18)",
+     "enunciado": "\\frac{11}{3}-\\frac{5}{12}+\\frac{13}{18}",
+     "respuesta": "143/36"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "(15/6)-(4/9)-(1/2)",
+     "enunciado": "\\frac{15}{6}-\\frac{4}{9}-\\frac{1}{2}",
+     "respuesta": "14/9"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 11 y 12",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{13}{12}$; b) $4$; c) $1$; d) $\\frac{103}{60}$; e) $\\frac{7}{8}$; f) $\\frac{143}{36}$; g) $\\frac{14}{9}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-fra-015",
+   "tipo": "suma y resta de fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula:\n\na) $\\frac{5}{6}+\\frac{7}{9}+\\frac{4}{3}$   b) $\\frac{5}{6}+\\frac{7}{9}-\\frac{1}{3}$   c) $\\frac{2}{3}+\\frac{11}{15}-\\frac{1}{5}$   d) $\\frac{8}{12}+\\frac{2}{5}-\\frac{1}{2}-\\frac{1}{10}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(5/6)+(7/9)+(4/3)",
+     "enunciado": "\\frac{5}{6}+\\frac{7}{9}+\\frac{4}{3}",
+     "respuesta": "53/18"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(5/6)+(7/9)-(1/3)",
+     "enunciado": "\\frac{5}{6}+\\frac{7}{9}-\\frac{1}{3}",
+     "respuesta": "23/18"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(2/3)+(11/15)-(1/5)",
+     "enunciado": "\\frac{2}{3}+\\frac{11}{15}-\\frac{1}{5}",
+     "respuesta": "6/5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(8/12)+(2/5)-(1/2)-(1/10)",
+     "enunciado": "\\frac{8}{12}+\\frac{2}{5}-\\frac{1}{2}-\\frac{1}{10}",
+     "respuesta": "7/15"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 5, para practicar, ej. 1 (la fuente da 5/18 y 43/9 en el b y el c: están mal)",
+   "solucion": "a) $\\frac{53}{18}$   b) $\\frac{23}{18}$   c) $\\frac{6}{5}$   d) $\\frac{7}{15}$ (en el b y el c la fuente da $\\frac{5}{18}$ y $\\frac{43}{9}$: están mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-016",
+   "tipo": "fracciones negativas",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Efectúa las siguientes operaciones:\n\na) $-\\frac{5}{3}-\\frac{7}{2}$   b) $\\frac{4}{7}+\\frac{-7}{9}$   c) $\\frac{-9}{5}+\\frac{-1}{8}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "-(5/3)-(7/2)",
+     "enunciado": "-\\frac{5}{3}-\\frac{7}{2}",
+     "respuesta": "-31/6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(4/7)+((-7)/9)",
+     "enunciado": "\\frac{4}{7}+\\frac{-7}{9}",
+     "respuesta": "-13/63"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "((-9)/5)+((-1)/8)",
+     "enunciado": "\\frac{-9}{5}+\\frac{-1}{8}",
+     "respuesta": "-77/40"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 25",
+   "verificacion": "comprobada",
+   "solucion": "a) $- \\frac{31}{6}$; b) $- \\frac{13}{63}$; c) $- \\frac{77}{40}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-fra-017",
+   "tipo": "producto de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Multiplica las siguientes fracciones y simplifica el resultado:\n\na) $\\frac{2}{3} \\cdot \\frac{4}{5}$   b) $7 \\cdot \\frac{5}{9}$   c) $8 \\cdot \\frac{1}{7}$   d) $\\frac{6}{10} \\cdot \\frac{11}{2}$   e) $\\frac{2}{9} \\cdot \\frac{3}{8}$   f) $\\frac{9}{12} \\cdot \\frac{4}{3}$   g) $\\frac{14}{6} \\cdot \\frac{5}{21}$   h) $\\frac{6}{5} \\cdot \\frac{10}{3}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(2/3)*(4/5)",
+     "enunciado": "\\frac{2}{3} \\cdot \\frac{4}{5}",
+     "respuesta": "8/15"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "7*(5/9)",
+     "enunciado": "7 \\cdot \\frac{5}{9}",
+     "respuesta": "35/9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "8*(1/7)",
+     "enunciado": "8 \\cdot \\frac{1}{7}",
+     "respuesta": "8/7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(6/10)*(11/2)",
+     "enunciado": "\\frac{6}{10} \\cdot \\frac{11}{2}",
+     "respuesta": "33/10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(2/9)*(3/8)",
+     "enunciado": "\\frac{2}{9} \\cdot \\frac{3}{8}",
+     "respuesta": "1/12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(9/12)*(4/3)",
+     "enunciado": "\\frac{9}{12} \\cdot \\frac{4}{3}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "(14/6)*(5/21)",
+     "enunciado": "\\frac{14}{6} \\cdot \\frac{5}{21}",
+     "respuesta": "5/9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "(6/5)*(10/3)",
+     "enunciado": "\\frac{6}{5} \\cdot \\frac{10}{3}",
+     "respuesta": "4"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 15 y 16",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{8}{15}$; b) $\\frac{35}{9}$; c) $\\frac{8}{7}$; d) $\\frac{33}{10}$; e) $\\frac{1}{12}$; f) $1$; g) $\\frac{5}{9}$; h) $4$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-fra-018",
+   "tipo": "división de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula y simplifica:\n\na) $\\frac{7}{2} : \\frac{3}{4}$   b) $\\frac{11}{6} : \\frac{2}{5}$   c) $\\frac{5}{7} : \\frac{5}{7}$   d) $\\frac{6}{4} : \\frac{12}{8}$   e) $\\frac{16}{5} : 3$   f) $\\frac{15}{2} : \\frac{5}{4}$   g) $\\frac{6}{5} : \\frac{1}{5}$   h) $\\frac{4}{3} : \\frac{4}{7}$   i) $15 : \\frac{3}{5}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(7/2)/(3/4)",
+     "enunciado": "\\frac{7}{2} : \\frac{3}{4}",
+     "respuesta": "14/3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(11/6)/(2/5)",
+     "enunciado": "\\frac{11}{6} : \\frac{2}{5}",
+     "respuesta": "55/12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(5/7)/(5/7)",
+     "enunciado": "\\frac{5}{7} : \\frac{5}{7}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(6/4)/(12/8)",
+     "enunciado": "\\frac{6}{4} : \\frac{12}{8}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(16/5)/3",
+     "enunciado": "\\frac{16}{5} : 3",
+     "respuesta": "16/15"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(15/2)/(5/4)",
+     "enunciado": "\\frac{15}{2} : \\frac{5}{4}",
+     "respuesta": "6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "(6/5)/(1/5)",
+     "enunciado": "\\frac{6}{5} : \\frac{1}{5}",
+     "respuesta": "6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "(4/3)/(4/7)",
+     "enunciado": "\\frac{4}{3} : \\frac{4}{7}",
+     "respuesta": "7/3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "i",
+     "expresion": "15/(3/5)",
+     "enunciado": "15 : \\frac{3}{5}",
+     "respuesta": "25"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 19 y 20",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{14}{3}$; b) $\\frac{55}{12}$; c) $1$; d) $1$; e) $\\frac{16}{15}$; f) $6$; g) $6$; h) $\\frac{7}{3}$; i) $25$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-fra-019",
+   "tipo": "operaciones combinadas con fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Efectúa las siguientes operaciones:\n\na) $\\frac{8}{3} \\cdot \\left(\\frac{6}{5} \\cdot \\frac{1}{4}\\right)$   b) $\\left(\\frac{8}{3} \\cdot \\frac{6}{5}\\right) \\cdot \\frac{1}{4}$   c) $\\frac{7}{2}+\\left(\\frac{5}{3} \\cdot \\frac{9}{8}\\right)$   d) $\\left(\\frac{7}{2}+\\frac{5}{3}\\right) \\cdot \\frac{9}{8}$   e) $\\frac{7}{2} \\cdot \\left(\\frac{5}{3}+\\frac{9}{8}\\right)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(8/3)*((6/5)*(1/4))",
+     "enunciado": "\\frac{8}{3} \\cdot \\left(\\frac{6}{5} \\cdot \\frac{1}{4}\\right)",
+     "respuesta": "4/5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "((8/3)*(6/5))*(1/4)",
+     "enunciado": "\\left(\\frac{8}{3} \\cdot \\frac{6}{5}\\right) \\cdot \\frac{1}{4}",
+     "respuesta": "4/5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(7/2)+((5/3)*(9/8))",
+     "enunciado": "\\frac{7}{2}+\\left(\\frac{5}{3} \\cdot \\frac{9}{8}\\right)",
+     "respuesta": "43/8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "((7/2)+(5/3))*(9/8)",
+     "enunciado": "\\left(\\frac{7}{2}+\\frac{5}{3}\\right) \\cdot \\frac{9}{8}",
+     "respuesta": "93/16"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(7/2)*((5/3)+(9/8))",
+     "enunciado": "\\frac{7}{2} \\cdot \\left(\\frac{5}{3}+\\frac{9}{8}\\right)",
+     "respuesta": "469/48"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 17 y 18",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{4}{5}$; b) $\\frac{4}{5}$; c) $\\frac{43}{8}$; d) $\\frac{93}{16}$; e) $\\frac{469}{48}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-fra-020",
+   "tipo": "operaciones combinadas con fracciones",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula:\n\na) $\\frac{6}{7} \\cdot \\left(\\frac{9}{4}+\\frac{3}{8}\\right)$   b) $\\left(8+\\frac{2}{5}\\right) : \\left(6-\\frac{9}{4}\\right)$   c) $\\frac{7}{9} : \\frac{4}{3}+\\frac{8}{12} \\cdot \\frac{2}{5}$   d) $\\frac{8}{12}+\\frac{2}{5} : \\frac{6}{7}$   e) $\\frac{5}{6}+\\frac{7}{9} \\cdot \\frac{4}{3}-\\frac{1}{2}$   f) $\\frac{5}{6}+\\frac{7}{9} \\cdot \\left(\\frac{4}{3}-\\frac{1}{2}\\right)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(6/7)*((9/4)+(3/8))",
+     "enunciado": "\\frac{6}{7} \\cdot \\left(\\frac{9}{4}+\\frac{3}{8}\\right)",
+     "respuesta": "9/4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(8+(2/5))/(6-(9/4))",
+     "enunciado": "\\left(8+\\frac{2}{5}\\right) : \\left(6-\\frac{9}{4}\\right)",
+     "respuesta": "56/25"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(7/9)/(4/3)+(8/12)*(2/5)",
+     "enunciado": "\\frac{7}{9} : \\frac{4}{3}+\\frac{8}{12} \\cdot \\frac{2}{5}",
+     "respuesta": "17/20"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(8/12)+(2/5)/(6/7)",
+     "enunciado": "\\frac{8}{12}+\\frac{2}{5} : \\frac{6}{7}",
+     "respuesta": "17/15"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(5/6)+(7/9)*(4/3)-(1/2)",
+     "enunciado": "\\frac{5}{6}+\\frac{7}{9} \\cdot \\frac{4}{3}-\\frac{1}{2}",
+     "respuesta": "37/27"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(5/6)+(7/9)*((4/3)-(1/2))",
+     "enunciado": "\\frac{5}{6}+\\frac{7}{9} \\cdot \\left(\\frac{4}{3}-\\frac{1}{2}\\right)",
+     "respuesta": "40/27"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 5, para practicar, ej. 3",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{9}{4}$; b) $\\frac{56}{25}$; c) $\\frac{17}{20}$; d) $\\frac{17}{15}$; e) $\\frac{37}{27}$; f) $\\frac{40}{27}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-fra-021",
+   "tipo": "jerarquía con fracciones",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Realiza las siguientes operaciones (con GeoGebra o a mano) y compara los resultados de la primera y la última. ¿Son iguales? ¿Por qué?\n\na) $\\left(\\frac{2}{5}+\\frac{7}{5}\\right) \\cdot \\frac{1}{4}-\\frac{4}{3}$   b) $\\frac{2}{5}+\\frac{7}{5} \\cdot \\frac{1}{4}-\\frac{4}{3}$   c) $\\frac{2}{5}+\\frac{7}{5} \\cdot \\left(\\frac{1}{4}-\\frac{4}{3}\\right)$   d) $\\frac{2}{5} \\cdot \\frac{1}{4}+\\frac{7}{5} \\cdot \\frac{1}{4}-\\frac{4}{3}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "((2/5)+(7/5))*(1/4)-(4/3)",
+     "enunciado": "\\left(\\frac{2}{5}+\\frac{7}{5}\\right) \\cdot \\frac{1}{4}-\\frac{4}{3}",
+     "respuesta": "-53/60"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(2/5)+(7/5)*(1/4)-(4/3)",
+     "enunciado": "\\frac{2}{5}+\\frac{7}{5} \\cdot \\frac{1}{4}-\\frac{4}{3}",
+     "respuesta": "-7/12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(2/5)+(7/5)*((1/4)-(4/3))",
+     "enunciado": "\\frac{2}{5}+\\frac{7}{5} \\cdot \\left(\\frac{1}{4}-\\frac{4}{3}\\right)",
+     "respuesta": "-67/60"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(2/5)*(1/4)+(7/5)*(1/4)-(4/3)",
+     "enunciado": "\\frac{2}{5} \\cdot \\frac{1}{4}+\\frac{7}{5} \\cdot \\frac{1}{4}-\\frac{4}{3}",
+     "respuesta": "-53/60"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ej. 21 (adaptado: la tabla de GeoGebra, en texto)",
+   "solucion": "a) $-\\frac{53}{60} \\approx -0{,}88$   b) $-\\frac{7}{12} \\approx -0{,}58$   c) $-\\frac{67}{60} \\approx -1{,}12$   d) $-\\frac{53}{60}$. La primera y la última son iguales por la propiedad distributiva",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-022",
+   "tipo": "problema de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Ana ha recibido de sus padres 36 euros y su hermano menor, Ernesto, la tercera parte de lo que ha percibido Ana. ¿Qué cantidad recibió Ernesto?",
+   "solucion": "12 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "36/3",
+     "respuesta": "12"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ejercicios y problemas, ej. 2",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-023",
+   "tipo": "problema de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Una persona dispone de 1172 euros y ha decidido invertir tres cuartas partes de esa cantidad en cierto producto bancario. ¿Cuál es el importe de lo invertido?",
+   "solucion": "879 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "3/4*1172",
+     "respuesta": "879"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ejercicios y problemas, ej. 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-024",
+   "tipo": "problema de fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Una figura maciza pesa ocho kilos y medio. ¿Cuánto pesará una figura y media?",
+   "solucion": "$\\frac{17}{2} \\cdot \\frac{3}{2} = \\frac{51}{4}$: doce kilos y tres cuartos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "17/2*3/2",
+     "respuesta": "51/4"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ejercicios y problemas, ej. 6",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-025",
+   "tipo": "problema de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Pilar ha leído las 3/4 partes de un libro de 300 hojas. Javier ha leído los 6/8 del mismo libro. ¿Cuántas páginas han leído cada uno? ¿Cómo son las fracciones utilizadas?",
+   "solucion": "Los dos han leído 225 hojas: las fracciones son equivalentes",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "3/4*300",
+     "respuesta": "225",
+     "apartado": "Pilar"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "6/8*300",
+     "respuesta": "225",
+     "apartado": "Javier"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ejercicios y problemas, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-026",
+   "tipo": "problema de fracciones",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Si se congela, el agua aumenta su volumen en 1/10. Metes en el congelador una botella de un litro y medio, ¿cuánto debes dejar vacío para que no explote?",
+   "solucion": "El agua x cumple $x \\cdot \\frac{11}{10} = \\frac{3}{2}$: $x = \\frac{15}{11}$ L. Hay que dejar vacío $\\frac{3}{22}$ L, siempre $\\frac{1}{11}$ de la botella. (La fuente dice que se llena con 19/22 de litro, que no cuadra: son 30/22 = 15/11.)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(3/2)/(11/10)",
+     "respuesta": "15/11",
+     "apartado": "agua"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3/2-15/11",
+     "respuesta": "3/22",
+     "apartado": "vacío"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ejercicios y problemas, ej. 13 (un dato de la solución de la fuente está mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-027",
+   "tipo": "comparar fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "En una obra de teatro han trabajado los 3/8 del alumnado de 1.º A, 1/2 del de 1.º B y 4/5 del de 1.º C. ¿En qué clase han trabajado más estudiantes? Ordena las clases según que hayan trabajado más o menos estudiantes.",
+   "solucion": "$\\frac{3}{8} < \\frac{1}{2} < \\frac{4}{5}$: han trabajado más (en proporción) en 1.º C, luego 1.º B y luego 1.º A",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "B − A",
+     "expresion": "1/2-3/8",
+     "respuesta": "1/8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "C − B",
+     "expresion": "4/5-1/2",
+     "respuesta": "3/10"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ejercicios y problemas, ej. 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-028",
+   "tipo": "problema de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "En un almacén quieren envasar tres mil litros en botellas de 1/3, ¿cuántas botellas necesitan?",
+   "solucion": "9000 botellas",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "3000/(1/3)",
+     "respuesta": "9000"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 5, ejercicios y problemas, ej. 18",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-029",
+   "tipo": "problema de fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3",
+    "D.2"
+   ],
+   "enunciado": "En una bolsa de 24 bolas, las bolas blancas son 1/4 de ellas. Sin sacar ninguna, ¿cuántas bolas blancas debo añadir para conseguir que las blancas fuesen la mitad?",
+   "solucion": "Debo añadir 12 bolas blancas",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "24/4+x = (24+x)/2",
+     "respuesta": [
+      "12"
+     ]
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 5, para practicar, ej. 7",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-030",
+   "tipo": "problema de fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Un coche lleva circulando 26 minutos, en los cuales ha recorrido 2/3 de su trayecto. ¿Cuánto tiempo empleará en recorrer todo el trayecto, yendo siempre a la misma velocidad?",
+   "solucion": "Tardará 39 minutos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "26/(2/3)",
+     "respuesta": "39"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 5, para practicar, ej. 8",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-031",
+   "tipo": "problema de fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Una pelota, al caer al suelo, rebota hasta los 3/8 de la altura desde la que se la suelta. Si se la deja caer desde 1024 cm, ¿a qué altura llegará tras el tercer bote?",
+   "solucion": "Llegará a 54 cm de altura",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1024*(3/8)^3",
+     "respuesta": "54"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 5, para practicar, ej. 9",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-032",
+   "tipo": "problema de fracciones",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "En un pinar de 210 pinos se talaron sus 3/5 partes; poco después hubo un incendio, en el que se quemaron los 5/7 de los pinos que quedaban. ¿Cuántos pinos sobrevivieron?",
+   "solucion": "Quedan 84 pinos tras la tala y se quema 60: sobrevivieron 24 pinos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "210*(2/5)*(2/7)",
+     "respuesta": "24"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 5, para practicar, ej. 10",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-033",
+   "tipo": "problema de fracciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3",
+    "A.6"
+   ],
+   "enunciado": "La familia de Óscar gasta 1/3 de su presupuesto en vivienda y 1/5 en alimentación. ¿Qué fracción del presupuesto queda para otros gastos? Sus ingresos mensuales son de 2235 euros. ¿Cuánto pagarán por la vivienda?",
+   "solucion": "Para otros gastos quedan $\\frac{7}{15}$ del presupuesto. En vivienda gastan 745 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1-1/3-1/5",
+     "respuesta": "7/15",
+     "apartado": "otros"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2235/3",
+     "respuesta": "745",
+     "apartado": "vivienda"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 5, para practicar, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-fra-034",
+   "tipo": "problema de fracciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Cada paso de Eva mide aproximadamente 3/5 de metro. ¿Cuántos pasos dará para recorrer 6 km?",
+   "solucion": "10 000 pasos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "6000/(3/5)",
+     "respuesta": "10000"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 5, para practicar, ej. 13",
+   "verificacion": "comprobada"
+  }
+ ]
+}

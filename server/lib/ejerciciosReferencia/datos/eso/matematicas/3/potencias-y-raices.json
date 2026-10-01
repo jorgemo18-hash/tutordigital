@@ -1,0 +1,1164 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 3,
+ "tema": "potencias-y-raices",
+ "titulo": "Potencias de exponente entero, notación científica y raíces",
+ "saberes": [
+  "A.2",
+  "A.3"
+ ],
+ "fuentes": {
+  "mv3": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 3.º ESO (LOMLOE): «Soluciones de ejercicios y problemas» (enunciados y soluciones de cada capítulo)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/3ESO/Soluciones%203%20ESO.pdf",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "ag3": {
+   "nombre": "Alfonso González, IES Fernando de Mena: fichas de ejercicios de 3.º ESO Académicas",
+   "url": "https://www.alfonsogonzalez.es/asignaturas/3_eso_academicas/ejercicios_3_eso_academicas_propuestos.php",
+   "licencia": "CC BY-NC"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m3-pot-001",
+   "tipo": "signo de una potencia",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Determina el signo de las potencias: a) $(-1)^{9}$   b) $(5)^{12}$   c) $(-12)^{-5}$   d) $(8)^{-4}$",
+   "solucion": "a) negativo (base negativa, exponente impar)   b) positivo   c) negativo   d) positivo",
+   "fuente": "mv3",
+   "ref": "cap. 2, act. 1",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-pot-002",
+   "tipo": "propiedades de las potencias",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Expresa en forma de una única potencia:\n\na) $(-7)^{3} \\cdot (-7)^{5} \\cdot (-7)^{2} \\cdot (-7)^{6}$   b) $3^{2} \\cdot 3^{7} \\cdot 3 \\cdot 3^{4} \\cdot 3^{3}$   c) $(-6)^{4} \\cdot 4^{4} \\cdot (-1)^{4} \\cdot (-5)^{4}$   d) $(-8)^{9} : (-8)^{3}$   e) $(-3)^{2} : (-3)^{7}$   f) $\\left((-2)^{5}\\right)^{6}$   g) $\\left(7^{3}\\right)^{-5}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(-7)^3*(-7)^5*(-7)^2*(-7)^6",
+     "enunciado": "(-7)^{3} \\cdot (-7)^{5} \\cdot (-7)^{2} \\cdot (-7)^{6}",
+     "respuesta": "(-7)^16"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "3^2*3^7*3*3^4*3^3",
+     "enunciado": "3^{2} \\cdot 3^{7} \\cdot 3 \\cdot 3^{4} \\cdot 3^{3}",
+     "respuesta": "3^17"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-6)^4*4^4*(-1)^4*(-5)^4",
+     "enunciado": "(-6)^{4} \\cdot 4^{4} \\cdot (-1)^{4} \\cdot (-5)^{4}",
+     "respuesta": "120^4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(-8)^9/(-8)^3",
+     "enunciado": "(-8)^{9} : (-8)^{3}",
+     "respuesta": "(-8)^6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(-3)^2/(-3)^7",
+     "enunciado": "(-3)^{2} : (-3)^{7}",
+     "respuesta": "(-3)^(-5)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "((-2)^5)^6",
+     "enunciado": "\\left((-2)^{5}\\right)^{6}",
+     "respuesta": "(-2)^30"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "(7^3)^(-5)",
+     "enunciado": "\\left(7^{3}\\right)^{-5}",
+     "respuesta": "7^(-15)"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, act. 2 a 6",
+   "verificacion": "comprobada",
+   "solucion": "a) $33232930569601$; b) $129140163$; c) $207360000$; d) $262144$; e) $- \\frac{1}{243}$; f) $1073741824$; g) $\\frac{1}{4747561509943}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pot-003",
+   "tipo": "potencias de base racional",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula:\n\na) $\\left(\\frac{5}{3}\\right)^{3}$   b) $\\left(-\\frac{2}{7}\\right)^{-4}$   c) $\\left(-\\frac{1}{6}\\right)^{4}$   d) $\\left(-\\frac{5}{2}\\right)^{-2}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(5/3)^3",
+     "enunciado": "\\left(\\frac{5}{3}\\right)^{3}",
+     "respuesta": "125/27"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(-2/7)^(-4)",
+     "enunciado": "\\left(-\\frac{2}{7}\\right)^{-4}",
+     "respuesta": "2401/16"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-1/6)^4",
+     "enunciado": "\\left(-\\frac{1}{6}\\right)^{4}",
+     "respuesta": "1/1296"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(-5/2)^(-2)",
+     "enunciado": "\\left(-\\frac{5}{2}\\right)^{-2}",
+     "respuesta": "4/25"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, act. 7",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{125}{27}$; b) $\\frac{2401}{16}$; c) $\\frac{1}{1296}$; d) $\\frac{4}{25}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pot-004",
+   "tipo": "potencias de base racional",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Expresa como una única potencia:\n\na) $\\left(-\\frac{3}{4}\\right)^{3} \\cdot \\left(-\\frac{3}{4}\\right)^{2} \\cdot \\left(-\\frac{3}{4}\\right)^{-8}$   b) $\\left(\\frac{5}{4}\\right)^{6} \\cdot \\left(-\\frac{2}{3}\\right)^{6} \\cdot \\left(-\\frac{1}{7}\\right)^{6}$   c) $\\left(-\\frac{3}{5}\\right)^{-4} \\cdot \\left(-\\frac{3}{8}\\right)^{-4} \\cdot \\left(-\\frac{1}{4}\\right)^{-4}$   d) $\\left(-\\frac{2}{5}\\right)^{4} : \\left(-\\frac{2}{5}\\right)^{7}$   e) $\\left(\\frac{5}{8}\\right)^{3} : \\left(\\frac{5}{8}\\right)^{-2}$   f) $\\left(\\frac{1}{5}\\right)^{-3} : \\left(\\frac{2}{9}\\right)^{-3}$   g) $(-6)^{5} : \\left(-\\frac{2}{9}\\right)^{5}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(-3/4)^3*(-3/4)^2*(-3/4)^(-8)",
+     "enunciado": "\\left(-\\frac{3}{4}\\right)^{3} \\cdot \\left(-\\frac{3}{4}\\right)^{2} \\cdot \\left(-\\frac{3}{4}\\right)^{-8}",
+     "respuesta": "(-3/4)^(-3)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(5/4)^6*(-2/3)^6*(-1/7)^6",
+     "enunciado": "\\left(\\frac{5}{4}\\right)^{6} \\cdot \\left(-\\frac{2}{3}\\right)^{6} \\cdot \\left(-\\frac{1}{7}\\right)^{6}",
+     "respuesta": "(5/42)^6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-3/5)^(-4)*(-3/8)^(-4)*(-1/4)^(-4)",
+     "enunciado": "\\left(-\\frac{3}{5}\\right)^{-4} \\cdot \\left(-\\frac{3}{8}\\right)^{-4} \\cdot \\left(-\\frac{1}{4}\\right)^{-4}",
+     "respuesta": "(9/160)^(-4)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(-2/5)^4/(-2/5)^7",
+     "enunciado": "\\left(-\\frac{2}{5}\\right)^{4} : \\left(-\\frac{2}{5}\\right)^{7}",
+     "respuesta": "(-2/5)^(-3)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(5/8)^3/(5/8)^(-2)",
+     "enunciado": "\\left(\\frac{5}{8}\\right)^{3} : \\left(\\frac{5}{8}\\right)^{-2}",
+     "respuesta": "(5/8)^5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(1/5)^(-3)/(2/9)^(-3)",
+     "enunciado": "\\left(\\frac{1}{5}\\right)^{-3} : \\left(\\frac{2}{9}\\right)^{-3}",
+     "respuesta": "(9/10)^(-3)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "(-6)^5/(-2/9)^5",
+     "enunciado": "(-6)^{5} : \\left(-\\frac{2}{9}\\right)^{5}",
+     "respuesta": "27^5"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, act. 8a, 9, 10 y 11",
+   "verificacion": "comprobada",
+   "solucion": "a) $- \\frac{64}{27}$; b) $\\frac{15625}{5489031744}$; c) $\\frac{655360000}{6561}$; d) $- \\frac{125}{8}$; e) $\\frac{3125}{32768}$; f) $\\frac{1000}{729}$; g) $14348907$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pot-005",
+   "tipo": "propiedades de las potencias",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Expresa en forma de única potencia:\n\na) $2^{5} \\cdot (-3)^{5} \\cdot (-1)^{5}$   b) $4^{3} \\cdot (-2)^{3} \\cdot (-1)^{3} \\cdot 5^{3}$   c) $(-5)^{2} \\cdot (-5)^{4} \\cdot 5$   d) $(-9)^{2} \\cdot 9^{3} \\cdot 9^{4} \\cdot 9$   e) $(-18)^{4} : (-3)^{4}$   f) $(-3)^{2} : (-3)^{4}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "2^5*(-3)^5*(-1)^5",
+     "enunciado": "2^{5} \\cdot (-3)^{5} \\cdot (-1)^{5}",
+     "respuesta": "6^5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "4^3*(-2)^3*(-1)^3*5^3",
+     "enunciado": "4^{3} \\cdot (-2)^{3} \\cdot (-1)^{3} \\cdot 5^{3}",
+     "respuesta": "40^3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-5)^2*(-5)^4*5",
+     "enunciado": "(-5)^{2} \\cdot (-5)^{4} \\cdot 5",
+     "respuesta": "5^7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(-9)^2*9^3*9^4*9",
+     "enunciado": "(-9)^{2} \\cdot 9^{3} \\cdot 9^{4} \\cdot 9",
+     "respuesta": "9^10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(-18)^4/(-3)^4",
+     "enunciado": "(-18)^{4} : (-3)^{4}",
+     "respuesta": "6^4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(-3)^2/(-3)^4",
+     "enunciado": "(-3)^{2} : (-3)^{4}",
+     "respuesta": "(-3)^(-2)"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, ejercicios y problemas 1 (a, c, d, e, f, h)",
+   "verificacion": "comprobada",
+   "solucion": "a) $7776$; b) $64000$; c) $78125$; d) $3486784401$; e) $1296$; f) $\\frac{1}{9}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pot-006",
+   "tipo": "exponente negativo",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Expresa en forma de potencia de exponente positivo:\n\na) $(-4)^{-3}$   b) $(9)^{-3}$   c) $(-2)^{5} : (-2)^{9}$   d) $(-5) \\cdot (-5)^{2} : (-5)^{6}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(-4)^(-3)",
+     "enunciado": "(-4)^{-3}",
+     "respuesta": "(-1/4)^3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "9^(-3)",
+     "enunciado": "(9)^{-3}",
+     "respuesta": "(1/9)^3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-2)^5/(-2)^9",
+     "enunciado": "(-2)^{5} : (-2)^{9}",
+     "respuesta": "(1/2)^4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(-5)*(-5)^2/(-5)^6",
+     "enunciado": "(-5) \\cdot (-5)^{2} : (-5)^{6}",
+     "respuesta": "(-1/5)^3"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, ejercicios y problemas 3",
+   "verificacion": "comprobada",
+   "solucion": "a) $- \\frac{1}{64}$; b) $\\frac{1}{729}$; c) $\\frac{1}{16}$; d) $- \\frac{1}{125}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pot-007",
+   "tipo": "potencias de base racional",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Expresa en forma de única potencia:\n\na) $\\left(\\frac{2}{3}\\right)^{-4} \\cdot \\left(\\frac{2}{3}\\right)^{3} \\cdot \\left(\\frac{2}{3}\\right)^{5}$   b) $\\left(\\frac{1}{6}\\right)^{3} \\cdot \\left(\\frac{3}{5}\\right)^{3} \\cdot \\left(-\\frac{6}{7}\\right)^{3}$   c) $\\left(-\\frac{5}{3}\\right)^{4} : \\left(-\\frac{2}{3}\\right)^{4}$   d) $\\left(\\frac{4}{9}\\right)^{3} : \\left(\\frac{4}{9}\\right)^{5}$   e) $\\left(\\left(-\\frac{4}{3}\\right)^{-3}\\right)^{5}$   f) $\\left(\\left(\\frac{2}{7}\\right)^{-1}\\right)^{-3}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(2/3)^(-4)*(2/3)^3*(2/3)^5",
+     "enunciado": "\\left(\\frac{2}{3}\\right)^{-4} \\cdot \\left(\\frac{2}{3}\\right)^{3} \\cdot \\left(\\frac{2}{3}\\right)^{5}",
+     "respuesta": "(2/3)^4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(1/6)^3*(3/5)^3*(-6/7)^3",
+     "enunciado": "\\left(\\frac{1}{6}\\right)^{3} \\cdot \\left(\\frac{3}{5}\\right)^{3} \\cdot \\left(-\\frac{6}{7}\\right)^{3}",
+     "respuesta": "(-3/35)^3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-5/3)^4/(-2/3)^4",
+     "enunciado": "\\left(-\\frac{5}{3}\\right)^{4} : \\left(-\\frac{2}{3}\\right)^{4}",
+     "respuesta": "(5/2)^4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(4/9)^3/(4/9)^5",
+     "enunciado": "\\left(\\frac{4}{9}\\right)^{3} : \\left(\\frac{4}{9}\\right)^{5}",
+     "respuesta": "(4/9)^(-2)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "((-4/3)^(-3))^5",
+     "enunciado": "\\left(\\left(-\\frac{4}{3}\\right)^{-3}\\right)^{5}",
+     "respuesta": "(-4/3)^(-15)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "((2/7)^(-1))^(-3)",
+     "enunciado": "\\left(\\left(\\frac{2}{7}\\right)^{-1}\\right)^{-3}",
+     "respuesta": "(2/7)^3"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, ejercicios y problemas 6",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{16}{81}$; b) $- \\frac{27}{42875}$; c) $\\frac{625}{16}$; d) $\\frac{81}{16}$; e) $- \\frac{14348907}{1073741824}$; f) $\\frac{8}{343}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pot-008",
+   "tipo": "operaciones con potencias de exponente entero",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Simplifica, mediante las propiedades de las potencias, dejando el resultado como entero o fracción (salvo si es muy elevado, en cuyo caso puede dejarse como potencia); no vale usar calculadora:\n\na) $\\left[\\left(\\frac{5}{2}\\right)^{3}\\right]^{-4} \\cdot \\left(\\frac{4}{5}\\right)^{-2}$   b) $\\left(\\frac{6}{5}\\right)^{6} \\cdot \\left(-\\frac{10}{3}\\right)^{-4}$   c) $\\frac{2^{-3} \\cdot (-2)^{4} \\cdot (-4)^{-1}}{-2}$   d) $2 \\cdot (-1)^{3}-4 \\cdot (-1)^{2}+2 \\cdot (-1)$   e) $\\frac{\\left(\\frac{1}{2}\\right)^{-3} \\cdot \\left(-\\frac{1}{4}\\right)^{2}}{2^{-1}}$   f) $2 \\cdot (-2)^{4}+3 \\cdot (-2)^{3}-4 \\cdot (-2)^{2}-3 \\cdot (-2)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "((5/2)^3)^(-4)*(4/5)^(-2)",
+     "enunciado": "\\left[\\left(\\frac{5}{2}\\right)^{3}\\right]^{-4} \\cdot \\left(\\frac{4}{5}\\right)^{-2}",
+     "respuesta": "2^8/5^10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(6/5)^6*(-10/3)^(-4)",
+     "enunciado": "\\left(\\frac{6}{5}\\right)^{6} \\cdot \\left(-\\frac{10}{3}\\right)^{-4}",
+     "respuesta": "3^10*2^2/5^10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "2^(-3)*(-2)^4*(-4)^(-1)/(-2)",
+     "enunciado": "\\frac{2^{-3} \\cdot (-2)^{4} \\cdot (-4)^{-1}}{-2}",
+     "respuesta": "1/4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "2*(-1)^3-4*(-1)^2+2*(-1)",
+     "enunciado": "2 \\cdot (-1)^{3}-4 \\cdot (-1)^{2}+2 \\cdot (-1)",
+     "respuesta": "-8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(1/2)^(-3)*(-1/4)^2/2^(-1)",
+     "enunciado": "\\frac{\\left(\\frac{1}{2}\\right)^{-3} \\cdot \\left(-\\frac{1}{4}\\right)^{2}}{2^{-1}}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "2*(-2)^4+3*(-2)^3-4*(-2)^2-3*(-2)",
+     "enunciado": "2 \\cdot (-2)^{4}+3 \\cdot (-2)^{3}-4 \\cdot (-2)^{2}-3 \\cdot (-2)",
+     "respuesta": "-2"
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "potencias, ficha 4, ej. 1 (1–3, 5–7)",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{256}{9765625}$; b) $\\frac{236196}{9765625}$; c) $\\frac{1}{4}$; d) $-8$; e) $1$; f) $-2$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pot-009",
+   "tipo": "operaciones con potencias de exponente entero",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Simplifica, mediante las propiedades de las potencias; no vale usar calculadora:\n\na) $\\frac{\\left(\\frac{4}{9}\\right)^{-1} \\cdot \\left(\\frac{5}{4}\\right)^{3}}{\\left(\\frac{25}{3}\\right)^{2} \\cdot \\left(\\frac{1}{3}\\right)^{-3} \\cdot 2^{-7}}$   b) $\\frac{\\left[\\left(\\frac{2}{3}\\right)^{2} \\cdot \\left(\\frac{2}{3}\\right)^{-5}\\right]^{-3}}{\\left[\\left(\\frac{2}{3}\\right)^{-5} : \\left(\\frac{2}{3}\\right)^{-8}\\right]^{-2}}$   c) $\\frac{\\left(\\frac{1}{5}\\right)^{-5} : \\left(\\frac{1}{5}\\right)^{-9}}{\\left(\\frac{1}{5}\\right)^{3} \\cdot \\left(\\frac{1}{5}\\right)^{-10} : \\frac{1}{5}}$   d) $\\frac{2^{3} \\cdot 8^{-3} \\cdot 12^{-1} \\cdot (-3)^{2}}{6^{2} \\cdot 16^{-2} \\cdot 3^{-3}}$   e) $\\frac{6^{4} \\cdot 9^{2} \\cdot 2^{-4} \\cdot 3^{-5} \\cdot 2^{-1}}{18^{3} \\cdot 2^{-5} \\cdot 3^{6} \\cdot \\left(3^{3}\\right)^{-3}}$   f) $\\frac{\\left(2^{-4} \\cdot 4^{3}\\right)^{2} \\cdot 5 \\cdot 5^{0}}{100^{2} \\cdot \\left(5^{2}\\right)^{-3}}$   g) $\\left(\\frac{8}{9}\\right)^{-2} \\cdot \\left[\\left(-\\frac{2}{3}\\right)^{2}\\right]^{3} \\cdot \\left(\\frac{3}{2}\\right)^{-1} \\cdot 9$   h) $\\frac{\\left(\\frac{1}{2}\\right)^{-8}}{\\left[\\left(4^{2}\\right)^{-3}\\right]^{2} \\cdot 64^{3}}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "((4/9)^(-1)*(5/4)^3)/((25/3)^2*(1/3)^(-3)*2^(-7))",
+     "enunciado": "\\frac{\\left(\\frac{4}{9}\\right)^{-1} \\cdot \\left(\\frac{5}{4}\\right)^{3}}{\\left(\\frac{25}{3}\\right)^{2} \\cdot \\left(\\frac{1}{3}\\right)^{-3} \\cdot 2^{-7}}",
+     "respuesta": "3/10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "((2/3)^2*(2/3)^(-5))^(-3)/((2/3)^(-5)/(2/3)^(-8))^(-2)",
+     "enunciado": "\\frac{\\left[\\left(\\frac{2}{3}\\right)^{2} \\cdot \\left(\\frac{2}{3}\\right)^{-5}\\right]^{-3}}{\\left[\\left(\\frac{2}{3}\\right)^{-5} : \\left(\\frac{2}{3}\\right)^{-8}\\right]^{-2}}",
+     "respuesta": "(2/3)^15"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "((1/5)^(-5)/(1/5)^(-9))/((1/5)^3*(1/5)^(-10)/(1/5))",
+     "enunciado": "\\frac{\\left(\\frac{1}{5}\\right)^{-5} : \\left(\\frac{1}{5}\\right)^{-9}}{\\left(\\frac{1}{5}\\right)^{3} \\cdot \\left(\\frac{1}{5}\\right)^{-10} : \\frac{1}{5}}",
+     "respuesta": "1/5^12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "2^3*8^(-3)*12^(-1)*(-3)^2/(6^2*16^(-2)*3^(-3))",
+     "enunciado": "\\frac{2^{3} \\cdot 8^{-3} \\cdot 12^{-1} \\cdot (-3)^{2}}{6^{2} \\cdot 16^{-2} \\cdot 3^{-3}}",
+     "respuesta": "9/4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "6^4*9^2*2^(-4)*3^(-5)*2^(-1)/(18^3*2^(-5)*3^6*(3^3)^(-3))",
+     "enunciado": "\\frac{6^{4} \\cdot 9^{2} \\cdot 2^{-4} \\cdot 3^{-5} \\cdot 2^{-1}}{18^{3} \\cdot 2^{-5} \\cdot 3^{6} \\cdot \\left(3^{3}\\right)^{-3}}",
+     "respuesta": "2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(2^(-4)*4^3)^2*5*5^0/(100^2*(5^2)^(-3))",
+     "enunciado": "\\frac{\\left(2^{-4} \\cdot 4^{3}\\right)^{2} \\cdot 5 \\cdot 5^{0}}{100^{2} \\cdot \\left(5^{2}\\right)^{-3}}",
+     "respuesta": "125"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "(8/9)^(-2)*((-2/3)^2)^3*(3/2)^(-1)*9",
+     "enunciado": "\\left(\\frac{8}{9}\\right)^{-2} \\cdot \\left[\\left(-\\frac{2}{3}\\right)^{2}\\right]^{3} \\cdot \\left(\\frac{3}{2}\\right)^{-1} \\cdot 9",
+     "respuesta": "2/3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "(1/2)^(-8)/(((4^2)^(-3))^2*64^3)",
+     "enunciado": "\\frac{\\left(\\frac{1}{2}\\right)^{-8}}{\\left[\\left(4^{2}\\right)^{-3}\\right]^{2} \\cdot 64^{3}}",
+     "respuesta": "2^14"
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "potencias, ficha 4, ej. 1 (8–10, 22, 23, 28, 29 y 31)",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{3}{10}$; b) $\\frac{32768}{14348907}$; c) $\\frac{1}{244140625}$; d) $\\frac{9}{4}$; e) $2$; f) $125$; g) $\\frac{2}{3}$; h) $16384$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pot-010",
+   "tipo": "potencias de base racional",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula:\n\na) $\\frac{\\left(\\frac{-2}{3}\\right)^{2} \\cdot \\left(\\frac{-1}{6}\\right)^{2}}{\\left(\\frac{3}{8}\\right)^{-4} \\cdot \\left(\\frac{3}{8}\\right)^{6}}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "((-2/3)^2*(-1/6)^2)/((3/8)^(-4)*(3/8)^6)",
+     "enunciado": "\\frac{\\left(\\frac{-2}{3}\\right)^{2} \\cdot \\left(\\frac{-1}{6}\\right)^{2}}{\\left(\\frac{3}{8}\\right)^{-4} \\cdot \\left(\\frac{3}{8}\\right)^{6}}",
+     "respuesta": "64/729"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, act. 12b",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{64}{729}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pot-011",
+   "tipo": "notación científica",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Expresa en forma de notación científica:\n\na) $140\\,000\\,000$   b) $32\\,800$   c) $71\\,000\\,000\\,000\\,000\\,000$   d) $0{,}0000075$   e) $-18\\,000\\,000$   f) $0{,}00000000042$   g) $-0{,}009$   h) $0{,}00000000007$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "140000000",
+     "enunciado": "140\\,000\\,000",
+     "respuesta": "1.4*10^8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "32800",
+     "enunciado": "32\\,800",
+     "respuesta": "3.28*10^4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "71000000000000000",
+     "enunciado": "71\\,000\\,000\\,000\\,000\\,000",
+     "respuesta": "7.1*10^16"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "0.0000075",
+     "enunciado": "0{,}0000075",
+     "respuesta": "7.5*10^(-6)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "-18000000",
+     "enunciado": "-18\\,000\\,000",
+     "respuesta": "-1.8*10^7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "0.00000000042",
+     "enunciado": "0{,}00000000042",
+     "respuesta": "4.2*10^(-10)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "-0.009",
+     "enunciado": "-0{,}009",
+     "respuesta": "-9*10^(-3)"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "0.00000000007",
+     "enunciado": "0{,}00000000007",
+     "respuesta": "7*10^(-11)"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, ejercicios y problemas 8 (la fuente da 4,2·10¹⁰ en f): falta el signo menos del exponente)",
+   "verificacion": "comprobada",
+   "solucion": "a) $1{,}4*10^8$; b) $3{,}28*10^4$; c) $7{,}1*10^16$; d) $7{,}5*10^(-6)$; e) $-1{,}8*10^7$; f) $4{,}2*10^(-10)$; g) $- \\frac{9}{1000}$; h) $\\frac{7}{100000000000}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pot-012",
+   "tipo": "operaciones en notación científica",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Efectúa las operaciones en notación científica: a) $0{,}000257 + 1{,}4 \\cdot 10^{-5}$   b) $200\\,000\\,000 - 3{,}5 \\cdot 10^{6} + 8{,}5 \\cdot 10^{5}$   c) $(1{,}3 \\cdot 10^{5}) \\cdot (6{,}1 \\cdot 10^{-3})$   d) $(4{,}7 \\cdot 10^{-8}) \\cdot (3 \\cdot 10^{6}) \\cdot (2{,}5 \\cdot 10^{-4})$   e) $(5 \\cdot 10^{-8}) : (1{,}5 \\cdot 10^{-3})$   f) $(3{,}25 \\cdot 10^{-5}) \\cdot (5 \\cdot 10^{2}) : (6{,}15 \\cdot 10^{-7})$",
+   "solucion": "a) $2{,}71 \\cdot 10^{-4}$   b) $\\approx 1{,}97 \\cdot 10^{8}$ (exacto $1{,}9735 \\cdot 10^{8}$)   c) $7{,}93 \\cdot 10^{2}$   d) $3{,}525 \\cdot 10^{-5}$   e) $\\approx 3{,}333 \\cdot 10^{-5}$   f) $\\approx 2{,}64 \\cdot 10^{4}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "0.000257+1.4*10^(-5)",
+     "respuesta": "2.71*10^(-4)",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "200000000-3.5*10^6+8.5*10^5",
+     "respuesta": "1.97*10^8",
+     "apartado": "b",
+     "tolerancia": 500000.0
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1.3*10^5*6.1*10^(-3)",
+     "respuesta": "7.93*10^2",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "4.7*10^(-8)*3*10^6*2.5*10^(-4)",
+     "respuesta": "3.525*10^(-5)",
+     "apartado": "d"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5*10^(-8)/(1.5*10^(-3))",
+     "respuesta": "3.333*10^(-5)",
+     "apartado": "e",
+     "tolerancia": 5e-09
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3.25*10^(-5)*5*10^2/(6.15*10^(-7))",
+     "respuesta": "2.64*10^4",
+     "apartado": "f",
+     "tolerancia": 50.0
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, act. 15 a 17",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-013",
+   "tipo": "operaciones en notación científica",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Realiza las operaciones y expresa el resultado en notación científica: a) $4 \\cdot 10^{3} + 2{,}4 \\cdot 10^{6} - 1{,}7 \\cdot 10^{5} - 3 \\cdot 10^{3}$   b) $2{,}3 \\cdot 10^{-5} - 3{,}45 \\cdot 10^{-4} + 6 \\cdot 10^{-3}$   c) $3 \\cdot 10^{-4} \\cdot 4{,}5 \\cdot 10^{2}$   d) $1{,}8 \\cdot 10^{5} : 5 \\cdot 10^{8}$",
+   "solucion": "a) $2{,}231 \\cdot 10^{6}$   b) $5{,}678 \\cdot 10^{-3}$   c) $1{,}35 \\cdot 10^{-1}$ (la fuente da $1{,}35 \\cdot 10^{1}$: errata)   d) $3{,}6 \\cdot 10^{-4}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4*10^3+2.4*10^6-1.7*10^5-3*10^3",
+     "respuesta": "2.231*10^6",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2.3*10^(-5)-3.45*10^(-4)+6*10^(-3)",
+     "respuesta": "5.678*10^(-3)",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3*10^(-4)*4.5*10^2",
+     "respuesta": "1.35*10^(-1)",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1.8*10^5/(5*10^8)",
+     "respuesta": "3.6*10^(-4)",
+     "apartado": "d"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, ejercicios y problemas 10 (en c) la fuente da 1,35·10¹: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-014",
+   "tipo": "operaciones en notación científica",
+   "dificultad": 3,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Calcula y expresa en notación científica: a) $0{,}00829 + 4 \\cdot 10^{-3} + 7{,}45 \\cdot 10^{-5} - 6{,}32 \\cdot 10^{-4}$   b) $5 \\cdot 10^{6} - 2{,}8 \\cdot 10^{7} - 3 \\cdot 10^{5}$   c) $\\frac{2{,}4 \\cdot 10^{-3} - 1{,}5 \\cdot 10^{-4}}{0{,}025 + 3 \\cdot 10^{-4}}$   d) $\\frac{(1{,}3 \\cdot 10^{4}) \\cdot (5 \\cdot 10^{3})}{(4 \\cdot 10^{5}) \\cdot (2{,}3 \\cdot 10^{6})}$",
+   "solucion": "a) $\\approx 1{,}17 \\cdot 10^{-2}$   b) $-2{,}33 \\cdot 10^{7}$   c) $\\approx 8{,}89 \\cdot 10^{-2}$   d) $\\approx 7{,}07 \\cdot 10^{-5}$ (sale $7{,}065\\ldots$; la fuente redondea a $7{,}06$)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "0.00829+4*10^(-3)+7.45*10^(-5)-6.32*10^(-4)",
+     "respuesta": "1.17*10^(-2)",
+     "apartado": "a",
+     "tolerancia": 5e-05
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5*10^6-2.8*10^7-3*10^5",
+     "respuesta": "-2.33*10^7",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "(2.4*10^(-3)-1.5*10^(-4))/(0.025+3*10^(-4))",
+     "respuesta": "8.89*10^(-2)",
+     "apartado": "c",
+     "tolerancia": 5e-05
+    },
+    {
+     "tipo": "valor",
+     "expresion": "(1.3*10^4*5*10^3)/(4*10^5*2.3*10^6)",
+     "respuesta": "7.065*10^(-5)",
+     "apartado": "d",
+     "tolerancia": 5e-09
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, ejercicios y problemas 13 (a, b) y 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-015",
+   "tipo": "operaciones en notación científica",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Opera y expresa en notación científica: a) $32\\,000\\,000^{2}$   b) $10^{10} + 9 \\cdot 10^{10}$   c) $5{,}5 \\cdot 10^{-3} + 2{,}2 \\cdot 10^{-7}$   d) $7{,}23 \\cdot 10^{-7} - 7{,}23 \\cdot 10^{-3}$   e) $\\frac{5 \\cdot 10^{7}}{2 \\cdot 10^{-6}}$   f) $\\frac{(1{,}2 \\cdot 10^{-5})^{2}}{10^{10} + 9 \\cdot 10^{10}}$   g) $(2 \\cdot 10^{3})^{5} \\cdot 0{,}5 \\cdot 10^{-7}$",
+   "solucion": "a) $1{,}024 \\cdot 10^{15}$   b) $1 \\cdot 10^{11}$   c) $5{,}50022 \\cdot 10^{-3}$   d) $-7{,}229277 \\cdot 10^{-3}$   e) $2{,}5 \\cdot 10^{13}$   f) $1{,}44 \\cdot 10^{-21}$   g) $1{,}6 \\cdot 10^{9}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "32000000^2",
+     "respuesta": "1.024*10^15",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "10^10+9*10^10",
+     "respuesta": "1*10^11",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5.5*10^(-3)+2.2*10^(-7)",
+     "respuesta": "5.50022*10^(-3)",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "7.23*10^(-7)-7.23*10^(-3)",
+     "respuesta": "-7.229277*10^(-3)",
+     "apartado": "d"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5*10^7/(2*10^(-6))",
+     "respuesta": "2.5*10^13",
+     "apartado": "e"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "(1.2*10^(-5))^2/(10^10+9*10^10)",
+     "respuesta": "1.44*10^(-21)",
+     "apartado": "f"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "(2*10^3)^5*0.5*10^(-7)",
+     "respuesta": "1.6*10^9",
+     "apartado": "g"
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "potencias, ficha 5, ej. 3 (l–n, p–s)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-016",
+   "tipo": "problema de notación científica",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Se estima que el volumen del agua de los océanos es de 1 285 600 000 km³ y el volumen de agua dulce es de 35 000 000 km³. Escribe esas cantidades en notación científica y calcula la proporción de agua dulce.",
+   "solucion": "$1{,}2856 \\cdot 10^{9}$ km³ y $3{,}5 \\cdot 10^{7}$ km³; el agua dulce es ≈ 2,72 % de la de los océanos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "35000000/1285600000*100",
+     "respuesta": "2.72",
+     "apartado": "proporción",
+     "tolerancia": 0.005
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, act. 18",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-017",
+   "tipo": "problema de notación científica",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "A Juan le han hecho un análisis de sangre y tiene 5 millones de glóbulos rojos en cada mm³. Escribe en notación científica el número aproximado de glóbulos rojos que tiene Juan estimando que tiene 5 litros de sangre.",
+   "solucion": "5 litros = 5 dm³ = $5 \\cdot 10^{6}$ mm³: $5 \\cdot 10^{6} \\cdot 5 \\cdot 10^{6} = 2{,}5 \\cdot 10^{13}$ glóbulos rojos. La fuente da $2{,}5 \\cdot 10^{3}$: errata",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "5*10^6*5*10^6",
+     "respuesta": "2.5*10^13"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, act. 20 (la fuente da 2,5·10³: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-018",
+   "tipo": "problema de notación científica",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "La estrella Sirio está a unos 8,611 años luz de nuestro planeta. Expresa en metros, mediante notación científica, la distancia que recorrería una nave espacial que realizara un trayecto de ida y vuelta a Sirio. (Un año luz es aproximadamente igual a $9{,}46 \\cdot 10^{12}$ km.)",
+   "solucion": "$\\approx 1{,}629 \\cdot 10^{17}$ m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2*8.611*9.46*10^12*1000",
+     "respuesta": "1.629*10^17",
+     "tolerancia": 50000000000000.0
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, ejercicios y problemas 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-019",
+   "tipo": "problema de notación científica",
+   "dificultad": 3,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "La masa de un electrón en reposo se estima en $9{,}11 \\cdot 10^{-31}$ kg, la de un protón en $1{,}672 \\cdot 10^{-27}$ kg, y la de un neutrón en $1{,}64 \\cdot 10^{-27}$ kg. Calcula la masa de un átomo de carbono 14, formado por seis protones, seis electrones y 6 + 2 = 8 neutrones.",
+   "solucion": "$\\approx 2{,}32 \\cdot 10^{-26}$ kg",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "6*1.672*10^(-27)+6*9.11*10^(-31)+8*1.64*10^(-27)",
+     "respuesta": "2.32*10^(-26)",
+     "tolerancia": 5.0000000000000004e-29
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, ejercicios y problemas 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-020",
+   "tipo": "problema de notación científica",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Se estima que existen 40 millones de bacterias en un gramo de tierra. Expresa en notación científica de forma aproximada el número de bacterias que existen en unos camiones que están descargando 50 toneladas métricas de arena en una playa.",
+   "solucion": "50 t = $5 \\cdot 10^{7}$ g: $4 \\cdot 10^{7} \\cdot 5 \\cdot 10^{7} = 2 \\cdot 10^{15}$ bacterias. La fuente da $4 \\cdot 10^{13}$: errata",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "40*10^6*50*10^6",
+     "respuesta": "2*10^15"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, ejercicios y problemas 15 (la fuente da 4·10¹³: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-021",
+   "tipo": "problema de notación científica",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Vemos en Internet que la masa de Marte es de 639E21 kg, que la masa de Júpiter es de 1.898E27 kg, y que la masa de la Tierra es de 5.972E24 kg. a) Calcula cuántas veces cabría la Tierra en el planeta Júpiter. b) Calcula la relación entre la masa de la Tierra y la de Marte.",
+   "solucion": "a) ≈ 318 veces   b) la masa de la Tierra es ≈ 9,34 veces la de Marte",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1.898*10^27/(5.972*10^24)",
+     "respuesta": "318",
+     "apartado": "a",
+     "tolerancia": 0.5
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5.972*10^24/(639*10^21)",
+     "respuesta": "9.34",
+     "apartado": "b",
+     "tolerancia": 0.01
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, ejercicios y problemas 18",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-022",
+   "tipo": "problema de notación científica",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "a) La estrella más cercana a nuestro sistema solar es α-Centauri, que está a una distancia de tan solo 4,3 años luz. Expresa, en km, esta distancia en notación científica (velocidad de la luz: 300 000 km/s). b) ¿Cuántos años tardaría en llegar una nave espacial viajando a 10 km/s?",
+   "solucion": "a) $\\approx 4{,}068 \\cdot 10^{13}$ km   b) 30 000 veces más que la luz: $4{,}3 \\cdot 30\\,000 = 129\\,000 = 1{,}29 \\cdot 10^{5}$ años",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4.3*365*24*3600*300000",
+     "respuesta": "4.068*10^13",
+     "apartado": "a",
+     "tolerancia": 5000000000.0
+    },
+    {
+     "tipo": "valor",
+     "expresion": "4.3*300000/10",
+     "respuesta": "129000",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "potencias, ficha 5, ej. 4",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-023",
+   "tipo": "problema de notación científica",
+   "dificultad": 3,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "a) Calcula el volumen aproximado (en m³) de la Tierra, tomando como valor medio de su radio 6371 km, dando el resultado en notación científica con dos cifras decimales (volumen de la esfera: $\\frac{4}{3}\\pi r^{3}$). b) Halla la superficie aproximada (en m²) de la Tierra.",
+   "solucion": "a) $\\approx 1{,}08 \\cdot 10^{21}$ m³   b) $\\approx 5{,}10 \\cdot 10^{14}$ m²",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4/3*pi*(6371000)^3",
+     "respuesta": "1.08*10^21",
+     "apartado": "a",
+     "tolerancia": 5e+18
+    },
+    {
+     "tipo": "valor",
+     "expresion": "4*pi*6371000^2",
+     "respuesta": "5.10*10^14",
+     "apartado": "b",
+     "tolerancia": 500000000000.0
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "potencias, ficha 5, ej. 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-024",
+   "tipo": "problema de notación científica",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "En una balanza de precisión pesamos cien granos de arroz, obteniendo un valor de 0,0000277 kg. ¿Cuántos granos hay en 1000 toneladas de arroz? Utiliza notación científica.",
+   "solucion": "$\\approx 3{,}61 \\cdot 10^{12}$ granos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1000*1000/(0.0000277/100)",
+     "respuesta": "3.61*10^12",
+     "tolerancia": 5000000000.0
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "potencias, ficha 5, ej. 6",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-025",
+   "tipo": "raíz cuadrada",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Calcula mentalmente las siguientes raíces:\n\na) $\\sqrt{49}$   b) $\\sqrt{25}$   c) $\\sqrt{100}$   d) $\\sqrt{64}$   e) $\\sqrt{81}$   f) $\\sqrt{12\\,100}$   g) $\\sqrt{0{,}49}$   h) $\\sqrt{33\\,640\\,000}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "sqrt(49)",
+     "enunciado": "\\sqrt{49}",
+     "respuesta": "7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "sqrt(25)",
+     "enunciado": "\\sqrt{25}",
+     "respuesta": "5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "sqrt(100)",
+     "enunciado": "\\sqrt{100}",
+     "respuesta": "10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "sqrt(64)",
+     "enunciado": "\\sqrt{64}",
+     "respuesta": "8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "sqrt(81)",
+     "enunciado": "\\sqrt{81}",
+     "respuesta": "9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "sqrt(12100)",
+     "enunciado": "\\sqrt{12\\,100}",
+     "respuesta": "110"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "sqrt(0.49)",
+     "enunciado": "\\sqrt{0{,}49}",
+     "respuesta": "0.7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "sqrt(33640000)",
+     "enunciado": "\\sqrt{33\\,640\\,000}",
+     "respuesta": "5800"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, act. 29 y ejercicios y problemas 19 y 20",
+   "verificacion": "comprobada",
+   "solucion": "a) $7$; b) $5$; c) $10$; d) $8$; e) $9$; f) $110$; g) $0{,}7$; h) $5800$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pot-026",
+   "tipo": "aproximación de raíces",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Calcula mentalmente las aproximaciones enteras de las siguientes raíces: a) $\\sqrt{51}$   b) $\\sqrt{27}$   c) $\\sqrt{102}$   d) $\\sqrt{63}$   e) $\\sqrt{80}$   f) $\\sqrt{2}$   g) $\\sqrt{123}$",
+   "solucion": "a) 7   b) 5   c) 10   d) 7 (por defecto) u 8 (por exceso)   e) 8 (por defecto) o 9 (por exceso)   f) 1   g) 11",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(51)",
+     "respuesta": "7",
+     "apartado": "a",
+     "tolerancia": 0.5
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(27)",
+     "respuesta": "5",
+     "apartado": "b",
+     "tolerancia": 0.5
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(102)",
+     "respuesta": "10",
+     "apartado": "c",
+     "tolerancia": 0.5
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(63)",
+     "respuesta": "8",
+     "apartado": "d",
+     "tolerancia": 0.5
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(80)",
+     "respuesta": "9",
+     "apartado": "e",
+     "tolerancia": 0.5
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(2)",
+     "respuesta": "1",
+     "apartado": "f",
+     "tolerancia": 0.5
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(123)",
+     "respuesta": "11",
+     "apartado": "g",
+     "tolerancia": 0.5
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 2, act. 30",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pot-027",
+   "tipo": "raíces que existen",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Indica qué raíces cuadradas van a ser números naturales, cuáles números irracionales y cuáles no existen: a) $\\sqrt{36}$   b) $\\sqrt{-25}$   c) $\\sqrt{-100}$   d) $\\sqrt{32}$   e) $\\sqrt{-7}$   f) $\\sqrt{10}$   g) $\\sqrt{100}$",
+   "solucion": "a) 6, natural   b) no existe   c) no existe   d) irracional   e) no existe   f) irracional   g) 10, natural",
+   "fuente": "mv3",
+   "ref": "cap. 2, act. 31",
+   "verificacion": "sin_verificar"
+  }
+ ]
+}

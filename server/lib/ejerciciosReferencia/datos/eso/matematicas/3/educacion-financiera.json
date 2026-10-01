@@ -1,0 +1,540 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 3,
+ "tema": "educacion-financiera",
+ "titulo": "Educación financiera: comisiones, cambio de divisas y calidad-precio",
+ "saberes": [
+  "A.5",
+  "A.6",
+  "B.2"
+ ],
+ "fuentes": {
+  "mv3": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 3.º ESO (LOMLOE): «Soluciones de ejercicios y problemas» (enunciados y soluciones de cada capítulo)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/3ESO/Soluciones%203%20ESO.pdf",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m3-fin-001",
+   "tipo": "comisiones bancarias",
+   "dificultad": 1,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "Una chica desea realizar varias transferencias desde su banca online. La primera, de 30 € a su madre: no le urge que le llegue el dinero. La segunda, a su casera, de 365 €: debe llegarle en el mismo día. La tercera, para pagar la letra de su coche a su financiera de EE. UU., de 250 €: debe llegar en menos de 24 horas. Su banco cobra comisiones por realizar transferencias urgentes del 2,5 % si son nacionales y del 4 % si son al extranjero. Calcula: a) El importe total de comisiones que va a pagar. b) El importe total que va a pagar.",
+   "solucion": "a) 19,125 € ≈ 19,13 €   b) 664,125 € ≈ 664,13 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "365*0.025+250*0.04",
+     "respuesta": "19.125",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "365*0.025+250*0.04+30+365+250",
+     "respuesta": "664.125",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 7, act. 17",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-002",
+   "tipo": "comisiones bancarias",
+   "dificultad": 2,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "Un hombre acude a la ventanilla de su banco a realizar varias operaciones: ingresar dinero en una de sus cuentas, realizar una transferencia urgente a su hijo, que vive en Alemania, de 1375 €, y otra transferencia no urgente a un cliente suyo por importe de 543 €. Aprovechando que está allí, el banco le dice que debe pagar la comisión por el mantenimiento de sus tarjetas, 10 €/anual, y la de administración por tener abierta una cuenta con ellos, 7 €/anual. Calcula el total de comisiones que ese día paga dicho hombre sabiendo que el importe de realizar transferencias urgentes es del 3,5 % y que las no urgentes no suponen un gasto a los clientes.",
+   "solucion": "$1375 \\cdot 0{,}035+10+7 = 65{,}125$ € ≈ 65,13 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1375*0.035+10+7",
+     "respuesta": "65.125"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 7, ejercicios y problemas 27",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-003",
+   "tipo": "comisiones bancarias",
+   "dificultad": 2,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "Una entidad bancaria determina que las transferencias tendrán una comisión del 0,4 % de cada importe. Por otro lado, la comisión mínima a cobrar debe ser de 5 €. A partir de estos datos calcula el total a pagar por un cliente que realiza transferencias por valor de: a) 4956 €   b) 3,5 €   c) 321 €   d) 1879,10 €",
+   "solucion": "a) Comisión 19,824 €: total 4975,824 €   b) La comisión sería 0,014 €, no llega al mínimo: total 3,5 + 5 = 8,5 €   c) La comisión sería 1,284 €, no llega al mínimo: total 326 €   d) Comisión 7,5164 €: total 1886,6164 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4956*1.004",
+     "respuesta": "4975.824",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3.5+5",
+     "respuesta": "8.5",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "321+5",
+     "respuesta": "326",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1879.10*1.004",
+     "respuesta": "1886.6164",
+     "apartado": "d"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "321*0.004",
+     "respuesta": "1.284",
+     "apartado": "c, comisión"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 7, ejercicios y problemas 28",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-004",
+   "tipo": "comisiones bancarias",
+   "dificultad": 2,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "La plataforma de pago GooglePay cobra a una empresa por facturar a través de ella las siguientes comisiones: si factura menos de 1500 € al mes, cobrará 3,2 % + 0,45 € por cada transacción; si factura entre 1500 € y 12 000 € al mes, cobrará 2,6 % + 0,40 € por cada transacción; si factura entre 12 001 € y 99 999 € al mes, cobrará 1,8 % + 0,30 € por cada transacción. Señala en cada caso cuánto tendrá que pagar la empresa a GooglePay de comisiones: a) Factura 650 € realizando 7 transacciones. b) Factura 5340 € realizando 24 transacciones. c) Factura 45 520 € realizando 145 transacciones.",
+   "solucion": "a) 23,95 €   b) 148,44 €   c) 862,86 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "650*0.032+7*0.45",
+     "respuesta": "23.95",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5340*0.026+24*0.40",
+     "respuesta": "148.44",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "45520*0.018+145*0.3",
+     "respuesta": "862.86",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 7, ejercicios y problemas 29 (a, b, c; el apartado d, 111 000 €, cae en un tramo que la tabla no da)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-005",
+   "tipo": "cambio de divisas",
+   "dificultad": 1,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "Tipos de cambio: 1 € = 0,86 £ = 1,3 \\$ = 3,6 soles = 9 bolivianos = 131 yenes = 8 yuanes = 11,1 dírhams. Cambia 1200 € a libras, soles, bolivianos, yenes y dírhams.",
+   "solucion": "1032 £; 4320 soles; 10 800 bolivianos; 157 200 yenes; 13 320 dírhams",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1200*0.86",
+     "respuesta": "1032",
+     "apartado": "libras"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1200*3.6",
+     "respuesta": "4320",
+     "apartado": "soles"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1200*9",
+     "respuesta": "10800",
+     "apartado": "bolivianos"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1200*131",
+     "respuesta": "157200",
+     "apartado": "yenes"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1200*11.1",
+     "respuesta": "13320",
+     "apartado": "dírhams"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 7, act. 22 (adaptado: los tipos de cambio del cuadro del libro se dan en el enunciado)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-006",
+   "tipo": "cambio de divisas",
+   "dificultad": 2,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "Tipos de cambio: 1 € = 0,86 £ = 1,3 \\$ = 3,6 soles = 9 bolivianos = 131 yenes = 8 yuanes = 11,1 dírhams. Cambia a euros las siguientes cantidades: a) 390 \\$   b) 4051,5 dírhams   c) 104 800 yenes   d) 5103 bolivianos",
+   "solucion": "a) 300 €   b) 365 € (la fuente divide entre 1,1 en vez de 11,1 y da 3683,18 €: errata)   c) 800 €   d) 567 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "390/1.3",
+     "respuesta": "300",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "4051.5/11.1",
+     "respuesta": "365",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "104800/131",
+     "respuesta": "800",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5103/9",
+     "respuesta": "567",
+     "apartado": "d"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 7, act. 23 (adaptado: tipos de cambio en el enunciado; en b) la fuente divide entre 1,1: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-007",
+   "tipo": "cambio de divisas",
+   "dificultad": 2,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "Tipos de cambio: 1 € = 0,86 £ = 1,3 \\$ = 3,6 soles = 9 bolivianos = 131 yenes = 8 yuanes = 11,1 dírhams. Jessica se quiere comprar una tableta. En España cuesta 350 €; en Estados Unidos, 400 \\$ y 60 \\$ de transporte; en China, 2700 yuanes y 200 yuanes de transporte. ¿Dónde es más barato comprar la tableta?",
+   "solucion": "España 350 €; EE. UU. ≈ 353,85 €; China 362,50 €: es más barato comprarla en España. La fuente suma «2700 + 20», calcula 337,5 € con 2700 y concluye que es más barato en China: errata",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(400+60)/1.3",
+     "respuesta": "353.85",
+     "apartado": "EE. UU.",
+     "tolerancia": 0.005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "(2700+200)/8",
+     "respuesta": "362.5",
+     "apartado": "China"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 7, act. 24 (adaptado: tipos de cambio en el enunciado; la fuente se equivoca en el precio de China)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-008",
+   "tipo": "cambio de divisas",
+   "dificultad": 1,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "Con la siguiente tabla de equivalencias: 1 € = 0,6 £ = 1,1 \\$ = 2,5 soles = 7 bolivianos = 106 yenes = 8 yuanes = 15 dírhams, cambia 3000 € a libras, soles, bolivianos, yenes y dírhams.",
+   "solucion": "1800 £; 7500 soles; 21 000 bolivianos; 318 000 yenes; 45 000 dírhams",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "3000*0.6",
+     "respuesta": "1800",
+     "apartado": "libras"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3000*2.5",
+     "respuesta": "7500",
+     "apartado": "soles"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3000*7",
+     "respuesta": "21000",
+     "apartado": "bolivianos"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3000*106",
+     "respuesta": "318000",
+     "apartado": "yenes"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3000*15",
+     "respuesta": "45000",
+     "apartado": "dírhams"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 7, ejercicios y problemas 30",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-009",
+   "tipo": "cambio de divisas",
+   "dificultad": 1,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "Sara ha comprado un ordenador que cuesta 400 €. Les quiere decir a sus amigos el precio en su moneda nacional. a) ¿Qué diría al de Japón si el tipo de cambio es 102 yenes? b) ¿Y al de EE. UU. si el tipo de cambio es 1,1 \\$? c) ¿Y al de Bolivia si el tipo de cambio es 7 bolivianos?",
+   "solucion": "a) 40 800 yenes   b) 440 \\$   c) 2800 bolivianos (la fuente calcula a) y c) con 131 yenes y 9 bolivianos, los tipos de otro ejercicio, y da 52 400 yenes y 3600 bolivianos: errata)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "400*102",
+     "respuesta": "40800",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "400*1.1",
+     "respuesta": "440",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "400*7",
+     "respuesta": "2800",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 7, ejercicios y problemas 31 (la fuente usa otros tipos de cambio en a y c: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-010",
+   "tipo": "cambio de divisas",
+   "dificultad": 2,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "Joaquín se quiere comprar un móvil que en España cuesta 500 €; en Estados Unidos, 500 \\$ y 50 \\$ por el transporte; en China, 4550 yuanes y 0 yuanes de transporte. ¿Dónde es más barato comprar ese móvil? El tipo de cambio en Estados Unidos es de 1,2 dólares y el de China es de 6 yuanes.",
+   "solucion": "España 500 €; EE. UU. ≈ 458,33 €; China ≈ 758,33 €: es más barato en Estados Unidos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "550/1.2",
+     "respuesta": "458.33",
+     "apartado": "EE. UU.",
+     "tolerancia": 0.005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "4550/6",
+     "respuesta": "758.33",
+     "apartado": "China",
+     "tolerancia": 0.005
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 7, ejercicios y problemas 32",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-011",
+   "tipo": "cambio de divisas",
+   "dificultad": 1,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "a) Marina ha vuelto de un viaje de Estados Unidos con 650 \\$ en metálico. Los cambia a euros. El tipo de cambio vigente es 1,2 dólares. ¿Cuántos euros tendrá?   b) Andrés ha vuelto de un viaje del Reino Unido con 50 £ en metálico. Los cambia a euros. El tipo de cambio vigente es 0,87 libras. ¿Cuántos euros tendrá?",
+   "solucion": "a) ≈ 541,67 € (la fuente trunca a 541,6 €)   b) ≈ 57,47 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "650/1.2",
+     "respuesta": "541.67",
+     "apartado": "a",
+     "tolerancia": 0.005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "50/0.87",
+     "respuesta": "57.47",
+     "apartado": "b",
+     "tolerancia": 0.005
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 7, autoevaluación 11 y 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-012",
+   "tipo": "cambio de divisas",
+   "dificultad": 3,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "En el cuadro siguiente se presentan los tipos de cambio de un grupo de monedas respecto al dólar de EE. UU.: 1 dólar canadiense = 0,613 \\$; 1 € = 0,886 \\$; 1 £ = 1,564 \\$. Calcula el resto de las relaciones entre las monedas utilizando los tipos de cambio cruzados: a) dólares canadienses por dólar   b) euros por dólar   c) dólares canadienses por euro   d) dólares canadienses por libra   e) euros por libra",
+   "solucion": "a) ≈ 1,631   b) ≈ 1,1287 (la fuente da 1,1286)   c) ≈ 1,445   d) ≈ 2,5513   e) ≈ 1,7652; y los inversos: 0,6393 £/\\$, 0,692 €/dólar canadiense, 0,3919 £/dólar canadiense, 0,5665 £/€",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1/0.613",
+     "respuesta": "1.631",
+     "apartado": "a",
+     "tolerancia": 0.0005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1/0.886",
+     "respuesta": "1.1287",
+     "apartado": "b",
+     "tolerancia": 0.0005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "0.886/0.613",
+     "respuesta": "1.445",
+     "apartado": "c",
+     "tolerancia": 0.0005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1.564/0.613",
+     "respuesta": "2.5513",
+     "apartado": "d",
+     "tolerancia": 0.0005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1.564/0.886",
+     "respuesta": "1.7652",
+     "apartado": "e",
+     "tolerancia": 0.0005
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 7, ejercicios y problemas 33 (adaptado: la tabla se da en el texto)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-013",
+   "tipo": "tipo de cambio",
+   "dificultad": 2,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "Si el euro se deprecia frente al dólar, ¿esto es importante?, ¿por qué?, ¿qué ocurre con el dinero que dan los turistas extranjeros en España?, ¿podrán comprar más o menos en nuestro país? Si el tipo de cambio dólar/euro disminuye desde 1,35 hasta 1,05, ¿qué significa para los europeos?",
+   "solucion": "Comprar en Europa es más barato para los estadounidenses y comprar en EE. UU. es más caro para los europeos: antes con un euro se conseguían 1,35 dólares y ahora solo 1,05. Los europeos que viajen allí tendrán menos dólares y podrán comprar menos cosas",
+   "fuente": "mv3",
+   "ref": "cap. 7, act. 20",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-fin-014",
+   "tipo": "calidad-precio",
+   "dificultad": 2,
+   "saberes": [
+    "A.6",
+    "B.2"
+   ],
+   "enunciado": "En una pizzería, la pizza de 20 cm de diámetro vale 3 euros y la de 40 cm vale 6 euros. ¿Cuál tiene mejor precio?",
+   "solucion": "Áreas $100\\pi$ y $400\\pi$ cm²: la grande tiene el cuádruple de pizza y solo cuesta el doble. Mejor precio la grande (≈ 209 cm² por euro frente a ≈ 105)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "pi*10^2",
+     "respuesta": "100*pi",
+     "apartado": "área pequeña"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "pi*20^2",
+     "respuesta": "400*pi",
+     "apartado": "área grande"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "100*pi/3",
+     "respuesta": "104.72",
+     "apartado": "cm²/€, pequeña",
+     "tolerancia": 0.005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "400*pi/6",
+     "respuesta": "209.44",
+     "apartado": "cm²/€, grande",
+     "tolerancia": 0.005
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, curiosidades (revista)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-fin-015",
+   "tipo": "calidad-precio",
+   "dificultad": 2,
+   "saberes": [
+    "A.6",
+    "A.5"
+   ],
+   "enunciado": "Calcula el precio del litro de zumo que se consigue mezclando 8 litros de zumo de piña a 2,5 €/l, 15 litros de zumo de naranja a 1,6 €/l y 5 litros de zumo de uva a 1,2 €/l. ¿A cuánto debe venderse una botella de litro y medio si se le aplica un aumento del 40 % sobre el precio de coste?",
+   "solucion": "Precio de coste $\\frac{25}{14} \\approx 1{,}79$ €/l; la botella, $\\frac{75}{28}$ € de coste y 3,75 € de venta",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(8*2.5+15*1.6+5*1.2)/(8+15+5)",
+     "respuesta": "25/14",
+     "apartado": "€/l"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "(25/14)*1.5*1.4",
+     "respuesta": "3.75",
+     "apartado": "botella"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 35",
+   "verificacion": "comprobada"
+  }
+ ]
+}

@@ -1,0 +1,1105 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 3,
+ "tema": "expresiones-algebraicas",
+ "titulo": "Expresiones algebraicas y polinomios: operaciones e identidades notables",
+ "saberes": [
+  "D.2",
+  "D.3",
+  "D.4",
+  "A.5"
+ ],
+ "fuentes": {
+  "mv3": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 3.º ESO (LOMLOE): «Soluciones de ejercicios y problemas» (enunciados y soluciones de cada capítulo)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/3ESO/Soluciones%203%20ESO.pdf",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "ag3": {
+   "nombre": "Alfonso González, IES Fernando de Mena: fichas de ejercicios de 3.º ESO Académicas",
+   "url": "https://www.alfonsogonzalez.es/asignaturas/3_eso_academicas/ejercicios_3_eso_academicas_propuestos.php",
+   "licencia": "CC BY-NC"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m3-pol-001",
+   "tipo": "lenguaje algebraico",
+   "dificultad": 1,
+   "saberes": [
+    "D.2",
+    "D.3"
+   ],
+   "enunciado": "Reescribe, en lenguaje algebraico, los siguientes enunciados, referidos a dos números cualesquiera $x$ e $y$: a) El triple de su diferencia   b) La suma de sus cuadrados   c) El cuadrado de su suma   d) El inverso de su producto   e) La suma de sus opuestos   f) El producto de sus cuadrados",
+   "solucion": "a) $3(x-y)$   b) $x^{2}+y^{2}$   c) $(x+y)^{2}$   d) $\\frac{1}{xy}$   e) $-x-y$   f) $x^{2}y^{2}$",
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 3",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-pol-002",
+   "tipo": "lenguaje algebraico",
+   "dificultad": 1,
+   "saberes": [
+    "D.2",
+    "D.3"
+   ],
+   "enunciado": "Escribe las expresiones algebraicas que nos proporcionan la longitud de una circunferencia y el área de un trapecio.",
+   "solucion": "$L = 2\\pi r$; $A = \\frac{(B+b)h}{2}$",
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 2",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-pol-003",
+   "tipo": "lenguaje algebraico",
+   "dificultad": 1,
+   "saberes": [
+    "D.2",
+    "D.3",
+    "A.5"
+   ],
+   "enunciado": "Una tienda de ropa anuncia en sus escaparates que está de rebajas y que todos sus artículos están rebajados un 30 % sobre el precio impreso en cada etiqueta. Escribe lo que pagaremos por una prenda en función de lo que aparece en su etiqueta ($p$):\n\na) $p - \\frac{30}{100} \\cdot p$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "p-30/100*p",
+     "enunciado": "p - \\frac{30}{100} \\cdot p",
+     "respuesta": "0.7*p"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 4",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\frac{7 p}{10}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-004",
+   "tipo": "valor numérico",
+   "dificultad": 1,
+   "saberes": [
+    "D.3",
+    "D.4"
+   ],
+   "enunciado": "Calcula el valor numérico de las siguientes expresiones algebraicas para los valores que se indican:\n\na) $-3x^{2}+\\frac{4}{x}-5 \\text{ para } x = -2$   b) $3b+\\frac{a+b}{2-b^{3}}+a b^{2}-1 \\text{ para } a = \\frac{1}{3},\\ b = \\frac{1}{2}$   c) $x^{2}+2x-7 \\text{ para } x = 2$   d) $(a+b)^{2}-(a^{2}+b^{2}) \\text{ para } a = 3,\\ b = -2$   e) $c^{2}+3c+7 \\text{ para } c = 1$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "-3*(-2)^2+4/(-2)-5",
+     "enunciado": "-3x^{2}+\\frac{4}{x}-5 \\text{ para } x = -2",
+     "respuesta": "-19"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "3*(1/2)+(1/3+1/2)/(2-(1/2)^3)+(1/3)*(1/2)^2-1",
+     "enunciado": "3b+\\frac{a+b}{2-b^{3}}+a b^{2}-1 \\text{ para } a = \\frac{1}{3},\\ b = \\frac{1}{2}",
+     "respuesta": "37/36"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "2^2+2*2-7",
+     "enunciado": "x^{2}+2x-7 \\text{ para } x = 2",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(3+(-2))^2-(3^2+(-2)^2)",
+     "enunciado": "(a+b)^{2}-(a^{2}+b^{2}) \\text{ para } a = 3,\\ b = -2",
+     "respuesta": "-12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "1^2+3*1+7",
+     "enunciado": "c^{2}+3c+7 \\text{ para } c = 1",
+     "respuesta": "11"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 5 y 7",
+   "verificacion": "comprobada",
+   "solucion": "a) $-19$; b) $\\frac{37}{36}$; c) $1$; d) $-12$; e) $11$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-005",
+   "tipo": "valor numérico",
+   "dificultad": 1,
+   "saberes": [
+    "D.3",
+    "D.4"
+   ],
+   "enunciado": "Considera el polinomio $p(x) = x^{3}-3x+2$. Halla los siguientes valores numéricos de $p$:\n\na) $p(0)$   b) $p(1)$   c) $p(-1)$   d) $p(-2)$   e) $p\\left(\\frac{1}{2}\\right)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "0^3-3*0+2",
+     "enunciado": "p(0)",
+     "respuesta": "2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "1^3-3*1+2",
+     "enunciado": "p(1)",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-1)^3-3*(-1)+2",
+     "enunciado": "p(-1)",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(-2)^3-3*(-2)+2",
+     "enunciado": "p(-2)",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(1/2)^3-3*(1/2)+2",
+     "enunciado": "p\\left(\\frac{1}{2}\\right)",
+     "respuesta": "5/8"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 10",
+   "verificacion": "comprobada",
+   "solucion": "a) $2$; b) $0$; c) $4$; d) $0$; e) $\\frac{5}{8}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-006",
+   "tipo": "valor numérico",
+   "dificultad": 2,
+   "saberes": [
+    "D.3",
+    "D.4"
+   ],
+   "enunciado": "Halla el valor numérico de las siguientes expresiones en los números que se indican:\n\na) $\\frac{x-3}{x+1} \\text{ en } x = 1$   b) $\\frac{x}{x^{2}-2x+1} \\text{ para } x = -2$   c) $\\frac{x+y-2}{x^{2}+3y^{2}} \\text{ en } x = 3 \\text{ e } y = -1$   d) $\\frac{-2a+b^{2}-4}{a^{2}c-3abc} \\text{ para } a = -1,\\ b = 0 \\text{ y } c = 2$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(1-3)/(1+1)",
+     "enunciado": "\\frac{x-3}{x+1} \\text{ en } x = 1",
+     "respuesta": "-1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(-2)/((-2)^2-2*(-2)+1)",
+     "enunciado": "\\frac{x}{x^{2}-2x+1} \\text{ para } x = -2",
+     "respuesta": "-2/9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(3+(-1)-2)/(3^2+3*(-1)^2)",
+     "enunciado": "\\frac{x+y-2}{x^{2}+3y^{2}} \\text{ en } x = 3 \\text{ e } y = -1",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(-2*(-1)+0^2-4)/((-1)^2*2-3*(-1)*0*2)",
+     "enunciado": "\\frac{-2a+b^{2}-4}{a^{2}c-3abc} \\text{ para } a = -1,\\ b = 0 \\text{ y } c = 2",
+     "respuesta": "-1"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, ejercicios y problemas 6",
+   "verificacion": "comprobada",
+   "solucion": "a) $-1$; b) $- \\frac{2}{9}$; c) $0$; d) $-1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-007",
+   "tipo": "monomios y polinomios",
+   "dificultad": 1,
+   "saberes": [
+    "D.3",
+    "D.4"
+   ],
+   "enunciado": "a) En cada uno de los siguientes monomios señala su coeficiente, su parte literal y su grado: $-12x^{3}$;  $a^{4}b^{3}c$;  $4xy^{2}$.   b) Para cada uno de los siguientes polinomios destaca su grado y los monomios que lo constituyen: $5x^{4}+7x^{2}-x$;  $6x^{2}+10-2x^{3}$;  $2xy^{3}-x^{5}+7x^{2}y^{2}$.",
+   "solucion": "a) $-12x^{3}$: coeficiente $-12$, parte literal $x^{3}$, grado 3; $a^{4}b^{3}c$: coeficiente 1, parte literal $a^{4}b^{3}c$, grado 8; $4xy^{2}$: coeficiente 4, parte literal $xy^{2}$, grado 3.   b) Grado 4: $5x^{4}, 7x^{2}, -x$; grado 3: $-2x^{3}, 6x^{2}, 10$; grado 5: $-x^{5}, 7x^{2}y^{2}, 2xy^{3}$",
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 8 y 9",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-pol-008",
+   "tipo": "suma y resta de polinomios",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Realiza las siguientes sumas y diferencias de polinomios:\n\na) $(-x^{3} + x - 5) + (2x^{2} + 5x + 4) + (-4x^{3} - 2x^{2} + 3x)$   b) $(x^{2} + 4) + (-2x + 4) + (-6x^{3} + 3x^{2} + x + 1) - x^{2}$   c) $(5x^{2} + 2) - (-2x)$   d) $(-2x^{3} + 4x) - (-2x - 1)$   e) $(7x^{2} - 2x) - (3x^{3} + 4x^{2} - x + 1)$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(-x^3+x-5)+(2*x^2+5*x+4)+(-4*x^3-2*x^2+3*x)",
+     "enunciado": "(-x^{3} + x - 5) + (2x^{2} + 5x + 4) + (-4x^{3} - 2x^{2} + 3x)",
+     "respuesta": "-5*x^3+9*x-1"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(x^2+4)+(-2*x+4)+(-6*x^3+3*x^2+x+1)-x^2",
+     "enunciado": "(x^{2} + 4) + (-2x + 4) + (-6x^{3} + 3x^{2} + x + 1) - x^{2}",
+     "respuesta": "-6*x^3+3*x^2-x+9"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(5*x^2+2)-(-2*x)",
+     "enunciado": "(5x^{2} + 2) - (-2x)",
+     "respuesta": "5*x^2+2*x+2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "d",
+     "expresion": "(-2*x^3+4*x)-(-2*x-1)",
+     "enunciado": "(-2x^{3} + 4x) - (-2x - 1)",
+     "respuesta": "-2*x^3+6*x+1"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "e",
+     "expresion": "(7*x^2-2*x)-(3*x^3+4*x^2-x+1)",
+     "enunciado": "(7x^{2} - 2x) - (3x^{3} + 4x^{2} - x + 1)",
+     "respuesta": "-3*x^3+3*x^2-x-1"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 11 y 16 (en c) la fuente da 5x² + 2x + x: errata)",
+   "verificacion": "comprobada",
+   "solucion": "a) $- 5 x^{3} + 9 x - 1$; b) $- 6 x^{3} + 3 x^{2} - x + 9$; c) $5 x^{2} + 2 x + 2$; d) $- 2 x^{3} + 6 x + 1$; e) $- 3 x^{3} + 3 x^{2} - x - 1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-009",
+   "tipo": "suma de polinomios",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Considera los polinomios $p = x^{2}-x+1$, $q = -x^{3}+2x-3$, así como el polinomio suma $s = p+q$. Halla los valores que adopta cada uno de ellos para $x = -2$, es decir, calcula $p(-2)$, $q(-2)$ y $s(-2)$. Estudia si existe alguna relación entre esos tres valores.",
+   "solucion": "$p(-2) = 7$; $q(-2) = 1$; $s(-2) = 8 = p(-2)+q(-2)$ ($s = -x^{3}+x^{2}+x-2$)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(-2)^2-(-2)+1",
+     "respuesta": "7",
+     "apartado": "p(−2)"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "-(-2)^3+2*(-2)-3",
+     "respuesta": "1",
+     "apartado": "q(−2)"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "-(-2)^3+(-2)^2+(-2)-2",
+     "respuesta": "8",
+     "apartado": "s(−2)"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 13",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-pol-010",
+   "tipo": "producto de polinomios",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Efectúa los siguientes productos de polinomios:\n\na) $(-2x) \\cdot (3x^{2} - 4)$   b) $(2x^{3} + 1) \\cdot (-4x + 5)$   c) $(4x^{3} - x^{2} - 1) \\cdot (2x + 6)$   d) $(a - 2) \\cdot (4 - 3a)$   e) $(3a - b^{2}) \\cdot (2b - a^{2})$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(-2*x)*(3*x^2-4)",
+     "enunciado": "(-2x) \\cdot (3x^{2} - 4)",
+     "respuesta": "-6*x^3+8*x"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(2*x^3+1)*(-4*x+5)",
+     "enunciado": "(2x^{3} + 1) \\cdot (-4x + 5)",
+     "respuesta": "-8*x^4+10*x^3-4*x+5"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(4*x^3-x^2-1)*(2*x+6)",
+     "enunciado": "(4x^{3} - x^{2} - 1) \\cdot (2x + 6)",
+     "respuesta": "8*x^4+22*x^3-6*x^2-2*x-6"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "d",
+     "expresion": "(a-2)*(4-3*a)",
+     "enunciado": "(a - 2) \\cdot (4 - 3a)",
+     "respuesta": "-3*a^2+10*a-8"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "e",
+     "expresion": "(3*a-b^2)*(2*b-a^2)",
+     "enunciado": "(3a - b^{2}) \\cdot (2b - a^{2})",
+     "respuesta": "a^2*b^2-3*a^3-2*b^3+6*a*b"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 15 y 18",
+   "verificacion": "comprobada",
+   "solucion": "a) $- 6 x^{3} + 8 x$; b) $- 8 x^{4} + 10 x^{3} - 4 x + 5$; c) $8 x^{4} + 22 x^{3} - 6 x^{2} - 2 x - 6$; d) $- 3 a^{2} + 10 a - 8$; e) $- 3 a^{3} + a^{2} b^{2} + 6 a b - 2 b^{3}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-011",
+   "tipo": "producto de polinomios",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Realiza los siguientes productos de polinomios:\n\na) $x \\cdot (-3x^{2} + 4x + 2) \\cdot x^{2}$   b) $(-2x + 1) \\cdot (5x^{2} - x + 3) \\cdot (-x)$   c) $(3a - 1) \\cdot (2 - a) \\cdot (5 - 4a)$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "x*(-3*x^2+4*x+2)*x^2",
+     "enunciado": "x \\cdot (-3x^{2} + 4x + 2) \\cdot x^{2}",
+     "respuesta": "-3*x^5+4*x^4+2*x^3"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(-2*x+1)*(5*x^2-x+3)*(-x)",
+     "enunciado": "(-2x + 1) \\cdot (5x^{2} - x + 3) \\cdot (-x)",
+     "respuesta": "10*x^4-7*x^3+7*x^2-3*x"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(3*a-1)*(2-a)*(5-4*a)",
+     "enunciado": "(3a - 1) \\cdot (2 - a) \\cdot (5 - 4a)",
+     "respuesta": "12*a^3-43*a^2+43*a-10"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 19",
+   "verificacion": "comprobada",
+   "solucion": "a) $- 3 x^{5} + 4 x^{4} + 2 x^{3}$; b) $10 x^{4} - 7 x^{3} + 7 x^{2} - 3 x$; c) $12 a^{3} - 43 a^{2} + 43 a - 10$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-012",
+   "tipo": "producto de polinomios",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Efectúa los siguientes productos:\n\na) $(3x^{2} + 5x - 6) \\cdot (8x^{2} - 3x + 4)$   b) $(5x^{3} - 4x^{2} + x - 2) \\cdot (x^{3} - 7x^{2} + 3)$   c) $(a \\cdot b^{2} + a^{2} \\cdot b + a \\cdot b) \\cdot (a \\cdot b - a \\cdot b^{2})$   d) $(x^{2} \\cdot y^{2} - 2x \\cdot y) \\cdot (2x \\cdot y + 4)$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(3*x^2+5*x-6)*(8*x^2-3*x+4)",
+     "enunciado": "(3x^{2} + 5x - 6) \\cdot (8x^{2} - 3x + 4)",
+     "respuesta": "24*x^4+31*x^3-51*x^2+38*x-24"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(5*x^3-4*x^2+x-2)*(x^3-7*x^2+3)",
+     "enunciado": "(5x^{3} - 4x^{2} + x - 2) \\cdot (x^{3} - 7x^{2} + 3)",
+     "respuesta": "5*x^6-39*x^5+29*x^4+6*x^3+2*x^2+3*x-6"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(a*b^2+a^2*b+a*b)*(a*b-a*b^2)",
+     "enunciado": "(a \\cdot b^{2} + a^{2} \\cdot b + a \\cdot b) \\cdot (a \\cdot b - a \\cdot b^{2})",
+     "respuesta": "a^3*b^2+a^2*b^2-a^2*b^4-a^3*b^3"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "d",
+     "expresion": "(x^2*y^2-2*x*y)*(2*x*y+4)",
+     "enunciado": "(x^{2} \\cdot y^{2} - 2x \\cdot y) \\cdot (2x \\cdot y + 4)",
+     "respuesta": "2*x^3*y^3-8*x*y"
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "polinomios, ficha 7 (repaso), ej. 7 (a, b, d, f)",
+   "verificacion": "comprobada",
+   "solucion": "a) $24 x^{4} + 31 x^{3} - 51 x^{2} + 38 x - 24$; b) $5 x^{6} - 39 x^{5} + 29 x^{4} + 6 x^{3} + 2 x^{2} + 3 x - 6$; c) $- a^{3} b^{3} + a^{3} b^{2} - a^{2} b^{4} + a^{2} b^{2}$; d) $2 x^{3} y^{3} - 8 x y$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-013",
+   "tipo": "producto de polinomios",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Calcula los productos:\n\na) $(\\frac{3a \\cdot x}{2} - \\frac{y}{5}) \\cdot (-\\frac{b \\cdot y}{3})$   b) $(0{,}1x + 0{,}2y - 0{,}3z) \\cdot (0{,}3x - 0{,}2y + 0{,}1z)$   c) $(x - y) \\cdot (y - 1) \\cdot (x + a)$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(3*a*x/2-y/5)*(-b*y/3)",
+     "enunciado": "(\\frac{3a \\cdot x}{2} - \\frac{y}{5}) \\cdot (-\\frac{b \\cdot y}{3})",
+     "respuesta": "(-15*a*b*x*y+2*b*y^2)/30"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(0.1*x+0.2*y-0.3*z)*(0.3*x-0.2*y+0.1*z)",
+     "enunciado": "(0{,}1x + 0{,}2y - 0{,}3z) \\cdot (0{,}3x - 0{,}2y + 0{,}1z)",
+     "respuesta": "0.03*x^2-0.04*y^2-0.03*z^2+0.04*x*y-0.08*x*z+0.08*y*z"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(x-y)*(y-1)*(x+a)",
+     "enunciado": "(x - y) \\cdot (y - 1) \\cdot (x + a)",
+     "respuesta": "x^2*y+x*y*a-x^2-x*a-y^2*x+y*x-y^2*a+y*a"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, ejercicios y problemas 10 (en c) la fuente omite el término xy: errata)",
+   "verificacion": "comprobada",
+   "solucion": "a) $- \\frac{a b x y}{2} + \\frac{b y^{2}}{15}$; b) $\\frac{3 x^{2}}{100} + \\frac{x y}{25} - \\frac{2 x z}{25} - \\frac{y^{2}}{25} + \\frac{2 y z}{25} - \\frac{3 z^{2}}{100}$; c) $a x y - a x - a y^{2} + a y + x^{2} y - x^{2} - x y^{2} + x y$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-014",
+   "tipo": "operaciones combinadas con polinomios",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Realiza las siguientes operaciones combinadas de polinomios:\n\na) $(x^{3} + 2) \\cdot ((4x^{2} + 2) - (2x^{2} + x + 1))$   b) $(4x + 3) \\cdot (2x - 5) - (6x^{2} - 10x - 12)$   c) $(x^{2} - 3) \\cdot (x + 1) - (x^{2} + 5) \\cdot (x - 2)$   d) $(2x^{2} + x - 2) \\cdot (x^{2} - 3x + 2) - (5x^{3} - 3x^{2} + 4)$   e) $2x^{2} + x - 2 - (x^{2} - 3x + 2) \\cdot (5x^{3} - 3x^{2} + 4)$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(x^3+2)*((4*x^2+2)-(2*x^2+x+1))",
+     "enunciado": "(x^{3} + 2) \\cdot ((4x^{2} + 2) - (2x^{2} + x + 1))",
+     "respuesta": "2*x^5-x^4+x^3+4*x^2-2*x+2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(4*x+3)*(2*x-5)-(6*x^2-10*x-12)",
+     "enunciado": "(4x + 3) \\cdot (2x - 5) - (6x^{2} - 10x - 12)",
+     "respuesta": "2*x^2-4*x-3"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(x^2-3)*(x+1)-(x^2+5)*(x-2)",
+     "enunciado": "(x^{2} - 3) \\cdot (x + 1) - (x^{2} + 5) \\cdot (x - 2)",
+     "respuesta": "3*x^2-8*x+7"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "d",
+     "expresion": "(2*x^2+x-2)*(x^2-3*x+2)-(5*x^3-3*x^2+4)",
+     "enunciado": "(2x^{2} + x - 2) \\cdot (x^{2} - 3x + 2) - (5x^{3} - 3x^{2} + 4)",
+     "respuesta": "2*x^4-10*x^3+2*x^2+8*x-8"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "e",
+     "expresion": "2*x^2+x-2-(x^2-3*x+2)*(5*x^3-3*x^2+4)",
+     "enunciado": "2x^{2} + x - 2 - (x^{2} - 3x + 2) \\cdot (5x^{3} - 3x^{2} + 4)",
+     "respuesta": "-5*x^5+18*x^4-19*x^3+4*x^2+13*x-10"
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "polinomios, ficha 3, ej. 4 (a, b, c, e, g)",
+   "verificacion": "comprobada",
+   "solucion": "a) $2 x^{5} - x^{4} + x^{3} + 4 x^{2} - 2 x + 2$; b) $2 x^{2} - 4 x - 3$; c) $3 x^{2} - 8 x + 7$; d) $2 x^{4} - 10 x^{3} + 2 x^{2} + 8 x - 8$; e) $- 5 x^{5} + 18 x^{4} - 19 x^{3} + 4 x^{2} + 13 x - 10$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-015",
+   "tipo": "operaciones con polinomios",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Considera los polinomios $p(x) = 2x^{3}-x^{2}+4x-1$, $q(x) = -x^{4}-3x^{3}+2x^{2}-x-5$ y $r(x) = x^{2}-3x+2$. Haz las siguientes operaciones: a) $p+q+r$   b) $p-q$   c) $p \\cdot r$   d) $p \\cdot r-q$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(2*x^3-x^2+4*x-1)+(-x^4-3*x^3+2*x^2-x-5)+(x^2-3*x+2)",
+     "respuesta": "-x^4-x^3+2*x^2-4"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(2*x^3-x^2+4*x-1)-(-x^4-3*x^3+2*x^2-x-5)",
+     "respuesta": "x^4+5*x^3-3*x^2+5*x+4"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(2*x^3-x^2+4*x-1)*(x^2-3*x+2)",
+     "respuesta": "2*x^5-7*x^4+11*x^3-15*x^2+11*x-2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "d",
+     "expresion": "(2*x^3-x^2+4*x-1)*(x^2-3*x+2)-(-x^4-3*x^3+2*x^2-x-5)",
+     "respuesta": "2*x^5-6*x^4+14*x^3-17*x^2+12*x+3"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, ejercicios y problemas 9",
+   "verificacion": "comprobada",
+   "solucion": "a) $- x^{4} - x^{3} + 2 x^{2} - 4$; b) $x^{4} + 5 x^{3} - 3 x^{2} + 5 x + 4$; c) $2 x^{5} - 7 x^{4} + 11 x^{3} - 15 x^{2} + 11 x - 2$; d) $2 x^{5} - 6 x^{4} + 14 x^{3} - 17 x^{2} + 12 x + 3$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-016",
+   "tipo": "factor común",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "De cada uno de los siguientes polinomios extrae algún factor que sea común a sus monomios:\n\na) $-10x^{3} - 15x^{2} + 20x$   b) $30x^{4} + 24x^{2}$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "-10*x^3-15*x^2+20*x",
+     "enunciado": "-10x^{3} - 15x^{2} + 20x",
+     "respuesta": "5*x*(-2*x^2-3*x+4)"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "30*x^4+24*x^2",
+     "enunciado": "30x^{4} + 24x^{2}",
+     "respuesta": "6*x^2*(5*x^2+4)"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 20",
+   "verificacion": "comprobada",
+   "solucion": "a) $5 x \\left(- 2 x^{2} - 3 x + 4\\right)$; b) $6 x^{2} \\left(5 x^{2} + 4\\right)$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-017",
+   "tipo": "factor común",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Extrae el máximo factor común posible:\n\na) $6x^{2} - 2x + 4x^{3}$   b) $-2x \\cdot (x - 3)^{2} + 4x^{2}(x - 3)$   c) $2x^{3} + 4x^{2} - 8x$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "6*x^2-2*x+4*x^3",
+     "enunciado": "6x^{2} - 2x + 4x^{3}",
+     "respuesta": "2*x*(3*x-1+2*x^2)"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "-2*x*(x-3)^2+4*x^2*(x-3)",
+     "enunciado": "-2x \\cdot (x - 3)^{2} + 4x^{2}(x - 3)",
+     "respuesta": "2*x*(x-3)*(x+3)"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "2*x^3+4*x^2-8*x",
+     "enunciado": "2x^{3} + 4x^{2} - 8x",
+     "respuesta": "2*x*(x^2+2*x-4)"
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "polinomios, ficha 7 (repaso), ej. 6 (a, d, g)",
+   "verificacion": "comprobada",
+   "solucion": "a) $2 x \\left(2 x^{2} + 3 x - 1\\right)$; b) $2 x \\left(x - 3\\right) \\left(x + 3\\right)$; c) $2 x \\left(x^{2} + 2 x - 4\\right)$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-018",
+   "tipo": "identidades notables",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Desarrolla las siguientes expresiones utilizando la identidad notable correspondiente, y simplifica:\n\na) $(x + 2)^{2}$   b) $(x - 3)^{2}$   c) $(x + 4) \\cdot (x - 4)$   d) $(2x + 3)^{2}$   e) $(3x - 2)^{2}$   f) $(2x + 1) \\cdot (2x - 1)$   g) $(4b + 2)^{2}$   h) $(5b - 3)^{2}$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(x+2)^2",
+     "enunciado": "(x + 2)^{2}",
+     "respuesta": "x^2+4*x+4"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(x-3)^2",
+     "enunciado": "(x - 3)^{2}",
+     "respuesta": "x^2-6*x+9"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(x+4)*(x-4)",
+     "enunciado": "(x + 4) \\cdot (x - 4)",
+     "respuesta": "x^2-16"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "d",
+     "expresion": "(2*x+3)^2",
+     "enunciado": "(2x + 3)^{2}",
+     "respuesta": "4*x^2+12*x+9"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "e",
+     "expresion": "(3*x-2)^2",
+     "enunciado": "(3x - 2)^{2}",
+     "respuesta": "9*x^2-12*x+4"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "f",
+     "expresion": "(2*x+1)*(2*x-1)",
+     "enunciado": "(2x + 1) \\cdot (2x - 1)",
+     "respuesta": "4*x^2-1"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "g",
+     "expresion": "(4*b+2)^2",
+     "enunciado": "(4b + 2)^{2}",
+     "respuesta": "16*b^2+16*b+4"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "h",
+     "expresion": "(5*b-3)^2",
+     "enunciado": "(5b - 3)^{2}",
+     "respuesta": "25*b^2-30*b+9"
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "polinomios, ficha 5, ej. 1 (4, 5, 6, 13, 14, 15, 19 y 20)",
+   "verificacion": "comprobada",
+   "solucion": "a) $x^{2} + 4 x + 4$; b) $x^{2} - 6 x + 9$; c) $x^{2} - 16$; d) $4 x^{2} + 12 x + 9$; e) $9 x^{2} - 12 x + 4$; f) $4 x^{2} - 1$; g) $16 b^{2} + 16 b + 4$; h) $25 b^{2} - 30 b + 9$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-019",
+   "tipo": "identidades notables",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Desarrolla las siguientes potencias:\n\na) $(3x - y)^{2}$   b) $(2a + \\frac{x}{2})^{2}$   c) $(4y - \\frac{2}{y})^{2}$   d) $(5a + a^{2})^{2}$   e) $(-a^{2} + 2b^{2})^{2}$   f) $((\\frac{2}{3}) \\cdot y - \\frac{1}{y})^{2}$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(3*x-y)^2",
+     "enunciado": "(3x - y)^{2}",
+     "respuesta": "9*x^2-6*x*y+y^2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(2*a+x/2)^2",
+     "enunciado": "(2a + \\frac{x}{2})^{2}",
+     "respuesta": "4*a^2+2*a*x+x^2/4"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(4*y-2/y)^2",
+     "enunciado": "(4y - \\frac{2}{y})^{2}",
+     "respuesta": "16*y^2-16+4/y^2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "d",
+     "expresion": "(5*a+a^2)^2",
+     "enunciado": "(5a + a^{2})^{2}",
+     "respuesta": "25*a^2+10*a^3+a^4"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "e",
+     "expresion": "(-a^2+2*b^2)^2",
+     "enunciado": "(-a^{2} + 2b^{2})^{2}",
+     "respuesta": "a^4-4*a^2*b^2+4*b^4"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "f",
+     "expresion": "((2/3)*y-1/y)^2",
+     "enunciado": "((\\frac{2}{3}) \\cdot y - \\frac{1}{y})^{2}",
+     "respuesta": "(4/9)*y^2-4/3+1/y^2"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 33",
+   "verificacion": "comprobada",
+   "solucion": "a) $9 x^{2} - 6 x y + y^{2}$; b) $4 a^{2} + 2 a x + \\frac{x^{2}}{4}$; c) $16 y^{2} - 16 + \\frac{4}{y^{2}}$; d) $a^{4} + 10 a^{3} + 25 a^{2}$; e) $a^{4} - 4 a^{2} b^{2} + 4 b^{4}$; f) $\\frac{4 y^{2}}{9} - \\frac{4}{3} + \\frac{1}{y^{2}}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-020",
+   "tipo": "identidades notables",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Realiza los cálculos:\n\na) $(1 + x)^{2}$   b) $(-x + 2)^{2}$   c) $(2a - 3)^{2}$   d) $(x^{2} + 1)^{3}$   e) $(2b - 4)^{3}$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(1+x)^2",
+     "enunciado": "(1 + x)^{2}",
+     "respuesta": "1+2*x+x^2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(-x+2)^2",
+     "enunciado": "(-x + 2)^{2}",
+     "respuesta": "x^2-4*x+4"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(2*a-3)^2",
+     "enunciado": "(2a - 3)^{2}",
+     "respuesta": "4*a^2-12*a+9"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "d",
+     "expresion": "(x^2+1)^3",
+     "enunciado": "(x^{2} + 1)^{3}",
+     "respuesta": "x^6+3*x^4+3*x^2+1"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "e",
+     "expresion": "(2*b-4)^3",
+     "enunciado": "(2b - 4)^{3}",
+     "respuesta": "8*b^3-48*b^2+96*b-64"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 31 (en f) la fuente da 24b en vez de 96b: errata)",
+   "verificacion": "comprobada",
+   "solucion": "a) $x^{2} + 2 x + 1$; b) $x^{2} - 4 x + 4$; c) $4 a^{2} - 12 a + 9$; d) $x^{6} + 3 x^{4} + 3 x^{2} + 1$; e) $8 b^{3} - 48 b^{2} + 96 b - 64$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-021",
+   "tipo": "identidades notables",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Efectúa estos productos:\n\na) $(3x + 2) \\cdot (3x - 2)$   b) $(2x + 4y) \\cdot (2x - 4y)$   c) $(4x^{2} + 3) \\cdot (4x^{2} - 3)$   d) $(3a - 5b) \\cdot (3a + 5b)$   e) $(-x^{2} + 5x) \\cdot (x^{2} + 5x)$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(3*x+2)*(3*x-2)",
+     "enunciado": "(3x + 2) \\cdot (3x - 2)",
+     "respuesta": "9*x^2-4"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(2*x+4*y)*(2*x-4*y)",
+     "enunciado": "(2x + 4y) \\cdot (2x - 4y)",
+     "respuesta": "4*x^2-16*y^2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(4*x^2+3)*(4*x^2-3)",
+     "enunciado": "(4x^{2} + 3) \\cdot (4x^{2} - 3)",
+     "respuesta": "16*x^4-9"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "d",
+     "expresion": "(3*a-5*b)*(3*a+5*b)",
+     "enunciado": "(3a - 5b) \\cdot (3a + 5b)",
+     "respuesta": "9*a^2-25*b^2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "e",
+     "expresion": "(-x^2+5*x)*(x^2+5*x)",
+     "enunciado": "(-x^{2} + 5x) \\cdot (x^{2} + 5x)",
+     "respuesta": "-x^4+25*x^2"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 35",
+   "verificacion": "comprobada",
+   "solucion": "a) $9 x^{2} - 4$; b) $4 x^{2} - 16 y^{2}$; c) $16 x^{4} - 9$; d) $9 a^{2} - 25 b^{2}$; e) $- x^{4} + 25 x^{2}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-022",
+   "tipo": "factorizar con identidades notables",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Expresa como cuadrado de una suma o de una diferencia, o como suma por diferencia, las siguientes expresiones algebraicas:\n\na) $a^{2} - 6a + 9$   b) $4x^{2} + 4x + 1$   c) $4y^{2} - 12y + 9$   d) $y^{4} + 6x \\cdot y^{2} + 9x^{2}$   e) $9x^{2} - 25$   f) $4a^{4} - 81b^{2}$   g) $49 - 25x^{2}$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "a^2-6*a+9",
+     "enunciado": "a^{2} - 6a + 9",
+     "respuesta": "(a-3)^2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "4*x^2+4*x+1",
+     "enunciado": "4x^{2} + 4x + 1",
+     "respuesta": "(2*x+1)^2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "4*y^2-12*y+9",
+     "enunciado": "4y^{2} - 12y + 9",
+     "respuesta": "(2*y-3)^2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "d",
+     "expresion": "y^4+6*x*y^2+9*x^2",
+     "enunciado": "y^{4} + 6x \\cdot y^{2} + 9x^{2}",
+     "respuesta": "(y^2+3*x)^2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "e",
+     "expresion": "9*x^2-25",
+     "enunciado": "9x^{2} - 25",
+     "respuesta": "(3*x-5)*(3*x+5)"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "f",
+     "expresion": "4*a^4-81*b^2",
+     "enunciado": "4a^{4} - 81b^{2}",
+     "respuesta": "(2*a^2+9*b)*(2*a^2-9*b)"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "g",
+     "expresion": "49-25*x^2",
+     "enunciado": "49 - 25x^{2}",
+     "respuesta": "(7-5*x)*(7+5*x)"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 34 (a, b, d, f) y 36 (a, b, c)",
+   "verificacion": "comprobada",
+   "solucion": "a) $\\left(a - 3\\right)^{2}$; b) $\\left(2 x + 1\\right)^{2}$; c) $\\left(2 y - 3\\right)^{2}$; d) $\\left(3 x + y^{2}\\right)^{2}$; e) $\\left(3 x - 5\\right) \\left(3 x + 5\\right)$; f) $\\left(2 a^{2} - 9 b\\right) \\left(2 a^{2} + 9 b\\right)$; g) $\\left(7 - 5 x\\right) \\left(5 x + 7\\right)$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-023",
+   "tipo": "identidades notables",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Opera y simplifica:\n\na) $(3x + 2) \\cdot (x^{2} + 3x - 2) - (3x + 2) \\cdot (3x - 2)$   b) $(3x + 2)^{2} + (3x - 2)^{2}$   c) $(2x - 5)^{2} - (2x^{2} - 5x + 3) \\cdot (2x^{2} - 1)$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(3*x+2)*(x^2+3*x-2)-(3*x+2)*(3*x-2)",
+     "enunciado": "(3x + 2) \\cdot (x^{2} + 3x - 2) - (3x + 2) \\cdot (3x - 2)",
+     "respuesta": "3*x^3+2*x^2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(3*x+2)^2+(3*x-2)^2",
+     "enunciado": "(3x + 2)^{2} + (3x - 2)^{2}",
+     "respuesta": "18*x^2+8"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(2*x-5)^2-(2*x^2-5*x+3)*(2*x^2-1)",
+     "enunciado": "(2x - 5)^{2} - (2x^{2} - 5x + 3) \\cdot (2x^{2} - 1)",
+     "respuesta": "-4*x^4+10*x^3-25*x+28"
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "polinomios, ficha 5 (l, m, n)",
+   "verificacion": "comprobada",
+   "solucion": "a) $3 x^{3} + 2 x^{2}$; b) $18 x^{2} + 8$; c) $- 4 x^{4} + 10 x^{3} - 25 x + 28$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-024",
+   "tipo": "potencias de polinomios",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Calcula las potencias:\n\na) $(x + 2y - z)^{2}$   b) $(x - 3y)^{3}$   c) $(a + \\frac{b}{3})^{2}$   d) $(x^{2} - 2z^{3})^{2}$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(x+2*y-z)^2",
+     "enunciado": "(x + 2y - z)^{2}",
+     "respuesta": "x^2+4*y^2+z^2+4*x*y-2*x*z-4*y*z"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(x-3*y)^3",
+     "enunciado": "(x - 3y)^{3}",
+     "respuesta": "x^3-9*x^2*y+27*x*y^2-27*y^3"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(a+b/3)^2",
+     "enunciado": "(a + \\frac{b}{3})^{2}",
+     "respuesta": "a^2+(2/3)*a*b+(1/9)*b^2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "d",
+     "expresion": "(x^2-2*z^3)^2",
+     "enunciado": "(x^{2} - 2z^{3})^{2}",
+     "respuesta": "x^4-4*x^2*z^3+4*z^6"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, ejercicios y problemas 15",
+   "verificacion": "comprobada",
+   "solucion": "a) $x^{2} + 4 x y - 2 x z + 4 y^{2} - 4 y z + z^{2}$; b) $x^{3} - 9 x^{2} y + 27 x y^{2} - 27 y^{3}$; c) $a^{2} + \\frac{2 a b}{3} + \\frac{b^{2}}{9}$; d) $x^{4} - 4 x^{2} z^{3} + 4 z^{6}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-025",
+   "tipo": "división por un monomio",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Calcula los siguientes cocientes:\n\na) $\\frac{2x^{3} - 8x^{2} + 6x}{2x}$   b) $\\frac{5a^{3} + 60a^{2} - 20}{5}$   c) $\\frac{16x^{3} + 40x^{2}}{8x^{2}}$   d) $\\frac{6x^{2} \\cdot y^{3} - 4x \\cdot y^{2}}{x \\cdot y^{2}}$   e) $\\frac{4x^{3} \\cdot y^{3} \\cdot z^{4}}{3x^{2} \\cdot y \\cdot z^{2}}$",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(2*x^3-8*x^2+6*x)/(2*x)",
+     "enunciado": "\\frac{2x^{3} - 8x^{2} + 6x}{2x}",
+     "respuesta": "x^2-4*x+3"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(5*a^3+60*a^2-20)/5",
+     "enunciado": "\\frac{5a^{3} + 60a^{2} - 20}{5}",
+     "respuesta": "a^3+12*a^2-4"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "c",
+     "expresion": "(16*x^3+40*x^2)/(8*x^2)",
+     "enunciado": "\\frac{16x^{3} + 40x^{2}}{8x^{2}}",
+     "respuesta": "2*x+5"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "d",
+     "expresion": "(6*x^2*y^3-4*x*y^2)/(x*y^2)",
+     "enunciado": "\\frac{6x^{2} \\cdot y^{3} - 4x \\cdot y^{2}}{x \\cdot y^{2}}",
+     "respuesta": "6*x*y-4"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "e",
+     "expresion": "(4*x^3*y^3*z^4)/(3*x^2*y*z^2)",
+     "enunciado": "\\frac{4x^{3} \\cdot y^{3} \\cdot z^{4}}{3x^{2} \\cdot y \\cdot z^{2}}",
+     "respuesta": "(4/3)*x*y^2*z^2"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, act. 40 y ejercicios y problemas 12b",
+   "verificacion": "comprobada",
+   "solucion": "a) $x^{2} - 4 x + 3$; b) $a^{3} + 12 a^{2} - 4$; c) $2 x + 5$; d) $6 x y - 4$; e) $\\frac{4 x y^{2} z^{2}}{3}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-pol-026",
+   "tipo": "truco algebraico",
+   "dificultad": 3,
+   "saberes": [
+    "D.2",
+    "D.3",
+    "D.4"
+   ],
+   "enunciado": "Vamos a adivinar el número que resulta tras manipular repetidamente un número desconocido. Convierte en una expresión algebraica las sucesivas alteraciones del número desconocido y justifica lo que ocurre: 1) Dile a un compañero que escriba en un papel un número par y que no lo muestre. 2) Que lo multiplique por 5. 3) Que al resultado anterior le sume 5. 4) Que multiplique por 2 lo obtenido. 5) Que al resultado anterior le sume 10. 6) Que multiplique por 5 lo obtenido. 7) Que divida entre 100 la última cantidad. 8) Que al resultado precedente le reste la mitad del número que escribió. 9) Independientemente del número desconocido original, ¿qué número ha surgido?",
+   "solucion": "Con el número par $2n$: $\\frac{[(10n+5) \\cdot 2+10] \\cdot 5}{100}-n = \\frac{100n+100}{100}-n = 1$. Siempre sale 1. La fuente escribe «−10» en el paso 5 y obtiene 0, pero el enunciado dice «le sume 10»",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "expresion": "((2*n*5+5)*2+10)*5/100-n",
+     "respuesta": "1"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 4, ejercicios y problemas 2 (la fuente resta 10 en vez de sumarlo y da 0)",
+   "verificacion": "comprobada"
+  }
+ ]
+}

@@ -1,0 +1,1302 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 1,
+ "tema": "potencias-y-raices",
+ "titulo": "Potencias y raíces cuadradas",
+ "saberes": [
+  "A.1",
+  "A.2",
+  "A.3",
+  "D.1"
+ ],
+ "fuentes": {
+  "mv1": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 1.º ESO (LOMLOE): libro y «Soluciones de ejercicios y problemas»",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/1ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "edad1": {
+   "nombre": "Proyecto ED@D (CIDEAD, Ministerio de Educación): Matemáticas 1.º ESO, «Para practicar»",
+   "url": "http://recursostic.educacion.es/secundaria/edad/1esomatematicas/",
+   "licencia": "CC BY-NC-SA 3.0 ES"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m1-pot-001",
+   "tipo": "calcular potencias",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula en tu cuaderno las siguientes potencias:\n\na) $7^{3}$   b) $8^{4}$   c) $5^{5}$   d) $3^{5}$   e) $5^{2}$   f) $5^{3}$   g) $3^{4}$   h) $1^{47}$   i) $9^{0}$   j) $10^{8}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "7^3",
+     "enunciado": "7^{3}",
+     "respuesta": "343"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "8^4",
+     "enunciado": "8^{4}",
+     "respuesta": "4096"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "5^5",
+     "enunciado": "5^{5}",
+     "respuesta": "3125"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "3^5",
+     "enunciado": "3^{5}",
+     "respuesta": "243"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "5^2",
+     "enunciado": "5^{2}",
+     "respuesta": "25"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "5^3",
+     "enunciado": "5^{3}",
+     "respuesta": "125"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "3^4",
+     "enunciado": "3^{4}",
+     "respuesta": "81"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "1^47",
+     "enunciado": "1^{47}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "i",
+     "expresion": "9^0",
+     "enunciado": "9^{0}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "j",
+     "expresion": "10^8",
+     "enunciado": "10^{8}",
+     "respuesta": "100000000"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 1",
+   "verificacion": "comprobada",
+   "solucion": "a) $343$; b) $4096$; c) $3125$; d) $243$; e) $25$; f) $125$; g) $81$; h) $1$; i) $1$; j) $100000000$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-pot-002",
+   "tipo": "calcular potencias",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula en tu cuaderno las siguientes potencias:\n\na) $3^{5}$   b) $7^{4}$   c) $4^{5}$   d) $9^{4}$   e) $25^{2}$   f) $16^{3}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "3^5",
+     "enunciado": "3^{5}",
+     "respuesta": "243"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "7^4",
+     "enunciado": "7^{4}",
+     "respuesta": "2401"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "4^5",
+     "enunciado": "4^{5}",
+     "respuesta": "1024"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "9^4",
+     "enunciado": "9^{4}",
+     "respuesta": "6561"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "25^2",
+     "enunciado": "25^{2}",
+     "respuesta": "625"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "16^3",
+     "enunciado": "16^{3}",
+     "respuesta": "4096"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ej. 2",
+   "verificacion": "comprobada",
+   "solucion": "a) $243$; b) $2401$; c) $1024$; d) $6561$; e) $625$; f) $4096$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-pot-003",
+   "tipo": "potencias de base 0 y 1",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula mentalmente:\n\na) $1^{2689}$   b) $0^{9826}$   c) $1927^{0}$   d) $0^{1382}$   e) $1^{1000}$   f) $1961^{0}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "1^2689",
+     "enunciado": "1^{2689}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "0^9826",
+     "enunciado": "0^{9826}",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "1927^0",
+     "enunciado": "1927^{0}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "0^1382",
+     "enunciado": "0^{1382}",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "1^1000",
+     "enunciado": "1^{1000}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "1961^0",
+     "enunciado": "1961^{0}",
+     "respuesta": "1"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ej. 6",
+   "verificacion": "comprobada",
+   "solucion": "a) $1$; b) $0$; c) $1$; d) $0$; e) $1$; f) $1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-pot-004",
+   "tipo": "potencias de 10",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Busca los exponentes de las potencias siguientes: a) $10^{\\square} = 10\\,000$   b) $10^{\\square} = 10\\,000\\,000$   c) $10^{\\square} = 100$",
+   "solucion": "a) 4   b) 7   c) 2",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "10^4",
+     "respuesta": "10000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "10^7",
+     "respuesta": "10000000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "10^2",
+     "respuesta": "100"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ej. 8",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-005",
+   "tipo": "potencias de 10",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Expresa en forma polinómica usando potencias de 10: a) 12 345   b) 6 780 912   c) 500 391   d) 9 078 280",
+   "solucion": "a) $1 \\cdot 10^{4} + 2 \\cdot 10^{3} + 3 \\cdot 10^{2} + 4 \\cdot 10 + 5$   b) $6 \\cdot 10^{6} + 7 \\cdot 10^{5} + 8 \\cdot 10^{4} + 9 \\cdot 10^{2} + 1 \\cdot 10 + 2$   c) $5 \\cdot 10^{5} + 3 \\cdot 10^{2} + 9 \\cdot 10 + 1$   d) $9 \\cdot 10^{6} + 7 \\cdot 10^{4} + 8 \\cdot 10^{3} + 2 \\cdot 10^{2} + 8 \\cdot 10$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "1*10^4+2*10^3+3*10^2+4*10+5",
+     "respuesta": "12345"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "6*10^6+7*10^5+8*10^4+9*10^2+1*10+2",
+     "respuesta": "6780912"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "5*10^5+3*10^2+9*10+1",
+     "respuesta": "500391"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "9*10^6+7*10^4+8*10^3+2*10^2+8*10",
+     "respuesta": "9078280"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ej. 9",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-006",
+   "tipo": "potencias de 10",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Calcula:\n\na) $4 \\cdot 10^{5}$   b) $6 \\cdot 10^{7}$   c) $9 \\cdot 10^{3}$   d) $56 \\cdot 10^{4}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "4*10^5",
+     "enunciado": "4 \\cdot 10^{5}",
+     "respuesta": "400000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "6*10^7",
+     "enunciado": "6 \\cdot 10^{7}",
+     "respuesta": "60000000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "9*10^3",
+     "enunciado": "9 \\cdot 10^{3}",
+     "respuesta": "9000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "56*10^4",
+     "enunciado": "56 \\cdot 10^{4}",
+     "respuesta": "560000"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ej. 11",
+   "verificacion": "comprobada",
+   "solucion": "a) $400000$; b) $60000000$; c) $9000$; d) $560000$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-pot-007",
+   "tipo": "potencias de 10",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Expresa en forma de potencia en tu cuaderno: a) 100 000   b) 1 000 000   c) 10 000 000",
+   "solucion": "a) $10^{5}$   b) $10^{6}$   c) $10^{7}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "10^5",
+     "respuesta": "100000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "10^6",
+     "respuesta": "1000000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "10^7",
+     "respuesta": "10000000"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 3",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-008",
+   "tipo": "una sola potencia",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Escribe en forma de una única potencia:\n\na) $7^{5} \\cdot 7^{6} \\cdot 7^{4}$   b) $4^{4} \\cdot 4^{6} \\cdot 4^{7}$   c) $2^{20} \\cdot 2^{17}$   d) $3^{6} \\cdot 3^{7} \\cdot 3^{3}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "7^5*7^6*7^4",
+     "enunciado": "7^{5} \\cdot 7^{6} \\cdot 7^{4}",
+     "respuesta": "7^15"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "4^4*4^6*4^7",
+     "enunciado": "4^{4} \\cdot 4^{6} \\cdot 4^{7}",
+     "respuesta": "4^17"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "2^20*2^17",
+     "enunciado": "2^{20} \\cdot 2^{17}",
+     "respuesta": "2^37"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "3^6*3^7*3^3",
+     "enunciado": "3^{6} \\cdot 3^{7} \\cdot 3^{3}",
+     "respuesta": "3^16"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ej. 16",
+   "solucion": "a) $7^{15}$   b) $4^{17}$   c) $2^{37}$   d) $3^{16}$",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-009",
+   "tipo": "propiedades de las potencias",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Escribe con una única potencia:\n\na) $7^{8} \\cdot 7^{2}$   b) $5^{12} : 5^{6}$   c) $(2^{7})^{3}$   d) $9^{5} \\cdot 9^{11}$   e) $8^{9} : 8^{3}$   f) $(3^{10})^{4}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "7^8*7^2",
+     "enunciado": "7^{8} \\cdot 7^{2}",
+     "respuesta": "7^10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "5^12/5^6",
+     "enunciado": "5^{12} : 5^{6}",
+     "respuesta": "5^6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(2^7)^3",
+     "enunciado": "(2^{7})^{3}",
+     "respuesta": "2^21"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "9^5*9^11",
+     "enunciado": "9^{5} \\cdot 9^{11}",
+     "respuesta": "9^16"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "8^9/8^3",
+     "enunciado": "8^{9} : 8^{3}",
+     "respuesta": "8^6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(3^10)^4",
+     "enunciado": "(3^{10})^{4}",
+     "respuesta": "3^40"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 1, para practicar, ej. 13",
+   "solucion": "a) $7^{10}$   b) $5^{6}$   c) $2^{21}$   d) $9^{16}$   e) $8^{6}$   f) $3^{40}$",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-010",
+   "tipo": "potencia de un producto y de un cociente",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Escribe con una única potencia:\n\na) $2^{7} \\cdot 5^{7}$   b) $10^{6} : 5^{6}$   c) $6^{5} \\cdot 5^{5}$   d) $9^{8} : 3^{8}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "2^7*5^7",
+     "enunciado": "2^{7} \\cdot 5^{7}",
+     "respuesta": "10^7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "10^6/5^6",
+     "enunciado": "10^{6} : 5^{6}",
+     "respuesta": "2^6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "6^5*5^5",
+     "enunciado": "6^{5} \\cdot 5^{5}",
+     "respuesta": "30^5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "9^8/3^8",
+     "enunciado": "9^{8} : 3^{8}",
+     "respuesta": "3^8"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 1, para practicar, ej. 14",
+   "solucion": "a) $10^{7}$   b) $2^{6}$   c) $30^{5}$   d) $3^{8}$",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-011",
+   "tipo": "potencia de un producto y de un cociente",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula:\n\na) $(2 \\cdot 5)^{4}$   b) $(32 : 4)^{3}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(2*5)^4",
+     "enunciado": "(2 \\cdot 5)^{4}",
+     "respuesta": "10000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(32/4)^3",
+     "enunciado": "(32 : 4)^{3}",
+     "respuesta": "512"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ej. 14",
+   "verificacion": "comprobada",
+   "solucion": "a) $10000$; b) $512$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-pot-012",
+   "tipo": "potencia de un producto",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Escribe en forma de una única potencia y calcula:\n\na) $2^{5} \\cdot 5^{5}$   b) $10^{4} \\cdot 3^{4}$   c) $2^{20} \\cdot 5^{20}$   d) $10^{10} \\cdot 5^{10}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "2^5*5^5",
+     "enunciado": "2^{5} \\cdot 5^{5}",
+     "respuesta": "10^5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "10^4*3^4",
+     "enunciado": "10^{4} \\cdot 3^{4}",
+     "respuesta": "30^4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "2^20*5^20",
+     "enunciado": "2^{20} \\cdot 5^{20}",
+     "respuesta": "10^20"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "10^10*5^10",
+     "enunciado": "10^{10} \\cdot 5^{10}",
+     "respuesta": "50^10"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ej. 19",
+   "solucion": "a) $10^{5} = 100\\,000$   b) $30^{4} = 810\\,000$   c) $10^{20}$   d) $50^{10}$",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-013",
+   "tipo": "una sola potencia",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula utilizando la calculadora (escribe primero el resultado como una sola potencia):\n\na) $53^{3} \\cdot 53^{2} \\cdot 53$   b) $71^{3} \\cdot 71^{2}$   c) $3{,}2^{2} \\cdot 3{,}2$   d) $82^{3} \\cdot 82$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "53^3*53^2*53",
+     "enunciado": "53^{3} \\cdot 53^{2} \\cdot 53",
+     "respuesta": "22164361129"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "71^3*71^2",
+     "enunciado": "71^{3} \\cdot 71^{2}",
+     "respuesta": "71^5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "3.2^2*3.2",
+     "enunciado": "3{,}2^{2} \\cdot 3{,}2",
+     "respuesta": "3.2^3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "82^3*82",
+     "enunciado": "82^{3} \\cdot 82",
+     "respuesta": "82^4"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ej. 20 (la fuente da $53^{4}$ en el a: está mal)",
+   "solucion": "a) $53^{6} = 22\\,164\\,361\\,129$ (la fuente da $53^{4}$, pero $3 + 2 + 1 = 6$)   b) $71^{5}$   c) $3{,}2^{3}$   d) $82^{4}$",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-014",
+   "tipo": "propiedades de las potencias",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Efectúa las siguientes operaciones con potencias dando el resultado en forma de potencia de una sola base, la que creas más adecuada en cada caso:\n\na) $(4^{5} \\cdot 4^{2})^{3} : 16$   b) $1^{3} \\cdot 3^{3}$   c) $(16^{4} : 8^{3})^{4}$   d) $(5^{3} : 5^{2})^{3}$   e) $((7^{5} \\cdot 7^{2})^{2})^{3}$   f) $(27^{2} \\cdot 9^{2})^{3}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(4^5*4^2)^3/16",
+     "enunciado": "(4^{5} \\cdot 4^{2})^{3} : 16",
+     "respuesta": "4^19"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "1^3*3^3",
+     "enunciado": "1^{3} \\cdot 3^{3}",
+     "respuesta": "3^3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(16^4/8^3)^4",
+     "enunciado": "(16^{4} : 8^{3})^{4}",
+     "respuesta": "2^28"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(5^3/5^2)^3",
+     "enunciado": "(5^{3} : 5^{2})^{3}",
+     "respuesta": "5^3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "((7^5*7^2)^2)^3",
+     "enunciado": "((7^{5} \\cdot 7^{2})^{2})^{3}",
+     "respuesta": "7^42"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(27^2*9^2)^3",
+     "enunciado": "(27^{2} \\cdot 9^{2})^{3}",
+     "respuesta": "3^30"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 13 (la fuente da 9 en el e: está mal)",
+   "solucion": "a) $4^{19}$   b) $3^{3}$   c) $2^{28}$   d) $5^{3}$   e) $7^{42}$   f) $3^{30}$",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-015",
+   "tipo": "propiedades de las potencias",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Efectúa las siguientes operaciones dando el resultado como una única potencia:\n\na) $2^{10} \\cdot 2^{2} \\cdot 2^{2}$   b) $(5^{10} \\cdot 25^{2})^{4}$   c) $4^{3} \\cdot 4^{5} \\cdot (4^{5})^{2}$   d) $16^{7} : 8^{2}$   e) $(16^{7})^{3} : (8^{2})^{2}$   f) $3^{4} \\cdot (3^{2} : 3^{5})$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "2^10*2^2*2^2",
+     "enunciado": "2^{10} \\cdot 2^{2} \\cdot 2^{2}",
+     "respuesta": "2^14"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(5^10*25^2)^4",
+     "enunciado": "(5^{10} \\cdot 25^{2})^{4}",
+     "respuesta": "5^56"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "4^3*4^5*(4^5)^2",
+     "enunciado": "4^{3} \\cdot 4^{5} \\cdot (4^{5})^{2}",
+     "respuesta": "4^18"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "16^7/8^2",
+     "enunciado": "16^{7} : 8^{2}",
+     "respuesta": "2^22"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(16^7)^3/(8^2)^2",
+     "enunciado": "(16^{7})^{3} : (8^{2})^{2}",
+     "respuesta": "2^72"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "3^4*(3^2/3^5)",
+     "enunciado": "3^{4} \\cdot (3^{2} : 3^{5})",
+     "respuesta": "3"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 14",
+   "solucion": "a) $2^{14}$   b) $5^{56}$   c) $4^{18}$   d) $2^{22}$   e) $2^{72}$   f) $3$",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-016",
+   "tipo": "simplificar con potencias",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Simplifica y calcula en tu cuaderno:\n\na) $(3 \\cdot 2^{4} \\cdot 5^{3}) : (3 \\cdot 2^{2} \\cdot 5^{2})$   b) $(6^{3} \\cdot 4^{5} \\cdot 11^{3}) : (2^{4} \\cdot 3 \\cdot 11^{2})$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(3*2^4*5^3)/(3*2^2*5^2)",
+     "enunciado": "(3 \\cdot 2^{4} \\cdot 5^{3}) : (3 \\cdot 2^{2} \\cdot 5^{2})",
+     "respuesta": "20"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(6^3*4^5*11^3)/(2^4*3*11^2)",
+     "enunciado": "(6^{3} \\cdot 4^{5} \\cdot 11^{3}) : (2^{4} \\cdot 3 \\cdot 11^{2})",
+     "respuesta": "50688"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 8 (la fuente da 1584 en el b: está mal)",
+   "solucion": "a) $2^{2} \\cdot 5 = 20$   b) $2^{9} \\cdot 3^{2} \\cdot 11 = 50688$ (la fuente da $11 \\cdot 2^{4} \\cdot 3^{2} = 1584$: está mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-017",
+   "tipo": "jerarquía con potencias",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula en tu cuaderno:\n\na) $2 + 5^{2} + (14 : 2) + 1^{7}$   b) $3 + 4^{2} + (12 : 6) + 1^{14}$   c) $3^{2} + 3^{3} + 3^{4} + 3^{0}$   d) $4^{3} + 7 \\cdot 3^{2}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "2+5^2+(14/2)+1^7",
+     "enunciado": "2 + 5^{2} + (14 : 2) + 1^{7}",
+     "respuesta": "35"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "3+4^2+(12/6)+1^14",
+     "enunciado": "3 + 4^{2} + (12 : 6) + 1^{14}",
+     "respuesta": "22"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "3^2+3^3+3^4+3^0",
+     "enunciado": "3^{2} + 3^{3} + 3^{4} + 3^{0}",
+     "respuesta": "118"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "4^3+7*3^2",
+     "enunciado": "4^{3} + 7 \\cdot 3^{2}",
+     "respuesta": "127"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 28",
+   "verificacion": "comprobada",
+   "solucion": "a) $35$; b) $22$; c) $118$; d) $127$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-pot-018",
+   "tipo": "cuadrados con calculadora",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Usa la calculadora (tecla $x^{2}$) para obtener:\n\na) $13^{2}$   b) $43^{2}$   c) $75^{2}$   d) $82^{2}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "13^2",
+     "enunciado": "13^{2}",
+     "respuesta": "169"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "43^2",
+     "enunciado": "43^{2}",
+     "respuesta": "1849"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "75^2",
+     "enunciado": "75^{2}",
+     "respuesta": "5625"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "82^2",
+     "enunciado": "82^{2}",
+     "respuesta": "6724"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 17",
+   "verificacion": "comprobada",
+   "solucion": "a) $169$; b) $1849$; c) $5625$; d) $6724$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-pot-019",
+   "tipo": "cuadrados y cubos",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Indica cuáles de los siguientes números son cuadrados y cuáles son cubos: a) 1   b) 2   c) 4   d) 8   e) 16   f) 27   g) 1000",
+   "solucion": "a) Cuadrado y cubo   b) ninguno   c) cuadrado   d) cubo   e) cuadrado ($16 = 4^{2}$; la fuente dice «nada»: está mal)   f) cubo   g) cubo",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "4^2",
+     "respuesta": "16"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "3^3",
+     "respuesta": "27"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "10^3",
+     "respuesta": "1000"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 19 (la fuente da mal el e)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-020",
+   "tipo": "cuadrados y cubos",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Dibuja en un papel cuadriculado un cuadrado de lado igual a 2 cuadrados pequeños. ¿Cuántos cuadrados pequeños tiene? Dibuja también cuadrados de lados 3, 4 y 5 cuadrados pequeños e indica cuántos cuadrados pequeños tienen. Exprésalo en forma de potencias. Con cubitos se forman cubos mayores de lado 2, 3, 4 y 5. ¿Cuántos cubitos son necesarios en cada caso?",
+   "solucion": "Cuadrados: $2^{2} = 4$, $3^{2} = 9$, $4^{2} = 16$, $5^{2} = 25$. Cubos: $2^{3} = 8$, $3^{3} = 27$, $4^{3} = 64$, $5^{3} = 125$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "cuadrado 5",
+     "expresion": "5^2",
+     "respuesta": "25"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "cubo 5",
+     "expresion": "5^3",
+     "respuesta": "125"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 11 y 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-021",
+   "tipo": "raíces cuadradas exactas",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Halla en tu cuaderno:\n\na) $\\sqrt{4}$   b) $\\sqrt{25}$   c) $\\sqrt{81}$   d) $\\sqrt{9}$   e) $\\sqrt{64}$   f) $\\sqrt{16}$   g) $\\sqrt{225}$   h) $\\sqrt{100}$   i) $\\sqrt{121}$   j) $\\sqrt{289}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "sqrt(4)",
+     "enunciado": "\\sqrt{4}",
+     "respuesta": "2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "sqrt(25)",
+     "enunciado": "\\sqrt{25}",
+     "respuesta": "5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "sqrt(81)",
+     "enunciado": "\\sqrt{81}",
+     "respuesta": "9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "sqrt(9)",
+     "enunciado": "\\sqrt{9}",
+     "respuesta": "3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "sqrt(64)",
+     "enunciado": "\\sqrt{64}",
+     "respuesta": "8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "sqrt(16)",
+     "enunciado": "\\sqrt{16}",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "sqrt(225)",
+     "enunciado": "\\sqrt{225}",
+     "respuesta": "15"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "sqrt(100)",
+     "enunciado": "\\sqrt{100}",
+     "respuesta": "10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "i",
+     "expresion": "sqrt(121)",
+     "enunciado": "\\sqrt{121}",
+     "respuesta": "11"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "j",
+     "expresion": "sqrt(289)",
+     "enunciado": "\\sqrt{289}",
+     "respuesta": "17"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 20 y 21 a, f",
+   "verificacion": "comprobada",
+   "solucion": "a) $2$; b) $5$; c) $9$; d) $3$; e) $8$; f) $4$; g) $15$; h) $10$; i) $11$; j) $17$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-pot-022",
+   "tipo": "raíces cuadradas",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Usa la calculadora para obtener las raíces cuadradas de 121, 144, 625 y 2025. Calcula mentalmente las raíces cuadradas de 100, 10 000 y 1 000 000.\n\na) $\\sqrt{121}$   b) $\\sqrt{144}$   c) $\\sqrt{625}$   d) $\\sqrt{2025}$   e) $\\sqrt{100}$   f) $\\sqrt{10000}$   g) $\\sqrt{1000000}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "sqrt(121)",
+     "enunciado": "\\sqrt{121}",
+     "respuesta": "11"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "sqrt(144)",
+     "enunciado": "\\sqrt{144}",
+     "respuesta": "12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "sqrt(625)",
+     "enunciado": "\\sqrt{625}",
+     "respuesta": "25"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "sqrt(2025)",
+     "enunciado": "\\sqrt{2025}",
+     "respuesta": "45"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "sqrt(100)",
+     "enunciado": "\\sqrt{100}",
+     "respuesta": "10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "sqrt(10000)",
+     "enunciado": "\\sqrt{10000}",
+     "respuesta": "100"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "sqrt(1000000)",
+     "enunciado": "\\sqrt{1000000}",
+     "respuesta": "1000"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 24 y 27",
+   "verificacion": "comprobada",
+   "solucion": "a) $11$; b) $12$; c) $25$; d) $45$; e) $10$; f) $100$; g) $1000$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-pot-023",
+   "tipo": "raíz cuadrada entera",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "a) Se quieren plantar árboles en un jardín de forma que llenen un cuadrado. Hay 26 árboles. ¿Cuántos árboles habrá en cada lado del cuadrado? ¿Sobrará algún árbol?   b) Escribe el número 111 entre los cuadrados de dos números consecutivos.",
+   "solucion": "a) 5 árboles por lado y sobra 1 ($5^{2} = 25$)   b) $10^{2} < 111 < 11^{2}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a lado",
+     "expresion": "floor(sqrt(26))",
+     "respuesta": "5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "a sobran",
+     "expresion": "26-5^2",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "floor(sqrt(111))",
+     "respuesta": "10"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 30 y 31",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-024",
+   "tipo": "patrones con cuadrados",
+   "dificultad": 2,
+   "saberes": [
+    "A.3",
+    "D.1"
+   ],
+   "enunciado": "Con 9 cuadrados hemos formado un cuadrado mayor de lado 3. ¿Cuántos cuadraditos debemos añadir para formar el siguiente cuadrado de lado 4? ¿Es 3 + 3 + 1? Y si ya tenemos el cuadrado de lado 4, ¿cuántos para formar el cuadrado de lado 5?",
+   "solucion": "7 = 3 + 3 + 1, sí; para el de lado 5, 4 + 4 + 1 = 9",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4^2-3^2",
+     "respuesta": "7",
+     "apartado": "lado 4"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5^2-4^2",
+     "respuesta": "9",
+     "apartado": "lado 5"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 32",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-025",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "En la pastelería quieren colocar en una caja cuadrada 196 bombones formando el mayor cuadrado posible, ¿cuántos bombones tendrá de lado? ¿Cuántos bombones se necesitan para formar el cuadrado que tenga un bombón más por lado?",
+   "solucion": "14 bombones de lado; con uno más por lado, $15^{2} = 225$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(196)",
+     "respuesta": "14",
+     "apartado": "lado"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "15^2",
+     "respuesta": "225",
+     "apartado": "más"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 25",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-026",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Una finca tiene forma cuadrada y mide 36 m de lado. Si el metro cuadrado se paga a 500 €, ¿cuánto vale la finca?",
+   "solucion": "$36^{2} \\cdot 500 = 648\\,000$ €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "36^2*500",
+     "respuesta": "648000"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 33",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-027",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "El suelo de una cocina es cuadrado y está formado por 121 losas cuadradas de 40 cm x 40 cm. Halla la medida del lado de la cocina y su área.",
+   "solucion": "$\\sqrt{121} = 11$ losas por lado: 11 · 40 = 440 cm de lado; área $440^{2} = 193\\,600$ cm² = 19,36 m²",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(121)*40",
+     "respuesta": "440",
+     "apartado": "lado"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "440^2",
+     "respuesta": "193600",
+     "apartado": "área"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 34",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-028",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Preguntan la edad a una profesora de Matemáticas y contesta: «Mi edad se obtiene si del cubo de 3 se suma el cuadrado de 2». ¿Qué edad tiene?",
+   "solucion": "$3^{3} + 2^{2} = 27 + 4 = 31$ años",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "3^3+2^2",
+     "respuesta": "31"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 35",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-029",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Luis y Miriam tienen canicas. Luis tiene 8 elevado al cuadrado. Miriam tiene 2 elevado a la sexta potencia. ¿Quién tiene más canicas?",
+   "solucion": "Luis $8^{2} = 64$ y Miriam $2^{6} = 64$: tienen las mismas",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "8^2",
+     "respuesta": "64",
+     "apartado": "Luis"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2^6",
+     "respuesta": "64",
+     "apartado": "Miriam"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 37",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-030",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 1,
+   "saberes": [
+    "A.1",
+    "A.3"
+   ],
+   "enunciado": "En un restaurante se puede elegir entre cuatro primeros platos, cuatro segundos y cuatro postres. ¿Cuántos menús distintos pueden hacerse?",
+   "solucion": "$4 \\cdot 4 \\cdot 4 = 4^{3} = 64$ menús distintos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4^3",
+     "respuesta": "64"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 38",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-pot-031",
+   "tipo": "problema de potencias y raíces",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "En un envase de un supermercado hay 16 cajas de batidos de chocolate, y cada caja tiene 8 batidos de 200 centímetros cúbicos. Expresa el número total de batidos de cada envase en forma de potencia de 2.",
+   "solucion": "$2^{4} \\cdot 2^{3} = 2^{7} = 128$ batidos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2^4*2^3",
+     "respuesta": "128"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 3, ejercicios y problemas, ej. 16",
+   "verificacion": "comprobada"
+  }
+ ]
+}

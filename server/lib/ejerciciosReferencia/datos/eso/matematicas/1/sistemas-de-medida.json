@@ -1,0 +1,978 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 1,
+ "tema": "sistemas-de-medida",
+ "titulo": "Magnitudes y sistemas de medida",
+ "saberes": [
+  "A.6",
+  "B.1",
+  "B.2",
+  "B.3"
+ ],
+ "fuentes": {
+  "mv1": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 1.º ESO (LOMLOE): libro y «Soluciones de ejercicios y problemas»",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/1ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m1-med-001",
+   "tipo": "magnitudes y unidades",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Clasifica como magnitudes o unidades de medida: a) Litro   b) Tiempo   c) Hora   d) Memoria de un ordenador   e) Gramo   f) Altitud   g) Presión   h) Kilómetros por hora",
+   "solucion": "Magnitudes: b), d), f) y g). Unidades de medida: a), c), e) y h)",
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 1",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-med-002",
+   "tipo": "magnitudes y unidades",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Indica al menos una unidad del Sistema Internacional de Unidades (o de uso habitual) adecuada para expresar las siguientes magnitudes: a) La edad de una persona   b) El tamaño de un huerto   c) La capacidad de una botella   d) La distancia entre Segovia y Albacete   e) La masa de un camión",
+   "solucion": "a) Año   b) hectárea (o m²)   c) litro   d) kilómetro   e) tonelada",
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 4",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-med-003",
+   "tipo": "estimar medidas",
+   "dificultad": 1,
+   "saberes": [
+    "B.1",
+    "B.3"
+   ],
+   "enunciado": "Estima cuál es la respuesta correcta a estas medidas: 1) Juan mide: 7 mm; 300 km; 1,7 m; 1,7 cm.   2) La longitud de este tenedor que está sobre mi mesa mide: 5,8 mm; 3,9 km; 1,7 m; 24 cm.   3) En la botella de agua que está en mi nevera cabe: 2,7 m³; 7 ml; 1,5 l; 9,4 cm³.   4) Elena pesa: 47 g; 470 g; 470 kg; 47 kg.   5) Ese autobús parado en la esquina mide: 12,5 cm; 12,5 mm; 12,5 m; 12,5 km.   6) El suelo de este aula mide: 1 m²; 30 m²; 30 cm²; 30 km².",
+   "solucion": "1) 1,7 m   2) 24 cm   3) 1,5 l   4) 47 kg   5) 12,5 m   6) 30 m²",
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 21",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-med-004",
+   "tipo": "estimar medidas",
+   "dificultad": 1,
+   "saberes": [
+    "B.1",
+    "B.3"
+   ],
+   "enunciado": "Indica, en cada caso, la medida más aproximada: a) Masa de un autobús: 3 t; 4 qm; 7000 g.   b) Masa de un gorrión: 2 kg; 150 g; 30 mg.   c) Masa de un gato: 350 g; 1 qm; 25 kg.   d) Masa de una lenteja: 4 dag; 2 g; 5 dg.",
+   "solucion": "a) 3 t   b) 150 g   c) 350 g, según la fuente (ninguna es buena: un gato adulto pesa unos 4 kg)   d) 5 dg",
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 41",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-med-005",
+   "tipo": "elegir la unidad",
+   "dificultad": 1,
+   "saberes": [
+    "B.1",
+    "B.3"
+   ],
+   "enunciado": "Escribe la unidad que utilizarías para medir la superficie de los siguientes objetos: a) Una habitación   b) Un país   c) La sección de un tubo   d) Una mesa",
+   "solucion": "a) m²   b) km²   c) mm²   d) cm² (o m²)",
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 12",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-med-006",
+   "tipo": "cambio de unidades de longitud",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Expresa las siguientes longitudes en decímetros: a) 54 cm   b) 21,08 m   c) 8,7 hm   d) 327 mm",
+   "solucion": "a) 5,4 dm   b) 210,8 dm   c) 8700 dm   d) 3,27 dm (La fuente da 870 dm en el c, pero 1 hm = 1000 dm.)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "54/10",
+     "respuesta": "5.4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "21.08*10",
+     "respuesta": "210.8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "8.7*1000",
+     "respuesta": "8700"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "327/100",
+     "respuesta": "3.27"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 9 (la fuente da 870 dm en el c: está mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-007",
+   "tipo": "cambio de unidades de longitud",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Realiza los cambios de unidades que se indican: a) 15,2 hm = … dm   b) 257 cm = … dam   c) 3 500 dam = … km   d) 345 mm = … m   e) 0,234 km = … dm   f) 23 000 cm = … hm   g) 2,5 km = … dam",
+   "solucion": "a) 15 200 dm   b) 0,257 dam   c) 35 km   d) 0,345 m   e) 2340 dm   f) 2,3 hm   g) 250 dam (La fuente da 23,4 dm en el e: está mal, 1 km = 10 000 dm.)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "15.2*1000",
+     "respuesta": "15200"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "257/1000",
+     "respuesta": "0.257"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "3500/100",
+     "respuesta": "35"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "345/1000",
+     "respuesta": "0.345"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "0.234*10000",
+     "respuesta": "2340"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "23000/10000",
+     "respuesta": "2.3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "2.5*100",
+     "respuesta": "250"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 10 (la fuente da 23,4 dm en el e: está mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-008",
+   "tipo": "medidas complejas",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Expresa las siguientes longitudes en las unidades que se indican en cada caso: a) 8 m 1 mm en decímetros   b) 3,5 km 27 dam en decímetros   c) 13 km 21 mm en milímetros   d) 7 hm 15 cm en decímetros   e) 2 dam 5 dm en metros   f) 0,6 m 340 mm en centímetros",
+   "solucion": "a) 80,01 dm   b) 37 700 dm   c) 13 000 021 mm   d) 7001,5 dm   e) 20,5 m   f) 94 cm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "8*10+1/100",
+     "respuesta": "80.01"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "3.5*10000+27*100",
+     "respuesta": "37700"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "13*10^6+21",
+     "respuesta": "13000021"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "7*1000+15/10",
+     "respuesta": "7001.5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "2*10+5/10",
+     "respuesta": "20.5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "0.6*100+340/10",
+     "respuesta": "94"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-009",
+   "tipo": "cambio de unidades de longitud",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Expresa en micras: a) 0,00067 mm   b) 25,7 m   c) 0,0768 dm   d) 0,000002 cm",
+   "solucion": "a) 0,67 µm   b) 25 700 000 µm   c) 7680 µm   d) 0,02 µm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "0.00067*1000",
+     "respuesta": "0.67"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "25.7*10^6",
+     "respuesta": "25700000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "0.0768*10^5",
+     "respuesta": "7680"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "0.000002*10^4",
+     "respuesta": "0.02"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 8",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-010",
+   "tipo": "cambio de unidades de superficie",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Calcula los metros cuadrados de estas superficies: a) 4,59 dm²   b) 10,2 hm²   c) 4 391 mm²   d) 501 dam²",
+   "solucion": "a) 0,0459 m²   b) 102 000 m²   c) 0,004391 m²   d) 50 100 m²",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "4.59/100",
+     "respuesta": "0.0459"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "10.2*10^4",
+     "respuesta": "102000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "4391/10^6",
+     "respuesta": "0.004391"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "501*100",
+     "respuesta": "50100"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-011",
+   "tipo": "cambio de unidades de superficie",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Expresa las siguientes superficies en las unidades que se indican en cada caso: a) 8 m² 1 cm² en decímetros cuadrados   b) 2 dam² 15 dm² en metros cuadrados   c) 7 hm² 65 m² en milímetros cuadrados",
+   "solucion": "a) 800,01 dm²   b) 200,15 m²   c) 70 065 000 000 mm²",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "8*100+1/100",
+     "respuesta": "800.01"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "2*100+15/100",
+     "respuesta": "200.15"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(7*10^4+65)*10^6",
+     "respuesta": "70065000000"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 15 a, b y d",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-012",
+   "tipo": "hectáreas y áreas",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "La superficie de un campo de fútbol es de 7 140 metros cuadrados. Expresa esta medida en cada una de estas unidades: a) centímetros cuadrados   b) decámetros cuadrados   c) hectáreas   d) áreas",
+   "solucion": "a) 71 400 000 cm²   b) 71,40 dam²   c) 0,714 ha   d) 71,4 a",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "7140*10^4",
+     "respuesta": "71400000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "7140/100",
+     "respuesta": "71.4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "7140/10^4",
+     "respuesta": "0.714"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "7140/100",
+     "respuesta": "71.4"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 17",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-013",
+   "tipo": "hectáreas y áreas",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Expresa las siguientes superficies en áreas: a) 1 678 ha   b) 5 ha   c) 8 ha 20 a   d) 28 100 ca",
+   "solucion": "a) 167 800 a   b) 500 a   c) 820 a   d) 281 a",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "1678*100",
+     "respuesta": "167800"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "5*100",
+     "respuesta": "500"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "8*100+20",
+     "respuesta": "820"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "28100/100",
+     "respuesta": "281"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 16",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-014",
+   "tipo": "cambio de unidades de volumen",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Resuelve: a) 23 km³ = … m³   b) 25 m³ = … cm³   c) 302 hm³ = … m³   d) 80 m³ = … dam³",
+   "solucion": "a) $23 \\cdot 10^{9}$ m³   b) $25 \\cdot 10^{6}$ cm³   c) $3{,}02 \\cdot 10^{8}$ m³   d) 0,08 dam³",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "23*10^9",
+     "respuesta": "23000000000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "25*10^6",
+     "respuesta": "25000000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "302*10^6",
+     "respuesta": "302000000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "80/1000",
+     "respuesta": "0.08"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 18",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-015",
+   "tipo": "volumen y capacidad",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Expresa en litros: a) 5,8 dm³   b) 39 m³   c) 931 cm³   d) 8 425 mm³   e) 3 dam³",
+   "solucion": "a) 5,8 L   b) 39 000 L   c) 0,931 L   d) 0,008425 L   e) 3 000 000 L",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "5.8",
+     "respuesta": "5.8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "39*1000",
+     "respuesta": "39000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "931/1000",
+     "respuesta": "0.931"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "8425/10^6",
+     "respuesta": "0.008425"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "3*10^6",
+     "respuesta": "3000000"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 24",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-016",
+   "tipo": "volumen y capacidad",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Expresa en centímetros cúbicos: a) 2,75 hL   b) 72,8 cL   c) 6,24 kL   d) 3,75 dL   e) 45 L   f) 895 mL",
+   "solucion": "a) 275 000 cm³   b) 728 cm³   c) 6 240 000 cm³   d) 375 cm³   e) 45 000 cm³   f) 895 cm³",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "2.75*100*1000",
+     "respuesta": "275000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "72.8*10",
+     "respuesta": "728"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "6.24*10^6",
+     "respuesta": "6240000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "3.75*100",
+     "respuesta": "375"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "45*1000",
+     "respuesta": "45000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "895",
+     "respuesta": "895"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 26",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-017",
+   "tipo": "ordenar medidas",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Ordena de menor a mayor estas medidas: a) 7,0001 hm³   b) 23 000 L   c) 8 mL   d) 4 mm³",
+   "solucion": "d < c < b < a: 4 mm³ = 0,004 mL; 8 mL; 23 000 L; 7,0001 hm³ = 7 000 100 000 L. (La fuente pone d < c < a < b: está mal.)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a en litros",
+     "expresion": "7.0001*10^9",
+     "respuesta": "7000100000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d en mL",
+     "expresion": "4/1000",
+     "respuesta": "0.004"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 25 (la fuente se equivoca de orden)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-018",
+   "tipo": "unidades de capacidad",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Expresa en kilolitros: a) 34 L   b) 1 232 cL   c) 57 daL   d) 107 hL",
+   "solucion": "a) 0,034 kL   b) 0,01232 kL   c) 0,57 kL   d) 10,7 kL",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "34/1000",
+     "respuesta": "0.034"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "1232/100/1000",
+     "respuesta": "0.01232"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "57*10/1000",
+     "respuesta": "0.57"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "107*100/1000",
+     "respuesta": "10.7"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 23",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-019",
+   "tipo": "unidades de capacidad",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Añade la medida necesaria para que sume 5 litros: a) 500 cL + … cL   b) 25 dL + … dL   c) 500 mL + … mL   d) 225 mL + …",
+   "solucion": "a) 0 cL   b) 25 dL   c) 4500 mL   d) 4775 mL",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "500/100+0",
+     "respuesta": "5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "25/10+25/10",
+     "respuesta": "5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(500+4500)/1000",
+     "respuesta": "5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(225+4775)/1000",
+     "respuesta": "5"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 24",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-020",
+   "tipo": "unidades de capacidad",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Calcula esta resta: 5 cL − 5 cm³.",
+   "solucion": "5 cL − 5 cm³ = 50 mL − 5 mL = 45 mL = 4,5 cL",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "50-5",
+     "respuesta": "45"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 35",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-021",
+   "tipo": "unidades de masa",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Expresa en gramos las siguientes masas: a) 1,6 dag   b) 49 kg   c) 240,5 kg 7,5 dag   d) 2 dag 15,10 dg",
+   "solucion": "a) 16 g   b) 49 000 g   c) 240 575 g   d) 21,51 g (La fuente da 24 050 + 75 = 24 125 g en el c: está mal, 240,5 kg son 240 500 g.)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "1.6*10",
+     "respuesta": "16"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "49*1000",
+     "respuesta": "49000"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "240.5*1000+7.5*10",
+     "respuesta": "240575"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "2*10+15.10/10",
+     "respuesta": "21.51"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 29 (la fuente da 24 125 g en el c: está mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-022",
+   "tipo": "unidades de masa",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Expresa en kilogramos: a) 4 t 6 q 3,7 mag   b) 3,46 t 869 dag   c) 424 q 561 hg   d) 6,3 t 4,1 mag 8,92 kg",
+   "solucion": "a) 4637 kg   b) 3468,69 kg   c) 42 456,1 kg   d) 6349,92 kg",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "4000+600+37",
+     "respuesta": "4637"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "3460+869/100",
+     "respuesta": "3468.69"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "42400+561/10",
+     "respuesta": "42456.1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "6300+41+8.92",
+     "respuesta": "6349.92"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 40 (q: quintal métrico, 100 kg; mag: miriagramo, 10 kg)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-023",
+   "tipo": "problema de medida",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Si Iker mide 1,35 metros y Laura mide 134 centímetros, ¿quién es más alto?",
+   "solucion": "Iker: 1,35 m = 135 cm, 1 cm más",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "135-134",
+     "respuesta": "1"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 6",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-024",
+   "tipo": "problema de medida",
+   "dificultad": 1,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Calcula el volumen (en litros y en cm³) de una caja que mide 10 cm de ancho, 20 cm de largo y 5 cm de alto.",
+   "solucion": "1000 cm³ = 1 litro",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "10*20*5",
+     "respuesta": "1000",
+     "apartado": "cm³"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 27",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-025",
+   "tipo": "problema de medida",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Una furgoneta puede cargar 1,2 t. Debe transportar 72 cajas que contienen 25 envases de paquetes de jabón, con un peso de 750 g cada uno. ¿Puede transportarlos de un solo viaje?",
+   "solucion": "No: 72 · 25 · 750 = 1 350 000 g = 1,35 t, más de 1,2 t",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "72*25*750/1000",
+     "respuesta": "1350",
+     "apartado": "kg"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 31",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-026",
+   "tipo": "problema de medida",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Utiliza la calculadora para resolver el siguiente problema: un camión puede cargar 3,5 t. Debe transportar 88 cajas que contienen 120 envases de paquetes de jabón, con un peso de 328 g cada uno. ¿Puede hacer el porte de un solo viaje?",
+   "solucion": "Sí: 88 · 120 · 328 = 3 463 680 g = 3,46368 t < 3,5 t",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "88*120*328",
+     "respuesta": "3463680",
+     "apartado": "g"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ej. 33",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-027",
+   "tipo": "problema de medida",
+   "dificultad": 2,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Una caja llena de libros pesa 25 kg, 7 hg y 4 dag y vacía pesa 200 g y 5 dg. Halla el peso de los libros en gramos.",
+   "solucion": "Caja llena: 25 740 g; vacía: 200,5 g; libros: 25 539,5 g",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "25000+700+40",
+     "respuesta": "25740",
+     "apartado": "llena"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "25740-200.5",
+     "respuesta": "25539.5",
+     "apartado": "libros"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 43",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-028",
+   "tipo": "problema de medida",
+   "dificultad": 3,
+   "saberes": [
+    "B.1",
+    "B.2"
+   ],
+   "enunciado": "Quieres embaldosar tu habitación, que mide 3,5 m de largo por 2,5 m de ancho. No quieres tener que cortar ninguna baldosa, pues entonces muchas se rompen. Al ir a comprarlas hay baldosas de: a) 40 cm por 20 cm; b) 50 cm por 35 cm; c) 25 cm por 18 cm. ¿Te sirve alguna? ¿Cuántas baldosas comprarías? Indica en m² cuánto mide tu habitación.",
+   "solucion": "Sirven las de 50 × 35 cm (350 : 35 = 10 y 250 : 50 = 5): 50 baldosas. La habitación mide 8,75 m²",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(350/35)*(250/50)",
+     "respuesta": "50",
+     "apartado": "baldosas"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3.5*2.5",
+     "respuesta": "8.75",
+     "apartado": "área"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 13",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-029",
+   "tipo": "problema de medida",
+   "dificultad": 2,
+   "saberes": [
+    "B.1",
+    "A.6"
+   ],
+   "enunciado": "Un terreno rústico de 6 ha cuesta 144 000 euros. ¿A cuánto sale el metro cuadrado? Compáralo con el precio del terreno urbanizable, que cuesta unos 350 euros el metro cuadrado.",
+   "solucion": "2,4 €/m², muchísimo menos que el urbanizable",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "144000/60000",
+     "respuesta": "2.4"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-030",
+   "tipo": "problema de medida",
+   "dificultad": 3,
+   "saberes": [
+    "B.1",
+    "A.6"
+   ],
+   "enunciado": "En una comunidad el agua se paga cada dos meses. Las tarifas van por tramos: los primeros 25 m³ a 0,30 €/m³; entre 25 y 50 m³ a 0,5291 €/m³; de 50 m³ en adelante a 0,55 €/m³. Si la media de consumo de agua por persona y día es 170 L, ¿cuánto pagará una persona que viva sola? ¿Cuánto pagará una familia de 6 miembros?",
+   "solucion": "Una persona: 170 · 60 = 10 200 L = 10,2 m³, todo en el primer tramo: 3,06 €. Familia: 61,2 m³: 25 · 0,30 + 25 · 0,5291 + 11,2 · 0,55 = 26,8875 ≈ 26,89 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "170*60/1000*0.30",
+     "respuesta": "3.06",
+     "apartado": "una persona"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "25*0.30+25*0.5291+(170*60*6/1000-50)*0.55",
+     "respuesta": "26.8875",
+     "apartado": "familia"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 37",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-med-031",
+   "tipo": "problema de medida",
+   "dificultad": 3,
+   "saberes": [
+    "B.1"
+   ],
+   "enunciado": "Un grifo gotea 25 mm³ cada 4 s. ¿Cuánta agua se pierde en una hora? ¿Y en un mes?",
+   "solucion": "En una hora 22 500 mm³ = 22,5 cm³; en un mes de 30 días, 16 200 cm³ = 16,2 L. (La fuente toma los mm³ por cm³ y da 22,5 L y 16,2 m³: está mal.)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "25*3600/4",
+     "respuesta": "22500",
+     "apartado": "hora (mm³)"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "22500*24*30/1000",
+     "respuesta": "16200",
+     "apartado": "mes de 30 días (cm³)"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 7, ejercicios y problemas, ej. 30 (la solución de la fuente confunde mm³ y cm³)",
+   "verificacion": "comprobada"
+  }
+ ]
+}

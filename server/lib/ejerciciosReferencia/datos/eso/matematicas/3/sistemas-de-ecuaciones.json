@@ -1,0 +1,1310 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 3,
+ "tema": "sistemas-de-ecuaciones",
+ "titulo": "Sistemas de dos ecuaciones lineales con dos incógnitas",
+ "saberes": [
+  "D.2",
+  "D.4",
+  "D.5",
+  "A.5",
+  "A.6"
+ ],
+ "fuentes": {
+  "mv3": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 3.º ESO (LOMLOE): «Soluciones de ejercicios y problemas» (enunciados y soluciones de cada capítulo)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/3ESO/Soluciones%203%20ESO.pdf",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "ag3": {
+   "nombre": "Alfonso González, IES Fernando de Mena: fichas de ejercicios de 3.º ESO Académicas",
+   "url": "https://www.alfonsogonzalez.es/asignaturas/3_eso_academicas/ejercicios_3_eso_academicas_propuestos.php",
+   "licencia": "CC BY-NC"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m3-sis-001",
+   "tipo": "sistemas lineales",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Razona si son o no sistemas de ecuaciones lineales los siguientes sistemas: a) $\\begin{cases} xy+2y = 6 \\\\ 2x-3y = 1 \\end{cases}$   b) $\\begin{cases} 5y-x = 4 \\\\ 2x-3y = -1 \\end{cases}$   c) $\\begin{cases} 4x-2 = y \\\\ 3x+5y = 2 \\end{cases}$   d) $\\begin{cases} x^{2}+y = 2 \\\\ 3x+y^{2} = 4 \\end{cases}$",
+   "solucion": "a) No: el término $xy$ no es de primer grado   b) Sí   c) Sí   d) No: los términos $x^{2}$ e $y^{2}$ no son de primer grado",
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 17",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-sis-002",
+   "tipo": "clasificar sistemas",
+   "dificultad": 2,
+   "saberes": [
+    "D.4",
+    "D.5"
+   ],
+   "enunciado": "Representa los siguientes sistemas y clasifícalos:\n\na) $\\begin{cases} x + 3y = 4 \\\\ -2x + y =-1 \\end{cases}$   b) $\\begin{cases} 2x - y = 3 \\\\ -y + 2x = 1 \\end{cases}$   c) $\\begin{cases} x - 3y = 3 \\\\ 2x - 6y = 6 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "x+3*y = 4",
+      "-2*x+y = -1"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} x + 3y = 4 \\\\ -2x + y =-1 \\end{cases}",
+     "respuesta": {
+      "x": "1",
+      "y": "1"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "2*x-y = 3",
+      "-y+2*x = 1"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2x - y = 3 \\\\ -y + 2x = 1 \\end{cases}",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "x-3*y = 3",
+      "2*x-6*y = 6"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} x - 3y = 3 \\\\ 2x - 6y = 6 \\end{cases}",
+     "respuesta": "infinitas"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 18",
+   "solucion": "a) Las rectas se cortan en el punto (1, 1): sistema compatible determinado   b) Las rectas son paralelas: sistema incompatible   c) Las rectas son coincidentes: sistema compatible indeterminado",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-003",
+   "tipo": "método de sustitución",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve los siguientes sistemas por el método de sustitución:\n\na) $\\begin{cases} 3x + 4y =-7 \\\\ x - 2y = 1 \\end{cases}$   b) $\\begin{cases} 2x + 4y = 0 \\\\ 3x + y = 5 \\end{cases}$   c) $\\begin{cases} 3x - 2y = 2 \\\\ 2x + 3y = 10 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "3*x+4*y = -7",
+      "x-2*y = 1"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x + 4y =-7 \\\\ x - 2y = 1 \\end{cases}",
+     "respuesta": {
+      "x": "-1",
+      "y": "-1"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "2*x+4*y = 0",
+      "3*x+y = 5"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2x + 4y = 0 \\\\ 3x + y = 5 \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "-1"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "3*x-2*y = 2",
+      "2*x+3*y = 10"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x - 2y = 2 \\\\ 2x + 3y = 10 \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "2"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 19",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -1$, $y = -1$; b) $x = 2$, $y = -1$; c) $x = 2$, $y = 2$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-sis-004",
+   "tipo": "método de igualación",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve los siguientes sistemas por el método de igualación:\n\na) $\\begin{cases} 3x + y = 2 \\\\ -2x + 3y =-5 \\end{cases}$   b) $\\begin{cases} 2x - 3y =-5 \\\\ 4x + 2y = 14 \\end{cases}$   c) $\\begin{cases} 7x - 4y = 3 \\\\ 3x + 2y = 5 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "3*x+y = 2",
+      "-2*x+3*y = -5"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x + y = 2 \\\\ -2x + 3y =-5 \\end{cases}",
+     "respuesta": {
+      "x": "1",
+      "y": "-1"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "2*x-3*y = -5",
+      "4*x+2*y = 14"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2x - 3y =-5 \\\\ 4x + 2y = 14 \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "3"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "7*x-4*y = 3",
+      "3*x+2*y = 5"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 7x - 4y = 3 \\\\ 3x + 2y = 5 \\end{cases}",
+     "respuesta": {
+      "x": "1",
+      "y": "1"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 20",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 1$, $y = -1$; b) $x = 2$, $y = 3$; c) $x = 1$, $y = 1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-sis-005",
+   "tipo": "método de reducción",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve los siguientes sistemas por el método de reducción:\n\na) $\\begin{cases} 3x + y = 4 \\\\ 2x - 5y = 14 \\end{cases}$   b) $\\begin{cases} 5x + 3y = 2 \\\\ 4x + y = 7 \\end{cases}$   c) $\\begin{cases} 2x + 3y = 0 \\\\ 3x - 2y = 13 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "3*x+y = 4",
+      "2*x-5*y = 14"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x + y = 4 \\\\ 2x - 5y = 14 \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "-2"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "5*x+3*y = 2",
+      "4*x+y = 7"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 5x + 3y = 2 \\\\ 4x + y = 7 \\end{cases}",
+     "respuesta": {
+      "x": "19/7",
+      "y": "-27/7"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "2*x+3*y = 0",
+      "3*x-2*y = 13"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2x + 3y = 0 \\\\ 3x - 2y = 13 \\end{cases}",
+     "respuesta": {
+      "x": "3",
+      "y": "-2"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 21",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 2$, $y = -2$; b) $x = \\frac{19}{7}$, $y = - \\frac{27}{7}$; c) $x = 3$, $y = -2$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-sis-006",
+   "tipo": "método de sustitución",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve los siguientes sistemas por el método de sustitución:\n\na) $\\begin{cases} 2x - 5y =-4 \\\\ 3x - y = 7 \\end{cases}$   b) $\\begin{cases} 3x + y = 4 \\\\ 2x + 5y = 7 \\end{cases}$   c) $\\begin{cases} 6x + 5y = 7 \\\\ 2x + 3y = 1 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "2*x-5*y = -4",
+      "3*x-y = 7"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2x - 5y =-4 \\\\ 3x - y = 7 \\end{cases}",
+     "respuesta": {
+      "x": "3",
+      "y": "2"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "3*x+y = 4",
+      "2*x+5*y = 7"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x + y = 4 \\\\ 2x + 5y = 7 \\end{cases}",
+     "respuesta": {
+      "x": "1",
+      "y": "1"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "6*x+5*y = 7",
+      "2*x+3*y = 1"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 6x + 5y = 7 \\\\ 2x + 3y = 1 \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "-1"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 14",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 3$, $y = 2$; b) $x = 1$, $y = 1$; c) $x = 2$, $y = -1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-sis-007",
+   "tipo": "método de igualación",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve los siguientes sistemas por el método de igualación:\n\na) $\\begin{cases} -2x + 3y = 13 \\\\ 3x - 7y =-27 \\end{cases}$   b) $\\begin{cases} 5x - 2y =-3 \\\\ 4x - y = 0 \\end{cases}$   c) $\\begin{cases} 9x - 5y = 4 \\\\ -8x + 3y =-5 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "-2*x+3*y = 13",
+      "3*x-7*y = -27"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} -2x + 3y = 13 \\\\ 3x - 7y =-27 \\end{cases}",
+     "respuesta": {
+      "x": "-2",
+      "y": "3"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "5*x-2*y = -3",
+      "4*x-y = 0"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 5x - 2y =-3 \\\\ 4x - y = 0 \\end{cases}",
+     "respuesta": {
+      "x": "1",
+      "y": "4"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "9*x-5*y = 4",
+      "-8*x+3*y = -5"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 9x - 5y = 4 \\\\ -8x + 3y =-5 \\end{cases}",
+     "respuesta": {
+      "x": "1",
+      "y": "1"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 15",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -2$, $y = 3$; b) $x = 1$, $y = 4$; c) $x = 1$, $y = 1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-sis-008",
+   "tipo": "método de reducción",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve los siguientes sistemas por el método de reducción:\n\na) $\\begin{cases} 3x - 5y = 1 \\\\ 2x + y = 5 \\end{cases}$   b) $\\begin{cases} 4x + 3y = 14 \\\\ -x - 6y = 7 \\end{cases}$   c) $\\begin{cases} 9x - 5y = 4 \\\\ -7x + 5y =-2 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "3*x-5*y = 1",
+      "2*x+y = 5"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3x - 5y = 1 \\\\ 2x + y = 5 \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "1"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "4*x+3*y = 14",
+      "-x-6*y = 7"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 4x + 3y = 14 \\\\ -x - 6y = 7 \\end{cases}",
+     "respuesta": {
+      "x": "5",
+      "y": "-2"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "9*x-5*y = 4",
+      "-7*x+5*y = -2"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 9x - 5y = 4 \\\\ -7x + 5y =-2 \\end{cases}",
+     "respuesta": {
+      "x": "1",
+      "y": "1"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 16",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 2$, $y = 1$; b) $x = 5$, $y = -2$; c) $x = 1$, $y = 1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-sis-009",
+   "tipo": "sistemas con fracciones",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve los siguientes sistemas por el método que creas más apropiado:\n\na) $\\begin{cases} \\frac{4x - 1}{3} - \\frac{2y + 2}{5} =-1 \\\\ \\frac{x + 3}{2} + \\frac{4y - 1}{3} = 7 \\end{cases}$   b) $\\begin{cases} \\frac{3x - 1}{2} - \\frac{y + 3}{5} =-3 \\\\ 3x + y =-1 \\end{cases}$   c) $\\begin{cases} \\frac{x + 1}{2} + \\frac{y + 2}{3} = 2 \\\\ 3x - 2y = 1 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "(4*x-1)/3-(2*y+2)/5 = -1",
+      "(x+3)/2+(4*y-1)/3 = 7"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} \\frac{4x - 1}{3} - \\frac{2y + 2}{5} =-1 \\\\ \\frac{x + 3}{2} + \\frac{4y - 1}{3} = 7 \\end{cases}",
+     "respuesta": {
+      "x": "1",
+      "y": "4"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "(3*x-1)/2-(y+3)/5 = -3",
+      "3*x+y = -1"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} \\frac{3x - 1}{2} - \\frac{y + 3}{5} =-3 \\\\ 3x + y =-1 \\end{cases}",
+     "respuesta": {
+      "x": "-1",
+      "y": "2"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "(x+1)/2+(y+2)/3 = 2",
+      "3*x-2*y = 1"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} \\frac{x + 1}{2} + \\frac{y + 2}{3} = 2 \\\\ 3x - 2y = 1 \\end{cases}",
+     "respuesta": {
+      "x": "1",
+      "y": "1"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 18",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 1$, $y = 4$; b) $x = -1$, $y = 2$; c) $x = 1$, $y = 1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-sis-010",
+   "tipo": "sistemas con fracciones",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve los siguientes sistemas por el método más indicado en cada caso:\n\na) $\\begin{cases} \\frac{2x}{3} - \\frac{3y}{2} = 1 \\\\ x + y = 4 \\end{cases}$   b) $\\begin{cases} x - 2(y - 4) = 6 \\\\ x - 6 + 2y = 8 \\end{cases}$   c) $\\begin{cases} 3 \\cdot \\frac{x - 2}{4} + 2 \\cdot \\frac{y - 3}{5} = \\frac{2}{5} \\\\ 2 \\cdot \\frac{y - 4}{3} + 3 \\cdot \\frac{x - 1}{2} = \\frac{3}{2} \\end{cases}$   d) $\\begin{cases} 2x - 3(y + 2) = x \\\\ -7y - 3 \\cdot \\frac{y - x}{2} = 9 \\end{cases}$   e) $\\begin{cases} \\frac{x + 1}{2} - \\frac{y - 2}{3} = \\frac{1}{3} \\\\ \\frac{x}{3} + \\frac{y + 1}{2} = \\frac{1}{2} \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "2*x/3-3*y/2 = 1",
+      "x+y = 4"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} \\frac{2x}{3} - \\frac{3y}{2} = 1 \\\\ x + y = 4 \\end{cases}",
+     "respuesta": {
+      "x": "42/13",
+      "y": "10/13"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "x-2*(y-4) = 6",
+      "x-6+2*y = 8"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} x - 2(y - 4) = 6 \\\\ x - 6 + 2y = 8 \\end{cases}",
+     "respuesta": {
+      "x": "6",
+      "y": "4"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "3*(x-2)/4+2*(y-3)/5 = 2/5",
+      "2*(y-4)/3+3*(x-1)/2 = 3/2"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 3 \\cdot \\frac{x - 2}{4} + 2 \\cdot \\frac{y - 3}{5} = \\frac{2}{5} \\\\ 2 \\cdot \\frac{y - 4}{3} + 3 \\cdot \\frac{x - 1}{2} = \\frac{3}{2} \\end{cases}",
+     "respuesta": {
+      "x": "2",
+      "y": "4"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "d",
+     "ecuaciones": [
+      "2*x-3*(y+2) = x",
+      "-7*y-3*(y-x)/2 = 9"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} 2x - 3(y + 2) = x \\\\ -7y - 3 \\cdot \\frac{y - x}{2} = 9 \\end{cases}",
+     "respuesta": {
+      "x": "6",
+      "y": "0"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "e",
+     "ecuaciones": [
+      "(x+1)/2-(y-2)/3 = 1/3",
+      "x/3+(y+1)/2 = 1/2"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} \\frac{x + 1}{2} - \\frac{y - 2}{3} = \\frac{1}{3} \\\\ \\frac{x}{3} + \\frac{y + 1}{2} = \\frac{1}{2} \\end{cases}",
+     "respuesta": {
+      "x": "-15/13",
+      "y": "10/13"
+     }
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "sistemas, ficha 3, ej. 6 (5, 6, 9, 15 y 12)",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = \\frac{42}{13}$, $y = \\frac{10}{13}$; b) $x = 6$, $y = 4$; c) $x = 2$, $y = 4$; d) $x = 6$, $y = 0$; e) $x = - \\frac{15}{13}$, $y = \\frac{10}{13}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-sis-011",
+   "tipo": "sistemas con otras letras",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve los siguientes sistemas:\n\na) $\\begin{cases} 3m - n = 17 \\\\ 2m + n = 8 \\end{cases}$   b) $\\begin{cases} a - b =-18 \\\\ 10a - 2b =-12 \\end{cases}$   c) $\\begin{cases} 3m - 4n =-6 \\\\ 2m + 4n = 16 \\end{cases}$   d) $\\begin{cases} 3p - 2t = 2 \\\\ 6p - 8t = 6 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "3*m-n = 17",
+      "2*m+n = 8"
+     ],
+     "vars": [
+      "m",
+      "n"
+     ],
+     "enunciado": "\\begin{cases} 3m - n = 17 \\\\ 2m + n = 8 \\end{cases}",
+     "respuesta": {
+      "m": "5",
+      "n": "-2"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "a-b = -18",
+      "10*a-2*b = -12"
+     ],
+     "vars": [
+      "a",
+      "b"
+     ],
+     "enunciado": "\\begin{cases} a - b =-18 \\\\ 10a - 2b =-12 \\end{cases}",
+     "respuesta": {
+      "a": "3",
+      "b": "21"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "3*m-4*n = -6",
+      "2*m+4*n = 16"
+     ],
+     "vars": [
+      "m",
+      "n"
+     ],
+     "enunciado": "\\begin{cases} 3m - 4n =-6 \\\\ 2m + 4n = 16 \\end{cases}",
+     "respuesta": {
+      "m": "2",
+      "n": "3"
+     }
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "d",
+     "ecuaciones": [
+      "3*p-2*t = 2",
+      "6*p-8*t = 6"
+     ],
+     "vars": [
+      "p",
+      "t"
+     ],
+     "enunciado": "\\begin{cases} 3p - 2t = 2 \\\\ 6p - 8t = 6 \\end{cases}",
+     "respuesta": {
+      "p": "1/3",
+      "t": "-1/2"
+     }
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "sistemas, ficha 3, ej. 3 (3 y 5) y ej. 4 (5 y 11; en el último la ficha usa las letras p y q)",
+   "verificacion": "comprobada",
+   "solucion": "a) $m = 5$, $n = -2$; b) $a = 3$, $b = 21$; c) $m = 2$, $n = 3$; d) $p = \\frac{1}{3}$, $t = - \\frac{1}{2}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-sis-012",
+   "tipo": "clasificar sistemas",
+   "dificultad": 2,
+   "saberes": [
+    "D.4",
+    "D.5"
+   ],
+   "enunciado": "Resuelve los siguientes sistemas por el método de igualación y comprueba la solución gráficamente. ¿De qué tipo es cada sistema?\n\na) $\\begin{cases} -2x + 6y = 13 \\\\ x - 3y = 8 \\end{cases}$   b) $\\begin{cases} x - y =-3 \\\\ 4x - 4y =-12 \\end{cases}$   c) $\\begin{cases} x - y = 4 \\\\ -x + 3y =-5 \\end{cases}$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "-2*x+6*y = 13",
+      "x-3*y = 8"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} -2x + 6y = 13 \\\\ x - 3y = 8 \\end{cases}",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "x-y = -3",
+      "4*x-4*y = -12"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} x - y =-3 \\\\ 4x - 4y =-12 \\end{cases}",
+     "respuesta": "infinitas"
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "x-y = 4",
+      "-x+3*y = -5"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "enunciado": "\\begin{cases} x - y = 4 \\\\ -x + 3y =-5 \\end{cases}",
+     "respuesta": {
+      "x": "7/2",
+      "y": "-1/2"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 23 (en c) la fuente da x = 9/2: errata)",
+   "solucion": "a) Incompatible (rectas paralelas)   b) Compatible indeterminado (la misma recta)   c) Compatible determinado: $x = \\frac{7}{2}$, $y = -\\frac{1}{2}$ (la fuente da $x = \\frac{9}{2}$, que no cumple $x-y = 4$)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-013",
+   "tipo": "completar un sistema",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Completa los siguientes sistemas incompletos de forma que se cumpla lo que se pide en cada uno: a) Compatible indeterminado: $\\begin{cases} (\\ \\ )x+3y = (\\ \\ ) \\\\ 2x-y = 3 \\end{cases}$   b) Incompatible: $\\begin{cases} -5x+y = 2 \\\\ (\\ \\ )x+y = 6 \\end{cases}$   c) Que su solución sea $x = 2$ e $y = 1$: $\\begin{cases} 3x-y = (\\ \\ ) \\\\ (\\ \\ )x+y = 7 \\end{cases}$",
+   "solucion": "a) $-6x+3y = -9$   b) $-5x+y = 6$   c) $3x-y = 5$, $3x+y = 7$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "apartado": "a",
+     "ecuaciones": [
+      "-6*x+3*y = -9",
+      "2*x-y = 3"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": "infinitas"
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "b",
+     "ecuaciones": [
+      "-5*x+y = 2",
+      "-5*x+y = 6"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "sistema",
+     "apartado": "c",
+     "ecuaciones": [
+      "3*x-y = 5",
+      "3*x+y = 7"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "2",
+      "y": "1"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 19 (a, b, c)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-014",
+   "tipo": "problema de sistemas",
+   "dificultad": 1,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "En un hotel hay 47 habitaciones simples y dobles. Si en total tiene 57 camas, ¿cuántas habitaciones son simples y cuántas son dobles?",
+   "solucion": "37 habitaciones simples y 10 dobles",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x+y = 47",
+      "x+2*y = 57"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "37",
+      "y": "10"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 23",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-015",
+   "tipo": "problema de sistemas",
+   "dificultad": 1,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "En una granja hay 100 animales entre gallinas y conejos, y entre todos los animales suman 280 patas. ¿Cuántas gallinas hay en la granja?",
+   "solucion": "60 gallinas (y 40 conejos)",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x+y = 100",
+      "2*x+4*y = 280"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "60",
+      "y": "40"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 24",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-016",
+   "tipo": "problema de sistemas",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "La suma de las edades de María y Alberto es 32 años. Dentro de 8 años, la edad de Alberto será dos veces la edad de María. ¿Qué edad tiene cada uno en la actualidad?",
+   "solucion": "Alberto tiene 24 años y María 8",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x+y = 32",
+      "y+8 = 2*(x+8)"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "8",
+      "y": "24"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 30",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-017",
+   "tipo": "problema de sistemas",
+   "dificultad": 1,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Encuentra dos números cuya diferencia sea 24 y su suma sea 123.",
+   "solucion": "73,5 y 49,5",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x-y = 24",
+      "x+y = 123"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "147/2",
+      "y": "99/2"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 31",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-018",
+   "tipo": "problema de sistemas",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Van cargados un asno y un mulo. El asno se quejaba del peso que llevaba encima. El mulo le contestó: «Si yo llevara uno de tus sacos, llevaría el doble de carga que tú, pero si tú tomas uno de los míos, los dos llevaremos igual carga». ¿Cuántos sacos lleva cada uno?",
+   "solucion": "El asno lleva 5 sacos y el mulo 7",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "y+1 = 2*(x-1)",
+      "x+1 = y-1"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "5",
+      "y": "7"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 30",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-019",
+   "tipo": "problema de sistemas",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4",
+    "A.6"
+   ],
+   "enunciado": "María quiere formar bandejas de un kilogramo con mazapanes y polvorones. Si los polvorones le cuestan a 5 euros el kilo y los mazapanes a 7 euros el kilo, y quiere que el precio de cada bandeja sea de 6 euros, ¿qué cantidad deberá poner de cada producto? Si quiere formar 25 bandejas, ¿qué cantidad de polvorones y de mazapanes va a necesitar?",
+   "solucion": "Medio kilo de cada producto en cada bandeja; para 25 bandejas, 12,5 kg de polvorones y 12,5 kg de mazapanes",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x+y = 1",
+      "5*x+7*y = 6"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "1/2",
+      "y": "1/2"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 36",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-020",
+   "tipo": "problema de sistemas",
+   "dificultad": 1,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Dos bocadillos y un refresco cuestan 5 €. Tres bocadillos y dos refrescos cuestan 8 €. ¿Cuál es el precio del bocadillo y el del refresco?",
+   "solucion": "El bocadillo cuesta 2 € y el refresco 1 €",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "2*x+y = 5",
+      "3*x+2*y = 8"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "2",
+      "y": "1"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 44",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-021",
+   "tipo": "problema de sistemas",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "En una pelea entre arañas y avispas hay 70 cabezas y 488 patas. Sabiendo que una araña tiene 8 patas y una avispa 6, ¿cuántas avispas y arañas hay en la pelea?",
+   "solucion": "34 arañas y 36 avispas",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x+y = 70",
+      "8*x+6*y = 488"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "34",
+      "y": "36"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 48",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-022",
+   "tipo": "problema de sistemas",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Yolanda tiene 6 años más que su hermano Pablo, y su madre tiene 50 años. Dentro de 2 años la edad de la madre será el doble de la suma de las edades de sus hijos. ¿Qué edades tienen?",
+   "solucion": "Yolanda tiene 14 años y Pablo 8",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x = y+6",
+      "52 = 2*((x+2)+(y+2))"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "14",
+      "y": "8"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 50",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-023",
+   "tipo": "problema de sistemas",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Un padre tiene el doble de edad que su hijo. Hace 17 años tenía el triple. Halla la edad de ambos.",
+   "solucion": "68 y 34 años",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x = 2*y",
+      "x-17 = 3*(y-17)"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "68",
+      "y": "34"
+     }
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "problemas de planteamiento, ficha 5, ej. 50",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-024",
+   "tipo": "problema de sistemas",
+   "dificultad": 3,
+   "saberes": [
+    "D.2",
+    "D.4",
+    "A.5"
+   ],
+   "enunciado": "Se desea mezclar vino de 55 cént./litro con otro de 40 cént./litro, de modo que la mezcla resulte a 45 cént./litro. ¿Cuántos litros de cada clase deberán mezclarse para obtener 300 litros de la mezcla deseada?",
+   "solucion": "100 litros del vino de 55 cént. y 200 litros del de 40 cént.",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x+y = 300",
+      "55*x+40*y = 45*300"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "100",
+      "y": "200"
+     }
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "problemas de planteamiento, ficha 5, ej. 65",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-025",
+   "tipo": "problema de sistemas",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Hace 10 años la edad de un abuelo era el cuádruple de la edad del nieto, mientras que dentro de 20 años solo será el doble. Halla sus edades.",
+   "solucion": "El abuelo 70 años y el nieto 25",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x-10 = 4*(y-10)",
+      "x+20 = 2*(y+20)"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "70",
+      "y": "25"
+     }
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "problemas de planteamiento, ficha 5, ej. 64",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-026",
+   "tipo": "problema de sistemas",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Un padre, preocupado por motivar a su hijo en Matemáticas, se compromete a darle 1 € por problema bien hecho, mientras que, si está mal, el hijo le devolverá 0,5 €. Después de realizar 60 problemas, el hijo ganó 30 €. ¿Cuántos problemas resolvió correctamente?",
+   "solucion": "40 problemas bien (y 20 mal)",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x+y = 60",
+      "x-0.5*y = 30"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "40",
+      "y": "20"
+     }
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "problemas de planteamiento, ficha 5, ej. 73",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-sis-027",
+   "tipo": "problema de sistemas",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Entre Juan y Pedro tienen 40 €, pero si Juan le diera 5 € a Pedro entonces este tendría el triple que su amigo. ¿Cuánto dinero tiene cada uno?",
+   "solucion": "Juan 15 € y Pedro 25 €",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x+y = 40",
+      "y+5 = 3*(x-5)"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "15",
+      "y": "25"
+     }
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "problemas de planteamiento, ficha 5, ej. 74",
+   "verificacion": "comprobada"
+  }
+ ]
+}

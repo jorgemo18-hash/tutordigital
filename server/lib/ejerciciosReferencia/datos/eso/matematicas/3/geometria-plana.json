@@ -1,0 +1,909 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 3,
+ "tema": "geometria-plana",
+ "titulo": "Geometría en el plano: lugares geométricos, semejanza, Pitágoras y áreas",
+ "saberes": [
+  "B.2",
+  "C.1",
+  "C.4",
+  "D.4"
+ ],
+ "fuentes": {
+  "mv3": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 3.º ESO (LOMLOE): «Soluciones de ejercicios y problemas» (enunciados y soluciones de cada capítulo)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/3ESO/Soluciones%203%20ESO.pdf",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m3-geo-001",
+   "tipo": "lugares geométricos y puntos notables",
+   "dificultad": 1,
+   "saberes": [
+    "C.1",
+    "C.4"
+   ],
+   "enunciado": "a) Un agricultor encuentra en su campo una bomba de la Guerra Civil. Las autoridades establecen una distancia de seguridad de 50 metros. ¿Cómo se debe acordonar la zona?   b) Dos participantes se sitúan a una distancia de dos metros entre sí y se ponen varias banderas a la misma distancia de ambos: la primera a 5 metros, la segunda a 10 metros, la tercera a 15… ¿Sobre qué línea imaginaria estarían situadas las banderas?",
+   "solucion": "a) Con una circunferencia de centro la bomba y radio 50 metros.   b) En la mediatriz del segmento cuyos extremos son los dos participantes",
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 1 y 2",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-geo-002",
+   "tipo": "lugares geométricos y puntos notables",
+   "dificultad": 2,
+   "saberes": [
+    "C.1",
+    "C.4"
+   ],
+   "enunciado": "a) Queremos situar una farola en una plaza triangular. ¿Dónde la pondríamos?   b) Tenemos un campo triangular sin vallar y queremos atar una cabra de forma que no salga del campo pero que acceda al máximo de pasto posible. ¿Dónde pondríamos el poste?   c) A Yaiza y a su hermano Aitor les encanta la tarta. Su madre les ha hecho una triangular. Yaiza la tiene que cortar, pero Aitor elegirá primero su pedazo. ¿Cómo debería cortar Yaiza la tarta?",
+   "solucion": "a) En el circuncentro los tres vértices reciben la misma luz (aunque si el triángulo es obtusángulo queda fuera de la plaza); en el incentro hay un círculo completo de buena luz dentro de la plaza.   b) En el incentro.   c) Por una de las medianas (divide el triángulo en dos de igual área)",
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 10, 12 y 13",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-geo-003",
+   "tipo": "lugares geométricos y puntos notables",
+   "dificultad": 1,
+   "saberes": [
+    "C.1"
+   ],
+   "enunciado": "¿Cómo son las rectas y puntos notables de un triángulo rectángulo? ¿Y de un triángulo isósceles? ¿Y de un equilátero?",
+   "solucion": "Rectángulo: los catetos son alturas, el ortocentro es el vértice del ángulo recto y el circuncentro es el punto medio de la hipotenusa. Isósceles: el eje de simetría es a la vez altura, mediana, bisectriz y mediatriz. Equilátero: las medianas son también mediatrices, bisectrices y alturas, y los cuatro puntos notables coinciden",
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 29 y 30; act. 8",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-geo-004",
+   "tipo": "lugares geométricos y puntos notables",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Una hormiga anda por una mediana de un triángulo partiendo del vértice. Cuando llega al baricentro ha recorrido 8 centímetros. ¿Qué distancia le falta para llegar al punto medio del lado opuesto al vértice de donde partió?",
+   "solucion": "4 cm (el baricentro está al doble de distancia del vértice que del punto medio del lado)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "8/2",
+     "respuesta": "4"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-005",
+   "tipo": "lugares geométricos y puntos notables",
+   "dificultad": 3,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula el lado de un triángulo equilátero inscrito en una circunferencia de 10 cm de radio. [Ayuda: en este caso el circuncentro coincide con el baricentro, y este está al doble de distancia del vértice que del lado opuesto.]",
+   "solucion": "La altura mide $10+5 = 15$ cm y el lado $\\frac{2 \\cdot 15}{\\sqrt{3}} = 10\\sqrt{3} \\approx 17{,}32$ cm. La fuente da $20\\sqrt{3}$, que es el doble: errata",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "10+10/2",
+     "respuesta": "15",
+     "apartado": "altura"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "15*2/sqrt(3)",
+     "respuesta": "10*sqrt(3)",
+     "apartado": "lado"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 17 (la fuente da 20√3 cm: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-006",
+   "tipo": "semejanza",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Indica si son semejantes los siguientes pares de triángulos: a) Un ángulo de 70° y otro de 20°. Un ángulo de 90° y otro de 20°.   b) Triángulo isósceles con ángulo desigual de 80°. Triángulo isósceles con un ángulo igual de 50°.   c) $A = 40°$, $b = 8$ cm, $c = 10$ cm. $A' = 40°$, $b' = 4$ cm, $c' = 5$ cm.   d) $a = 3$ cm, $b = 4$ cm, $c = 6$ cm. $a' = 9$ cm, $b' = 12$ cm, $c' = 19$ cm.",
+   "solucion": "a) Sí (los dos tienen 90°, 70° y 20°)   b) Sí (80°, 50° y 50°)   c) Sí (un ángulo igual y los lados que lo forman proporcionales)   d) No ($\\frac{9}{3} = \\frac{12}{4} = 3$ pero $\\frac{19}{6} \\neq 3$)",
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 31",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-geo-007",
+   "tipo": "semejanza",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula el valor desconocido para que los triángulos sean semejantes: a) $a = 15$ cm, $b = 9$ cm, $c = 12$ cm. $a' = 10$ cm, $b' = 4$ cm, ¿$c'$?   b) $A = 50°$, $b = 6$ cm, $c = 4$ cm. $A' = 50°$, $b' = 18$ cm, ¿$c'$?",
+   "solucion": "a) No pueden ser semejantes: $\\frac{15}{10} \\neq \\frac{9}{4}$   b) $c' = 12$ cm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4*18/6",
+     "respuesta": "12",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 32",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-008",
+   "tipo": "semejanza",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Las longitudes de los lados de un triángulo son 12 cm, 14 cm y 14 cm. Un triángulo semejante a él tiene un perímetro de 90 cm. ¿Cuánto miden sus lados?",
+   "solucion": "27 cm, 31,5 cm y 31,5 cm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "12*90/40",
+     "respuesta": "27",
+     "apartado": "12"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "14*90/40",
+     "respuesta": "31.5",
+     "apartado": "14"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 33",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-009",
+   "tipo": "semejanza",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "María mide 160 cm. Su sombra mide 90 cm. En ese mismo instante se mide la sombra de un edificio y mide 7,2 m. ¿Cuánto mide el edificio?",
+   "solucion": "12,8 m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "7.2*160/90",
+     "respuesta": "12.8"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 29",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-010",
+   "tipo": "semejanza",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1",
+    "C.4"
+   ],
+   "enunciado": "Un poste muy alto se sujeta con cables de acero que van de su extremo superior al suelo. La distancia del anclaje de uno de los cables a la base del poste es 6 metros. Ponemos una barra de 120 centímetros de forma que está perpendicular al suelo y justo toca el suelo y el cable. Su distancia al anclaje del cable es 90 centímetros. Calcula la longitud del poste y la longitud del cable de acero.",
+   "solucion": "El poste mide 8 m (Thales) y el cable 10 m (Pitágoras)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1.2*6/0.9",
+     "respuesta": "8",
+     "apartado": "poste"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(8^2+6^2)",
+     "respuesta": "10",
+     "apartado": "cable"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 28",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-011",
+   "tipo": "semejanza",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "a) Un triángulo rectángulo isósceles tiene un cateto de longitud 7 cm, igual a la hipotenusa de otro triángulo semejante al primero. ¿Cuánto valen las áreas de ambos triángulos?   b) La altura y la base de un triángulo rectángulo miden respectivamente 4 y 7 cm, y es semejante a otro de base 26 cm. Calcula la altura del nuevo triángulo y las áreas de ambos.",
+   "solucion": "a) 24,5 cm² y 12,25 cm²   b) Altura $\\frac{104}{7}$ cm; áreas 14 cm² y $\\frac{1352}{7}$ cm²",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "7*7/2",
+     "respuesta": "24.5",
+     "apartado": "a, área 1"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "(7/sqrt(2))^2/2",
+     "respuesta": "12.25",
+     "apartado": "a, área 2"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "4*26/7",
+     "respuesta": "104/7",
+     "apartado": "b, altura"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "4*7/2",
+     "respuesta": "14",
+     "apartado": "b, área 1"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "26*(104/7)/2",
+     "respuesta": "1352/7",
+     "apartado": "b, área 2"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 39 y 41",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-012",
+   "tipo": "semejanza",
+   "dificultad": 3,
+   "saberes": [
+    "B.2",
+    "C.1",
+    "C.4"
+   ],
+   "enunciado": "En el museo de Bagdad se conserva una tablilla en la que aparece dibujado un triángulo rectángulo $ABC$, con el ángulo recto en $C$ y lados $a = BC = 60$, $b = AC = 45$ y $c = AB = 75$, subdividido en 4 triángulos rectángulos menores $ACD$, $CDE$, $DEF$ y $EFB$: $D$ es el pie de la perpendicular desde $C$ a $AB$; $E$, el de la perpendicular desde $D$ a $BC$; y $F$, el de la perpendicular desde $E$ a $AB$. El escriba calcula la longitud del lado $AD$ como 27. ¿Ha utilizado la semejanza de triángulos? Calcula el área del triángulo $ABC$ y del triángulo $ACD$. Determina la longitud de los segmentos $CD$, $DE$ y $EF$.",
+   "solucion": "$AD = 27$ (por semejanza, $\\frac{AD}{AC} = \\frac{AC}{AB}$). Área de $ABC$ = 1350; área de $ACD$ = 486. $CD = 36$, $DE = 28{,}8$, $EF = 23{,}04$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "45^2/75",
+     "respuesta": "27",
+     "apartado": "AD"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "60*45/2",
+     "respuesta": "1350",
+     "apartado": "área ABC"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "60*45/75",
+     "respuesta": "36",
+     "apartado": "CD"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "27*36/2",
+     "respuesta": "486",
+     "apartado": "área ACD"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "36*(75-27)/60",
+     "respuesta": "28.8",
+     "apartado": "DE"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "28.8*sqrt(48^2-28.8^2)/48",
+     "respuesta": "23.04",
+     "apartado": "EF"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 37 (adaptado: el dibujo se describe con palabras)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-013",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "¿Es posible encontrar un triángulo rectángulo cuyos catetos midan 5 y 12 cm y su hipotenusa 24 cm? Si tu respuesta es negativa, halla la medida de la hipotenusa de un triángulo rectángulo cuyos catetos miden 5 y 12 cm.",
+   "solucion": "No: $5^{2}+12^{2} = 169 \\neq 24^{2}$. La hipotenusa debe medir 13 cm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(5^2+12^2)",
+     "respuesta": "13"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 31",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-014",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula la longitud de la hipotenusa de los siguientes triángulos rectángulos de catetos: a) 6 cm y 8 cm   b) 4 m y 3 m   c) 8 dm y 15 dm   d) 13,6 km y 21,4 km",
+   "solucion": "a) 10 cm   b) 5 m   c) 17 dm   d) $\\sqrt{642{,}92} \\approx 25{,}4$ km",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(6^2+8^2)",
+     "respuesta": "10",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(4^2+3^2)",
+     "respuesta": "5",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(8^2+15^2)",
+     "respuesta": "17",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(13.6^2+21.4^2)",
+     "respuesta": "25.4",
+     "apartado": "d",
+     "tolerancia": 0.05
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 32",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-015",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula la longitud del cateto que falta en los siguientes triángulos rectángulos de hipotenusa y cateto: a) 26 cm y 10 cm   b) 17 m y 8 m   c) 37 dm y 35 dm   d) 14,7 km y 5,9 km",
+   "solucion": "a) 24 cm   b) 15 m   c) 12 dm   d) $\\sqrt{181{,}28} \\approx 13{,}5$ km",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(26^2-10^2)",
+     "respuesta": "24",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(17^2-8^2)",
+     "respuesta": "15",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(37^2-35^2)",
+     "respuesta": "12",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(14.7^2-5.9^2)",
+     "respuesta": "13.5",
+     "apartado": "d",
+     "tolerancia": 0.05
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 33",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-016",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Una portería de fútbol mide 7,32 m de ancho por 2,44 m de alto. El punto de penalti está a 10 metros. Calcula la distancia que recorre el balón en: a) Un tiro directo a la base del poste. b) Un tiro directo a la escuadra.",
+   "solucion": "a) ≈ 10,65 m   b) ≈ 10,92 m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(10^2+3.66^2)",
+     "respuesta": "10.65",
+     "apartado": "a",
+     "tolerancia": 0.005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(10^2+3.66^2+2.44^2)",
+     "respuesta": "10.92",
+     "apartado": "b",
+     "tolerancia": 0.005
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 40",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-017",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Una escalera de 4 m de longitud está apoyada sobre una pared. El pie de la escalera dista 1,5 m de la pared. ¿Qué altura alcanza la escalera sobre la pared?",
+   "solucion": "$\\frac{\\sqrt{55}}{2} \\approx 3{,}708$ m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(4^2-1.5^2)",
+     "respuesta": "sqrt(55)/2"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 52",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-018",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "a) Calcula el área y el perímetro de un rectángulo de lado 4 cm y diagonal 7 cm.   b) Calcula el área y el perímetro de un cuadrado de diagonal 9 cm.   c) Calcula el área y el perímetro de un triángulo isósceles de base 8 cm y altura 6 cm.",
+   "solucion": "a) Área $4\\sqrt{33} \\approx 22{,}98$ cm² (la fuente da 29,98: errata); perímetro $2(4+\\sqrt{33}) \\approx 19{,}49$ cm   b) Área 40,5 cm²; perímetro $18\\sqrt{2} \\approx 25{,}46$ cm   c) Área 24 cm²; perímetro $8+4\\sqrt{13} \\approx 22{,}42$ cm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4*sqrt(7^2-4^2)",
+     "respuesta": "4*sqrt(33)",
+     "apartado": "a, área"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2*(4+sqrt(7^2-4^2))",
+     "respuesta": "2*(4+sqrt(33))",
+     "apartado": "a, perímetro"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "9^2/2",
+     "respuesta": "40.5",
+     "apartado": "b, área"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "4*9/sqrt(2)",
+     "respuesta": "18*sqrt(2)",
+     "apartado": "b, perímetro"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "8*6/2",
+     "respuesta": "24",
+     "apartado": "c, área"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "8+2*sqrt(4^2+6^2)",
+     "respuesta": "8+4*sqrt(13)",
+     "apartado": "c, perímetro"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 60 a 62 (en 60 la fuente da ≈ 29,98 cm²: errata, es ≈ 22,98)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-019",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 3,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula el área de un trapecio isósceles de bases 8 y 6 cm y lado 3 cm.",
+   "solucion": "La altura es $\\sqrt{3^{2}-1^{2}} = 2\\sqrt{2}$: área $14\\sqrt{2} \\approx 19{,}80$ cm²",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(8+6)/2*sqrt(3^2-1^2)",
+     "respuesta": "14*sqrt(2)"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 59",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-020",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula el área de un trapecio isósceles de base menor 5 cm, lado 3 cm y altura 4 cm.",
+   "solucion": "La figura es imposible: el lado oblicuo (3 cm) tendría que ser mayor que la altura (4 cm)",
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 58",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-geo-021",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 3,
+   "saberes": [
+    "B.2",
+    "C.1",
+    "C.4"
+   ],
+   "enunciado": "Los griegos conocían las dos siguientes formas de construir un triángulo rectángulo con sus tres lados de longitud un número natural, sin más que dar valores a $n$. Comprueba que se verifican para $n = 1, 2, \\ldots$: a) Catetos: $2n$ y $n^{2}-1$; hipotenusa: $n^{2}+1$.   b) Catetos: $2n+1$ y $2n^{2}+2n$; hipotenusa: $2n^{2}+2n+1$.",
+   "solucion": "Sí: a) $(2n)^{2}+(n^{2}-1)^{2} = n^{4}+2n^{2}+1 = (n^{2}+1)^{2}$   b) $(2n+1)^{2}+(2n^{2}+2n)^{2} = (2n^{2}+2n+1)^{2}$ (con $n = 2$: 3, 4, 5 y 5, 12, 13)",
+   "comprobar": [
+    {
+     "tipo": "igualdad",
+     "apartado": "a",
+     "expresion": "(2*n)^2+(n^2-1)^2",
+     "respuesta": "(n^2+1)^2"
+    },
+    {
+     "tipo": "igualdad",
+     "apartado": "b",
+     "expresion": "(2*n+1)^2+(2*n^2+2*n)^2",
+     "respuesta": "(2*n^2+2*n+1)^2"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 49",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-022",
+   "tipo": "teorema de Pitágoras",
+   "dificultad": 3,
+   "saberes": [
+    "B.2",
+    "C.1",
+    "D.4"
+   ],
+   "enunciado": "Dos ascetas hindúes viven en lo alto de un acantilado de 10 m de altura cuyo pie está a 200 metros del pueblo más cercano. Uno de los ascetas baja del acantilado y va al pueblo. El otro, que es mago, asciende una distancia $x$ y viaja volando en línea recta al pueblo. Ambos recorren la misma distancia. ¿Cuánto ha ascendido el mago?",
+   "solucion": "$x = \\frac{100}{11} \\approx 9{,}09$ m. La fuente da $-10+10\\sqrt{41} \\approx 54{,}03$ m, que no cumple el enunciado: errata",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x+sqrt((10+x)^2+200^2) = 210",
+     "respuesta": [
+      "100/11"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 68 (la fuente da −10 + 10√41 m: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-023",
+   "tipo": "áreas y perímetros",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "a) Calcula el área de un triángulo equilátero de lado 9 m.   b) Calcula el área de un hexágono regular de lado 2 cm.   c) Calcula el área de un hexágono regular de 5 cm de lado (se puede dividir en seis triángulos equiláteros).",
+   "solucion": "a) $\\frac{81}{4}\\sqrt{3}$ m²   b) $6\\sqrt{3}$ cm²   c) $37{,}5\\sqrt{3} \\approx 64{,}95$ cm²",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(3)/4*9^2",
+     "respuesta": "81*sqrt(3)/4",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "6*sqrt(3)/4*2^2",
+     "respuesta": "6*sqrt(3)",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "6*sqrt(3)/4*5^2",
+     "respuesta": "37.5*sqrt(3)",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 35, 36 y 52",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-024",
+   "tipo": "áreas y perímetros",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula el área y el perímetro de un trapecio isósceles de bases 50 cm y 26 cm y altura 5 cm.",
+   "solucion": "Área 190 cm². Los lados oblicuos miden $\\sqrt{12^{2}+5^{2}} = 13$ cm: perímetro 102 cm (la fuente da 128 cm: errata)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(50+26)/2*5",
+     "respuesta": "190",
+     "apartado": "área"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "50+26+2*sqrt(12^2+5^2)",
+     "respuesta": "102",
+     "apartado": "perímetro"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 48 (la fuente da perímetro 128 cm: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-025",
+   "tipo": "áreas y perímetros",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula el área y el perímetro de un trapecio isósceles de bases 100 cm y 60 cm y lados laterales 29 cm.",
+   "solucion": "Altura $\\sqrt{29^{2}-20^{2}} = 21$ cm; área 1680 cm²; perímetro 218 cm (la fuente da 1470 m² y 198 cm: errata)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(29^2-20^2)",
+     "respuesta": "21",
+     "apartado": "altura"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "(100+60)/2*21",
+     "respuesta": "1680",
+     "apartado": "área"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "100+60+2*29",
+     "respuesta": "218",
+     "apartado": "perímetro"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 50 (la fuente da 1470 y 198 cm: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-026",
+   "tipo": "ángulos de polígonos",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "a) Dos ángulos de un triángulo isósceles miden 36° y 72°: ¿cuánto debe medir el ángulo que falta?   b) ¿Cuánto mide la suma de los ángulos interiores de un decágono irregular?   c) Calcula los ángulos central e interior del pentágono regular y del eneágono regular.",
+   "solucion": "a) 72°   b) 1440°   c) Pentágono: central 72°, interior 108°; eneágono: central 40°, interior 140°",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "180-36-72",
+     "respuesta": "72",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "(10-2)*180",
+     "respuesta": "1440",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "360/5",
+     "respuesta": "72",
+     "apartado": "c, pentágono"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "180-360/9",
+     "respuesta": "140",
+     "apartado": "c, eneágono"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 45, 47 y 43",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-027",
+   "tipo": "circunferencia y círculo",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "a) La Tierra es aproximadamente una esfera de radio 6379 km. ¿Cuánto mide el Ecuador?   b) Calcula el área encerrada por una circunferencia de radio 9 cm.   c) Calcula el área de la corona circular de radios 12 y 5 cm.",
+   "solucion": "a) ≈ 40 080 km   b) $81\\pi \\approx 254{,}47$ cm²   c) $119\\pi \\approx 373{,}85$ cm² (la fuente da 376,85: errata)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2*pi*6379",
+     "respuesta": "40080",
+     "apartado": "a",
+     "tolerancia": 1
+    },
+    {
+     "tipo": "valor",
+     "expresion": "pi*9^2",
+     "respuesta": "81*pi",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "pi*(12^2-5^2)",
+     "respuesta": "119*pi",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 59, 63 y 64",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-028",
+   "tipo": "circunferencia y círculo",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "a) Calcula el área del sector circular y del segmento circular de radio 6 cm y que forma un ángulo de 60°.   b) Calcula el área del sector de corona circular de radios 25 cm y 18 cm y que forma un ángulo de 60°.   c) Calcula el área encerrada entre cuatro círculos de 5 cm de radio, tangentes dos a dos, cuyos centros forman un cuadrado.",
+   "solucion": "a) Sector $6\\pi \\approx 18{,}85$ cm²; segmento $6\\pi-9\\sqrt{3} \\approx 3{,}26$ cm²   b) $\\frac{301\\pi}{6} \\approx 157{,}60$ cm²   c) $100-25\\pi \\approx 21{,}46$ cm²",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "pi*6^2/6",
+     "respuesta": "6*pi",
+     "apartado": "a, sector"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "6*pi-sqrt(3)/4*6^2",
+     "respuesta": "6*pi-9*sqrt(3)",
+     "apartado": "a, segmento"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "pi*(25^2-18^2)/6",
+     "respuesta": "301*pi/6",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "10^2-pi*5^2",
+     "respuesta": "100-25*pi",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, act. 65 a 67 (adaptado: el dibujo de c se describe con palabras)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-029",
+   "tipo": "circunferencia y círculo",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "a) Calcula el área de un círculo cuya circunferencia mide 50 cm.   b) Calcula la longitud de una circunferencia cuyo círculo tiene una superficie de 50 cm².   c) Calcula el área de la circunferencia circunscrita a un rectángulo de lados 7 y 9 cm.",
+   "solucion": "a) $\\frac{625}{\\pi} \\approx 198{,}94$ cm²   b) $10\\sqrt{2\\pi} \\approx 25{,}1$ cm   c) $\\frac{65}{2}\\pi \\approx 102{,}10$ cm²",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "pi*(50/(2*pi))^2",
+     "respuesta": "625/pi",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2*pi*sqrt(50/pi)",
+     "respuesta": "10*sqrt(2*pi)",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "pi*(sqrt(7^2+9^2)/2)^2",
+     "respuesta": "65*pi/2",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 45, 46 y 53",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-030",
+   "tipo": "problema de áreas",
+   "dificultad": 2,
+   "saberes": [
+    "B.2",
+    "D.4"
+   ],
+   "enunciado": "Al aumentar en 3 cm el lado de un cuadrado su área aumenta 32 cm². ¿Cuánto mide el lado de dichos cuadrados?",
+   "solucion": "$\\frac{23}{6}$ cm y $\\frac{41}{6}$ cm",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "(x+3)^2-x^2 = 32",
+     "respuesta": [
+      "23/6"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 50",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-geo-031",
+   "tipo": "problema de áreas",
+   "dificultad": 1,
+   "saberes": [
+    "B.2",
+    "C.1"
+   ],
+   "enunciado": "Se quiere cubrir un terreno circular de 25 m de diámetro con gravilla, echando 10 kg por cada metro cuadrado. ¿Cuánta gravilla se necesita?",
+   "solucion": "≈ 4908,739 kg (unas 5 toneladas)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "10*pi*12.5^2",
+     "respuesta": "4908.739",
+     "tolerancia": 0.001
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 8, ejercicios y problemas 51",
+   "verificacion": "comprobada"
+  }
+ ]
+}

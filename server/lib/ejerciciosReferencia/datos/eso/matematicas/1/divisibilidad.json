@@ -1,0 +1,1291 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 1,
+ "tema": "divisibilidad",
+ "titulo": "Divisibilidad: múltiplos, divisores, primos, m.c.m. y M.C.D.",
+ "saberes": [
+  "A.4"
+ ],
+ "fuentes": {
+  "mv1": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 1.º ESO (LOMLOE): libro y «Soluciones de ejercicios y problemas»",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/1ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "edad1": {
+   "nombre": "Proyecto ED@D (CIDEAD, Ministerio de Educación): Matemáticas 1.º ESO, «Para practicar»",
+   "url": "http://recursostic.educacion.es/secundaria/edad/1esomatematicas/",
+   "licencia": "CC BY-NC-SA 3.0 ES"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m1-div-001",
+   "tipo": "múltiplos",
+   "dificultad": 1,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "¿Cuáles de los siguientes números son múltiplos de 12? 12, 13, 22, 24, 25, 100, 112, 142, 144",
+   "solucion": "12, 24 y 144",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "12",
+     "expresion": "12 % 12",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "24",
+     "expresion": "24 % 12",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "144",
+     "expresion": "144 % 12",
+     "respuesta": "0"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-002",
+   "tipo": "múltiplos",
+   "dificultad": 1,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Halla los múltiplos de 11 comprendidos entre 12 y 90.",
+   "solucion": "22, 33, 44, 55, 66, 77, 88",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "22",
+     "expresion": "22 % 11",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "33",
+     "expresion": "33 % 11",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "44",
+     "expresion": "44 % 11",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "55",
+     "expresion": "55 % 11",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "66",
+     "expresion": "66 % 11",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "77",
+     "expresion": "77 % 11",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "88",
+     "expresion": "88 % 11",
+     "respuesta": "0"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-003",
+   "tipo": "múltiplo, divisor, divisible",
+   "dificultad": 1,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Completa con las expresiones «ser múltiplo de», «ser divisor de» o «ser divisible por»: a) 40 es … 10.   b) 2 es … 10.   c) 4 es … 8.   d) 935 es … 11.   e) 90 es … 45.   f) 3 es … 15.",
+   "solucion": "a) múltiplo de   b) divisor de   c) divisor de   d) múltiplo de   e) múltiplo de (o divisible por)   f) divisor de",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "40 % 10",
+     "respuesta": "0",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "935 % 11",
+     "respuesta": "0",
+     "apartado": "d"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "90 % 45",
+     "respuesta": "0",
+     "apartado": "e"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ejercicios y problemas, ej. 30",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-004",
+   "tipo": "criterios de divisibilidad",
+   "dificultad": 1,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Di cuáles de los siguientes números son múltiplos de 2: 23, 24, 56, 77, 89, 90, 234, 621, 400, 4520, 3411, 46295, 16392, 385500. Los números elegidos, ¿coinciden con los divisores de 2? ¿Y con los que son divisibles por 2?",
+   "solucion": "Múltiplos de 2: 24, 56, 90, 234, 400, 4520, 16392, 385500. No coinciden con los divisores de 2 (solo 1 y 2); sí con los divisibles por 2",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "24",
+     "expresion": "24 % 2",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "56",
+     "expresion": "56 % 2",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "90",
+     "expresion": "90 % 2",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "234",
+     "expresion": "234 % 2",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "400",
+     "expresion": "400 % 2",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "4520",
+     "expresion": "4520 % 2",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "16392",
+     "expresion": "16392 % 2",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "385500",
+     "expresion": "385500 % 2",
+     "respuesta": "0"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-005",
+   "tipo": "criterios de divisibilidad",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Di cuáles de los siguientes números son múltiplos de 5. ¿Y de 10? ¿Cuáles coinciden? ¿Por qué? 23, 24, 56, 77, 89, 90, 234, 621, 400, 4520, 3411, 46295, 16392, 385500",
+   "solucion": "Múltiplos de 5: 90, 400, 4520, 46295, 385500. Múltiplos de 10: 90, 400, 4520, 385500. Todos los múltiplos de 10 lo son de 5, pero no al revés (46295 acaba en 5)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "90",
+     "expresion": "90 % 5",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "400",
+     "expresion": "400 % 5",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "4520",
+     "expresion": "4520 % 5",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "46295",
+     "expresion": "46295 % 5",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "385500",
+     "expresion": "385500 % 5",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "90 % 10",
+     "respuesta": "0",
+     "apartado": "90 (10)"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "400 % 10",
+     "respuesta": "0",
+     "apartado": "400 (10)"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "4520 % 10",
+     "respuesta": "0",
+     "apartado": "4520 (10)"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "385500 % 10",
+     "respuesta": "0",
+     "apartado": "385500 (10)"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ejercicios y problemas, ej. 22",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-006",
+   "tipo": "criterios de divisibilidad",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Sustituye A por un valor apropiado para que: a) 24A75 sea múltiplo de 3.   b) 1107A sea múltiplo de 6.   c) 5A439 sea múltiplo de 11.",
+   "solucion": "a) A = 0, 3, 6 o 9   b) A = 0 o A = 6 (la fuente solo da 6, pero 11070 también es múltiplo de 6)   c) A = 4",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "24075 % 3",
+     "respuesta": "0",
+     "apartado": "a A=0"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "24375 % 3",
+     "respuesta": "0",
+     "apartado": "a A=3"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "24675 % 3",
+     "respuesta": "0",
+     "apartado": "a A=6"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "24975 % 3",
+     "respuesta": "0",
+     "apartado": "a A=9"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "11070 % 6",
+     "respuesta": "0",
+     "apartado": "b A=0"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "11076 % 6",
+     "respuesta": "0",
+     "apartado": "b A=6"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "54439 % 11",
+     "respuesta": "0",
+     "apartado": "c A=4"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 17 (a la solución de la fuente le falta A = 0 en el b)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-007",
+   "tipo": "criterios de divisibilidad",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "¿Todos los números divisibles por 3 lo son por 9? ¿Y al revés? Razona la respuesta.",
+   "solucion": "No: 6 es divisible por 3 pero no por 9. Al revés, sí: 3 es un factor de 9, así que si un número es divisible por 9 lo es por 3",
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 18",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-div-008",
+   "tipo": "criterios de divisibilidad",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "¿Sabrías deducir un criterio de divisibilidad por 15? Pon un ejemplo.",
+   "solucion": "Un número es múltiplo de 15 si lo es de 3 y de 5: si acaba en 0 o en 5 y la suma de sus cifras es múltiplo de 3. Por ejemplo, 345",
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 19",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-div-009",
+   "tipo": "criterios de divisibilidad",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Escribe verdadero o falso: 2567 es divisible por 2; 498650 es divisible por 5; 98370034 es divisible por 3; 78337650 es divisible por 6; 984486728 es divisible por 4; 23009845 es divisible por 11.",
+   "solucion": "Falso, verdadero, falso, verdadero, verdadero, falso",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "498650 % 5",
+     "respuesta": "0",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "78337650 % 6",
+     "respuesta": "0",
+     "apartado": "d"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "984486728 % 4",
+     "respuesta": "0",
+     "apartado": "e"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 20 (adaptado: la tabla, en texto)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-010",
+   "tipo": "criterios de divisibilidad",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Escribe verdadero o falso: 327 es divisible por 11; 494530 es divisible por 4; 39470034 es divisible por 6; 7855650 es divisible por 3; 985555328 es divisible por 2; 20000045 es divisible por 10.",
+   "solucion": "Falso, falso, verdadero, verdadero, verdadero, falso",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "39470034 % 6",
+     "respuesta": "0",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "7855650 % 3",
+     "respuesta": "0",
+     "apartado": "d"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "985555328 % 2",
+     "respuesta": "0",
+     "apartado": "e"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ejercicios y problemas, ej. 24 (adaptado: la tabla, en texto)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-011",
+   "tipo": "criterios de divisibilidad",
+   "dificultad": 3,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Sustituye x e y por valores apropiados para que el número 256x81y sea divisible por 9 y por 10 a la vez.",
+   "solucion": "y = 0 (para ser divisible por 10) y x = 5 (2 + 5 + 6 + x + 8 + 1 = 22 + x tiene que ser múltiplo de 9): 2565810",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2565810 % 90",
+     "respuesta": "0"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 23",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-012",
+   "tipo": "criterios de divisibilidad",
+   "dificultad": 3,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Sustituye x e y por valores apropiados para que el número 256x81y sea divisible por 2 y por 11 a la vez.",
+   "solucion": "2561812, 2563814, 2565816, 2567818",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2561812 % 22",
+     "respuesta": "0",
+     "apartado": "2561812"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2563814 % 22",
+     "respuesta": "0",
+     "apartado": "2563814"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2565816 % 22",
+     "respuesta": "0",
+     "apartado": "2565816"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2567818 % 22",
+     "respuesta": "0",
+     "apartado": "2567818"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ejercicios y problemas, ej. 28",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-013",
+   "tipo": "criterios de divisibilidad",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "¿Qué único número con tres cifras iguales es divisible por 2 y por 9 a la vez?",
+   "solucion": "666",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "666 % 18",
+     "respuesta": "0"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 24",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-014",
+   "tipo": "divisores",
+   "dificultad": 1,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Calcula todos los divisores de los siguientes números: a) 65   b) 33   c) 60   d) 75   e) 100   f) 150",
+   "solucion": "a) 1, 5, 13, 65   b) 1, 3, 11, 33   c) 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60   d) 1, 3, 5, 15, 25, 75   e) 1, 2, 4, 5, 10, 20, 25, 50, 100   f) 1, 2, 3, 5, 6, 10, 15, 25, 30, 50, 75, 150",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "divisor_count(65)",
+     "respuesta": "4",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "divisor_count(33)",
+     "respuesta": "4",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "divisor_count(60)",
+     "respuesta": "12",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "divisor_count(75)",
+     "respuesta": "6",
+     "apartado": "d"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "divisor_count(100)",
+     "respuesta": "9",
+     "apartado": "e"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "divisor_count(150)",
+     "respuesta": "12",
+     "apartado": "f"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 25",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-015",
+   "tipo": "número de divisores",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "La descomposición en factores primos de 15000 es $2^{3} \\cdot 3 \\cdot 5^{4}$. ¿Cuántos divisores tiene? (Se aumenta en uno cada exponente y se multiplican.)",
+   "solucion": "Exponentes 3, 1 y 4: $4 \\cdot 2 \\cdot 5 = 40$ divisores",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2^3*3*5^4",
+     "respuesta": "15000",
+     "apartado": "factorización"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "divisor_count(15000)",
+     "respuesta": "40",
+     "apartado": "divisores"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 2, para practicar, ej. 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-016",
+   "tipo": "número de divisores",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "¿Cuántos divisores tiene el número 810?",
+   "solucion": "$810 = 2 \\cdot 3^{4} \\cdot 5$: $2 \\cdot 5 \\cdot 2 = 20$ divisores",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2*3^4*5",
+     "respuesta": "810",
+     "apartado": "factorización"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "divisor_count(810)",
+     "respuesta": "20",
+     "apartado": "divisores"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 2, para practicar, ej. 6",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-017",
+   "tipo": "divisores",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Halla los divisores de 6728. ($6728 = 2^{3} \\cdot 29^{2}$; calcula primero el número de divisores, resultará más fácil.)",
+   "solucion": "$4 \\cdot 3 = 12$ divisores: 1, 2, 4, 8, 29, 58, 116, 232, 841, 1682, 3364, 6728. (La fuente da bien el número, 12, pero la lista que escribe es la de 22707 = $3^{3} \\cdot 29^{2}$: está mal.)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2^3*29^2",
+     "respuesta": "6728",
+     "apartado": "factorización"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "divisor_count(6728)",
+     "respuesta": "12",
+     "apartado": "divisores"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 2, para practicar, ej. 7 (la lista de divisores de la fuente está mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-018",
+   "tipo": "números primos",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Decide razonadamente si 247 es primo o no. (Los posibles primos que pueden dividir a 247 son los menores que $\\sqrt{247}$: 2, 3, 5, 7, 11, 13.) ¿Y 131?",
+   "solucion": "247 = 13 · 19: es compuesto. 131 no es divisible por 2, 3, 5, 7 ni 11: es primo",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "247 % 13",
+     "respuesta": "0",
+     "apartado": "247"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "divisor_count(131)",
+     "respuesta": "2",
+     "apartado": "131"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 2, para practicar, ej. 9 y 10",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-019",
+   "tipo": "números primos",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "¿Te atreverías a repetir la criba de Eratóstenes, pero hasta el 150?",
+   "solucion": "2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149",
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 28",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-div-020",
+   "tipo": "factorización",
+   "dificultad": 1,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Descompón en factores primos los siguientes números: a) 40   b) 56   c) 75   d) 90   e) 110   f) 124   g) 290   h) 366",
+   "solucion": "a) $2^{3} \\cdot 5$   b) $2^{3} \\cdot 7$   c) $3 \\cdot 5^{2}$   d) $2 \\cdot 3^{2} \\cdot 5$   e) $2 \\cdot 5 \\cdot 11$   f) $2^{2} \\cdot 31$   g) $2 \\cdot 5 \\cdot 29$   h) $2 \\cdot 3 \\cdot 61$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2^3*5",
+     "respuesta": "40",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2^3*7",
+     "respuesta": "56",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5^2*3",
+     "respuesta": "75",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2*3^2*5",
+     "respuesta": "90",
+     "apartado": "d"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2*5*11",
+     "respuesta": "110",
+     "apartado": "e"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2^2*31",
+     "respuesta": "124",
+     "apartado": "f"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2*5*29",
+     "respuesta": "290",
+     "apartado": "g"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2*3*61",
+     "respuesta": "366",
+     "apartado": "h"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 30 y 31",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-021",
+   "tipo": "factorización",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Descompón en factores primos los siguientes números: a) 1290   b) 3855   c) 4520   d) 5342   e) 1530   f) 2457   g) 7440",
+   "solucion": "a) $2 \\cdot 3 \\cdot 5 \\cdot 43$   b) $3 \\cdot 5 \\cdot 257$   c) $2^{3} \\cdot 5 \\cdot 113$   d) $2 \\cdot 2671$   e) $2 \\cdot 3^{2} \\cdot 5 \\cdot 17$   f) $3^{3} \\cdot 7 \\cdot 13$   g) $2^{4} \\cdot 3 \\cdot 5 \\cdot 31$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2*3*5*43",
+     "respuesta": "1290",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3*5*257",
+     "respuesta": "3855",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2^3*5*113",
+     "respuesta": "4520",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2*2671",
+     "respuesta": "5342",
+     "apartado": "d"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2*3^2*5*17",
+     "respuesta": "1530",
+     "apartado": "e"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3^3*7*13",
+     "respuesta": "2457",
+     "apartado": "f"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2^4*3*5*31",
+     "respuesta": "7440",
+     "apartado": "g"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 32 y ejercicios y problemas, ej. 31",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-022",
+   "tipo": "factorización",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Averigua cuáles son los números cuyas descomposiciones factoriales son: a) $x = 2^{3} \\cdot 3^{2} \\cdot 7$   b) $y = 5^{2} \\cdot 2^{2} \\cdot 11$   c) $z = 2 \\cdot 5^{2} \\cdot 7$",
+   "solucion": "a) 504   b) 1100   c) 350",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2^3*3^2*7",
+     "respuesta": "504",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5^2*2^2*11",
+     "respuesta": "1100",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2*5^2*7",
+     "respuesta": "350",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ejercicios y problemas, ej. 33",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-023",
+   "tipo": "M.C.D.",
+   "dificultad": 1,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Calcula el M.C.D. de: a) 60 y 45   b) 120 y 55   c) 34 y 66   d) 320 y 80   e) 30, 12 y 22   f) 66, 45 y 10   g) 75, 15 y 20   h) 82, 44 y 16",
+   "solucion": "a) 15   b) 5   c) 2   d) 80   e) 2   f) 1 (la fuente da 3, pero 10 no es múltiplo de 3)   g) 5   h) 2",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "gcd(60,45)",
+     "respuesta": "15",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(120,55)",
+     "respuesta": "5",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(34,66)",
+     "respuesta": "2",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(320,80)",
+     "respuesta": "80",
+     "apartado": "d"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(30,12),22)",
+     "respuesta": "2",
+     "apartado": "e"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(66,45),10)",
+     "respuesta": "1",
+     "apartado": "f"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(75,15),20)",
+     "respuesta": "5",
+     "apartado": "g"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(82,44),16)",
+     "respuesta": "2",
+     "apartado": "h"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 35 y 36 (la fuente da 3 en el f: está mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-024",
+   "tipo": "m.c.m.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Calcula el m.c.m. de: a) 60 y 45   b) 120 y 55   c) 34 y 66   d) 320 y 80   e) 30, 12 y 22   f) 66, 45 y 10   g) 75, 15 y 20   h) 82, 44 y 16",
+   "solucion": "a) $2^{2} \\cdot 3^{2} \\cdot 5 = 180$   b) $2^{3} \\cdot 3 \\cdot 5 \\cdot 11 = 1320$   c) $2 \\cdot 3 \\cdot 11 \\cdot 17 = 1122$   d) $2^{6} \\cdot 5 = 320$   e) $2^{2} \\cdot 3 \\cdot 5 \\cdot 11 = 660$   f) $2 \\cdot 3^{2} \\cdot 5 \\cdot 11 = 990$   g) $2^{2} \\cdot 3 \\cdot 5^{2} = 300$   h) $2^{4} \\cdot 11 \\cdot 41 = 7216$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "lcm(60,45)",
+     "respuesta": "2^2*3^2*5",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(120,55)",
+     "respuesta": "2^3*3*5*11",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(34,66)",
+     "respuesta": "2*3*11*17",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(320,80)",
+     "respuesta": "2^6*5",
+     "apartado": "d"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(30,12),22)",
+     "respuesta": "2^2*3*5*11",
+     "apartado": "e"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(66,45),10)",
+     "respuesta": "2*3^2*5*11",
+     "apartado": "f"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(75,15),20)",
+     "respuesta": "2^2*3*5^2",
+     "apartado": "g"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(82,44),16)",
+     "respuesta": "2^4*11*41",
+     "apartado": "h"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 37 y 38",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-025",
+   "tipo": "m.c.m. y M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Calcula el m.c.m. y el M.C.D. de los siguientes números: a) 24, 60 y 80   b) 60, 84 y 132   c) 270, 315 y 360   d) 240, 270 y 36",
+   "solucion": "a) m.c.m. $2^{4} \\cdot 3 \\cdot 5 = 240$; M.C.D. 4   b) m.c.m. 4620; M.C.D. 12   c) m.c.m. 7560; M.C.D. 45   d) m.c.m. 2160; M.C.D. 6",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(24,60),80)",
+     "respuesta": "240",
+     "apartado": "a m.c.m."
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(24,60),80)",
+     "respuesta": "4",
+     "apartado": "a M.C.D."
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(60,84),132)",
+     "respuesta": "4620",
+     "apartado": "b m.c.m."
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(60,84),132)",
+     "respuesta": "12",
+     "apartado": "b M.C.D."
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(270,315),360)",
+     "respuesta": "7560",
+     "apartado": "c m.c.m."
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(270,315),360)",
+     "respuesta": "45",
+     "apartado": "c M.C.D."
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(240,270),36)",
+     "respuesta": "2160",
+     "apartado": "d m.c.m."
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(240,270),36)",
+     "respuesta": "6",
+     "apartado": "d M.C.D."
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ejercicios y problemas, ej. 36",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-026",
+   "tipo": "m.c.m. y M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Halla el mínimo común múltiplo de: a) 72, 60   b) 150, 90   c) 9, 24, 6   d) 36, 15, 4. Halla el máximo común divisor de: e) 72, 24   f) 56, 81   g) 84, 108, 36   h) 54, 60, 18. (Es conveniente que primero hagas la descomposición factorial de esos números.)",
+   "solucion": "a) 360   b) 450   c) 72   d) 180   e) 24   f) 1 (primos entre sí)   g) 12   h) 6",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "lcm(72,60)",
+     "respuesta": "360",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(150,90)",
+     "respuesta": "450",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(9,24),6)",
+     "respuesta": "72",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(36,15),4)",
+     "respuesta": "180",
+     "apartado": "d"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(72,24)",
+     "respuesta": "24",
+     "apartado": "e"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(56,81)",
+     "respuesta": "1",
+     "apartado": "f"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(84,108),36)",
+     "respuesta": "12",
+     "apartado": "g"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(54,60),18)",
+     "respuesta": "6",
+     "apartado": "h"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 2, para practicar, ej. 11 y 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-027",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "María y Paula tienen 25 cuentas blancas, 15 cuentas azules y 90 cuentas rojas. Quieren hacer el mayor número de collares iguales sin que sobre ninguna cuenta. a) ¿Cuántos collares iguales pueden hacer? b) ¿Qué número de cuentas de cada color tendrá cada collar?",
+   "solucion": "a) M.C.D.(25, 15, 90) = 5 collares.   b) 26 cuentas en cada collar: 5 blancas, 3 azules y 18 rojas",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(25,15),90)",
+     "respuesta": "5",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "(25+15+90)/5",
+     "respuesta": "26",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 39",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-028",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Un autobús pasa por una parada cada 18 minutos, otro cada 25 minutos y un tercer autobús cada 36 minutos. Si a las 9 de la mañana han pasado en ese lugar los tres autobuses a la vez, ¿a qué hora vuelven a coincidir?",
+   "solucion": "m.c.m.(18, 25, 36) = 900 minutos = 15 horas: vuelven a coincidir a las 24:00, es decir, a las 12 de la noche",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(18,25),36)",
+     "respuesta": "900"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 40",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-029",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 1,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Se compran en una floristería 24 rosas y 36 claveles. ¿Cuántos centros de mesa se pueden elaborar si se coloca la máxima cantidad de flores sin que sobre ninguna? ¿Cuántas rosas y claveles se colocan en cada centro de mesa?",
+   "solucion": "M.C.D.(24, 36) = 12 centros de mesa, con 2 rosas y 3 claveles cada uno",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "gcd(24,36)",
+     "respuesta": "12",
+     "apartado": "centros"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "24/12",
+     "respuesta": "2",
+     "apartado": "rosas"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "36/12",
+     "respuesta": "3",
+     "apartado": "claveles"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 41",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-030",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Raúl tiene varios avisos en su móvil: uno que da una señal cada 60 minutos, otro que da una señal cada 150 minutos y un tercero que da una señal cada 360 minutos. Si a las 10 de la mañana las 3 señales de aviso han coincidido: a) ¿Cuántas horas como mínimo han de pasar para que vuelvan a coincidir? b) ¿A qué hora volverán a dar la señal otra vez juntos?",
+   "solucion": "a) m.c.m.(60, 150, 360) = 1800 minutos = 30 horas.   b) 30 horas = 1 día y 6 horas: al día siguiente a las 16 horas",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(60,150),360)/60",
+     "respuesta": "30",
+     "apartado": "a"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 42",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-031",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "¿Cuál será la menor cantidad de caramelos que se puede repartir en partes iguales entre grupos de 20, 30 o 60 niños? Determina en cada caso cuántos caramelos les toca a cada niño.",
+   "solucion": "m.c.m.(20, 30, 60) = 60 caramelos: a cada niño le tocan 3, 2 o 1",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "lcm(lcm(20,30),60)",
+     "respuesta": "60",
+     "apartado": "caramelos"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ej. 43",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-032",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "María y Jorge tienen 30 bolas blancas, 27 azules y 42 rojas y quieren hacer el mayor número posible de hileras iguales. ¿Cuántas hileras pueden hacer?",
+   "solucion": "M.C.D.(30, 27, 42) = 3 hileras",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "gcd(gcd(30,27),42)",
+     "respuesta": "3"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 2, para practicar, ej. 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-033",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 2,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Un ebanista quiere cortar una plancha de 10 dm de largo y 6 de ancho, en cuadrados lo más grandes posibles y cuyo lado sea un número entero de decímetros. ¿Cuál debe ser la longitud del lado?",
+   "solucion": "M.C.D.(10, 6) = 2 dm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "gcd(10,6)",
+     "respuesta": "2"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 2, para practicar, ej. 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-div-034",
+   "tipo": "problema de m.c.m. o M.C.D.",
+   "dificultad": 3,
+   "saberes": [
+    "A.4"
+   ],
+   "enunciado": "Pedro tiene una forma muy peculiar de dar el teléfono a sus amigos: les dice que consta de nueve cifras, que no se repite ninguna y que, leyéndolo de izquierda a derecha, se cumple: la primera cifra es un múltiplo de 3 mayor que 6; las dos primeras cifras forman un múltiplo de 2 y de 5; las tres primeras cifras forman un número par múltiplo de 3; las cuatro primeras cifras forman un número que es múltiplo de 5 pero no de 2; las cinco primeras cifras forman un número múltiplo de 2 y de 3; las seis primeras cifras forman un número múltiplo de 11; la séptima cifra es un múltiplo de 7; las ocho primeras cifras forman un número impar; las cuatro últimas cifras forman un múltiplo de 11. ¿Sabrías averiguar cuál es su teléfono?",
+   "solucion": "906 543 718",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "90 % 10",
+     "respuesta": "0",
+     "apartado": "2 primeras"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "906 % 6",
+     "respuesta": "0",
+     "apartado": "3 primeras"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "90654 % 6",
+     "respuesta": "0",
+     "apartado": "5 primeras"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "906543 % 11",
+     "respuesta": "0",
+     "apartado": "6 primeras"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3718 % 11",
+     "respuesta": "0",
+     "apartado": "4 últimas"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 2, ejercicios y problemas, ej. 26",
+   "verificacion": "comprobada"
+  }
+ ]
+}

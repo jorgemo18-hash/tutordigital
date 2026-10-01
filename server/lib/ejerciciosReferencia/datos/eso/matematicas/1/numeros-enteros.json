@@ -1,0 +1,1271 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 1,
+ "tema": "numeros-enteros",
+ "titulo": "Números enteros",
+ "saberes": [
+  "A.2",
+  "A.3",
+  "A.6",
+  "D.2"
+ ],
+ "fuentes": {
+  "mv1": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 1.º ESO (LOMLOE): libro y «Soluciones de ejercicios y problemas»",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/1ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "edad1": {
+   "nombre": "Proyecto ED@D (CIDEAD, Ministerio de Educación): Matemáticas 1.º ESO, «Para practicar»",
+   "url": "http://recursostic.educacion.es/secundaria/edad/1esomatematicas/",
+   "licencia": "CC BY-NC-SA 3.0 ES"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m1-ent-001",
+   "tipo": "situaciones con enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Escribe el número que mejor representa la situación que se plantea: a) Un avión vuela a 1 292 m de altura.   b) El lunes el termómetro marcaba 6 °C bajo cero.   c) El coche estaba en el sótano 2.   d) Sócrates nació en el año 470 antes de Cristo.",
+   "solucion": "a) +1292   b) −6   c) −2   d) −470",
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 1",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-ent-002",
+   "tipo": "situaciones con enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Indica el significado de los números −5, 0 y +3 en cada una de las situaciones siguientes: a) En un ascensor   b) En un termómetro   c) En una cuenta",
+   "solucion": "Ascensor: sótano 5, planta baja, tercera planta. Termómetro: 5 grados bajo cero, cero grados, 3 grados. Cuenta: debo 5 €, no tengo nada, tengo 3 €",
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 3",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-ent-003",
+   "tipo": "valor absoluto y opuesto",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Calcula:\n\na) $|+9|$   b) $|-11|$   c) $|0|$   d) $|-6|$   e) $\\mathrm{Op}(+6)$   f) $\\mathrm{Op}(-4)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "abs(9)",
+     "enunciado": "|+9|",
+     "respuesta": "9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "abs(-11)",
+     "enunciado": "|-11|",
+     "respuesta": "11"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "abs(0)",
+     "enunciado": "|0|",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "abs(-6)",
+     "enunciado": "|-6|",
+     "respuesta": "6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "-(6)",
+     "enunciado": "\\mathrm{Op}(+6)",
+     "respuesta": "-6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "-(-4)",
+     "enunciado": "\\mathrm{Op}(-4)",
+     "respuesta": "4"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 4 y 5",
+   "verificacion": "comprobada",
+   "solucion": "a) $9$; b) $11$; c) $0$; d) $6$; e) $-6$; f) $4$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-ent-004",
+   "tipo": "ordenar en la recta numérica",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Representa en una recta numérica los siguientes números y ordénalos de menor a mayor: −7, 3, 1, −4, 6, −5, −2 y 0.",
+   "solucion": "$-7 < -5 < -4 < -2 < 0 < 1 < 3 < 6$",
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 7",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-ent-005",
+   "tipo": "comparar enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Completa con el signo < (menor) o > (mayor) según corresponda: a) −11 □ −6   b) −8 □ +4   c) +2 □ +10   d) +3 □ −9   e) −2 □ |−6|. Ordena de menor a mayor: f) +12, −4, −15, +13   g) +3, −25, −9, −6",
+   "solucion": "a) $-11 < -6$   b) $-8 < +4$   c) $+2 < +10$   d) $+3 > -9$   e) $-2 < |-6|$   f) $-15 < -4 < +12 < +13$   g) $-25 < -9 < -6 < +3$",
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 8 y 9",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-ent-006",
+   "tipo": "ordenar en la recta numérica",
+   "dificultad": 2,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Representa gráficamente y ordena en sentido creciente, calcula los opuestos y los valores absolutos de los siguientes números enteros: 9, −5, −6, 4, −3, 5, −6, 0, 8",
+   "solucion": "$-6 = -6 < -5 < -3 < 0 < 4 < 5 < 8 < 9$. Opuestos: −9, 5, 6, −4, 3, −5, 6, 0, −8. Valores absolutos: 9, 5, 6, 4, 3, 5, 6, 0, 8",
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 10",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-ent-007",
+   "tipo": "sumas de enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Halla el resultado de las siguientes sumas:\n\na) $(+12)+(+5)+(-4)$   b) $(-8)+(-2)+(-10)$   c) $(-15)+(-4)+(+9)$   d) $(-3)+(+11)$   e) $(-14)+(-7)+(-11)$   f) $(-7)+(-2)+(+6)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(+12)+(+5)+(-4)",
+     "enunciado": "(+12)+(+5)+(-4)",
+     "respuesta": "13"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(-8)+(-2)+(-10)",
+     "enunciado": "(-8)+(-2)+(-10)",
+     "respuesta": "-20"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-15)+(-4)+(+9)",
+     "enunciado": "(-15)+(-4)+(+9)",
+     "respuesta": "-10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(-3)+(+11)",
+     "enunciado": "(-3)+(+11)",
+     "respuesta": "8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(-14)+(-7)+(-11)",
+     "enunciado": "(-14)+(-7)+(-11)",
+     "respuesta": "-32"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(-7)+(-2)+(+6)",
+     "enunciado": "(-7)+(-2)+(+6)",
+     "respuesta": "-3"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 12 y 13",
+   "verificacion": "comprobada",
+   "solucion": "a) $13$; b) $-20$; c) $-10$; d) $8$; e) $-32$; f) $-3$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-ent-008",
+   "tipo": "sumas y restas de enteros",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Realiza en tu cuaderno las siguientes sumas y diferencias de números enteros:\n\na) $+(+4)+(-6)$   b) $-(+5)-(+7)$   c) $-(-6)+(+8)$   d) $-(+4)+(+2)-(-5)$   e) $-(+3)-(+2)-(+7)$   f) $-(+3)+(-2)+(-5)-(-6)$   g) $-(+2)-(+4)-(-5)-(-6)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "+(+4)+(-6)",
+     "enunciado": "+(+4)+(-6)",
+     "respuesta": "-2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "-(+5)-(+7)",
+     "enunciado": "-(+5)-(+7)",
+     "respuesta": "-12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "-(-6)+(+8)",
+     "enunciado": "-(-6)+(+8)",
+     "respuesta": "14"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "-(+4)+(+2)-(-5)",
+     "enunciado": "-(+4)+(+2)-(-5)",
+     "respuesta": "3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "-(+3)-(+2)-(+7)",
+     "enunciado": "-(+3)-(+2)-(+7)",
+     "respuesta": "-12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "-(+3)+(-2)+(-5)-(-6)",
+     "enunciado": "-(+3)+(-2)+(-5)-(-6)",
+     "respuesta": "-4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "-(+2)-(+4)-(-5)-(-6)",
+     "enunciado": "-(+2)-(+4)-(-5)-(-6)",
+     "respuesta": "5"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 23",
+   "verificacion": "comprobada",
+   "solucion": "a) $-2$; b) $-12$; c) $14$; d) $3$; e) $-12$; f) $-4$; g) $5$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-ent-009",
+   "tipo": "sumas y restas de enteros",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula en tu cuaderno:\n\na) $(+7)-(-5)-(+2)+(-6)$   b) $-(-9)-(+7)+(-8)+(+6)$   c) $+(-1)-(+15)-(-13)+(+7)$   d) $-(+2)+(-5)-(-17)-(+8)-(+4)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(+7)-(-5)-(+2)+(-6)",
+     "enunciado": "(+7)-(-5)-(+2)+(-6)",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "-(-9)-(+7)+(-8)+(+6)",
+     "enunciado": "-(-9)-(+7)+(-8)+(+6)",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "+(-1)-(+15)-(-13)+(+7)",
+     "enunciado": "+(-1)-(+15)-(-13)+(+7)",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "-(+2)+(-5)-(-17)-(+8)-(+4)",
+     "enunciado": "-(+2)+(-5)-(-17)-(+8)-(+4)",
+     "respuesta": "-2"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 1 (la fuente da −6 en el d: está mal)",
+   "solucion": "a) +4   b) 0   c) 4   d) −2 (la fuente da −6: está mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-010",
+   "tipo": "sumas y restas de enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Halla y escribe el resultado en tu cuaderno:\n\na) $6-9-5+4-7+1$   b) $11-12+8-14+16-7$   c) $1-3-8-12+4+19-2$   d) $-8-16+9+2-8-7+12$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "6-9-5+4-7+1",
+     "enunciado": "6-9-5+4-7+1",
+     "respuesta": "-10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "11-12+8-14+16-7",
+     "enunciado": "11-12+8-14+16-7",
+     "respuesta": "2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "1-3-8-12+4+19-2",
+     "enunciado": "1-3-8-12+4+19-2",
+     "respuesta": "-1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "-8-16+9+2-8-7+12",
+     "enunciado": "-8-16+9+2-8-7+12",
+     "respuesta": "-16"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 4",
+   "verificacion": "comprobada",
+   "solucion": "a) $-10$; b) $2$; c) $-1$; d) $-16$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-ent-011",
+   "tipo": "sumas y restas de enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula las siguientes sumas de números enteros:\n\na) $(+2)-(-9)-(-8)-(-8)$   b) $(+4)+(-7)-(+2)+(+1)$   c) $(+2)-(+8)+(-5)-(-3)-(+1)$   d) $(-1)+(-1)+(-5)-(+7)+(-7)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(+2)-(-9)-(-8)-(-8)",
+     "enunciado": "(+2)-(-9)-(-8)-(-8)",
+     "respuesta": "27"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(+4)+(-7)-(+2)+(+1)",
+     "enunciado": "(+4)+(-7)-(+2)+(+1)",
+     "respuesta": "-4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(+2)-(+8)+(-5)-(-3)-(+1)",
+     "enunciado": "(+2)-(+8)+(-5)-(-3)-(+1)",
+     "respuesta": "-9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(-1)+(-1)+(-5)-(+7)+(-7)",
+     "enunciado": "(-1)+(-1)+(-5)-(+7)+(-7)",
+     "respuesta": "-21"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 3, para practicar, ej. 2",
+   "verificacion": "comprobada",
+   "solucion": "a) $27$; b) $-4$; c) $-9$; d) $-21$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-ent-012",
+   "tipo": "regla de los signos",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Efectúa en tu cuaderno aplicando la regla de los signos:\n\na) $(-6) \\cdot (-7)$   b) $(-24) : (+4)$   c) $(-5) \\cdot (+8)$   d) $(+49) : (-7)$   e) $(-7) \\cdot (-9)$   f) $(+48) : (+6)$   g) $(+11) \\cdot (+6)$   h) $(-60) : (-10)$   i) $(-12) \\cdot (-6)$   j) $(+75) : (-15)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(-6)*(-7)",
+     "enunciado": "(-6) \\cdot (-7)",
+     "respuesta": "42"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(-24)/(+4)",
+     "enunciado": "(-24) : (+4)",
+     "respuesta": "-6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-5)*(+8)",
+     "enunciado": "(-5) \\cdot (+8)",
+     "respuesta": "-40"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(+49)/(-7)",
+     "enunciado": "(+49) : (-7)",
+     "respuesta": "-7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(-7)*(-9)",
+     "enunciado": "(-7) \\cdot (-9)",
+     "respuesta": "63"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(+48)/(+6)",
+     "enunciado": "(+48) : (+6)",
+     "respuesta": "8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "(+11)*(+6)",
+     "enunciado": "(+11) \\cdot (+6)",
+     "respuesta": "66"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "(-60)/(-10)",
+     "enunciado": "(-60) : (-10)",
+     "respuesta": "6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "i",
+     "expresion": "(-12)*(-6)",
+     "enunciado": "(-12) \\cdot (-6)",
+     "respuesta": "72"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "j",
+     "expresion": "(+75)/(-15)",
+     "enunciado": "(+75) : (-15)",
+     "respuesta": "-5"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 3",
+   "verificacion": "comprobada",
+   "solucion": "a) $42$; b) $-6$; c) $-40$; d) $-7$; e) $63$; f) $8$; g) $66$; h) $6$; i) $72$; j) $-5$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-ent-013",
+   "tipo": "jerarquía de las operaciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Utiliza la jerarquía de operaciones para calcular en tu cuaderno:\n\na) $4 \\cdot (10-12)$   b) $-6 \\cdot (5-1)$   c) $6 \\cdot (1-5)-10$   d) $10+5 \\cdot (8-12)$   e) $7 \\cdot (9-2)-4 \\cdot (6-12)$   f) $5 \\cdot (12-9)+4 \\cdot (2-17)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "4*(10-12)",
+     "enunciado": "4 \\cdot (10-12)",
+     "respuesta": "-8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "-6*(5-1)",
+     "enunciado": "-6 \\cdot (5-1)",
+     "respuesta": "-24"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "6*(1-5)-10",
+     "enunciado": "6 \\cdot (1-5)-10",
+     "respuesta": "-34"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "10+5*(8-12)",
+     "enunciado": "10+5 \\cdot (8-12)",
+     "respuesta": "-10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "7*(9-2)-4*(6-12)",
+     "enunciado": "7 \\cdot (9-2)-4 \\cdot (6-12)",
+     "respuesta": "73"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "5*(12-9)+4*(2-17)",
+     "enunciado": "5 \\cdot (12-9)+4 \\cdot (2-17)",
+     "respuesta": "-45"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 5",
+   "verificacion": "comprobada",
+   "solucion": "a) $-8$; b) $-24$; c) $-34$; d) $-10$; e) $73$; f) $-45$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-ent-014",
+   "tipo": "jerarquía de las operaciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Utiliza la jerarquía de operaciones para calcular en tu cuaderno:\n\na) $7-5 \\cdot 4$   b) $3 \\cdot 8-6$   c) $5 \\cdot 6-7 \\cdot 4$   d) $3 \\cdot 9-5 \\cdot 4$   e) $25-5 \\cdot 8+2 \\cdot 6-33$   f) $6 \\cdot 7-40-4 \\cdot 8+57$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "7-5*4",
+     "enunciado": "7-5 \\cdot 4",
+     "respuesta": "-13"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "3*8-6",
+     "enunciado": "3 \\cdot 8-6",
+     "respuesta": "18"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "5*6-7*4",
+     "enunciado": "5 \\cdot 6-7 \\cdot 4",
+     "respuesta": "2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "3*9-5*4",
+     "enunciado": "3 \\cdot 9-5 \\cdot 4",
+     "respuesta": "7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "25-5*8+2*6-33",
+     "enunciado": "25-5 \\cdot 8+2 \\cdot 6-33",
+     "respuesta": "-36"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "6*7-40-4*8+57",
+     "enunciado": "6 \\cdot 7-40-4 \\cdot 8+57",
+     "respuesta": "27"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 7 (la fuente da 36 en el e y 23 en el f: están mal)",
+   "solucion": "a) −13   b) 18   c) 2   d) 7   e) −36   f) 27 (la fuente da 36 y 23 en el e y el f: están mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-015",
+   "tipo": "jerarquía de las operaciones",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Utiliza la jerarquía de operaciones para calcular en tu cuaderno:\n\na) $6 \\cdot (-5)-3 \\cdot (-7)+20$   b) $-8 \\cdot (+5)+(-4) \\cdot 9+50$   c) $(-3) \\cdot (+9)-(-6) \\cdot (-7)+(-2) \\cdot (+5)$   d) $-(-1) \\cdot (+6) \\cdot (-9) \\cdot (+8)-(+5) \\cdot (-7)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "6*(-5)-3*(-7)+20",
+     "enunciado": "6 \\cdot (-5)-3 \\cdot (-7)+20",
+     "respuesta": "11"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "-8*(+5)+(-4)*9+50",
+     "enunciado": "-8 \\cdot (+5)+(-4) \\cdot 9+50",
+     "respuesta": "-26"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-3)*(+9)-(-6)*(-7)+(-2)*(+5)",
+     "enunciado": "(-3) \\cdot (+9)-(-6) \\cdot (-7)+(-2) \\cdot (+5)",
+     "respuesta": "-79"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "-(-1)*(+6)*(-9)*(+8)-(+5)*(-7)",
+     "enunciado": "-(-1) \\cdot (+6) \\cdot (-9) \\cdot (+8)-(+5) \\cdot (-7)",
+     "respuesta": "-397"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 9",
+   "verificacion": "comprobada",
+   "solucion": "a) $11$; b) $-26$; c) $-79$; d) $-397$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-ent-016",
+   "tipo": "jerarquía de las operaciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Realiza las siguientes operaciones:\n\na) $+4-(+5) \\cdot (-3)$   b) $+6+(-9) : (+2-5)$   c) $-3+\\left[-4-(-26) : (+2)\\right]$   d) $+8+(-1) \\cdot (+6)$   e) $-6+(-7) : (+7)$   f) $+28-(-36) : (-9-9)$   g) $+11+(+7) \\cdot (+6-8)$   h) $-7-\\left[+4-(-6) : (+6)\\right]$   i) $+9+\\left[+5+(-8) \\cdot (-1)\\right]$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "+4-(+5)*(-3)",
+     "enunciado": "+4-(+5) \\cdot (-3)",
+     "respuesta": "19"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "+6+(-9)/(+2-5)",
+     "enunciado": "+6+(-9) : (+2-5)",
+     "respuesta": "9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "-3+(-4-(-26)/(+2))",
+     "enunciado": "-3+\\left[-4-(-26) : (+2)\\right]",
+     "respuesta": "6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "+8+(-1)*(+6)",
+     "enunciado": "+8+(-1) \\cdot (+6)",
+     "respuesta": "2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "-6+(-7)/(+7)",
+     "enunciado": "-6+(-7) : (+7)",
+     "respuesta": "-7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "+28-(-36)/(-9-9)",
+     "enunciado": "+28-(-36) : (-9-9)",
+     "respuesta": "26"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "+11+(+7)*(+6-8)",
+     "enunciado": "+11+(+7) \\cdot (+6-8)",
+     "respuesta": "-3"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "-7-(+4-(-6)/(+6))",
+     "enunciado": "-7-\\left[+4-(-6) : (+6)\\right]",
+     "respuesta": "-12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "i",
+     "expresion": "+9+(+5+(-8)*(-1))",
+     "enunciado": "+9+\\left[+5+(-8) \\cdot (-1)\\right]",
+     "respuesta": "22"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 28 y 29 (la fuente da 30 y 25 en el 29 c y d: están mal)",
+   "solucion": "a) 19   b) 9   c) 6   d) 2   e) −7   f) 26   g) −3   h) −12   i) 22 (en f y g la fuente da 30 y 25: están mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-017",
+   "tipo": "jerarquía con corchetes",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Opera respetando la jerarquía de operaciones:\n\na) $-4-(+24) : (+1-9)-(-1-2)$   b) $+7+(-5) : (-7+2)-(+1-6)$   c) $-6-\\left[+7+(+1) \\cdot (-1)\\right]$   d) $+7+\\left[+1-(+10) : (+5)\\right]$   e) $+4+\\left[+2+(+8) \\cdot (-6)-(-7+6)\\right]$   f) $-2-\\left[-6+(-4) : (-2)-(+7-5)\\right]$   g) $+1-\\left[-4+(-10) : (-5)\\right]+\\left[+3+(-9) : (-9)\\right]$   h) $+1-\\left[+3-(-8) \\cdot (+8)\\right]+\\left[+6+(+8) : (+4)\\right]$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "-4-(+24)/(+1-9)-(-1-2)",
+     "enunciado": "-4-(+24) : (+1-9)-(-1-2)",
+     "respuesta": "2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "+7+(-5)/(-7+2)-(+1-6)",
+     "enunciado": "+7+(-5) : (-7+2)-(+1-6)",
+     "respuesta": "13"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "-6-(+7+(+1)*(-1))",
+     "enunciado": "-6-\\left[+7+(+1) \\cdot (-1)\\right]",
+     "respuesta": "-12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "+7+(+1-(+10)/(+5))",
+     "enunciado": "+7+\\left[+1-(+10) : (+5)\\right]",
+     "respuesta": "6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "+4+(+2+(+8)*(-6)-(-7+6))",
+     "enunciado": "+4+\\left[+2+(+8) \\cdot (-6)-(-7+6)\\right]",
+     "respuesta": "-41"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "-2-(-6+(-4)/(-2)-(+7-5))",
+     "enunciado": "-2-\\left[-6+(-4) : (-2)-(+7-5)\\right]",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "+1-(-4+(-10)/(-5))+(+3+(-9)/(-9))",
+     "enunciado": "+1-\\left[-4+(-10) : (-5)\\right]+\\left[+3+(-9) : (-9)\\right]",
+     "respuesta": "7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "+1-(+3-(-8)*(+8))+(+6+(+8)/(+4))",
+     "enunciado": "+1-\\left[+3-(-8) \\cdot (+8)\\right]+\\left[+6+(+8) : (+4)\\right]",
+     "respuesta": "-58"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 3, para practicar, ej. 4 y 5 (la fuente da −62 en el 5 d: está mal)",
+   "solucion": "a) +2   b) +13   c) −12   d) +6   e) −41   f) +4   g) +7   h) −58 (la fuente da −62: está mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-018",
+   "tipo": "con calculadora",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Utiliza la calculadora para realizar las siguientes operaciones:\n\na) $+3+(-2) \\cdot (+7)$   b) $-4+(-11) : (+11)$   c) $+14-(-27) : (-9-9)$   d) $+5+(+2) \\cdot (+9-4)$   e) $-3-\\left[+5-(-7) : (+7)\\right]$   f) $+8+\\left[+3+(-5) \\cdot (-2)\\right]$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "+3+(-2)*(+7)",
+     "enunciado": "+3+(-2) \\cdot (+7)",
+     "respuesta": "-11"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "-4+(-11)/(+11)",
+     "enunciado": "-4+(-11) : (+11)",
+     "respuesta": "-5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "+14-(-27)/(-9-9)",
+     "enunciado": "+14-(-27) : (-9-9)",
+     "respuesta": "12.5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "+5+(+2)*(+9-4)",
+     "enunciado": "+5+(+2) \\cdot (+9-4)",
+     "respuesta": "15"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "-3-(+5-(-7)/(+7))",
+     "enunciado": "-3-\\left[+5-(-7) : (+7)\\right]",
+     "respuesta": "-9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "+8+(+3+(-5)*(-2))",
+     "enunciado": "+8+\\left[+3+(-5) \\cdot (-2)\\right]",
+     "respuesta": "21"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 32",
+   "verificacion": "comprobada",
+   "solucion": "a) $-11$; b) $-5$; c) $12{,}5$; d) $15$; e) $-9$; f) $21$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-ent-019",
+   "tipo": "potencias de enteros",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Efectúa en tu cuaderno y explica qué conclusiones obtienes:\n\na) $(-3)^{4}$   b) $(+3)^{4}$   c) $-3^{4}$   d) $+3^{4}$   e) $(-3)^{3}$   f) $-3^{3}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(-3)^4",
+     "enunciado": "(-3)^{4}",
+     "respuesta": "81"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(+3)^4",
+     "enunciado": "(+3)^{4}",
+     "respuesta": "81"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "-3^4",
+     "enunciado": "-3^{4}",
+     "respuesta": "-81"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "+3^4",
+     "enunciado": "+3^{4}",
+     "respuesta": "81"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(-3)^3",
+     "enunciado": "(-3)^{3}",
+     "respuesta": "-27"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "-3^3",
+     "enunciado": "-3^{3}",
+     "respuesta": "-27"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 8",
+   "solucion": "a) 81   b) 81   c) −81   d) 81   e) −27   f) −27. Una potencia de base negativa es positiva si el exponente es par y negativa si es impar; en $-3^{4}$ el signo no está elevado",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-020",
+   "tipo": "potencias de enteros",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Halla (usa la calculadora en las últimas):\n\na) $(+1)^{2374}$   b) $(-1)^{2375}$   c) $(-3)^{2}$   d) $(-3)^{3}$   e) $(+3)^{16}$   f) $(-2)^{15}$   g) $(-3)^{11}$   h) $(-2)^{20}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(+1)^2374",
+     "enunciado": "(+1)^{2374}",
+     "respuesta": "1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(-1)^2375",
+     "enunciado": "(-1)^{2375}",
+     "respuesta": "-1"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-3)^2",
+     "enunciado": "(-3)^{2}",
+     "respuesta": "9"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(-3)^3",
+     "enunciado": "(-3)^{3}",
+     "respuesta": "-27"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "(+3)^16",
+     "enunciado": "(+3)^{16}",
+     "respuesta": "43046721"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "(-2)^15",
+     "enunciado": "(-2)^{15}",
+     "respuesta": "-32768"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "(-3)^11",
+     "enunciado": "(-3)^{11}",
+     "respuesta": "-177147"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "(-2)^20",
+     "enunciado": "(-2)^{20}",
+     "respuesta": "1048576"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 30 y 33",
+   "verificacion": "comprobada",
+   "solucion": "a) $1$; b) $-1$; c) $9$; d) $-27$; e) $43046721$; f) $-32768$; g) $-177147$; h) $1048576$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-ent-021",
+   "tipo": "problema con enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Un autobús comienza el viaje con 45 pasajeros. En la primera parada se bajan 7 y se suben 12. En la segunda se bajan 10 y se suben 8, y en la tercera se bajan 4. ¿Cuántos pasajeros hay en el autobús?",
+   "solucion": "45 − 7 + 12 − 10 + 8 − 4 = 44 pasajeros",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "45-7+12-10+8-4",
+     "respuesta": "44"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-022",
+   "tipo": "problema con enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Un avión vuela a 4000 m y un submarino está sumergido a 60 m, ¿qué distancia en metros les separa?",
+   "solucion": "4000 − (−60) = 4060 m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4000-(-60)",
+     "respuesta": "4060"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-023",
+   "tipo": "problema con enteros",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Tales de Mileto vivió hacia el año 600 a. C. y Newton durante el siglo XVII, ¿qué diferencia de siglos hay entre ambas fechas? (Ayuda: representa ambas fechas en una recta numérica.)",
+   "solucion": "17 − (−6) = 23 siglos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "17-(-6)",
+     "respuesta": "23"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ej. 10",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-024",
+   "tipo": "problema con enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "En un campo de extracción de petróleo una bomba lo extrae de un pozo a 1528 m de profundidad y lo eleva a un depósito situado a 34 m de altura. ¿Qué nivel ha tenido que superar el petróleo?",
+   "solucion": "34 − (−1528) = 1562 m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "34-(-1528)",
+     "respuesta": "1562"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-025",
+   "tipo": "problema con enteros",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "La temperatura del aire baja según se asciende en la atmósfera, a razón de 9 °C cada 300 metros. ¿A qué altura vuela un avión si la temperatura del aire es de −90 °C, si la temperatura al nivel del mar en ese punto es de 15 °C?",
+   "solucion": "La temperatura baja 15 − (−90) = 105 °C: $\\frac{105}{9} \\cdot 300 = 3500$ m. (La fuente calcula con 75 °C y da 2500 m: está mal.)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(15-(-90))/9*300",
+     "respuesta": "3500"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 12 (la solución de la fuente está mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-026",
+   "tipo": "problema con enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Nieves vive en la planta 8 de un edificio y su plaza de garaje está en el sótano 3. ¿Cuántas plantas separan su vivienda de su plaza de garaje?",
+   "solucion": "8 − (−3) = 11 plantas",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "8-(-3)",
+     "respuesta": "11"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 13",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-027",
+   "tipo": "problema con enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3",
+    "A.6"
+   ],
+   "enunciado": "El saldo de la cartilla de ahorros de Manuel es hoy 289 €, pero le cargan una factura de 412 €. ¿Cuál es el saldo ahora?",
+   "solucion": "289 − 412 = −123 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "289-412",
+     "respuesta": "-123"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 16",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-028",
+   "tipo": "problema con enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Cuando Manuel fue a la sierra, a las 7 de la mañana el termómetro marcaba −7 °C; a la hora de comer el termómetro había subido 9 °C, y a la hora de volver había vuelto a bajar 5 °C. ¿Qué temperatura hacía a esa hora?",
+   "solucion": "−7 + 9 − 5 = −3 °C",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "-7+9-5",
+     "respuesta": "-3"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 17",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-029",
+   "tipo": "problema con enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3",
+    "A.6"
+   ],
+   "enunciado": "Lourdes tenía ayer en su cartilla −169 euros y hoy tiene 56 euros. ¿Ha ingresado o ha gastado dinero? ¿Qué cantidad?",
+   "solucion": "Ha ingresado 56 − (−169) = 225 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "56-(-169)",
+     "respuesta": "225"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 19",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-030",
+   "tipo": "problema con enteros",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "¿Cuál es la diferencia de temperatura que debe soportar una persona que pasa de la cámara de conservación de las frutas, que se encuentra a 4 °C, a la de la carne congelada, que está a −18 °C? ¿Y si pasara de la cámara de la carne a la de la fruta?",
+   "solucion": "22 grados (baja 22 °C); al revés, sube 22 °C",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4-(-18)",
+     "respuesta": "22"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, ejercicios y problemas, ej. 20",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-031",
+   "tipo": "problema con enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Por la mañana un termómetro marcaba 9° bajo cero. La temperatura baja 12 °C a lo largo de la mañana. ¿Qué temperatura marca al mediodía?",
+   "solucion": "−9 − 12 = −21 °C: 21° bajo cero",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "-9-12",
+     "respuesta": "-21"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 3, para practicar, ej. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-032",
+   "tipo": "problema con enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "El ascensor de un edificio está en el sótano 1 y sube 5 pisos hasta que se para. ¿A qué planta ha llegado?",
+   "solucion": "−1 + 5 = 4: a la planta 4",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "-1+5",
+     "respuesta": "4"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 3, para practicar, ej. 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-033",
+   "tipo": "problema con enteros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3",
+    "A.6"
+   ],
+   "enunciado": "Elena tenía ayer en su cartilla −234 euros y hoy tiene 72 euros. Desde ayer, ¿ha ingresado o ha gastado dinero? ¿Qué cantidad?",
+   "solucion": "Ha ingresado 72 − (−234) = 306 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "72-(-234)",
+     "respuesta": "306"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 3, para practicar, ej. 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-ent-034",
+   "tipo": "problema con ecuación",
+   "dificultad": 3,
+   "saberes": [
+    "A.3",
+    "D.2"
+   ],
+   "enunciado": "Pacto con el diablo: una persona protestaba por su mala suerte; solo le quedaban unos euros en el bolsillo. El diablo se le acercó y le propuso: «Yo puedo hacer que tu dinero se duplique cada vez que cruces el puente que atraviesa el río. La única condición es que yo te esperaré al otro lado y debes entregarme 24 €». Cuando cruzó por tercera vez, al dar al diablo los 24 € se quedó sin nada. ¿Cuánto dinero tenía en un principio?",
+   "solucion": "Tenía 21 €: 21 → 42 − 24 = 18 → 36 − 24 = 12 → 24 − 24 = 0",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "2*(2*(2*x-24)-24)-24 = 0",
+     "respuesta": [
+      "21"
+     ]
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 4, curiosidades",
+   "verificacion": "comprobada"
+  }
+ ]
+}

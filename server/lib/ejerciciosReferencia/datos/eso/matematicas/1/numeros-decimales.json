@@ -1,0 +1,1142 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 1,
+ "tema": "numeros-decimales",
+ "titulo": "Números decimales",
+ "saberes": [
+  "A.2",
+  "A.3",
+  "A.4",
+  "A.5",
+  "A.6",
+  "B.1"
+ ],
+ "fuentes": {
+  "mv1": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 1.º ESO (LOMLOE): libro y «Soluciones de ejercicios y problemas»",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/1ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "edad1": {
+   "nombre": "Proyecto ED@D (CIDEAD, Ministerio de Educación): Matemáticas 1.º ESO, «Para practicar»",
+   "url": "http://recursostic.educacion.es/secundaria/edad/1esomatematicas/",
+   "licencia": "CC BY-NC-SA 3.0 ES"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m1-dec-001",
+   "tipo": "decimal a fracción",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "Transforma en fracciones los siguientes números decimales: a) 0,87   b) 0,0701   c) 30,56   d) 17,03   e) 10,050",
+   "solucion": "a) $\\frac{87}{100}$   b) $\\frac{701}{10000}$   c) $\\frac{3056}{100}$   d) $\\frac{1703}{100}$ (la fuente da $\\frac{1703}{10}$: está mal)   e) $\\frac{1005}{100}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "87/100",
+     "respuesta": "0.87"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "701/10000",
+     "respuesta": "0.0701"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "3056/100",
+     "respuesta": "30.56"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "1703/100",
+     "respuesta": "17.03"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "1005/100",
+     "respuesta": "10.05"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ej. 2 (la fuente se equivoca en el d)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-002",
+   "tipo": "decimal a fracción",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "Convierte en fracción los siguientes números decimales: a) 0,124   b) 5,23   c) 49,350   d) 0,013",
+   "solucion": "a) $\\frac{124}{1000} = \\frac{31}{250}$   b) $\\frac{523}{100}$   c) $\\frac{4935}{100} = \\frac{987}{20}$   d) $\\frac{13}{1000}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "31/250",
+     "respuesta": "0.124"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "523/100",
+     "respuesta": "5.23"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "987/20",
+     "respuesta": "49.35"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "13/1000",
+     "respuesta": "0.013"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-003",
+   "tipo": "descomposición decimal",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Completa las siguientes igualdades: a) $38{,}532 = 38 + \\frac{\\square}{10} + \\frac{\\square}{100} + \\frac{\\square}{1000}$   b) $0{,}078 = \\frac{\\square}{10} + \\frac{\\square}{100} + \\frac{\\square}{1000}$   c) $6{,}36 = \\frac{\\square}{100}$",
+   "solucion": "a) $38 + \\frac{5}{10} + \\frac{3}{100} + \\frac{2}{1000}$   b) $\\frac{0}{10} + \\frac{7}{100} + \\frac{8}{1000}$   c) $\\frac{636}{100}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "38+5/10+3/100+2/1000",
+     "respuesta": "38.532"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "0/10+7/100+8/1000",
+     "respuesta": "0.078"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "636/100",
+     "respuesta": "6.36"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 11 a–c",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-004",
+   "tipo": "comparar decimales",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "Señala qué número es el mayor en cada una de las siguientes parejas: a) 0,87 y 0,789   b) 3,58 y 4,1   c) 7,005 y 7,1   d) 32,4 y 27,9. Escribe después dos números decimales que sean, simultáneamente, mayores que 6,147 y menores que 6,2.",
+   "solucion": "a) 0,87   b) 4,1   c) 7,1   d) 32,4. Por ejemplo, 6,178 y 6,1623 (cualquiera entre 6,147 y 6,2)",
+   "fuente": "mv1",
+   "ref": "cap. 6, ej. 4 y 5",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-dec-005",
+   "tipo": "ordenar decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "a) Ordena de menor a mayor los números: 5,67; 5,68; 5,6666; 5,63; 5,5; 5,8; 5,6070.   b) Ordena de mayor a menor los números: 7,45; 6,9999; 7,3456; 7,4378; 7,44444; 7,4501; 7,45012.",
+   "solucion": "a) $5{,}5 < 5{,}607 < 5{,}63 < 5{,}6666 < 5{,}67 < 5{,}68 < 5{,}8$   b) $7{,}45012 > 7{,}4501 > 7{,}45 > 7{,}44444 > 7{,}4378 > 7{,}3456 > 6{,}9999$",
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 3 y 4",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-dec-006",
+   "tipo": "ordenar fracciones y decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "Ordena de menor a mayor los siguientes números: 1/2; 0,45; 0,999; 2/3; 0,75; 5/4; 0,3939; 1/5.",
+   "solucion": "$\\frac{1}{5} < 0{,}3939 < 0{,}45 < \\frac{1}{2} < \\frac{2}{3} < 0{,}75 < 0{,}999 < \\frac{5}{4}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "1/5",
+     "expresion": "1/5",
+     "respuesta": "0.2"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "2/3",
+     "expresion": "2/3",
+     "respuesta": "0.667",
+     "tolerancia": 0.001
+    },
+    {
+     "tipo": "valor",
+     "apartado": "5/4",
+     "expresion": "5/4",
+     "respuesta": "1.25"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 9",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-007",
+   "tipo": "suma y resta de decimales",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Realiza las operaciones:\n\na) $17{,}03 + 5{,}46$   b) $26{,}84 + 15{,}57$   c) $6{,}64 - 5{,}47$   d) $35{,}21 - 23{,}57$   e) $27{,}3 + 5{,}87$   f) $2{,}553 + 6{,}7$   g) $13{,}51 - 4{,}7$   h) $9{,}1 - 8{,}57$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "17.03+5.46",
+     "enunciado": "17{,}03 + 5{,}46",
+     "respuesta": "22.49"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "26.84+15.57",
+     "enunciado": "26{,}84 + 15{,}57",
+     "respuesta": "42.41"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "6.64-5.47",
+     "enunciado": "6{,}64 - 5{,}47",
+     "respuesta": "1.17"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "35.21-23.57",
+     "enunciado": "35{,}21 - 23{,}57",
+     "respuesta": "11.64"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "27.3+5.87",
+     "enunciado": "27{,}3 + 5{,}87",
+     "respuesta": "33.17"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "2.553+6.7",
+     "enunciado": "2{,}553 + 6{,}7",
+     "respuesta": "9.253"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "13.51-4.7",
+     "enunciado": "13{,}51 - 4{,}7",
+     "respuesta": "8.81"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "9.1-8.57",
+     "enunciado": "9{,}1 - 8{,}57",
+     "respuesta": "0.53"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ej. 6 y 7",
+   "verificacion": "comprobada",
+   "solucion": "a) $22{,}49$; b) $42{,}41$; c) $1{,}17$; d) $11{,}64$; e) $33{,}17$; f) $9{,}253$; g) $8{,}81$; h) $0{,}53$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-dec-008",
+   "tipo": "suma y resta de decimales",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Halla:\n\na) $5{,}57 + 32{,}6 + 9{,}115$   b) $46{,}77 - 15{,}6 + 2{,}3$   c) $33{,}2 - 16{,}53 - 12{,}4$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "5.57+32.6+9.115",
+     "enunciado": "5{,}57 + 32{,}6 + 9{,}115",
+     "respuesta": "47.285"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "46.77-15.6+2.3",
+     "enunciado": "46{,}77 - 15{,}6 + 2{,}3",
+     "respuesta": "33.47"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "33.2-16.53-12.4",
+     "enunciado": "33{,}2 - 16{,}53 - 12{,}4",
+     "respuesta": "4.27"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ej. 8 (la fuente da 28,87 en el b: está mal)",
+   "solucion": "a) 47,285   b) 33,47 (la fuente da 28,87, que sería restando 2,3: está mal)   c) 4,27",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-009",
+   "tipo": "suma y resta de decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Efectúa las operaciones:\n\na) $1{,}34 + 51{,}7$   b) $53{,}4 - 3{,}72$   c) $4{,}83 + 9{,}77 - 5{,}9$   d) $1{,}42 - 9{,}77$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "1.34+51.7",
+     "enunciado": "1{,}34 + 51{,}7",
+     "respuesta": "53.04"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "53.4-3.72",
+     "enunciado": "53{,}4 - 3{,}72",
+     "respuesta": "49.68"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "4.83+9.77-5.9",
+     "enunciado": "4{,}83 + 9{,}77 - 5{,}9",
+     "respuesta": "8.7"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "1.42-9.77",
+     "enunciado": "1{,}42 - 9{,}77",
+     "respuesta": "-8.35"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 13",
+   "verificacion": "comprobada",
+   "solucion": "a) $53{,}04$; b) $49{,}68$; c) $8{,}7$; d) $-8{,}35$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-dec-010",
+   "tipo": "término que falta",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Rellena adecuadamente los lugares vacíos: a) $6{,}36 + \\square = 10$   b) $36{,}76 - \\square = 10$   c) $6{,}54 - \\square = 1{,}38$   d) $2{,}7 + \\square = 15{,}29$",
+   "solucion": "a) 3,64   b) 26,76   c) 5,16   d) 12,59",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "6.36+3.64",
+     "respuesta": "10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "36.76-26.76",
+     "respuesta": "10"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "6.54-5.16",
+     "respuesta": "1.38"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "2.7+12.59",
+     "respuesta": "15.29"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-011",
+   "tipo": "producto de decimales",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula:\n\na) $4{,}6 \\cdot 7{,}5$   b) $1{,}16 \\cdot 3{,}52$   c) $3{,}2 \\cdot 5{,}1 \\cdot 1{,}4$   d) $2{,}3 \\cdot 4{,}11 \\cdot 3{,}5$   e) $4 \\cdot (3{,}01 + 2{,}4)$   f) $5{,}3 \\cdot (12 + 3{,}14)$   g) $3{,}9 \\cdot (25{,}8 - 21{,}97)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "4.6*7.5",
+     "enunciado": "4{,}6 \\cdot 7{,}5",
+     "respuesta": "34.5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "1.16*3.52",
+     "enunciado": "1{,}16 \\cdot 3{,}52",
+     "respuesta": "4.0832"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "3.2*5.1*1.4",
+     "enunciado": "3{,}2 \\cdot 5{,}1 \\cdot 1{,}4",
+     "respuesta": "22.848"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "2.3*4.11*3.5",
+     "enunciado": "2{,}3 \\cdot 4{,}11 \\cdot 3{,}5",
+     "respuesta": "33.0855"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "4*(3.01+2.4)",
+     "enunciado": "4 \\cdot (3{,}01 + 2{,}4)",
+     "respuesta": "21.64"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "5.3*(12+3.14)",
+     "enunciado": "5{,}3 \\cdot (12 + 3{,}14)",
+     "respuesta": "80.242"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "3.9*(25.8-21.97)",
+     "enunciado": "3{,}9 \\cdot (25{,}8 - 21{,}97)",
+     "respuesta": "14.937"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ej. 9 y 10",
+   "verificacion": "comprobada",
+   "solucion": "a) $34{,}5$; b) $4{,}0832$; c) $22{,}848$; d) $33{,}0855$; e) $21{,}64$; f) $80{,}242$; g) $14{,}937$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-dec-012",
+   "tipo": "multiplicar y dividir por la unidad seguida de ceros",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Realiza las siguientes operaciones:\n\na) $43{,}76 \\cdot 10$   b) $43{,}76 \\cdot 1000$   c) $0{,}017 \\cdot 10$   d) $3{,}76 : 10$   e) $5{,}67 : 100$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "43.76*10",
+     "enunciado": "43{,}76 \\cdot 10",
+     "respuesta": "437.6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "43.76*1000",
+     "enunciado": "43{,}76 \\cdot 1000",
+     "respuesta": "43760"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "0.017*10",
+     "enunciado": "0{,}017 \\cdot 10",
+     "respuesta": "0.17"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "3.76/10",
+     "enunciado": "3{,}76 : 10",
+     "respuesta": "0.376"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "5.67/100",
+     "enunciado": "5{,}67 : 100",
+     "respuesta": "0.0567"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 15",
+   "verificacion": "comprobada",
+   "solucion": "a) $437{,}6$; b) $43760$; c) $0{,}17$; d) $0{,}376$; e) $0{,}0567$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-dec-013",
+   "tipo": "división de decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Efectúa las siguientes divisiones:\n\na) $42{,}78 : 6$   b) $15{,}2 : 3{,}8$   c) $12{,}505 : 4{,}1$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "42.78/6",
+     "enunciado": "42{,}78 : 6",
+     "respuesta": "7.13"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "15.2/3.8",
+     "enunciado": "15{,}2 : 3{,}8",
+     "respuesta": "4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "12.505/4.1",
+     "enunciado": "12{,}505 : 4{,}1",
+     "respuesta": "3.05"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ej. 13 a–c",
+   "verificacion": "comprobada",
+   "solucion": "a) $7{,}13$; b) $4$; c) $3{,}05$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-dec-014",
+   "tipo": "fracción a decimal",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "Determina el desarrollo decimal de las fracciones siguientes: a) $\\frac{13}{50}$   b) $\\frac{110}{9}$   c) $\\frac{22}{12}$   d) $\\frac{170}{125}$   e) $\\frac{53}{22}$. Convierte también en número decimal f) $\\frac{9}{2}$ y g) $\\frac{31}{4}$.",
+   "solucion": "a) 0,26   b) 12,222…   c) 1,8333…   d) 1,36   e) 2,40909…   f) 4,5   g) 7,75",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "13/50",
+     "respuesta": "0.26"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "170/125",
+     "respuesta": "1.36"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "9/2",
+     "respuesta": "4.5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "31/4",
+     "respuesta": "7.75"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "110/9",
+     "respuesta": "12.222",
+     "tolerancia": 0.001
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "22/12",
+     "respuesta": "1.8333",
+     "tolerancia": 0.001
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "53/22",
+     "respuesta": "2.40909",
+     "tolerancia": 0.001
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ej. 12 y ejercicios y problemas, ej. 18",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-015",
+   "tipo": "decimal exacto o periódico",
+   "dificultad": 3,
+   "saberes": [
+    "A.2",
+    "A.4"
+   ],
+   "enunciado": "Determina cuáles de las siguientes fracciones tienen representación decimal finita (decídelo sin calcularlas): a) $\\frac{12}{20}$   b) $\\frac{5}{7}$   c) $\\frac{12}{5}$   d) $\\frac{12}{45}$   e) $\\frac{9}{48}$",
+   "solucion": "a) Sí ($\\frac{3}{5}$)   b) No   c) Sí   d) No ($\\frac{4}{15}$)   e) Sí: $\\frac{9}{48} = \\frac{3}{16}$ y 16 solo tiene el factor 2 (la fuente dice que no: está mal). Una fracción irreducible da un decimal exacto si su denominador solo tiene los factores 2 y 5",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "12/20",
+     "respuesta": "0.6"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "12/5",
+     "respuesta": "2.4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "9/48",
+     "respuesta": "0.1875"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 24 (la fuente se equivoca en el e)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-016",
+   "tipo": "redondeo y truncamiento",
+   "dificultad": 1,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "a) Redondea a las décimas los números siguientes: 5,67; 5,68; 5,6666; 7,45; 6,9999; 7,3456; 7,4378.   b) Redondea a las centésimas: 5,676767; 5,688989; 5,6666; 7,459; 6,9999; 7,3456; 7,4378.   c) Trunca por las centésimas esos mismos números.",
+   "solucion": "a) 5,7; 5,7; 5,7; 7,5; 7,0; 7,3; 7,4   b) 5,68; 5,69; 5,67; 7,46; 7,00; 7,35; 7,44   c) 5,67; 5,68; 5,66; 7,45; 6,99; 7,34; 7,43",
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 6, 7 y 10",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-dec-017",
+   "tipo": "redondeo y truncamiento",
+   "dificultad": 2,
+   "saberes": [
+    "A.2"
+   ],
+   "enunciado": "Escribe un número decimal que satisfaga la siguiente condición: sus truncamientos coinciden con sus redondeos. Construye otro en el que ninguno de sus truncamientos coincida con los redondeos.",
+   "solucion": "Por ejemplo, 31,4312 (todas sus cifras decimales son menores o iguales que 4) y 68,798 (todas mayores o iguales que 5)",
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 35 y 36",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-dec-018",
+   "tipo": "operaciones combinadas con decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula:\n\na) $49 - 4{,}5 \\cdot 0{,}01$   b) $0{,}5 + 0{,}4 : 0{,}1$   c) $7{,}52 - 37 \\cdot 0{,}1$   d) $0{,}97 - 0{,}1 \\cdot 0{,}01$   e) $6{,}3 : 0{,}1 + 15 \\cdot 0{,}08 + 0{,}59$   f) $5{,}2 : 0{,}01 - 5{,}6 \\cdot 5 - 29$   g) $0{,}73 : 0{,}001 - 5{,}1 \\cdot 11 - 7{,}3$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "49-4.5*0.01",
+     "enunciado": "49 - 4{,}5 \\cdot 0{,}01",
+     "respuesta": "48.955"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "0.5+0.4/0.1",
+     "enunciado": "0{,}5 + 0{,}4 : 0{,}1",
+     "respuesta": "4.5"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "7.52-37*0.1",
+     "enunciado": "7{,}52 - 37 \\cdot 0{,}1",
+     "respuesta": "3.82"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "0.97-0.1*0.01",
+     "enunciado": "0{,}97 - 0{,}1 \\cdot 0{,}01",
+     "respuesta": "0.969"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "6.3/0.1+15*0.08+0.59",
+     "enunciado": "6{,}3 : 0{,}1 + 15 \\cdot 0{,}08 + 0{,}59",
+     "respuesta": "64.79"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "5.2/0.01-5.6*5-29",
+     "enunciado": "5{,}2 : 0{,}01 - 5{,}6 \\cdot 5 - 29",
+     "respuesta": "463"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "0.73/0.001-5.1*11-7.3",
+     "enunciado": "0{,}73 : 0{,}001 - 5{,}1 \\cdot 11 - 7{,}3",
+     "respuesta": "666.6"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 4, para practicar, ej. 1 y 2",
+   "verificacion": "comprobada",
+   "solucion": "a) $48{,}955$; b) $4{,}5$; c) $3{,}82$; d) $0{,}969$; e) $64{,}79$; f) $463$; g) $666{,}6$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m1-dec-019",
+   "tipo": "operaciones combinadas con decimales",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Calcula:\n\na) $5 \\cdot (10{,}5 - 1{,}9) \\cdot 0{,}001$   b) $30 \\cdot (0{,}74 + 0{,}36) : 0{,}01$   c) $9{,}8 \\cdot (14 - 4{,}2) : 0{,}1$   d) $1{,}9 \\cdot (0{,}61 - 0{,}52) \\cdot 0{,}01$   e) $0{,}39 + 4{,}2 \\cdot (0{,}3 + 60 \\cdot 0{,}1)$   f) $62 - 3{,}8 \\cdot (0{,}33 + 0{,}84 : 0{,}1)$   g) $0{,}2 - 0{,}8 \\cdot (20 + 9{,}8 : 0{,}01)$   h) $1{,}4 - 0{,}4 \\cdot (0{,}25 + 0{,}75 : 0{,}01)$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "5*(10.5-1.9)*0.001",
+     "enunciado": "5 \\cdot (10{,}5 - 1{,}9) \\cdot 0{,}001",
+     "respuesta": "0.043"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "30*(0.74+0.36)/0.01",
+     "enunciado": "30 \\cdot (0{,}74 + 0{,}36) : 0{,}01",
+     "respuesta": "3300"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "9.8*(14-4.2)/0.1",
+     "enunciado": "9{,}8 \\cdot (14 - 4{,}2) : 0{,}1",
+     "respuesta": "960.4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "1.9*(0.61-0.52)*0.01",
+     "enunciado": "1{,}9 \\cdot (0{,}61 - 0{,}52) \\cdot 0{,}01",
+     "respuesta": "0.00171"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "e",
+     "expresion": "0.39+4.2*(0.3+60*0.1)",
+     "enunciado": "0{,}39 + 4{,}2 \\cdot (0{,}3 + 60 \\cdot 0{,}1)",
+     "respuesta": "26.85"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "f",
+     "expresion": "62-3.8*(0.33+0.84/0.1)",
+     "enunciado": "62 - 3{,}8 \\cdot (0{,}33 + 0{,}84 : 0{,}1)",
+     "respuesta": "28.826"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "g",
+     "expresion": "0.2-0.8*(20+9.8/0.01)",
+     "enunciado": "0{,}2 - 0{,}8 \\cdot (20 + 9{,}8 : 0{,}01)",
+     "respuesta": "-799.8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "h",
+     "expresion": "1.4-0.4*(0.25+0.75/0.01)",
+     "enunciado": "1{,}4 - 0{,}4 \\cdot (0{,}25 + 0{,}75 : 0{,}01)",
+     "respuesta": "-28.7"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 4, para practicar, ej. 3 y 4 (la fuente da 961,2 en el 3 c: está mal)",
+   "solucion": "a) 0,043   b) 3300   c) 960,4 ($9{,}8 \\cdot 9{,}8 = 96{,}04$; la fuente pone 96,12 y da 961,2: está mal)   d) 0,00171   e) 26,85   f) 28,826   g) −799,8   h) −28,7",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-020",
+   "tipo": "uso de paréntesis con calculadora",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Usa la calculadora o una hoja de cálculo y analiza el uso de paréntesis: a) 2.34186 / 987.6543 + 8.981342 * 654.9234 − 25.98   b) 2.34186 / (987.6543 + 8.981342) * (654.9234 − 25.98)   c) (2.34186 / 987.6543) + (8.981342 * 654.9234) − 25.98   d) (2.34186 / 987.6543) + 8.981342 * (654.9234 − 25.98)",
+   "solucion": "a) 5856,11341   b) 1,477869473   c) 5856,11341   d) 5648,758145. La calculadora o el ordenador usan la jerarquía de operaciones: a) se calcula como c)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "2.34186/987.6543+8.981342*654.9234-25.98",
+     "respuesta": "5856.11341",
+     "tolerancia": 0.0001
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "2.34186/(987.6543+8.981342)*(654.9234-25.98)",
+     "respuesta": "1.477869473",
+     "tolerancia": 0.0001
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(2.34186/987.6543)+(8.981342*654.9234)-25.98",
+     "respuesta": "5856.11341",
+     "tolerancia": 0.0001
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(2.34186/987.6543)+8.981342*(654.9234-25.98)",
+     "respuesta": "5648.758145",
+     "tolerancia": 0.0001
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 41",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-021",
+   "tipo": "problema de decimales",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Si se reparten equitativamente 270 euros entre 120 personas, ¿qué cantidad recibe cada persona?",
+   "solucion": "2,25 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "270/120",
+     "respuesta": "2.25"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 25",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-022",
+   "tipo": "problema de decimales",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Manuel compró en la papelería 4 bolígrafos y 3 lapiceros. Si cada bolígrafo costaba 0,78 euros y cada lapicero 0,63 euros, ¿cuánto se gastó Manuel?",
+   "solucion": "5,01 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4*0.78+3*0.63",
+     "respuesta": "5.01"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 32",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-023",
+   "tipo": "problema de decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Claudia se ha comprado tres bolígrafos iguales que, en total, le han costado 2,46 euros. También compró un cuaderno que costaba el cuádruple que cada bolígrafo. Calcula el precio del cuaderno.",
+   "solucion": "3,28 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2.46/3*4",
+     "respuesta": "3.28"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 33",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-024",
+   "tipo": "problema de decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Un depósito contiene 46,22 litros de agua que vamos a traspasar a botellas de litro y medio. Halla cuántas botellas llenaremos e indica la cantidad de agua sobrante.",
+   "solucion": "30 botellas se llenan y sobran 1,22 litros",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "floor(46.22/1.5)",
+     "respuesta": "30",
+     "apartado": "botellas"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "46.22-30*1.5",
+     "respuesta": "1.22",
+     "apartado": "sobra"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 34",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-025",
+   "tipo": "problema de decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "El examen de Matemáticas constaba de cuatro ejercicios. En ellos Jaime obtuvo las siguientes calificaciones: 5, 7, 8 y 7. Calcula la nota media del examen de Jaime y aproxímala tanto por truncamiento como por redondeo hasta las décimas.",
+   "solucion": "Nota media 6,75; por redondeo 6,8; por truncamiento 6,7",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(5+7+8+7)/4",
+     "respuesta": "6.75"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 38",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-026",
+   "tipo": "problema de decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.3",
+    "A.5",
+    "A.6"
+   ],
+   "enunciado": "Los padres de Alicia están comprando varias macetas y plantas. El importe de todo ello es de 135,80 euros. El comercio realiza un descuento del 2,5 % si se paga en metálico y no con tarjeta de crédito. Si los padres de Alicia optan por el pago en metálico, ¿qué cantidad deberán abonar?",
+   "solucion": "132,405 €, que como no se puede pagar en metálico se redondea a las centésimas: 132,41 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "135.80*(1-0.025)",
+     "respuesta": "132.405"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 6, ejercicios y problemas, ej. 39",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-027",
+   "tipo": "problema de decimales",
+   "dificultad": 1,
+   "saberes": [
+    "A.3",
+    "A.6"
+   ],
+   "enunciado": "Ana compró 12 gominolas y 14 chicles. Cada gominola cuesta 0,10 € y cada chicle 0,15. Pagó con un billete de 10 €. ¿Cuánto dinero le tienen que devolver?",
+   "solucion": "10 − (1,20 + 2,10) = 6,70 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "10-(12*0.10+14*0.15)",
+     "respuesta": "6.70"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 4, para practicar, ej. 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-028",
+   "tipo": "problema de decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Yo vivo en un quinto piso. Entre cada piso hay 15 escalones iguales que miden cada uno 0,175 m. Además hay que pasar un escalón en el portal que mide 0,15 m. ¿A cuántos metros de altura está el suelo de mi piso?",
+   "solucion": "75 · 0,175 + 0,15 = 13,275 m",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "5*15*0.175+0.15",
+     "respuesta": "13.275"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 4, para practicar, ej. 6",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-029",
+   "tipo": "problema de decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Un coche consume una media de 4,2 litros de gasolina cada 100 km. Tiene el depósito lleno y son 45 litros. Recorre 888 km. ¿Cuántos litros de gasolina quedan, aproximadamente, en el depósito?",
+   "solucion": "45 − 888 · 0,042 = 7,704 ≈ 8 litros",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "45-888*4.2/100",
+     "respuesta": "7.704"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 4, para practicar, ej. 7",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-030",
+   "tipo": "problema de decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Un depósito contiene 124 litros de zumo. Con 57 litros se llenan botellas de 0,25 litros cada una y con el resto que queda en el depósito se llenan botellas de 0,5 litros. ¿Cuántas botellas se llenan en total?",
+   "solucion": "228 + 134 = 362 botellas",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "57/0.25+(124-57)/0.5",
+     "respuesta": "362"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 4, para practicar, ej. 8",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-031",
+   "tipo": "problema de decimales",
+   "dificultad": 2,
+   "saberes": [
+    "A.3",
+    "B.1"
+   ],
+   "enunciado": "Un paquete de 500 folios tiene un grosor de 6,8 cm y pesa 0,884 g. ¿Cuál es el grosor, en mm, de un folio? ¿Cuál es el peso, en gramos, de un folio?",
+   "solucion": "Grosor: 68 mm : 500 = 0,136 mm (la fuente divide 0,68 y da 0,00136 mm: está mal, 6,8 cm son 68 mm). Peso: 0,001768 g",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "68/500",
+     "respuesta": "0.136",
+     "apartado": "grosor"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "0.884/500",
+     "respuesta": "0.001768",
+     "apartado": "peso"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 4, para practicar, ej. 9 (la fuente se equivoca de unidad en el grosor)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-032",
+   "tipo": "problema de decimales",
+   "dificultad": 3,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Una caja contiene 35 bombones iguales y pesa 0,471 kg. El peso de la caja vacía es 149 g. ¿Cuántos kg pesa la caja después de comernos 26 bombones?",
+   "solucion": "Cada bombón pesa 0,322 : 35 = 0,0092 kg; los 9 que quedan pesan 0,0828 kg (lo que da la fuente) y, con la caja vacía, 0,2318 kg. El enunciado es ambiguo: «la caja» puede ser solo el contenido o todo",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(0.471-0.149)/35*9",
+     "respuesta": "0.0828",
+     "apartado": "bombones"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "(0.471-0.149)/35*9+0.149",
+     "respuesta": "0.2318",
+     "apartado": "con la caja"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 4, para practicar, ej. 10 (enunciado ambiguo)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-dec-033",
+   "tipo": "problema de decimales",
+   "dificultad": 3,
+   "saberes": [
+    "A.3",
+    "B.1"
+   ],
+   "enunciado": "Un grifo no cierra bien y pierde 2 ml de agua cada 5 segundos. ¿Cuántos litros se perderán en una semana?",
+   "solucion": "0,4 ml por segundo: 0,4 · 604 800 s = 241 920 ml = 241,92 litros. (La fuente pasa de minutos a horas multiplicando por 12 en vez de por 60 y da 24,192 litros: está mal.)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2/5*60*60*24*7/1000",
+     "respuesta": "241.92"
+    }
+   ],
+   "fuente": "edad1",
+   "ref": "quincena 4, para practicar, ej. 14 (la solución de la fuente está mal)",
+   "verificacion": "comprobada"
+  }
+ ]
+}

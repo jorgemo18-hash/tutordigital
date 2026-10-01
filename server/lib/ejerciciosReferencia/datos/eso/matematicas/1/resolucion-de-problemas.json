@@ -1,0 +1,641 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 1,
+ "tema": "resolucion-de-problemas",
+ "titulo": "Resolución de problemas y estrategias",
+ "saberes": [
+  "A.1",
+  "A.2",
+  "A.3",
+  "A.4",
+  "A.6",
+  "D.1",
+  "D.2",
+  "D.6",
+  "E.1"
+ ],
+ "fuentes": {
+  "mv1": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 1.º ESO (LOMLOE): libro y «Soluciones de ejercicios y problemas»",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/1ESOLL.htm",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m1-res-001",
+   "tipo": "problema de la vida cotidiana",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "El cuentakilómetros del padre de Juan marca 64 731 km. Si las revisiones son cada 5 000 km, ¿cuántos kilómetros le faltan para la próxima revisión?",
+   "solucion": "Le faltan 65 000 − 64 731 = 269 km (la próxima revisión es a los 65 000 km, pues 5 000 · 13 = 65 000)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "65000-64731",
+     "respuesta": "269"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 3",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-002",
+   "tipo": "problema de la vida cotidiana",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "La piscina de Inés tiene forma de rectángulo. Sus lados miden 10 m de largo y 7 m de ancho. Desea rodear la piscina con una valla. El metro de valla vale 12 €. ¿Cuánto costará hacer la valla?",
+   "solucion": "(10 + 7) · 2 · 12 = 408 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(10+7)*2*12",
+     "respuesta": "408"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 4",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-003",
+   "tipo": "estimación",
+   "dificultad": 1,
+   "saberes": [
+    "A.2",
+    "A.3"
+   ],
+   "enunciado": "Si tu paga semanal es de ocho euros, y ahorras toda la paga de un mes, ¿podrías comprarte un móvil (que estimas que vale unos 300 euros)? ¿Y con todas las pagas de un año?",
+   "solucion": "En un mes hay 4 o 5 semanas: como mucho 8 · 5 = 40 €, mucho menos que 300 €. En un año hay 52 semanas: 52 · 8 = 416 €, ahora sí llega",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "8*5",
+     "respuesta": "40",
+     "apartado": "mes"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "52*8",
+     "respuesta": "416",
+     "apartado": "año"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-004",
+   "tipo": "estimación",
+   "dificultad": 2,
+   "saberes": [
+    "A.1",
+    "A.2"
+   ],
+   "enunciado": "Informan que a una manifestación han ido 40 000 personas, ¿cómo crees que las han contado?",
+   "solucion": "Abierta. Por ejemplo: contar las personas que hay en un metro cuadrado y multiplicar por los metros cuadrados que ocupa la manifestación",
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 7",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-res-005",
+   "tipo": "estimación",
+   "dificultad": 2,
+   "saberes": [
+    "A.1",
+    "A.2"
+   ],
+   "enunciado": "¿Cuántos granos de arroz hay en un kilo?",
+   "solucion": "Abierta. Contarlos uno a uno no es razonable: se pesa una cantidad pequeña de granos contados y se hace la proporción (por ejemplo, si 100 granos pesan 2,7 g, en un kilo hay unos 37 000)",
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 11",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-res-006",
+   "tipo": "patrones",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "D.6"
+   ],
+   "enunciado": "«Las torres de Hanoi»: cuenta la leyenda que en tres agujas de oro hay sesenta y cuatro discos, todos de distinto tamaño, colocados de mayor a menor. Unos monjes cambian continuamente de sitio estos discos, uno cada segundo, con estas reglas: en cada movimiento solo se puede mover un disco, y no se puede colocar nunca un disco encima de otro de menor tamaño. Cuando hayan pasado todos los discos de una de las agujas a otra se acabará el mundo. ¿Cuánto falta para que termine el mundo? (Hazlo más fácil para empezar: prueba con 2, 3 y 4 discos.)",
+   "solucion": "Con 2 discos hacen falta 3 movimientos; con 3, 3 + 1 + 3 = 7 = 8 − 1; con 4, 7 + 1 + 7 = 15 = 16 − 1. Con n discos, $2^{n} - 1$. Con 64 discos, $2^{64} - 1 = 18446744073709551615$ segundos, unos 585 000 millones de años. (La fuente da 4 611 686 018 427 387 903, que es $2^{62} - 1$: está mal.)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2^3-1",
+     "respuesta": "7",
+     "apartado": "3 discos"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2^4-1",
+     "respuesta": "15",
+     "apartado": "4 discos"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2^64-1",
+     "respuesta": "18446744073709551615",
+     "apartado": "64 discos"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 13 (la solución de la fuente está mal)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-007",
+   "tipo": "problema de ingenio",
+   "dificultad": 2,
+   "saberes": [
+    "A.3",
+    "D.6"
+   ],
+   "enunciado": "Cuadrado mágico: con los números del 10 al 18 completa un cuadro de 3 × 3 de forma que obtengas la misma suma en todas direcciones: en horizontal, en vertical, e incluso en las dos diagonales.",
+   "solucion": "La suma de los 9 números es 126, así que cada línea suma 42 y el central es 14. Una solución: 11, 18, 13 / 16, 14, 12 / 15, 10, 17 (hay más)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(10+11+12+13+14+15+16+17+18)/3",
+     "respuesta": "42",
+     "apartado": "suma de cada línea"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "11+18+13",
+     "respuesta": "42",
+     "apartado": "fila 1"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "11+14+17",
+     "respuesta": "42",
+     "apartado": "diagonal"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-008",
+   "tipo": "problema de lógica",
+   "dificultad": 2,
+   "saberes": [
+    "D.6"
+   ],
+   "enunciado": "«Color del pelo»: tres amigas A, B, C, una rubia, otra morena y otra pelirroja, están jugando a las cartas sentadas en una mesa circular; cada una pasa una carta a la que está a su derecha. La amiga B ha pasado una carta a la rubia. La amiga A ha pasado una carta a la que ha pasado una carta a la pelirroja. ¿Cuál es el color del pelo de A, B y C?",
+   "solucion": "A es rubia, B pelirroja y C morena",
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 15",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-res-009",
+   "tipo": "problema con ecuación",
+   "dificultad": 2,
+   "saberes": [
+    "D.2"
+   ],
+   "enunciado": "Una persona es 80 cm más alta que la mitad de su altura. ¿Qué estatura tiene?",
+   "solucion": "$\\frac{x}{2} + 80 = x$: mide 160 cm",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x/2+80 = x",
+     "respuesta": [
+      "160"
+     ]
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 16",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-010",
+   "tipo": "consumo",
+   "dificultad": 1,
+   "saberes": [
+    "A.3",
+    "A.6"
+   ],
+   "enunciado": "Observa las ofertas de una tienda. Camisetas: antes 15 €, oferta 12 €. Chaquetas: antes 40 €, oferta 30 €. Pantalones: antes 32 €, oferta 28 €. Camisas: antes 25 €, oferta 21 €. Una persona aprovecha estas ofertas y compra cinco camisas, una chaqueta, dos pantalones y tres camisetas. Averigua cuánto se gasta y cuánto se ahorra por comprar esa ropa en ofertas.",
+   "solucion": "Gasta 5 · 21 + 30 + 2 · 28 + 3 · 12 = 227 €. Sin rebajas habría gastado 274 €: se ahorra 47 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "5*21+30+2*28+3*12",
+     "respuesta": "227",
+     "apartado": "gasto"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5*25+40+2*32+3*15",
+     "respuesta": "274",
+     "apartado": "sin oferta"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "274-227",
+     "respuesta": "47",
+     "apartado": "ahorro"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 18 (adaptado: la tabla, en texto)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-011",
+   "tipo": "problema de la vida cotidiana",
+   "dificultad": 2,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Se han apuntado 25 estudiantes a un viaje. Al pagar el billete, 5 de ellos se dan cuenta de que no han traído dinero. El resto decide pagárselo, y abonan cada uno 3 €. ¿Cuánto cuesta cada billete?",
+   "solucion": "Los 20 que pagan ponen 20 · 3 = 60 € para 5 billetes: cada billete cuesta 12 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(25-5)*3/5",
+     "respuesta": "12"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 19",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-012",
+   "tipo": "magia con números",
+   "dificultad": 2,
+   "saberes": [
+    "A.4",
+    "D.6"
+   ],
+   "enunciado": "¡Hagamos magia! Dile a una persona que piense un número de tres cifras, que escriba ese número y, de nuevo, las tres cifras, para formar un número de seis cifras. Pídele que lo divida entre 7, luego entre 11 y luego entre 13. Se quedará sorprendida al comprobar que el resultado es el número que escribió. ¿Sabes por qué?",
+   "solucion": "Si el número es abc, abcabc = 1001 · abc, y 7 · 11 · 13 = 1001: dividir entre 7, 11 y 13 es dividir entre 1001",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "7*11*13",
+     "respuesta": "1001"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 27",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-013",
+   "tipo": "problema de ingenio",
+   "dificultad": 2,
+   "saberes": [
+    "A.4",
+    "D.6"
+   ],
+   "enunciado": "Resuelve el crucigrama: coloca un número en cada casilla de un cuadro de 3 × 3 de forma que los productos de las filas sean 24, 35 y 30, y los productos de las columnas sean 6, 50 y 84.",
+   "solucion": "Filas: 2, 2, 6 / 1, 5, 7 / 3, 5, 2",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2*2*6",
+     "respuesta": "24",
+     "apartado": "fila 1"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1*5*7",
+     "respuesta": "35",
+     "apartado": "fila 2"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3*5*2",
+     "respuesta": "30",
+     "apartado": "fila 3"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2*1*3",
+     "respuesta": "6",
+     "apartado": "col. 1"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2*5*5",
+     "respuesta": "50",
+     "apartado": "col. 2"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "6*7*2",
+     "respuesta": "84",
+     "apartado": "col. 3"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 28 (adaptado: la cuadrícula, descrita con palabras)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-014",
+   "tipo": "tablas de datos",
+   "dificultad": 2,
+   "saberes": [
+    "A.3",
+    "E.1"
+   ],
+   "enunciado": "La jefa de estudios de un colegio ha anotado el número de alumnos y alumnas que han faltado a clase (lunes, martes, miércoles, jueves, viernes). 1.º A: 2, 3, 5, 1, 3. 1.º B: 3, 4, 1, 3, 2. 2.º A: 2, 6, 3, 4, 3. 2.º B: 5, 1, 0, 2, 1. 3.º A: 4, 2, 3, 1, 0. 3.º B: 6, 3, 1, 2, 3. 4.º A: 2, 3, 1, 4, 0. 4.º B: 4, 2, 2, 2, 0. a) Haz la tabla y completa la última fila y la última columna (los totales). b) Sabiendo que el número total de alumnos y alumnas de Secundaria de ese colegio es 205, averigua cuántos había en el colegio el jueves.",
+   "solucion": "a) Totales por clase: 14, 13, 18, 9, 10, 15, 10, 10. Totales por día: 28, 24, 16, 19, 12; total 99.   b) El jueves faltaron 19: había 205 − 19 = 186",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1+3+4+2+1+2+4+2",
+     "respuesta": "19",
+     "apartado": "jueves"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2+3+2+5+4+6+2+4",
+     "respuesta": "28",
+     "apartado": "lunes"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "28+24+16+19+12",
+     "respuesta": "99",
+     "apartado": "total"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "205-19",
+     "respuesta": "186",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ejercicios y problemas, ej. 1 (adaptado: la tabla, en texto)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-015",
+   "tipo": "patrones",
+   "dificultad": 1,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "«El extraordinario 37»: 37 · 3 = 111; 37 · 6 = 222; 37 · 9 = 333. Consigue tú ahora 444, 555, 666…",
+   "solucion": "37 · 12 = 444; 37 · 15 = 555; 37 · 18 = 666, y así con los múltiplos de 3",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "37*12",
+     "respuesta": "444",
+     "apartado": "444"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "37*15",
+     "respuesta": "555",
+     "apartado": "555"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "37*18",
+     "respuesta": "666",
+     "apartado": "666"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ejercicios y problemas, ej. 2",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-016",
+   "tipo": "patrones",
+   "dificultad": 1,
+   "saberes": [
+    "D.1"
+   ],
+   "enunciado": "Triángulos: 1 · 9 + 2 = 11; 12 · 9 + 3 = 111; 123 · 9 + 4 = 1111; 1234 · 9 + 5 = 11111. Comprueba que el triángulo sigue hasta llegar a + 10.",
+   "solucion": "12345 · 9 + 6 = 111111; 123456 · 9 + 7 = 1111111; 1234567 · 9 + 8 = 11111111; 12345678 · 9 + 9 = 111111111; 123456789 · 9 + 10 = 1111111111",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "12345*9+6",
+     "respuesta": "111111",
+     "apartado": "+6"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "123456*9+7",
+     "respuesta": "1111111",
+     "apartado": "+7"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1234567*9+8",
+     "respuesta": "11111111",
+     "apartado": "+8"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "12345678*9+9",
+     "respuesta": "111111111",
+     "apartado": "+9"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "123456789*9+10",
+     "respuesta": "1111111111",
+     "apartado": "+10"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ejercicios y problemas, ej. 4",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-017",
+   "tipo": "operaciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.3",
+    "D.6"
+   ],
+   "enunciado": "Números en fuga: estas operaciones se han quedado sin resolver por falta de algunos números. ¿Puedes completarlas? a) $4\\square 2 : \\square 5 = 17$, resto 7.   b) $2\\square 3\\square \\cdot 75 = 2\\square 0050$",
+   "solucion": "a) 432 : 25 = 17, resto 7.   b) 2934 · 75 = 220050",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "25*17+7",
+     "respuesta": "432",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2934*75",
+     "respuesta": "220050",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ejercicios y problemas, ej. 6 b y c (el a, con siete soluciones, no se copia)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-018",
+   "tipo": "problema de la vida cotidiana",
+   "dificultad": 3,
+   "saberes": [
+    "A.3",
+    "D.6"
+   ],
+   "enunciado": "Dos mujeres habían ido al mercado a vender 30 manzanas cada una. La primera tenía la intención de vender cada dos manzanas por un euro. ¿Cuánto pensaba ganar? La segunda quería vender cada tres manzanas por dos euros. ¿Cuánto ganaría? Pero no querían hacerse la competencia, por lo que llegaron al siguiente acuerdo: vender ambas cada cinco (2 + 3) manzanas por tres (1 + 2) euros. Lo habían vendido todo. ¿Han ganado 36 €? ¡Les sobra un euro! Con la venta anterior iban a ganar 35 € y han ganado 36 €. ¿Puedes explicarles qué ha ocurrido?",
+   "solucion": "La primera pensaba ganar 15 € (0,50 € cada manzana) y la segunda 20 € (0,67 € cada una). Juntas, 60 manzanas a 3 € cada 5 son 36 €: cada manzana a 0,60 €, más que el precio medio de las ventas iniciales (35/60 ≈ 0,58 €). Por eso ganan 1 € más",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "30/2*1",
+     "respuesta": "15",
+     "apartado": "primera"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "30/3*2",
+     "respuesta": "20",
+     "apartado": "segunda"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "60/5*3",
+     "respuesta": "36",
+     "apartado": "juntas"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ejercicios y problemas, ej. 7",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-019",
+   "tipo": "jerarquía de las operaciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.3"
+   ],
+   "enunciado": "Letras y números: si sigues el orden alfabético, estas cuatro operaciones dan como resultado letras con las que podrás formar una palabra.\n\na) $(8 + 10) : 3 + 7 \\cdot 1 - 5$   b) $(23 - 15) + 2 \\cdot 4$   c) $1 \\cdot 4 + 6 : 2 + 5 \\cdot 1$   d) $45 \\cdot (1 + 0) - 45 + 1$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "(8+10)/3+7*1-5",
+     "enunciado": "(8 + 10) : 3 + 7 \\cdot 1 - 5",
+     "respuesta": "8"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(23-15)+2*4",
+     "enunciado": "(23 - 15) + 2 \\cdot 4",
+     "respuesta": "16"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "1*4+6/2+5*1",
+     "enunciado": "1 \\cdot 4 + 6 : 2 + 5 \\cdot 1",
+     "respuesta": "12"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "45*(1+0)-45+1",
+     "enunciado": "45 \\cdot (1 + 0) - 45 + 1",
+     "respuesta": "1"
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ejercicios y problemas, ej. 9",
+   "solucion": "8, 16, 12 y 1: H, O, L, A → HOLA",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-020",
+   "tipo": "problema de lógica",
+   "dificultad": 3,
+   "saberes": [
+    "D.6"
+   ],
+   "enunciado": "Juan, Jaime y Jorge tienen cada uno dos oficios. Hay un barbero, un chófer, un tabernero, un músico, un pintor y un jardinero. ¿A qué se dedica cada uno de ellos? Sabiendo que: 1) el chófer se burló del músico porque tenía el pelo largo; 2) el músico y el jardinero pescan con Juan; 3) el pintor compró al tabernero vino; 4) el chófer cortejaba a la hermana del pintor; 5) Jaime debía 5 dólares al jardinero; 6) Jorge vio a lo lejos a Jaime y al pintor.",
+   "solucion": "Juan: barbero y pintor. Jaime: músico y tabernero. Jorge: chófer y jardinero",
+   "fuente": "mv1",
+   "ref": "cap. 1, ejercicios y problemas, ej. 11",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-res-021",
+   "tipo": "generalizar",
+   "dificultad": 3,
+   "saberes": [
+    "D.6"
+   ],
+   "enunciado": "Nos dan 16 bolas del mismo tamaño, pero una de ellas pesa un poco menos que las otras. Para averiguar cuál es disponemos de una balanza de dos platos. ¿Cuál es el mínimo número de pesadas que necesitas efectuar para, sin tener en cuenta la buena suerte, determinar la bola? ¿Y si son 32 bolas? ¿Y si son 27? ¿Y si 13? Generaliza el problema a cualquier número de bolas.",
+   "solucion": "3, 4, 3 y 3 pesadas. Con 3 bolas basta 1 pesada; con 9, 2 (se hacen tres grupos de 3); con 27, 3. En general, si el número de bolas k cumple $3^{n-1} < k \\le 3^{n}$, hacen falta n pesadas: se reparten en tres grupos y se pesan dos iguales",
+   "fuente": "mv1",
+   "ref": "cap. 1, ejercicios y problemas, ej. 13",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m1-res-022",
+   "tipo": "problema con ecuación",
+   "dificultad": 3,
+   "saberes": [
+    "A.3",
+    "D.2",
+    "D.6"
+   ],
+   "enunciado": "Un rajá dejó a sus hijas cierto número de perlas y determinó que se hiciera del siguiente modo: la hija mayor tomaría una perla y un séptimo de lo que quedara. La segunda hija recibiría dos perlas y un séptimo de lo que restase. La tercera joven recibiría tres perlas y un séptimo de lo que quedara. Y así sucesivamente. Hecha la división, cada una de las hermanas recibió el mismo número de perlas. ¿Cuántas perlas había? ¿Cuántas hijas tenía el rajá?",
+   "solucion": "Había 36 perlas: el rajá tenía 6 hijas y a cada una le dejó 6 perlas",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "1+(x-1)/7 = 2+(x-(1+(x-1)/7)-2)/7",
+     "respuesta": [
+      "36"
+     ]
+    }
+   ],
+   "fuente": "mv1",
+   "ref": "cap. 1, ejercicios y problemas, ej. 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m1-res-023",
+   "tipo": "patrones",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "D.6"
+   ],
+   "enunciado": "a) Piensa un número de tres cifras. b) Escríbelo al revés y resta el menor del mayor. c) Escribe el resultado al revés y súmalo al resultado de la resta. d) Escribe la solución final. e) Prueba con varios números, ¿qué observas? ¿Hay algún caso en el que no se obtenga la misma solución?",
+   "solucion": "Sale siempre 1089 (por ejemplo, 321 − 123 = 198 y 198 + 891 = 1089), escribiendo la resta con tres cifras (099 + 990). No sale si las cifras primera y última son iguales: la resta da 0. (La solución de la fuente llega a 0 porque no tiene en cuenta las llevadas: está mal.)",
+   "fuente": "mv1",
+   "ref": "cap. 1, ej. 12 a–e (la solución de la fuente está mal)",
+   "verificacion": "sin_verificar"
+  }
+ ]
+}

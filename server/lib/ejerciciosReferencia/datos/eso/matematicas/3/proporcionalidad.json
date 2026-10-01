@@ -1,0 +1,899 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 3,
+ "tema": "proporcionalidad",
+ "titulo": "Proporcionalidad directa e inversa, porcentajes, escalas y repartos",
+ "saberes": [
+  "A.5",
+  "A.6",
+  "D.2"
+ ],
+ "fuentes": {
+  "mv3": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 3.º ESO (LOMLOE): «Soluciones de ejercicios y problemas» (enunciados y soluciones de cada capítulo)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/3ESO/Soluciones%203%20ESO.pdf",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m3-prop-001",
+   "tipo": "proporcionalidad directa",
+   "dificultad": 1,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "En una receta nos dicen que para hacer una mermelada de fresa necesitamos un kilogramo de azúcar por cada dos kilogramos de fresas. Queremos hacer 5 kilogramos de mermelada: ¿cuántos kilogramos de azúcar y cuántos de fresas debemos poner?",
+   "solucion": "$\\frac{10}{3} \\approx 3{,}33$ kg de fresas y $\\frac{5}{3} \\approx 1{,}67$ kg de azúcar",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "5*2/3",
+     "respuesta": "10/3",
+     "apartado": "fresas"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5*1/3",
+     "respuesta": "5/3",
+     "apartado": "azúcar"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 2",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-002",
+   "tipo": "proporcionalidad directa",
+   "dificultad": 1,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "La altura de un árbol es proporcional a su sombra (a una misma hora). Un árbol que mide 1,2 m tiene una sombra de 2,3 m. ¿Qué altura tendrá un árbol cuya sombra mida 4,2 m?",
+   "solucion": "$h = \\frac{4{,}2 \\cdot 1{,}2}{2{,}3} \\approx 2{,}19$ m (la fuente redondea a 2,1)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4.2*1.2/2.3",
+     "respuesta": "2.19",
+     "tolerancia": 0.005
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 3 (la fuente da ≈ 2,1 m; sale 2,19)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-003",
+   "tipo": "proporcionalidad directa",
+   "dificultad": 1,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "a) Hemos gastado 72 l de gasolina para recorrer 960 km. ¿Cuántos litros necesitaremos para una distancia de 1500 km?   b) Un libro de 420 páginas pesa 200 g. ¿Cuánto pesará un libro de la misma colección de 300 páginas?   c) Con 76 € hemos pagado 12,5 m de tela. ¿Cuánto nos costarán 22,5 m?",
+   "solucion": "a) 112,5 l   b) ≈ 142,86 g   c) 136,8 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1500*72/960",
+     "respuesta": "112.5",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "300*200/420",
+     "respuesta": "142.86",
+     "apartado": "b",
+     "tolerancia": 0.005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "22.5*76/12.5",
+     "respuesta": "136.8",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 5 y 7; ejercicios y problemas 2",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-004",
+   "tipo": "proporcionalidad directa",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Copia en tu cuaderno, calcula la razón de proporcionalidad y completa la tabla de proporcionalidad directa: litros: 6,25; __; 0,75; 1,4; __ — euros: __; 15; 2,25; __; 4,5.",
+   "solucion": "Razón litros/euros $k = \\frac{0{,}75}{2{,}25} = \\frac{1}{3}$. litros: 6,25; 5; 0,75; 1,4; 1,5 — euros: 18,75; 15; 2,25; 4,2; 4,5",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "0.75/2.25",
+     "respuesta": "1/3",
+     "apartado": "razón"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "6.25*3",
+     "respuesta": "18.75",
+     "apartado": "euros de 6,25 l"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "15/3",
+     "respuesta": "5",
+     "apartado": "litros de 15 €"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1.4*3",
+     "respuesta": "4.2",
+     "apartado": "euros de 1,4 l"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "4.5/3",
+     "respuesta": "1.5",
+     "apartado": "litros de 4,5 €"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 1",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-005",
+   "tipo": "proporciones",
+   "dificultad": 1,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Calcula los términos que faltan para completar las proporciones: a) $\\frac{24}{100} = \\frac{30}{x}$   b) $\\frac{x}{80} = \\frac{46}{12}$   c) $\\frac{3{,}6}{12{,}8} = \\frac{x}{60}$",
+   "solucion": "a) $x = 125$   b) $x \\approx 306{,}67$   c) $x = 16{,}875$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "100*30/24",
+     "respuesta": "125",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "80*46/12",
+     "respuesta": "306.67",
+     "apartado": "b",
+     "tolerancia": 0.005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "60*3.6/12.8",
+     "respuesta": "16.875",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 10",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-006",
+   "tipo": "proporcionalidad compuesta",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Seis personas realizan un viaje de ocho días y pagan en total 40 800 €. ¿Cuánto pagarán 15 personas si su viaje dura 5 días?",
+   "solucion": "63 750 € (cada persona y día cuesta 850 €)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 40800/(6*8)*15*5",
+     "respuesta": [
+      "63750"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 8",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-007",
+   "tipo": "proporcionalidad compuesta",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "a) Un camión ha transportado en 3 viajes 220 sacos de patatas de 24 kg cada uno. ¿Cuántos viajes serán necesarios para transportar 550 sacos de 30 kg cada uno?   b) Una edición de 350 libros de 210 páginas cada uno alcanza un peso total de 70 kg. ¿Cuántos kg pesará otra edición de 630 libros de 140 páginas cada uno?",
+   "solucion": "a) Saldrían 9,375: hacen falta 10 viajes   b) 84 kg",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "550*30*3/(220*24)",
+     "respuesta": "9.375",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "630*140*70/(350*210)",
+     "respuesta": "84",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 5 y 6",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-008",
+   "tipo": "porcentajes",
+   "dificultad": 2,
+   "saberes": [
+    "A.5",
+    "A.6"
+   ],
+   "enunciado": "Calcula el precio final de un lavavajillas que costaba 430 € más un 21 % de IVA, al que se le ha aplicado un descuento sobre el coste total del 15 %.",
+   "solucion": "≈ 442,26 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "430*1.21*0.85",
+     "respuesta": "442.255"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 9",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-009",
+   "tipo": "porcentajes",
+   "dificultad": 2,
+   "saberes": [
+    "A.5",
+    "A.6"
+   ],
+   "enunciado": "Copia en tu cuaderno y completa: a) De una factura de 127 € he pagado 111 €. Me han aplicado un __ % de descuento.   b) Me han descontado el 12 % de una factura de __ € y he pagado 365 €.   c) Por pagar al contado un mueble me han descontado el 15 % y me he ahorrado 100 €. ¿Cuál era el precio del mueble sin descuento?",
+   "solucion": "a) ≈ 12,6 %   b) ≈ 414,77 €   c) ≈ 666,67 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(127-111)/127*100",
+     "respuesta": "12.6",
+     "apartado": "a",
+     "tolerancia": 0.05
+    },
+    {
+     "tipo": "valor",
+     "expresion": "365/0.88",
+     "respuesta": "414.77",
+     "apartado": "b",
+     "tolerancia": 0.005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "100/0.15",
+     "respuesta": "666.67",
+     "apartado": "c",
+     "tolerancia": 0.005
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-010",
+   "tipo": "porcentajes",
+   "dificultad": 2,
+   "saberes": [
+    "A.5",
+    "A.6"
+   ],
+   "enunciado": "El modelo de teléfono móvil que costaba 285 € + IVA está ahora con un 15 % de descuento. ¿Cuál es su precio rebajado? (IVA 21 %)",
+   "solucion": "≈ 293,12 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x = 285*1.21*0.85",
+     "respuesta": [
+      "293.1225"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 8",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-011",
+   "tipo": "porcentajes",
+   "dificultad": 1,
+   "saberes": [
+    "A.5",
+    "A.6"
+   ],
+   "enunciado": "a) Por retrasarse dos meses en el pago de una deuda de 1520 €, una persona debe pagar un recargo del 12 %. ¿Cuánto tiene que devolver en total?   b) ¿Qué tanto por ciento de descuento se ha aplicado en una factura de 1820 € si finalmente se pagaron 1274 €?",
+   "solucion": "a) 1702,40 €   b) 30 %",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1520*1.12",
+     "respuesta": "1702.4",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "(1820-1274)/1820*100",
+     "respuesta": "30",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 9 y 10",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-012",
+   "tipo": "porcentajes",
+   "dificultad": 2,
+   "saberes": [
+    "A.5",
+    "A.6",
+    "D.2"
+   ],
+   "enunciado": "Al comprar un televisor he obtenido un 22 % de descuento, por lo que al final he pagado 483,60 €. ¿Cuál era el precio del televisor sin descuento?",
+   "solucion": "620 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x-x*22/100 = 483.6",
+     "respuesta": [
+      "620"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-013",
+   "tipo": "porcentajes",
+   "dificultad": 2,
+   "saberes": [
+    "A.5",
+    "A.6",
+    "D.2"
+   ],
+   "enunciado": "El precio de un viaje se anuncia a 907,50 € IVA incluido. ¿Cuál era el precio sin IVA? (IVA 21 %)",
+   "solucion": "750 €",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x+x*21/100 = 907.5",
+     "respuesta": [
+      "750"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 13",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-014",
+   "tipo": "porcentajes",
+   "dificultad": 2,
+   "saberes": [
+    "A.5",
+    "A.6",
+    "D.2"
+   ],
+   "enunciado": "¿Qué incremento porcentual se ha efectuado sobre un artículo que antes valía 38 € y ahora se paga a 47,12 €?",
+   "solucion": "Un 24 %",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "38+38*x/100 = 47.12",
+     "respuesta": [
+      "24"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 14",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-015",
+   "tipo": "escalas",
+   "dificultad": 1,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "a) La distancia real entre dos pueblos es 18,5 km. Si en el mapa están a 10 cm de distancia, ¿a qué escala está dibujado?   b) ¿Qué altura tiene un edificio si su maqueta construida a escala 1 : 300 presenta una altura de 12 cm?   c) Un mapa está dibujado a escala 1 : 700 000. La distancia real entre dos ciudades es 21 km. ¿Cuál es su distancia en el mapa?",
+   "solucion": "a) 1 : 185 000   b) 3600 cm = 36 m   c) 3 cm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "18.5*100000/10",
+     "respuesta": "185000",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "300*12/100",
+     "respuesta": "36",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "21*100000/700000",
+     "respuesta": "3",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 13 y 14; ejercicios y problemas 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-016",
+   "tipo": "escalas",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Copia en tu cuaderno y completa la tabla: tamaño en el dibujo 24 cm de largo y 5 cm de ancho, escala 1 : 25 000 (¿tamaño real?); tamaño en el dibujo 6 cm, tamaño real 15 km (¿escala?); tamaño real 450 m, escala 1 : 30 000 (¿tamaño en el dibujo?).",
+   "solucion": "6 km de largo y 1,25 km de ancho; escala 1 : 250 000; 1,5 cm",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "24*25000/100000",
+     "respuesta": "6",
+     "apartado": "largo (km)"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5*25000/100000",
+     "respuesta": "1.25",
+     "apartado": "ancho (km)"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "15*100000/6",
+     "respuesta": "250000",
+     "apartado": "escala"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "450*100/30000",
+     "respuesta": "1.5",
+     "apartado": "dibujo (cm)"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 18",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-017",
+   "tipo": "proporcionalidad inversa",
+   "dificultad": 1,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "a) Al cortar una cantidad de madera hemos conseguido 6 paneles de 2,25 m de largo. ¿Cuántos paneles conseguiremos si ahora tienen 1,5 m de largo?   b) Para llenar un depósito se abren tres grifos que lanzan 2 litros por minuto cada uno y tardan 6 horas. ¿Cuánto tiempo tardarán 4 grifos similares que lanzan 5 litros por minuto cada uno?",
+   "solucion": "a) 9 paneles   b) 1,8 h = 1 hora y 48 minutos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2.25*6/1.5",
+     "respuesta": "9",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3*2*6/(4*5)",
+     "respuesta": "1.8",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 18 y 19",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-018",
+   "tipo": "proporcionalidad inversa",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Copia en tu cuaderno, calcula la razón de proporcionalidad inversa y completa la tabla: magnitud A: 4; 7,5; __; 3,6; __ — magnitud B: __; 12; 0,18; __; 10.",
+   "solucion": "$k' = 7{,}5 \\cdot 12 = 90$. A: 4; 7,5; 500; 3,6; 9 — B: 22,5; 12; 0,18; 25; 10",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "7.5*12",
+     "respuesta": "90",
+     "apartado": "razón"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "90/4",
+     "respuesta": "22.5",
+     "apartado": "B de 4"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "90/0.18",
+     "respuesta": "500",
+     "apartado": "A de 0,18"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "90/3.6",
+     "respuesta": "25",
+     "apartado": "B de 3,6"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "90/10",
+     "respuesta": "9",
+     "apartado": "A de 10"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 19",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-019",
+   "tipo": "proporcionalidad inversa",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "¿Qué velocidad debe llevar un automóvil para recorrer en 4 horas cierta distancia si a 80 km/h ha tardado 5 horas y 15 minutos?",
+   "solucion": "Recorre $80 \\cdot 5{,}25 = 420$ km: 105 km/h",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "80*5.25/4",
+     "respuesta": "105"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 20",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-020",
+   "tipo": "proporcionalidad inversa",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "En la granja se hace el pedido de forraje para alimentar a 240 vacas durante 9 semanas. Si vende 60 vacas, ¿cuántas semanas le durará el forraje? ¿Y si en lugar de vender, compra treinta vacas? ¿Y si decide rebajar la ración una cuarta parte con las 240 vacas?",
+   "solucion": "12 semanas; 8 semanas; 12 semanas",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "9*240/180",
+     "respuesta": "12",
+     "apartado": "vende 60"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "9*240/270",
+     "respuesta": "8",
+     "apartado": "compra 30"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "9/(3/4)",
+     "respuesta": "12",
+     "apartado": "ración 3/4"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 22",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-021",
+   "tipo": "proporcionalidad compuesta",
+   "dificultad": 3,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "a) En un almacén se guardan reservas de comida para 80 personas durante 15 días con 3 raciones diarias. ¿Cuántos días duraría la misma comida para 75 personas con 4 raciones diarias?   b) Diez operarios instalan 3600 m de valla en 6 días. ¿Cuántos días tardarán 12 operarios en instalar 5040 m de valla?",
+   "solucion": "a) 12 días   b) 7 días (cada operario instala 60 m al día)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "80*15*3/(75*4)",
+     "respuesta": "12",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5040/(3600/6/10*12)",
+     "respuesta": "7",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 26 y 27",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-022",
+   "tipo": "repartos proporcionales",
+   "dificultad": 1,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Cinco personas comparten lotería, con 10, 6, 12, 7 y 5 participaciones respectivamente. Si han obtenido un premio de 18 000 €, ¿cuánto corresponde a cada uno?",
+   "solucion": "4500 €, 2700 €, 5400 €, 3150 € y 2250 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "18000*10/40",
+     "respuesta": "4500",
+     "apartado": "10"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "18000*6/40",
+     "respuesta": "2700",
+     "apartado": "6"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "18000*12/40",
+     "respuesta": "5400",
+     "apartado": "12"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "18000*7/40",
+     "respuesta": "3150",
+     "apartado": "7"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "18000*5/40",
+     "respuesta": "2250",
+     "apartado": "5"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 24",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-023",
+   "tipo": "repartos proporcionales",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "En un concurso se acumula puntuación de forma inversamente proporcional al número de errores. Los cuatro finalistas, con 6, 5, 2 y 1 error, deben repartirse los 1400 puntos. ¿Cuántos puntos recibirá cada uno?",
+   "solucion": "125, 150, 375 y 750 puntos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "1400*(1/6)/(1/6+1/5+1/2+1)",
+     "respuesta": "125",
+     "apartado": "6 errores"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1400*(1/5)/(1/6+1/5+1/2+1)",
+     "respuesta": "150",
+     "apartado": "5 errores"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1400*(1/2)/(1/6+1/5+1/2+1)",
+     "respuesta": "375",
+     "apartado": "2 errores"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1400*1/(1/6+1/5+1/2+1)",
+     "respuesta": "750",
+     "apartado": "1 error"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 25",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-024",
+   "tipo": "repartos proporcionales",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "En el testamento, el abuelo establece que quiere repartir entre sus nietos 22 200 €, de manera proporcional a sus edades, 12, 15 y 18 años, cuidando que la mayor cantidad sea para los nietos menores. ¿Cuánto recibirá cada uno?",
+   "solucion": "Reparto inversamente proporcional: 9000 €, 7200 € y 6000 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "22200*(1/12)/(1/12+1/15+1/18)",
+     "respuesta": "9000",
+     "apartado": "12 años"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "22200*(1/15)/(1/12+1/15+1/18)",
+     "respuesta": "7200",
+     "apartado": "15 años"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "22200*(1/18)/(1/12+1/15+1/18)",
+     "respuesta": "6000",
+     "apartado": "18 años"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 26",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-025",
+   "tipo": "repartos proporcionales",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Se ha decidido penalizar a las empresas que más contaminan. Para ello se reparten 2 350 000 € para subvencionar a tres empresas que presentan un 12 %, 20 % y 15 % de grado de contaminación. ¿Cuánto recibirá cada una?",
+   "solucion": "Inversamente proporcional al grado de contaminación: ≈ 979 166,67 €, 587 500 € y ≈ 783 333,33 € (la fuente da 9 791 666,67 €, 5 875 000 € y 7 833 333,33 €: cada cantidad multiplicada por 10, y entre las tres suman más de lo que se reparte)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2350000*(1/12)/(1/12+1/20+1/15)",
+     "respuesta": "979166.67",
+     "apartado": "12 %",
+     "tolerancia": 0.005
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2350000*(1/20)/(1/12+1/20+1/15)",
+     "respuesta": "587500",
+     "apartado": "20 %"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2350000*(1/15)/(1/12+1/20+1/15)",
+     "respuesta": "783333.33",
+     "apartado": "15 %",
+     "tolerancia": 0.005
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 33 (las cantidades de la fuente están multiplicadas por 10: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-026",
+   "tipo": "repartos proporcionales",
+   "dificultad": 1,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "Un trabajo se paga a 3120 €. Tres operarios lo realizan aportando el primero 22 jornadas, el segundo 16 jornadas y el tercero 14 jornadas. ¿Cuánto recibirá cada uno?",
+   "solucion": "60 € por jornada: 1320 €, 960 € y 840 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "3120/52*22",
+     "respuesta": "1320",
+     "apartado": "22"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3120/52*16",
+     "respuesta": "960",
+     "apartado": "16"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "3120/52*14",
+     "respuesta": "840",
+     "apartado": "14"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 30",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-027",
+   "tipo": "mezclas y aleaciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.5",
+    "A.6"
+   ],
+   "enunciado": "Mezclamos 3 kg de almendras a 14 €/kg, 1,5 kg de nueces a 6 €/kg y 1,75 kg de anacardos a 18 €/kg. Calcula el precio final del paquete de 250 g de mezcla de frutos secos.",
+   "solucion": "13,20 €/kg; el paquete de 250 g, 3,30 €",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "(3*14+1.5*6+1.75*18)/(3+1.5+1.75)",
+     "respuesta": "13.2",
+     "apartado": "€/kg"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "13.2/4",
+     "respuesta": "3.3",
+     "apartado": "paquete"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 34",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-028",
+   "tipo": "mezclas y aleaciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.5",
+    "D.2"
+   ],
+   "enunciado": "¿Cuántos litros de zumo de pomelo a 2,40 €/l deben mezclarse con 4 litros de zumo de naranja a 1,80 €/l para obtener una mezcla a 2,13 €/l?",
+   "solucion": "$\\frac{1{,}32}{0{,}27} = \\frac{44}{9} \\approx 4{,}89$ litros",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "(2.4*x+1.8*4)/(x+4) = 2.13",
+     "respuesta": [
+      "44/9"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, act. 29",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-prop-029",
+   "tipo": "mezclas y aleaciones",
+   "dificultad": 2,
+   "saberes": [
+    "A.5"
+   ],
+   "enunciado": "a) Un lingote de oro pesa 340 g y contiene 280,5 g de oro puro. ¿Cuál es su ley?   b) ¿Cuántos gramos de oro contiene una joya de 0,900 de ley, que se ha formado con una aleación de 60 g de 0,950 de ley y 20 g de 0,750 de ley?",
+   "solucion": "a) Ley 0,825   b) $57+15 = 72$ g de oro (y, en efecto, $\\frac{72}{80} = 0{,}9$)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "280.5/340",
+     "respuesta": "0.825",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "0.95*60+0.75*20",
+     "respuesta": "72",
+     "apartado": "b"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 6, ejercicios y problemas 37 y 38",
+   "verificacion": "comprobada"
+  }
+ ]
+}

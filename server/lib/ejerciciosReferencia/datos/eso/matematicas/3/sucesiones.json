@@ -1,0 +1,747 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 3,
+ "tema": "sucesiones",
+ "titulo": "Sucesiones: patrones, progresiones aritméticas y geométricas",
+ "saberes": [
+  "D.1",
+  "A.4",
+  "D.2",
+  "C.1"
+ ],
+ "fuentes": {
+  "mv3": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 3.º ESO (LOMLOE): «Soluciones de ejercicios y problemas» (enunciados y soluciones de cada capítulo)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/3ESO/Soluciones%203%20ESO.pdf",
+   "licencia": "CC BY-NC-SA 3.0"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m3-suc-001",
+   "tipo": "término de una sucesión",
+   "dificultad": 1,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "1) Escribe los diez primeros términos de las sucesiones: a) $-1, -2, -3, -4, \\ldots$   b) $1, 4, 9, 16, \\ldots$   c) $1, 3, 5, 7, \\ldots$   2) Escribe el término que ocupa el lugar 100 de cada una.",
+   "solucion": "Términos: a) $-1, -2, \\ldots, -10$ ($a_n = -n$)   b) $1, 4, 9, \\ldots, 100$ ($b_n = n^{2}$)   c) $1, 3, 5, \\ldots, 19$ ($c_n = 2n-1$). Lugar 100: a) $-100$   b) 10 000   c) 199 (la fuente da 201, que es el término 101: errata)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "-100",
+     "respuesta": "-100",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "100^2",
+     "respuesta": "10000",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "2*100-1",
+     "respuesta": "199",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 1 y 2 (en c) la fuente da 201: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-002",
+   "tipo": "término de una sucesión",
+   "dificultad": 1,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "Escribe los cuatro primeros términos de las siguientes sucesiones (se dan el cuarto de cada una para comprobar):\n\na) $a_n = 2n^{2}+1$   b) $v_n = \\frac{4n-1}{3n}$   c) $c_1 = 1,\\ c_n = 3c_{n-1}+5$   d) $d_1 = 2,\\ d_2 = 5,\\ d_n = 2d_{n-1}+d_{n-2}$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "2*4^2+1",
+     "enunciado": "a_n = 2n^{2}+1",
+     "respuesta": "33"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(4*4-1)/(3*4)",
+     "enunciado": "v_n = \\frac{4n-1}{3n}",
+     "respuesta": "5/4"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "3*(3*(3*1+5)+5)+5",
+     "enunciado": "c_1 = 1,\\ c_n = 3c_{n-1}+5",
+     "respuesta": "92"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "2*(2*5+2)+5",
+     "enunciado": "d_1 = 2,\\ d_2 = 5,\\ d_n = 2d_{n-1}+d_{n-2}",
+     "respuesta": "29"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 4",
+   "verificacion": "comprobada",
+   "solucion": "a) $33$; b) $\\frac{5}{4}$; c) $92$; d) $29$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-suc-003",
+   "tipo": "término general",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "Escribe la expresión del término general de las siguientes sucesiones: a) $\\{-1, 1, -1, 1, -1, 1, -1, 1, \\ldots\\}$   b) $\\{0, 3, 8, 15, 24, 35, \\ldots\\}$   c) $\\{2, 4, 6, 8, 10, \\ldots\\}$   d) $\\left\\{\\frac{1}{4}, \\frac{3}{5}, \\frac{5}{6}, \\frac{7}{7}, \\frac{9}{8}, \\ldots\\right\\}$",
+   "solucion": "a) $a_n = (-1)^{n}$   b) $b_n = n^{2}-1$   c) $c_n = 2n$   d) $d_n = \\frac{2n-1}{n+3}$",
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 5",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-suc-004",
+   "tipo": "progresión aritmética",
+   "dificultad": 1,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "Señala razonadamente si la siguiente sucesión es una progresión aritmética: $\\{1, 10, 100, 1000, 100\\,000, \\ldots\\}$",
+   "solucion": "No: la diferencia entre términos consecutivos no es constante (9, 90, 900…). Cada término se obtiene multiplicando por 10: es una progresión geométrica, $a_n = 10^{n-1}$",
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 8",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-suc-005",
+   "tipo": "progresión aritmética",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "Dada una progresión aritmética de la que se conocen dos términos, $a_3 = 4$ y $a_{10} = 18$: a) Calcula su diferencia. b) Calcula su término general.",
+   "solucion": "Con $a_1 = x$ y $d = y$: $x+2y = 4$, $x+9y = 18$. a) $d = 2$ ($a_1 = 0$)   b) $a_n = 2n-2$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x+2*y = 4",
+      "x+9*y = 18"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "0",
+      "y": "2"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 10",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-006",
+   "tipo": "progresión aritmética",
+   "dificultad": 1,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "Calcula el primer término de una progresión aritmética con diferencia 2 y $a_{30} = 60$.",
+   "solucion": "$a_1 = 2$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x+29*2 = 60",
+     "respuesta": [
+      "2"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 11",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-007",
+   "tipo": "progresión aritmética",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "¿Cuál es el término general de una progresión aritmética con $a_{22} = 45$ y $d = 3$?",
+   "solucion": "$a_1 = -18$: $a_n = -18+(n-1) \\cdot 3 = 3n-21$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x+21*3 = 45",
+     "respuesta": [
+      "-18"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-008",
+   "tipo": "progresión aritmética",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "D.2"
+   ],
+   "enunciado": "Los lados de un pentágono están en progresión aritmética de diferencia 5. Sabiendo además que su perímetro es 65, calcula el valor de los lados.",
+   "solucion": "3, 8, 13, 18 y 23",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x+(x+5)+(x+10)+(x+15)+(x+20) = 65",
+     "respuesta": [
+      "3"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 13",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-009",
+   "tipo": "progresión aritmética",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "Calcula la expresión general de las progresiones aritméticas: a) De diferencia $d = 2{,}5$ y primer término 2.   b) De diferencia $d = -2$ y primer término 0.   c) De diferencia $d = \\frac{1}{3}$ y segundo término 5.   d) De diferencia $d = 4$ y quinto término 1.",
+   "solucion": "a) $a_n = 2+(n-1) \\cdot 2{,}5 = 2{,}5n-0{,}5$ (la fuente da $2{,}5n-5$: errata)   b) $a_n = -2n+2$   c) $a_n = \\frac{n}{3}+\\frac{13}{3}$   d) $a_n = 4n-19$ (la comprobación mira el término 7 con las dos formas)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2+(7-1)*2.5",
+     "respuesta": "2.5*7-0.5",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "0+(7-1)*(-2)",
+     "respuesta": "-2*7+2",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "5+(7-2)*(1/3)",
+     "respuesta": "7/3+13/3",
+     "apartado": "c"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "1+(7-5)*4",
+     "respuesta": "4*7-19",
+     "apartado": "d"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 15 (en a) la fuente da 2,5n − 5: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-010",
+   "tipo": "contar términos",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "¿Cuántos múltiplos de 7 están comprendidos entre el 4 y el 893?",
+   "solucion": "Van de $7 = 7 \\cdot 1$ a $889 = 7 \\cdot 127$: son 127. La fuente da 126: errata",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "floor(893/7)-floor(4/7)",
+     "respuesta": "127"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 16 (la fuente da 126: errata)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-011",
+   "tipo": "progresión aritmética",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "D.2"
+   ],
+   "enunciado": "Un nadador se entrena en una piscina de 50 m y quiere controlar las pérdidas de velocidad por cansancio. Cronometra en cinco días consecutivos los tiempos que tarda en hacer 2, 5, 8, 11 y 14 largos. a) Halla el término general de la sucesión $a_n$ que da los metros recorridos en el día $n$. b) ¿Cuántos metros habrá nadado en dichos cronometrajes?",
+   "solucion": "a) $a_n = 100+(n-1) \\cdot 150$   b) 100, 250, 400, 550 y 700 metros",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "100+(5-1)*150",
+     "respuesta": "14*50",
+     "apartado": "a, día 5"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 22",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-012",
+   "tipo": "progresión geométrica",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "Averigua la razón de una progresión geométrica cuyo primer término es 27 y el cuarto es 8.",
+   "solucion": "$r = \\frac{2}{3}$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "27*x^3 = 8",
+     "respuesta": [
+      "2/3"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 23",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-013",
+   "tipo": "progresión geométrica",
+   "dificultad": 1,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "El cuarto término de una progresión geométrica es $\\frac{1}{9}$ y la razón $\\frac{1}{3}$. Halla el primer término.",
+   "solucion": "$a_1 = 3$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x*(1/3)^3 = 1/9",
+     "respuesta": [
+      "3"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 24",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-014",
+   "tipo": "progresión geométrica",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "Halla el sexto término de la siguiente progresión geométrica: $\\{\\sqrt{2}, 2, 2\\sqrt{2}, 4, \\ldots\\}$",
+   "solucion": "$r = \\sqrt{2}$, $a_6 = \\sqrt{2} \\cdot (\\sqrt{2})^{5} = 8$",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "sqrt(2)*sqrt(2)^5",
+     "respuesta": "8"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 25",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-015",
+   "tipo": "progresión geométrica",
+   "dificultad": 3,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "Dada una progresión geométrica de la que se conocen dos términos, $a_3 = -8$ y $a_{11} = -2048$: a) Calcula su razón. b) Calcula su término general.",
+   "solucion": "a) $r^{8} = 256$, así que $r = 2$ o $r = -2$.   b) Con $r = -2$: $a_n = (-2)^{n}$; con $r = 2$: $a_n = -2^{n}$ (las dos cumplen $a_3 = -8$ y $a_{11} = -2048$; la fuente solo da la primera)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x^8 = -2048/(-8)",
+     "respuesta": [
+      "-2",
+      "2"
+     ],
+     "apartado": "a"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 26 (la fuente da solo r = −2)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-016",
+   "tipo": "progresión geométrica",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "D.2"
+   ],
+   "enunciado": "Cierta clase de alga, llamada clorella, se reproduce doblando su cantidad cada dos horas y media. Si se tiene en el momento inicial un kilo, al cabo de dos horas y media hay dos kilos. a) Haz una tabla de valores en la que indiques para cada periodo de reproducción el número de kilos de clorella. b) Indica el término general. c) Al cabo de 4 días han transcurrido 40 periodos: ¿consideras posible este crecimiento?",
+   "solucion": "a) 1, 2, 4, 8, 16…   b) $a_n = 2^{n-1}$ (kilos en el periodo $n$)   c) No: saldrían del orden de $2^{40} \\approx 1{,}1 \\cdot 10^{12}$ kg de algas",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "2^40",
+     "respuesta": "1.0995*10^12",
+     "apartado": "c",
+     "tolerancia": 100000000.0
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, act. 27",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-017",
+   "tipo": "progresión aritmética",
+   "dificultad": 1,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "a) Calcula el término que ocupa el lugar 100 de una progresión aritmética cuyo primer término es 4 y la diferencia es 5.   b) El décimo término de una progresión aritmética es 45 y la diferencia es 4. Halla el primer término.   c) El término sexto de una progresión aritmética es 4 y la diferencia $\\frac{1}{2}$. Halla el término 20.",
+   "solucion": "a) 499   b) 9   c) 11",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "4+99*5",
+     "respuesta": "499",
+     "apartado": "a"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "45-9*4",
+     "respuesta": "9",
+     "apartado": "b"
+    },
+    {
+     "tipo": "valor",
+     "expresion": "4+14*(1/2)",
+     "respuesta": "11",
+     "apartado": "c"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas (primera numeración) 1 y 2; (segunda numeración) 3",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-018",
+   "tipo": "progresión aritmética",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "Sabiendo que el primer término de una progresión aritmética es 4, la diferencia 7 y el término $n$-ésimo 88, halla $n$.",
+   "solucion": "$n = 13$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "4+(n-1)*7 = 88",
+     "respuesta": [
+      "13"
+     ],
+     "var": "n"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas (segunda numeración) 1",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-019",
+   "tipo": "progresión aritmética",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "Halla el primer término de una progresión aritmética y la diferencia, sabiendo que $a_3 = 24$ y $a_{10} = 66$.",
+   "solucion": "$a_1 = 12$; $d = 6$",
+   "comprobar": [
+    {
+     "tipo": "sistema",
+     "ecuaciones": [
+      "x+2*y = 24",
+      "x+9*y = 66"
+     ],
+     "vars": [
+      "x",
+      "y"
+     ],
+     "respuesta": {
+      "x": "12",
+      "y": "6"
+     }
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas (segunda numeración) 2",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-020",
+   "tipo": "progresión aritmética",
+   "dificultad": 3,
+   "saberes": [
+    "D.1",
+    "D.2",
+    "C.1"
+   ],
+   "enunciado": "Calcula los lados de un triángulo rectángulo sabiendo que sus medidas, expresadas en metros, están en progresión aritmética de diferencia 3.",
+   "solucion": "9, 12 y 15 m (la solución $x = -3$ no vale para una longitud)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x^2+(x+3)^2 = (x+6)^2",
+     "respuesta": [
+      "-3",
+      "9"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas (segunda numeración) 4",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-021",
+   "tipo": "progresión aritmética",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "D.2"
+   ],
+   "enunciado": "Sabiendo que las medidas de los tres ángulos de un triángulo están en progresión aritmética y que uno de ellos mide 100°, calcula los otros dos.",
+   "solucion": "El del medio mide 60° (la suma es $3 \\cdot a_2 = 180°$), así que la diferencia es 40°: los otros miden 20° y 60°",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "3*x = 180",
+     "respuesta": [
+      "60"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas 21",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-022",
+   "tipo": "progresión aritmética",
+   "dificultad": 1,
+   "saberes": [
+    "D.1",
+    "D.2"
+   ],
+   "enunciado": "Por el alquiler de una casa se acuerda pagar 800 euros al mes durante el primer año, y cada año se aumentará el alquiler en 50 euros mensuales. ¿Cuánto se pagará mensualmente al cabo de 12 años?",
+   "solucion": "1350 € (el año 12 es $a_{12} = 800+11 \\cdot 50$)",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "800+11*50",
+     "respuesta": "1350"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas 26",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-023",
+   "tipo": "progresión aritmética",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "D.2"
+   ],
+   "enunciado": "Las edades de cuatro hermanos forman una progresión aritmética, y su suma es 32 años. El mayor tiene 6 años más que el menor. Halla las edades de los cuatro hermanos.",
+   "solucion": "La diferencia es $6 : 3 = 2$ años: 5, 7, 9 y 11 años",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x+(x+2)+(x+4)+(x+6) = 32",
+     "respuesta": [
+      "5"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas 27",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-024",
+   "tipo": "progresión aritmética",
+   "dificultad": 1,
+   "saberes": [
+    "D.1",
+    "D.2"
+   ],
+   "enunciado": "Un esquiador comienza la pretemporada de esquí haciendo pesas en un gimnasio durante una hora. Decide incrementar el entrenamiento 10 minutos cada día. ¿Cuánto tiempo deberá entrenar al cabo de 15 días?",
+   "solucion": "$a_{15} = 60+14 \\cdot 10 = 200$ minutos",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "expresion": "60+14*10",
+     "respuesta": "200"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas 28 (primera pregunta)",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-025",
+   "tipo": "progresión aritmética",
+   "dificultad": 3,
+   "saberes": [
+    "D.1",
+    "D.2"
+   ],
+   "enunciado": "En una sala de cine, la primera fila de butacas dista de la pantalla 86 dm, y la sexta, 134 dm. ¿En qué fila estará una persona si su distancia a la pantalla es de 230 dm?",
+   "solucion": "La diferencia es $48 : 5 = 9{,}6$ dm: fila 16",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "86+(n-1)*(134-86)/5 = 230",
+     "respuesta": [
+      "16"
+     ],
+     "var": "n"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas 29",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-026",
+   "tipo": "progresión geométrica",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "El quinto término de una progresión geométrica es 81 y el primero es 1. Halla los cinco primeros términos de dicha progresión.",
+   "solucion": "$r^{4} = 81$, $r = 3$ o $r = -3$: 1, 3, 9, 27 y 81; o bien 1, −3, 9, −27 y 81",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x^4 = 81",
+     "respuesta": [
+      "-3",
+      "3"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas 31",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-027",
+   "tipo": "progresión geométrica",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "En una progresión geométrica de primer término 7 y razón 2, un cierto término es 28 672. ¿Qué lugar ocupa dicho término?",
+   "solucion": "$2^{n-1} = 4096 = 2^{12}$: el lugar 13",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "7*2^(n-1) = 28672",
+     "respuesta": [
+      "13"
+     ],
+     "var": "n"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas 32",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-028",
+   "tipo": "progresión geométrica",
+   "dificultad": 2,
+   "saberes": [
+    "D.1",
+    "A.4"
+   ],
+   "enunciado": "En una progresión geométrica se sabe que el término decimoquinto es igual a 512 y que el término décimo es igual a 16. Halla el primer término y la razón.",
+   "solucion": "$r^{5} = 32$, $r = 2$; $a_1 = \\frac{16}{2^{9}} = \\frac{1}{32}$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "16*x^5 = 512",
+     "respuesta": [
+      "2"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas 34",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-suc-029",
+   "tipo": "progresión geométrica",
+   "dificultad": 3,
+   "saberes": [
+    "D.1",
+    "D.2"
+   ],
+   "enunciado": "Tres números están en progresión geométrica; el segundo es 32 unidades mayor que el primero, y el tercero, 96 unidades mayor que el segundo. Halla los números.",
+   "solucion": "Como $a_3-a_2 = r(a_2-a_1)$, la razón es 3; $a_1 \\cdot 3 - a_1 = 32$ da $a_1 = 16$: 16, 48 y 144",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "32*x = 96",
+     "respuesta": [
+      "3"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 3, ejercicios y problemas 48",
+   "verificacion": "comprobada"
+  }
+ ]
+}

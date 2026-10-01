@@ -1,0 +1,1436 @@
+{
+ "materia": "matematicas",
+ "etapa": "eso",
+ "curso": 3,
+ "tema": "ecuaciones",
+ "titulo": "Ecuaciones de primer y segundo grado",
+ "saberes": [
+  "D.2",
+  "D.4",
+  "C.1"
+ ],
+ "fuentes": {
+  "mv3": {
+   "nombre": "Apuntes Marea Verde, Matemáticas 3.º ESO (LOMLOE): «Soluciones de ejercicios y problemas» (enunciados y soluciones de cada capítulo)",
+   "url": "https://www.apuntesmareaverde.org.es/grupos/mat/LOMLOE/3ESO/Soluciones%203%20ESO.pdf",
+   "licencia": "CC BY-NC-SA 3.0"
+  },
+  "ag3": {
+   "nombre": "Alfonso González, IES Fernando de Mena: fichas de ejercicios de 3.º ESO Académicas",
+   "url": "https://www.alfonsogonzalez.es/asignaturas/3_eso_academicas/ejercicios_3_eso_academicas_propuestos.php",
+   "licencia": "CC BY-NC"
+  }
+ },
+ "ejercicios": [
+  {
+   "id": "m3-ec-001",
+   "tipo": "primer grado",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve las siguientes ecuaciones:\n\na) $2x - 3 = 4x - 5$   b) $3x + 6 = 9x - 12$   c) $4x + 8 = 12$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "2*x-3 = 4*x-5",
+     "enunciado": "2x - 3 = 4x - 5",
+     "respuesta": [
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "3*x+6 = 9*x-12",
+     "enunciado": "3x + 6 = 9x - 12",
+     "respuesta": [
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "4*x+8 = 12",
+     "enunciado": "4x + 8 = 12",
+     "respuesta": [
+      "1"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 4",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 1$; b) $x = 3$; c) $x = 1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-002",
+   "tipo": "primer grado",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve las siguientes ecuaciones de primer grado:\n\na) $-x - 6x - 8 = 0$   b) $-1 + x = 6$   c) $7x = 70x + 5$   d) $2(x + 3) - (2x + 1) = 5$   e) $5(2x - 1) + (x - 1) = 5$   f) $12(x - 1) - 6(2 + x) =-18$   g) $(2x + 3) + (x - 1) =-x - 3$   h) $x + 2 = 2x + 168$   i) $6(2x - 3x + 1) - 2x - 1 =-1$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "-x-6*x-8 = 0",
+     "enunciado": "-x - 6x - 8 = 0",
+     "respuesta": [
+      "-8/7"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "-1+x = 6",
+     "enunciado": "-1 + x = 6",
+     "respuesta": [
+      "7"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "7*x = 70*x+5",
+     "enunciado": "7x = 70x + 5",
+     "respuesta": [
+      "-5/63"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "2*(x+3)-(2*x+1) = 5",
+     "enunciado": "2(x + 3) - (2x + 1) = 5",
+     "respuesta": "identidad"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "5*(2*x-1)+(x-1) = 5",
+     "enunciado": "5(2x - 1) + (x - 1) = 5",
+     "respuesta": [
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "12*(x-1)-6*(2+x) = -18",
+     "enunciado": "12(x - 1) - 6(2 + x) =-18",
+     "respuesta": [
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "g",
+     "ecuacion": "(2*x+3)+(x-1) = -x-3",
+     "enunciado": "(2x + 3) + (x - 1) =-x - 3",
+     "respuesta": [
+      "-5/4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "h",
+     "ecuacion": "x+2 = 2*x+168",
+     "enunciado": "x + 2 = 2x + 168",
+     "respuesta": [
+      "-166"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "i",
+     "ecuacion": "6*(2*x-3*x+1)-2*x-1 = -1",
+     "enunciado": "6(2x - 3x + 1) - 2x - 1 =-1",
+     "respuesta": [
+      "3/4"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 1 (en e) la fuente da x = 1/11: errata, es x = 1)",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = - \\frac{8}{7}$; b) $x = 7$; c) $x = - \\frac{5}{63}$; d) identidad; e) $x = 1$; f) $x = 1$; g) $x = - \\frac{5}{4}$; h) $x = -166$; i) $x = \\frac{3}{4}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-003",
+   "tipo": "primer grado",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $3x + 1 - (x + 3) =-8$   b) $2(x + 1) = 3(x - 2)$   c) $4(x - 2) = 2(2x - 1)$   d) $2(3x + 2) - 3(2x - 1) = 7$   e) $5(2x - 3) - 8(4x - 9) = 6$   f) $x - 7(2x + 1) = 2(6 - 5x) - 13$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "3*x+1-(x+3) = -8",
+     "enunciado": "3x + 1 - (x + 3) =-8",
+     "respuesta": [
+      "-3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "2*(x+1) = 3*(x-2)",
+     "enunciado": "2(x + 1) = 3(x - 2)",
+     "respuesta": [
+      "8"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "4*(x-2) = 2*(2*x-1)",
+     "enunciado": "4(x - 2) = 2(2x - 1)",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "2*(3*x+2)-3*(2*x-1) = 7",
+     "enunciado": "2(3x + 2) - 3(2x - 1) = 7",
+     "respuesta": "identidad"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "5*(2*x-3)-8*(4*x-9) = 6",
+     "enunciado": "5(2x - 3) - 8(4x - 9) = 6",
+     "respuesta": [
+      "51/22"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "x-7*(2*x+1) = 2*(6-5*x)-13",
+     "enunciado": "x - 7(2x + 1) = 2(6 - 5x) - 13",
+     "respuesta": [
+      "-2"
+     ]
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "ecuaciones de 1.er grado, ficha 1, ej. 1 (7, 9, 11, 25, 26 y 50)",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -3$; b) $x = 8$; c) sin solución; d) identidad; e) $x = \\frac{51}{22}$; f) $x = -2$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-004",
+   "tipo": "primer grado con denominadores",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve las siguientes ecuaciones de primer grado con denominadores:\n\na) $\\frac{x - 1}{2} - \\frac{x + 1}{3} = 10$   b) $\\frac{x - 3}{3} + \\frac{-x + 1}{7} = 3$   c) $\\frac{x + 1}{5} + \\frac{2x + 6}{10} = 2$   d) $\\frac{1 - x}{2} + \\frac{3x - 1}{3} = \\frac{1}{3}$   e) $\\frac{2x - 8}{5} - \\frac{3x - 9}{10} = x - 1$   f) $\\frac{2x + 3x}{5} - \\frac{3x - 6}{10} = 1$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "(x-1)/2-(x+1)/3 = 10",
+     "enunciado": "\\frac{x - 1}{2} - \\frac{x + 1}{3} = 10",
+     "respuesta": [
+      "65"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "(x-3)/3+(-x+1)/7 = 3",
+     "enunciado": "\\frac{x - 3}{3} + \\frac{-x + 1}{7} = 3",
+     "respuesta": [
+      "81/4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "(x+1)/5+(2*x+6)/10 = 2",
+     "enunciado": "\\frac{x + 1}{5} + \\frac{2x + 6}{10} = 2",
+     "respuesta": [
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "(1-x)/2+(3*x-1)/3 = 1/3",
+     "enunciado": "\\frac{1 - x}{2} + \\frac{3x - 1}{3} = \\frac{1}{3}",
+     "respuesta": [
+      "1/3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "(2*x-8)/5-(3*x-9)/10 = x-1",
+     "enunciado": "\\frac{2x - 8}{5} - \\frac{3x - 9}{10} = x - 1",
+     "respuesta": [
+      "1/3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "(2*x+3*x)/5-(3*x-6)/10 = 1",
+     "enunciado": "\\frac{2x + 3x}{5} - \\frac{3x - 6}{10} = 1",
+     "respuesta": [
+      "4/7"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 2",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 65$; b) $x = \\frac{81}{4}$; c) $x = 3$; d) $x = \\frac{1}{3}$; e) $x = \\frac{1}{3}$; f) $x = \\frac{4}{7}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-005",
+   "tipo": "primer grado con denominadores",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $3 \\cdot \\frac{-x + 5}{4} + 2 \\cdot \\frac{x - 3}{3} = 6$   b) $x + 3 \\cdot \\frac{x - 5}{2} = 3 + \\frac{5x - 21}{2}$   c) $\\frac{6x}{7} + 4 \\cdot \\frac{x - 2}{14} - 2 \\cdot \\frac{x + 2}{7} = 9$   d) $1 - \\frac{3x - 7}{5} = \\frac{5x + 4}{15} - \\frac{x - 1}{3}$   e) $\\frac{1 - x}{3} - \\frac{x - 1}{12} = \\frac{3x - 1}{4}$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "3*(-x+5)/4+2*(x-3)/3 = 6",
+     "enunciado": "3 \\cdot \\frac{-x + 5}{4} + 2 \\cdot \\frac{x - 3}{3} = 6",
+     "respuesta": [
+      "-51"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "x+3*(x-5)/2 = 3+(5*x-21)/2",
+     "enunciado": "x + 3 \\cdot \\frac{x - 5}{2} = 3 + \\frac{5x - 21}{2}",
+     "respuesta": "identidad"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "6*x/7+4*(x-2)/14-2*(x+2)/7 = 9",
+     "enunciado": "\\frac{6x}{7} + 4 \\cdot \\frac{x - 2}{14} - 2 \\cdot \\frac{x + 2}{7} = 9",
+     "respuesta": [
+      "71/6"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "1-(3*x-7)/5 = (5*x+4)/15-(x-1)/3",
+     "enunciado": "1 - \\frac{3x - 7}{5} = \\frac{5x + 4}{15} - \\frac{x - 1}{3}",
+     "respuesta": [
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "(1-x)/3-(x-1)/12 = (3*x-1)/4",
+     "enunciado": "\\frac{1 - x}{3} - \\frac{x - 1}{12} = \\frac{3x - 1}{4}",
+     "respuesta": [
+      "4/7"
+     ]
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "ecuaciones de 1.er grado, ficha 1, ej. 2 (22, 25, 30, 41, 51)",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -51$; b) identidad; c) $x = \\frac{71}{6}$; d) $x = 3$; e) $x = \\frac{4}{7}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-006",
+   "tipo": "segundo grado incompleta",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve las siguientes ecuaciones de segundo grado incompletas:\n\na) $3x^{2} + 6x = 0$   b) $3x^{2} - 27 = 0$   c) $x^{2} - 25 = 0$   d) $2x^{2} + x = 0$   e) $4x^{2} - 9 = 0$   f) $5x^{2} - 10x = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "3*x^2+6*x = 0",
+     "enunciado": "3x^{2} + 6x = 0",
+     "respuesta": [
+      "-2",
+      "0"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "3*x^2-27 = 0",
+     "enunciado": "3x^{2} - 27 = 0",
+     "respuesta": [
+      "-3",
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "x^2-25 = 0",
+     "enunciado": "x^{2} - 25 = 0",
+     "respuesta": [
+      "-5",
+      "5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "2*x^2+x = 0",
+     "enunciado": "2x^{2} + x = 0",
+     "respuesta": [
+      "-1/2",
+      "0"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "4*x^2-9 = 0",
+     "enunciado": "4x^{2} - 9 = 0",
+     "respuesta": [
+      "-3/2",
+      "3/2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "5*x^2-10*x = 0",
+     "enunciado": "5x^{2} - 10x = 0",
+     "respuesta": [
+      "0",
+      "2"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 9 (en a) la fuente da x = -6: errata, es x = -2)",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -2$, $x = 0$; b) $x = -3$, $x = 3$; c) $x = -5$, $x = 5$; d) $x = - \\frac{1}{2}$, $x = 0$; e) $x = - \\frac{3}{2}$, $x = \\frac{3}{2}$; f) $x = 0$, $x = 2$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-007",
+   "tipo": "segundo grado incompleta",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve las siguientes ecuaciones de 2.º grado incompletas aplicando el método más conveniente en cada caso (no vale utilizar la fórmula general):\n\na) $x^{2} - 5x = 0$   b) $x^{2} - 16 = 0$   c) $x^{2} + 49 = 0$   d) $4 - 25x^{2} = 0$   e) $-x^{2} - x = 0$   f) $x^{2} - 8 = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x^2-5*x = 0",
+     "enunciado": "x^{2} - 5x = 0",
+     "respuesta": [
+      "0",
+      "5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "x^2-16 = 0",
+     "enunciado": "x^{2} - 16 = 0",
+     "respuesta": [
+      "-4",
+      "4"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "x^2+49 = 0",
+     "enunciado": "x^{2} + 49 = 0",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "4-25*x^2 = 0",
+     "enunciado": "4 - 25x^{2} = 0",
+     "respuesta": [
+      "-2/5",
+      "2/5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "-x^2-x = 0",
+     "enunciado": "-x^{2} - x = 0",
+     "respuesta": [
+      "-1",
+      "0"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "x^2-8 = 0",
+     "enunciado": "x^{2} - 8 = 0",
+     "respuesta": [
+      "-2*sqrt(2)",
+      "2*sqrt(2)"
+     ]
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "ecuaciones de 2.º grado, ficha 2, ej. 1 (1, 2, 5, 23, 25 y 22)",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 0$, $x = 5$; b) $x = -4$, $x = 4$; c) sin solución; d) $x = - \\frac{2}{5}$, $x = \\frac{2}{5}$; e) $x = -1$, $x = 0$; f) $x = - 2 \\sqrt{2}$, $x = 2 \\sqrt{2}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-008",
+   "tipo": "segundo grado completa",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve las siguientes ecuaciones de 2.º grado completas:\n\na) $x^{2} - 7x + 10 = 0$   b) $2x^{2} + 2x - 24 = 0$   c) $3x^{2} - 9x + 6 = 0$   d) $x^{2} - 4x - 12 = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x^2-7*x+10 = 0",
+     "enunciado": "x^{2} - 7x + 10 = 0",
+     "respuesta": [
+      "2",
+      "5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "2*x^2+2*x-24 = 0",
+     "enunciado": "2x^{2} + 2x - 24 = 0",
+     "respuesta": [
+      "-4",
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "3*x^2-9*x+6 = 0",
+     "enunciado": "3x^{2} - 9x + 6 = 0",
+     "respuesta": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "x^2-4*x-12 = 0",
+     "enunciado": "x^{2} - 4x - 12 = 0",
+     "respuesta": [
+      "-2",
+      "6"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 7",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = 2$, $x = 5$; b) $x = -4$, $x = 3$; c) $x = 1$, $x = 2$; d) $x = -2$, $x = 6$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-009",
+   "tipo": "número de soluciones",
+   "dificultad": 1,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Averigua cuántas soluciones tienen las siguientes ecuaciones de 2.º grado: a) $x^{2}+x+4 = 0$   b) $x^{2}-6x+9 = 0$   c) $x^{2}-6x-7 = 0$   d) $x^{2}-3x+5 = 0$",
+   "solucion": "Discriminante $b^{2}-4ac$: a) $-15 < 0$: ninguna   b) $0$: una (doble)   c) $64 > 0$: dos   d) $-11 < 0$: ninguna",
+   "comprobar": [
+    {
+     "tipo": "valor",
+     "apartado": "a",
+     "expresion": "1^2-4*1*4",
+     "respuesta": "-15"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "b",
+     "expresion": "(-6)^2-4*1*9",
+     "respuesta": "0"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "c",
+     "expresion": "(-6)^2-4*1*(-7)",
+     "respuesta": "64"
+    },
+    {
+     "tipo": "valor",
+     "apartado": "d",
+     "expresion": "(-3)^2-4*1*5",
+     "respuesta": "-11"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 8",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-010",
+   "tipo": "segundo grado completa",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve con la fórmula general:\n\na) $x^{2} - 4x + 21 = 0$   b) $3x^{2} - 10x + 7 = 0$   c) $x^{2} - 2x - 1 = 0$   d) $x^{2} + x - 1 = 0$   e) $6x^{2} - 5x - 6 = 0$   f) $-2x^{2} + 2x + 15 = 0$   g) $x^{2} + 6x - 8 = 0$   h) $3x^{2} - 6x - 4 = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x^2-4*x+21 = 0",
+     "enunciado": "x^{2} - 4x + 21 = 0",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "3*x^2-10*x+7 = 0",
+     "enunciado": "3x^{2} - 10x + 7 = 0",
+     "respuesta": [
+      "1",
+      "7/3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "x^2-2*x-1 = 0",
+     "enunciado": "x^{2} - 2x - 1 = 0",
+     "respuesta": [
+      "1-sqrt(2)",
+      "1+sqrt(2)"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "x^2+x-1 = 0",
+     "enunciado": "x^{2} + x - 1 = 0",
+     "respuesta": [
+      "(-1-sqrt(5))/2",
+      "(-1+sqrt(5))/2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "6*x^2-5*x-6 = 0",
+     "enunciado": "6x^{2} - 5x - 6 = 0",
+     "respuesta": [
+      "-2/3",
+      "3/2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "-2*x^2+2*x+15 = 0",
+     "enunciado": "-2x^{2} + 2x + 15 = 0",
+     "respuesta": [
+      "(1-sqrt(31))/2",
+      "(1+sqrt(31))/2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "g",
+     "ecuacion": "x^2+6*x-8 = 0",
+     "enunciado": "x^{2} + 6x - 8 = 0",
+     "respuesta": [
+      "-3-sqrt(17)",
+      "-3+sqrt(17)"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "h",
+     "ecuacion": "3*x^2-6*x-4 = 0",
+     "enunciado": "3x^{2} - 6x - 4 = 0",
+     "respuesta": [
+      "1-sqrt(21)/3",
+      "1+sqrt(21)/3"
+     ]
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "ecuaciones de 2.º grado, ficha 2, ej. 3 (3, 8, 13, 15, 12, 38, 60 y 69)",
+   "verificacion": "comprobada",
+   "solucion": "a) sin solución; b) $x = 1$, $x = \\frac{7}{3}$; c) $x = 1 - \\sqrt{2}$, $x = 1 + \\sqrt{2}$; d) $x = - \\frac{\\sqrt{5}}{2} - \\frac{1}{2}$, $x = - \\frac{1}{2} + \\frac{\\sqrt{5}}{2}$; e) $x = - \\frac{2}{3}$, $x = \\frac{3}{2}$; f) $x = \\frac{1}{2} - \\frac{\\sqrt{31}}{2}$, $x = \\frac{1}{2} + \\frac{\\sqrt{31}}{2}$; g) $x = - \\sqrt{17} - 3$, $x = -3 + \\sqrt{17}$; h) $x = 1 - \\frac{\\sqrt{21}}{3}$, $x = 1 + \\frac{\\sqrt{21}}{3}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-011",
+   "tipo": "segundo grado completa",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Determina el número de soluciones reales que tienen las siguientes ecuaciones de segundo grado calculando su discriminante, y luego resuélvelas:\n\na) $x^{2} + 3x - 4 = 0$   b) $7x^{2} + 12x - 4 = 0$   c) $3x^{2} + 7x + 10 = 0$   d) $x^{2} - x + 5 = 0$   e) $6x^{2} - 2x - 3 = 0$   f) $5x^{2} + 8x - 6 = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "x^2+3*x-4 = 0",
+     "enunciado": "x^{2} + 3x - 4 = 0",
+     "respuesta": [
+      "-4",
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "7*x^2+12*x-4 = 0",
+     "enunciado": "7x^{2} + 12x - 4 = 0",
+     "respuesta": [
+      "-2",
+      "2/7"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "3*x^2+7*x+10 = 0",
+     "enunciado": "3x^{2} + 7x + 10 = 0",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "x^2-x+5 = 0",
+     "enunciado": "x^{2} - x + 5 = 0",
+     "respuesta": "sin solución"
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "6*x^2-2*x-3 = 0",
+     "enunciado": "6x^{2} - 2x - 3 = 0",
+     "respuesta": [
+      "(1-sqrt(19))/6",
+      "(1+sqrt(19))/6"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "5*x^2+8*x-6 = 0",
+     "enunciado": "5x^{2} + 8x - 6 = 0",
+     "respuesta": [
+      "(-4-sqrt(46))/5",
+      "(-4+sqrt(46))/5"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 9",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -4$, $x = 1$; b) $x = -2$, $x = \\frac{2}{7}$; c) sin solución; d) sin solución; e) $x = \\frac{1}{6} - \\frac{\\sqrt{19}}{6}$, $x = \\frac{1}{6} + \\frac{\\sqrt{19}}{6}$; f) $x = - \\frac{\\sqrt{46}}{5} - \\frac{4}{5}$, $x = - \\frac{4}{5} + \\frac{\\sqrt{46}}{5}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-012",
+   "tipo": "segundo grado: operar antes",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve las siguientes ecuaciones de 2.º grado:\n\na) $-x^{2} - 6x - 8 = 0$   b) $x \\cdot (-1 + x) = 6$   c) $7x^{2} = 70x$   d) $2(x + 3) - x \\cdot (2x + 1) = 5$   e) $5(2x - 1) + x \\cdot (x - 1) = 5$   f) $12(x^{2} - 1) - 6(2 + x) =-18$   g) $(2x + 3) \\cdot (x - 1) =-x - 3$   h) $x \\cdot (x + 2) = 168$   i) $6(2x^{2} - 3x + 1) - x \\cdot (2x - 1) =-1$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "-x^2-6*x-8 = 0",
+     "enunciado": "-x^{2} - 6x - 8 = 0",
+     "respuesta": [
+      "-4",
+      "-2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "x*(-1+x) = 6",
+     "enunciado": "x \\cdot (-1 + x) = 6",
+     "respuesta": [
+      "-2",
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "7*x^2 = 70*x",
+     "enunciado": "7x^{2} = 70x",
+     "respuesta": [
+      "0",
+      "10"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "2*(x+3)-x*(2*x+1) = 5",
+     "enunciado": "2(x + 3) - x \\cdot (2x + 1) = 5",
+     "respuesta": [
+      "-1/2",
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "5*(2*x-1)+x*(x-1) = 5",
+     "enunciado": "5(2x - 1) + x \\cdot (x - 1) = 5",
+     "respuesta": [
+      "-10",
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "12*(x^2-1)-6*(2+x) = -18",
+     "enunciado": "12(x^{2} - 1) - 6(2 + x) =-18",
+     "respuesta": [
+      "-1/2",
+      "1"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "g",
+     "ecuacion": "(2*x+3)*(x-1) = -x-3",
+     "enunciado": "(2x + 3) \\cdot (x - 1) =-x - 3",
+     "respuesta": [
+      "-1",
+      "0"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "h",
+     "ecuacion": "x*(x+2) = 168",
+     "enunciado": "x \\cdot (x + 2) = 168",
+     "respuesta": [
+      "-14",
+      "12"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "i",
+     "ecuacion": "6*(2*x^2-3*x+1)-x*(2*x-1) = -1",
+     "enunciado": "6(2x^{2} - 3x + 1) - x \\cdot (2x - 1) =-1",
+     "respuesta": [
+      "7/10",
+      "1"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 3",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = -4$, $x = -2$; b) $x = -2$, $x = 3$; c) $x = 0$, $x = 10$; d) $x = - \\frac{1}{2}$, $x = 1$; e) $x = -10$, $x = 1$; f) $x = - \\frac{1}{2}$, $x = 1$; g) $x = -1$, $x = 0$; h) $x = -14$, $x = 12$; i) $x = \\frac{7}{10}$, $x = 1$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-013",
+   "tipo": "segundo grado con denominadores",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve las siguientes ecuaciones de 2.º grado con denominadores:\n\na) $\\frac{x^{2} - 1}{2} - \\frac{x + 1}{3} = 10$   b) $\\frac{x^{2} - 3}{3} + \\frac{x^{2} - x + 1}{7} = 3$   c) $\\frac{x^{2} + 1}{5} + \\frac{2x + 6}{10} = 2$   d) $\\frac{1 - x^{2}}{2} + \\frac{3x - 1}{3} = \\frac{1}{3}$   e) $\\frac{2x^{2} - 8}{5} - \\frac{3x - 9}{10} = x - 1$   f) $\\frac{2x + 3x^{2}}{5} - \\frac{3x - 6}{10} = 1$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "(x^2-1)/2-(x+1)/3 = 10",
+     "enunciado": "\\frac{x^{2} - 1}{2} - \\frac{x + 1}{3} = 10",
+     "respuesta": [
+      "-13/3",
+      "5"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "(x^2-3)/3+(x^2-x+1)/7 = 3",
+     "enunciado": "\\frac{x^{2} - 3}{3} + \\frac{x^{2} - x + 1}{7} = 3",
+     "respuesta": [
+      "-27/10",
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "(x^2+1)/5+(2*x+6)/10 = 2",
+     "enunciado": "\\frac{x^{2} + 1}{5} + \\frac{2x + 6}{10} = 2",
+     "respuesta": [
+      "-3",
+      "2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "(1-x^2)/2+(3*x-1)/3 = 1/3",
+     "enunciado": "\\frac{1 - x^{2}}{2} + \\frac{3x - 1}{3} = \\frac{1}{3}",
+     "respuesta": [
+      "1-sqrt(6)/3",
+      "1+sqrt(6)/3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "(2*x^2-8)/5-(3*x-9)/10 = x-1",
+     "enunciado": "\\frac{2x^{2} - 8}{5} - \\frac{3x - 9}{10} = x - 1",
+     "respuesta": [
+      "1/4",
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "f",
+     "ecuacion": "(2*x+3*x^2)/5-(3*x-6)/10 = 1",
+     "enunciado": "\\frac{2x + 3x^{2}}{5} - \\frac{3x - 6}{10} = 1",
+     "respuesta": [
+      "(-1-sqrt(97))/12",
+      "(-1+sqrt(97))/12"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 4",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = - \\frac{13}{3}$, $x = 5$; b) $x = - \\frac{27}{10}$, $x = 3$; c) $x = -3$, $x = 2$; d) $x = 1 - \\frac{\\sqrt{6}}{3}$, $x = \\frac{\\sqrt{6}}{3} + 1$; e) $x = \\frac{1}{4}$, $x = 3$; f) $x = - \\frac{\\sqrt{97}}{12} - \\frac{1}{12}$, $x = - \\frac{1}{12} + \\frac{\\sqrt{97}}{12}$",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-014",
+   "tipo": "segundo grado: operar antes",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Resuelve:\n\na) $3(x^{2} - 1) + 2(x^{2} - 2x) = 9$   b) $156 = x \\cdot (x - 1)$   c) $3x^{2} - 14x + 15 = 0$   d) $(x - 14)^{2} + x^{2} = (x + 2)^{2}$   e) $2(x + 2) - x \\cdot (2 - x) = 0$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "a",
+     "ecuacion": "3*(x^2-1)+2*(x^2-2*x) = 9",
+     "enunciado": "3(x^{2} - 1) + 2(x^{2} - 2x) = 9",
+     "respuesta": [
+      "-6/5",
+      "2"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "156 = x*(x-1)",
+     "enunciado": "156 = x \\cdot (x - 1)",
+     "respuesta": [
+      "-12",
+      "13"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "c",
+     "ecuacion": "3*x^2-14*x+15 = 0",
+     "enunciado": "3x^{2} - 14x + 15 = 0",
+     "respuesta": [
+      "5/3",
+      "3"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "d",
+     "ecuacion": "(x-14)^2+x^2 = (x+2)^2",
+     "enunciado": "(x - 14)^{2} + x^{2} = (x + 2)^{2}",
+     "respuesta": [
+      "8",
+      "24"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "e",
+     "ecuacion": "2*(x+2)-x*(2-x) = 0",
+     "enunciado": "2(x + 2) - x \\cdot (2 - x) = 0",
+     "respuesta": "sin solución"
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, autoevaluación 1 a 5",
+   "verificacion": "comprobada",
+   "solucion": "a) $x = - \\frac{6}{5}$, $x = 2$; b) $x = -12$, $x = 13$; c) $x = \\frac{5}{3}$, $x = 3$; d) $x = 8$, $x = 24$; e) sin solución",
+   "solucion_generada": true
+  },
+  {
+   "id": "m3-ec-015",
+   "tipo": "coeficiente desconocido",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Si 3 es una solución de $x^{2}-5x+a = 0$, ¿cuánto vale $a$?",
+   "solucion": "$9-15+a = 0$: $a = 6$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "3^2-5*3+a = 0",
+     "var": "a",
+     "respuesta": [
+      "6"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 13",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-016",
+   "tipo": "coeficiente desconocido",
+   "dificultad": 3,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Calcula el valor del coeficiente $b$ en la ecuación $5x^{2}+bx+6 = 0$ sabiendo que una de sus soluciones es 1. ¿Cuál es la otra solución?",
+   "solucion": "$b = -11$; la otra solución es $x = \\frac{6}{5}$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "apartado": "b",
+     "ecuacion": "5*1^2+b*1+6 = 0",
+     "var": "b",
+     "respuesta": [
+      "-11"
+     ]
+    },
+    {
+     "tipo": "ecuacion",
+     "apartado": "otra",
+     "ecuacion": "5*x^2-11*x+6 = 0",
+     "respuesta": [
+      "1",
+      "6/5"
+     ]
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "ecuaciones de 2.º grado, ficha 2, ej. 5",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-017",
+   "tipo": "escribir la ecuación",
+   "dificultad": 2,
+   "saberes": [
+    "D.4"
+   ],
+   "enunciado": "Escribe una ecuación de segundo grado cuyas soluciones sean 3 y 7. ¿Podrías escribir una ecuación de segundo grado con únicamente una solución real que no fuese doble?",
+   "solucion": "Por ejemplo $(x-3)(x-7) = 0$, es decir, $x^{2}-10x+21 = 0$ (valen todas las de la forma $a(x-3)(x-7) = 0$). No: una ecuación de segundo grado tiene dos soluciones, una doble o ninguna",
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 11 y ejercicios y problemas 13",
+   "verificacion": "sin_verificar"
+  },
+  {
+   "id": "m3-ec-018",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "El perímetro de un rectángulo mide 16 cm y su área 15 cm². Calcula sus dimensiones.",
+   "solucion": "Un lado mide 3 cm y el otro 5 cm",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x*(8-x) = 15",
+     "respuesta": [
+      "3",
+      "5"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 12",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-019",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "¿Qué número multiplicado por 3 es 40 unidades menor que su cuadrado?",
+   "solucion": "El número 8 o el número -5",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "3*x = x^2-40",
+     "respuesta": [
+      "-5",
+      "8"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 25",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-020",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Calcula tres números consecutivos tales que la suma de sus cuadrados sea 365.",
+   "solucion": "10, 11 y 12, o bien -12, -11 y -10 (el del medio es 11 o -11)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "(x-1)^2+x^2+(x+1)^2 = 365",
+     "respuesta": [
+      "-11",
+      "11"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 26",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-021",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "El triple del cuadrado de un número aumentado en su duplo es 85. ¿Cuál es el número?",
+   "solucion": "El número 5 o el número $-\\frac{17}{3}$",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "3*x^2+2*x = 85",
+     "respuesta": [
+      "-17/3",
+      "5"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, act. 27",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-022",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 3,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Dentro de 11 años, la edad de Mario será la mitad del cuadrado de la edad que tenía hace 13 años. ¿Qué edad tiene Mario?",
+   "solucion": "21 años (con 7 años no podía tener edad hace 13 años)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x+11 = (x-13)^2/2",
+     "respuesta": [
+      "7",
+      "21"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 33",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-023",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "¿Cuál es la edad de una persona si al multiplicarla por 15 le faltan 100 unidades para completar su cuadrado?",
+   "solucion": "20 años (-5 no vale para una edad)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "15*x+100 = x^2",
+     "respuesta": [
+      "-5",
+      "20"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 26",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-024",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 3,
+   "saberes": [
+    "D.2",
+    "D.4",
+    "C.1"
+   ],
+   "enunciado": "Determina los catetos de un triángulo rectángulo cuya suma es 7 cm y la hipotenusa de dicho triángulo mide 5 cm.",
+   "solucion": "3 y 4 cm",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x^2+(7-x)^2 = 25",
+     "respuesta": [
+      "3",
+      "4"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 37",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-025",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Dos números naturales se diferencian en 2 unidades y la suma de sus cuadrados es 580. ¿Cuáles son dichos números?",
+   "solucion": "16 y 18 (-18 no es natural)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x^2+(x+2)^2 = 580",
+     "respuesta": [
+      "-18",
+      "16"
+     ]
+    }
+   ],
+   "fuente": "mv3",
+   "ref": "cap. 5, ejercicios y problemas 34",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-026",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 1,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Un pastor vende 1/5 de sus ovejas. Después compra 120 y así pasa a tener el doble de las que tenía al principio. ¿Cuántas tenía originalmente?",
+   "solucion": "100 ovejas",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x-x/5+120 = 2*x",
+     "respuesta": [
+      "100"
+     ]
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "problemas de planteamiento, ficha 5, ej. 9",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-027",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Juan ha leído ya la quinta parte de un libro. Cuando lea 90 páginas más, todavía le quedará la mitad del libro. ¿Cuántas páginas tiene el libro? ¿Cuántas páginas lleva leídas?",
+   "solucion": "300 páginas; lleva leídas 60",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x/5+90 = x/2",
+     "respuesta": [
+      "300"
+     ]
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "problemas de planteamiento, ficha 5, ej. 15",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-028",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 3,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "La juventud de Diofanto duró 1/6 de su vida; se dejó barba después de 1/12 más. Después de 1/7 de su vida se casó. Cinco años después tuvo un hijo. Este vivió exactamente la mitad de tiempo que su padre, y Diofanto murió cuatro años después. Halla la edad de Diofanto.",
+   "solucion": "84 años",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x/6+x/12+x/7+5+x/2+4 = x",
+     "respuesta": [
+      "84"
+     ]
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "problemas de planteamiento, ficha 5, ej. 29",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-029",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Problema del bambú (texto indio del siglo IX): un bambú que mide 30 codos y que se eleva sobre un terreno plano se rompe en un punto por la fuerza del viento, de forma que la punta se queda ahora colgando a 16 codos del suelo. ¿A qué altura se ha roto?",
+   "solucion": "A 23 codos: la parte rota, de $30-23 = 7$ codos, cuelga desde 23 hasta 16 codos",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x-(30-x) = 16",
+     "respuesta": [
+      "23"
+     ]
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "problemas de planteamiento, ficha 5, ej. 20",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-030",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Restamos al área de un cuadrado su lado y obtenemos 870. Halla el lado de dicho cuadrado (texto matemático babilónico).",
+   "solucion": "30 (la otra solución, -29, no vale para un lado)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x^2-x = 870",
+     "respuesta": [
+      "-29",
+      "30"
+     ]
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "problemas de planteamiento, ficha 5, ej. 35",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-031",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Uno de los lados de un rectángulo es 3 m más pequeño que el triple del otro. Si el perímetro y el área coinciden numéricamente, halla ambos lados.",
+   "solucion": "3 m y 6 m (con $x = \\frac{2}{3}$ el otro lado saldría negativo)",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x*(3*x-3) = 2*x+2*(3*x-3)",
+     "respuesta": [
+      "2/3",
+      "3"
+     ]
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "problemas de planteamiento, ficha 5, ej. 39",
+   "verificacion": "comprobada"
+  },
+  {
+   "id": "m3-ec-032",
+   "tipo": "problema de ecuaciones",
+   "dificultad": 2,
+   "saberes": [
+    "D.2",
+    "D.4"
+   ],
+   "enunciado": "Se tiene un lote de baldosas cuadradas. Si se forma con ellas un cuadrado de $x$ baldosas por lado sobran 27, y si se toman $x+1$ baldosas por lado faltan 40. Halla las baldosas del lote.",
+   "solucion": "Con $x = 33$: $33^{2}+27 = 1116$ baldosas",
+   "comprobar": [
+    {
+     "tipo": "ecuacion",
+     "ecuacion": "x^2+27 = (x+1)^2-40",
+     "respuesta": [
+      "33"
+     ]
+    }
+   ],
+   "fuente": "ag3",
+   "ref": "problemas de planteamiento, ficha 5, ej. 46",
+   "verificacion": "comprobada"
+  }
+ ]
+}
