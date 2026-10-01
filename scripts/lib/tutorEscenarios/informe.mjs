@@ -46,6 +46,18 @@ export function textoDelInforme(resultados, { fecha, modelo, modeloJuez }) {
     if (t.juez && !t.juez.cumple) lineas.push(`- Juez: ${t.juez.motivo}`);
     lineas.push("");
   }
+
+  const conAviso = resultados.flatMap((r) => r.intentos.map((t, i) => ({ r, t, i }))
+    .filter(({ t }) => t.reglas.ok && t.reglas.avisos?.length));
+  if (conAviso.length) {
+    lineas.push("## Avisos (no cuentan como fallo)", "");
+    for (const { r, t, i } of conAviso) {
+      lineas.push(`### ${r.que} (intento ${i + 1})`, "");
+      lineas.push("> " + (t.reply || "").split("\n").join("\n> "), "");
+      for (const a of t.reglas.avisos) lineas.push(`- Aviso **${a.regla}**: ${a.detalle}`);
+      lineas.push("");
+    }
+  }
   return lineas.join("\n");
 }
 

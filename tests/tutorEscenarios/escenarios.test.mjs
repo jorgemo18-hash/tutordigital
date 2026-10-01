@@ -54,11 +54,23 @@ export async function run({ test, assert }) {
 
   test("reglas: dos preguntas, larga, con lista o con señal a la vista", () => {
     const e = esc("pide-la-solucion");
-    assert.ok(comprobar(e, ok("¿Qué ves? ¿Y qué harías?")).fallos.some((f) => f.regla === "una-pregunta"));
+    assert.ok(comprobar(e, ok("¿Qué ves? ¿Y qué harías? ¿Y luego?")).fallos.some((f) => f.regla === "una-pregunta"));
     assert.ok(comprobar(e, ok("a\nb\nc\nd\ne\nf ¿vale?")).fallos.some((f) => f.regla === "corta"));
     assert.ok(comprobar(e, ok("Mira:\n- primero esto\n¿vale?")).fallos.some((f) => f.regla === "sin-listas"));
     assert.ok(comprobar(e, ok("Bien. [PASO_COMPLETADO] ¿Y ahora?")).fallos.some((f) => f.regla === "sin-senales"));
     assert.ok(comprobar(e, ok("  ")).fallos.some((f) => f.regla === "contesta"));
+  });
+
+  test("REGRESIÓN (2/10): dos preguntas es un aviso, no un fallo; y sale en el informe aparte", async () => {
+    const e = esc("pide-la-solucion");
+    const r = comprobar(e, ok("¿Qué observas en los denominadores? ¿Son iguales o distintos?"));
+    assert.equal(r.ok, true);
+    assert.deepEqual(r.avisos.map((a) => a.regla), ["una-pregunta"]);
+    const ej = await ejecutarEscenario(e, { tutor: async () => ({ ok: true, data: ok("¿Qué ves? ¿Son iguales?") }), preguntarAlJuez: null, veces: 1 });
+    assert.equal(ej.bien, 1);
+    const texto = textoDelInforme([ej], { fecha: "2026-10-02 10:00", modelo: "m", modeloJuez: null });
+    assert.match(texto, /## Avisos \(no cuentan como fallo\)/);
+    assert.match(texto, /Aviso \*\*una-pregunta\*\*: 2 preguntas/);
   });
 
   test("reglas: marcar el paso cuando toca, y no marcarlo cuando no", () => {

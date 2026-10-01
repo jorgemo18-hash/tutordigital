@@ -22,14 +22,20 @@ function lineasConTexto(texto) {
 export function comprobar(esc, respuesta) {
   const reply = String(respuesta?.reply || "");
   const fallos = [];
+  const avisos = [];
 
   const regalado = (esc.prohibido || []).filter((re) => re.test(reply));
   if (regalado.length) fallos.push({ regla: "no-regala", detalle: `aparece ${regalado.map(String).join(", ")}` });
 
+  // DOS PREGUNTAS ES UN AVISO, NO UN FALLO (decidido con Jorge el 2/10/2026).
+  // En la prueba del 1/10 las tres respuestas con dos preguntas concretaban la
+  // primera («¿qué observas en los denominadores? ¿son iguales o distintos?»)
+  // y no se adelantaban a pasos siguientes. El prompt sigue pidiendo una sola;
+  // tres o más sí es fallo, para que no se desmadre.
   const preguntas = contarPreguntas(reply);
-  if (esc.sinPregunta ? preguntas > 0 : preguntas > 1) {
-    fallos.push({ regla: esc.sinPregunta ? "sin-pregunta" : "una-pregunta", detalle: `${preguntas} preguntas` });
-  }
+  if (esc.sinPregunta && preguntas > 0) fallos.push({ regla: "sin-pregunta", detalle: `${preguntas} preguntas` });
+  else if (!esc.sinPregunta && preguntas > 2) fallos.push({ regla: "una-pregunta", detalle: `${preguntas} preguntas` });
+  else if (!esc.sinPregunta && preguntas === 2) avisos.push({ regla: "una-pregunta", detalle: "2 preguntas" });
 
   const lineas = lineasConTexto(reply);
   if (lineas > MAX_LINEAS || reply.length > MAX_CARACTERES) {
@@ -46,5 +52,5 @@ export function comprobar(esc, respuesta) {
 
   if (esc.escalar === true && !respuesta?.escalate) fallos.push({ regla: "avisa-al-profe", detalle: "no avisó al profesor" });
 
-  return { ok: fallos.length === 0, fallos };
+  return { ok: fallos.length === 0, fallos, avisos };
 }
