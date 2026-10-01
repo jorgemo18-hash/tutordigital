@@ -39,7 +39,9 @@ import { explicaApartado } from "./explicacion.js";
 // su historia y las preguntas son de mirar. El ejemplo (una gráfica más,
 // resuelta y a todo lo ancho) costaba 70 mm y dejaba la hoja del objetivo
 // con una sola actividad. La explicación de cada respuesta se guarda igual.
-export const SIN_EJEMPLO = new Set(["pares_con_y_sin_parentesis", "lee_grafica"]);
+// `lee_diagrama_barras`, por lo mismo: cada diagrama es una encuesta distinta
+// y las preguntas son de mirar.
+export const SIN_EJEMPLO = new Set(["pares_con_y_sin_parentesis", "lee_grafica", "lee_diagrama_barras"]);
 
 // Marca un apartado como resuelto: se imprime con la respuesta puesta y con
 // una línea de explicación debajo.

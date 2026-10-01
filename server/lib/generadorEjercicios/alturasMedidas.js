@@ -3,7 +3,11 @@
 // ARCHIVO GENERADO: lo escribe `tests/manual/calibraAlturas.mjs` midiendo la
 // hoja en Chromium. No se edita a mano — se vuelve a pasar el script.
 //
-// Medido el 2026-09-25 con 12 semillas por batería.
+// Medido el 2026-09-25 con 12 semillas por batería. Las diez baterías de
+// estadística (tema 12), el 2026-10-01: en esa pasada otras baterías salieron
+// hasta 2 mm más bajas, y se dejaron las de septiembre (pasarse de folio es
+// peor que sobrar blanco). A las de estadística se les sumaron esos 2 mm por
+// la misma razón.
 // Cada número es el MÁXIMO de las semillas, no la media: una batería no mide
 // siempre lo mismo (la explicación del ejemplo resuelto varía), y pasarse de
 // folio es peor defecto que dejar blanco.
@@ -23,7 +27,9 @@ export const ALTURA_DEL_PIE_MM = 5.8;
 
 export const ALTURA_DE_LA_BATERIA_MM = {
   a_forma_incompleja: { minimo: 46.7, medio: 53.4, maximo: 60.1 },
+  aleatorio_o_determinista: { minimo: 48.7, medio: 55.4, maximo: 62.1 },
   angulo_del_triangulo: { minimo: 102.1, medio: 102.1, maximo: 102.1 },
+  angulos_de_sectores: { minimo: 75.1, medio: 92.1, maximo: 92.1 },
   area_circulo: { minimo: 81.6, medio: 81.6, maximo: 81.6 },
   area_cuadrilateros: { minimo: 81.6, medio: 81.6, maximo: 81.6 },
   area_triangulo: { minimo: 81.6, medio: 81.6, maximo: 81.6 },
@@ -43,6 +49,7 @@ export const ALTURA_DE_LA_BATERIA_MM = {
   combinada_fracciones: { minimo: 53.2, medio: 63.2, maximo: 63.2 },
   combinada_fracciones_parentesis: { minimo: 48.1, medio: 59.6, maximo: 59.6 },
   combinada_un_nivel: { minimo: 45.1, medio: 51.8, maximo: 51.8 },
+  compara_conjuntos: { minimo: 68.7, medio: 68.7, maximo: 68.7 },
   compara_decimales: { minimo: 40.9, medio: 47.8, maximo: 47.8 },
   compara_enteros: { minimo: 33.5, medio: 40.1, maximo: 40.1 },
   compara_fracciones: { minimo: 43.3, medio: 53.2, maximo: 53.2 },
@@ -88,9 +95,11 @@ export const ALTURA_DE_LA_BATERIA_MM = {
   fraccion_a_decimal: { minimo: 53.2, medio: 63.2, maximo: 63.2 },
   fraccion_de_cantidad: { minimo: 53.2, medio: 63.2, maximo: 63.2 },
   fraccion_de_fraccion: { minimo: 43.3, medio: 53.2, maximo: 53.2 },
+  frecuencia_relativa: { minimo: 57, medio: 57, maximo: 57 },
   grafica_a_expresion: { minimo: 132.1, medio: 132.1, maximo: 132.1 },
   identifica_cuadrilatero: { minimo: 46.7, medio: 53.4, maximo: 53.4 },
   lee_coordenadas: { minimo: 115.8, medio: 115.8, maximo: 115.8 },
+  lee_diagrama_barras: { minimo: 80, medio: 80, maximo: 80 },
   lee_grafica: { minimo: 84.9, medio: 84.9, maximo: 84.9 },
   lee_la_recta: { minimo: 82.8, medio: 106.1, maximo: 106.1 },
   lee_la_recta_graduada: { minimo: 82.8, medio: 106.1, maximo: 106.1 },
@@ -98,6 +107,8 @@ export const ALTURA_DE_LA_BATERIA_MM = {
   mcd_de_dos: { minimo: 40.1, medio: 46.8, maximo: 53.5 },
   mcd_y_mcm_de_tres: { minimo: 37.3, medio: 43.9, maximo: 43.9 },
   mcm_de_dos: { minimo: 40.1, medio: 46.8, maximo: 53.5 },
+  media_de_tabla: { minimo: 54.4, medio: 66, maximo: 66 },
+  media_mediana_moda: { minimo: 51.8, medio: 63.3, maximo: 63.3 },
   medidas_agrarias: { minimo: 40.4, medio: 47.1, maximo: 47.1 },
   mejor_oferta: { minimo: 40.4, medio: 47.1, maximo: 47.1 },
   mide_angulo: { minimo: 107.6, medio: 107.6, maximo: 107.6 },
@@ -122,6 +133,7 @@ export const ALTURA_DE_LA_BATERIA_MM = {
   precio_antes: { minimo: 40.4, medio: 47.1, maximo: 47.1 },
   primo_o_compuesto: { minimo: 40.1, medio: 46.8, maximo: 46.8 },
   primos_entre: { minimo: 33.5, medio: 40.1, maximo: 40.1 },
+  probabilidad_laplace: { minimo: 57.8, medio: 69.8, maximo: 69.8 },
   problemas_de_areas: { minimo: 59.9, medio: 71.4, maximo: 71.4 },
   problemas_de_medida: { minimo: 40.4, medio: 47.1, maximo: 47.1 },
   problemas_de_resto: { minimo: 45.3, medio: 52, maximo: 52 },
@@ -172,11 +184,13 @@ export const ALTURA_DE_LA_BATERIA_MM = {
   suma_mismo_denominador: { minimo: 53.2, medio: 63.2, maximo: 63.2 },
   suma_mismo_signo: { minimo: 43.9, medio: 50.6, maximo: 57.3 },
   tabla_a_expresion: { minimo: 48.5, medio: 60.2, maximo: 60.2 },
+  tabla_de_frecuencias: { minimo: 83.5, medio: 83.5, maximo: 83.5 },
   termino_de_la_division: { minimo: 46.7, medio: 53.4, maximo: 60.1 },
   termino_de_proporcion: { minimo: 53.2, medio: 53.2, maximo: 63.2 },
   termino_general: { minimo: 41.2, medio: 48.1, maximo: 48.1 },
   termino_lejano: { minimo: 40.1, medio: 46.8, maximo: 46.8 },
   termino_que_falta: { minimo: 33.5, medio: 40.1, maximo: 40.1 },
+  tipo_de_variable: { minimo: 46.9, medio: 53.6, maximo: 53.6 },
   todos_los_divisores: { minimo: 43.9, medio: 50.6, maximo: 50.6 },
   total_desde_porcentaje: { minimo: 40.4, medio: 47.1, maximo: 47.1 },
   traduce_enunciado: { minimo: 40.4, medio: 49.2, maximo: 49.2 },
