@@ -29,6 +29,9 @@ export async function run({ test, assert }) {
     assert.equal(familiasPendientes([familia({ alumnos_informe: [{ id: "a", tiene_sesiones: true, informe_enviado_at: null }] })]).length, 1);
     assert.equal(familiasPendientes([familia({ alumnos_informe: [{ id: "a", tiene_sesiones: false, informe_enviado_at: null }] })]).length, 0, "sin clases no hay informe");
     assert.equal(familiasPendientes([familia({ recibo: null, familia_email: "" })]).length, 0, "sin email: tiene su propio aviso y no puede dejar la franja puesta para siempre");
+    // 1/10/2026: 15 recibos de septiembre cobrados en mano salían como pendientes.
+    assert.equal(familiasPendientes([familia({ recibo: { id: "r", estado: "pagado", fecha_envio: null } })]).length, 0, "cobrado: el envío no espera por él");
+    assert.equal(familiasPendientes([familia({ recibo: { id: "r", estado: "borrador", fecha_envio: null } })]).length, 1, "ni enviado ni cobrado: pendiente");
   });
 
   test("la franja dice qué toca y cuántas faltan, y Revisar lleva al mes del envío", async () => {
@@ -45,6 +48,19 @@ export async function run({ test, assert }) {
     assert.equal(contenedor.querySelector(".ac-aviso-envio span").textContent, "Toca el envío a familias — recibo de octubre · informe de septiembre · 1 familia pendiente");
     contenedor.querySelector("button").click();
     assert.deepEqual(abiertos, [{ mes: 10, anio: 2026 }]);
+  });
+
+  test("antes del día de envío, el mes anterior que quedó a medias no dice «toca» (1/10/2026)", async () => {
+    const contenedor = document.createElement("div");
+    const pedidos = [];
+    const aviso = crearAvisoEnvio({
+      contenedor, diaEnvio: 5, hoyFn: () => dia(1),
+      fetchRecibosFn: async (p) => { pedidos.push(p); return { recibos: [familia({ recibo: { id: "r", estado: "borrador", fecha_envio: null } })], periodoInforme: { mes: 8, anio: 2026 } }; },
+      onRevisar: () => {},
+    });
+    await aviso.actualizar();
+    assert.deepEqual(pedidos, [{ mes: 9, anio: 2026 }]);
+    assert.equal(contenedor.querySelector(".ac-aviso-envio span").textContent, "Quedó sin terminar el envío de septiembre — recibo de septiembre · informe de agosto · 1 familia pendiente");
   });
 
   test("con todo enviado la franja se va; sin día configurado no pide nada", async () => {

@@ -1,6 +1,8 @@
 import { textoDelEnvio } from "../../../../shared/js/periodosDeEnvio.js";
 import { alumnosDelInforme } from "../sections/envioFamilias/alumnosDelInforme.js";
 
+const MESES = [null, "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
 // EL AVISO DE "TOCA ENVIAR", arriba del todo en cualquier sección del panel.
 //
 // POR QUÉ (Jorge, 30/09/2026): *"que en los ajustes pudieras configurar qué
@@ -38,16 +40,25 @@ export function familiasPendientes(items = []) {
   return items.filter((f) => {
     if (!String(f.familia_email || "").trim()) return false;
     const tieneActivos = (f.alumnos_activos || []).length > 0;
-    const reciboPendiente = tieneActivos && (!f.recibo || !f.recibo.fecha_envio);
+    // Un recibo ya COBRADO no hace falta mandarlo para que el envío esté
+    // hecho (1/10/2026: el 1 de octubre la franja contaba 15 recibos de
+    // septiembre pagados en mano como «pendientes»). En Envío a familias se
+    // puede mandar igual, como justificante; aquí no da la lata.
+    const reciboPendiente = tieneActivos && (!f.recibo || (!f.recibo.fecha_envio && f.recibo.estado !== "pagado"));
     const informePendiente = alumnosDelInforme(f).some((a) => a.tiene_sesiones && !a.informe_enviado_at);
     return reciboPendiente || informePendiente;
   });
 }
 
-export function textoAviso({ mes, anio }, periodoInforme, pendientes) {
+// Antes del día de envío, lo que sale es el envío del mes ANTERIOR que
+// quedó a medias, y no puede decir «toca»: el 1 de octubre «Toca el envío —
+// recibo de septiembre · informe de agosto» se leía como si el de este mes
+// fuera ese (Jorge, 1/10/2026).
+export function textoAviso({ mes, anio, esDeEsteMes = true }, periodoInforme, pendientes) {
   const n = pendientes.length;
   const familias = n === 1 ? "1 familia pendiente" : `${n} familias pendientes`;
-  return `Toca el envío a familias — ${textoDelEnvio({ mes, anio }, periodoInforme).toLowerCase()} · ${familias}`;
+  const inicio = esDeEsteMes ? "Toca el envío a familias" : `Quedó sin terminar el envío de ${MESES[mes]}`;
+  return `${inicio} — ${textoDelEnvio({ mes, anio }, periodoInforme).toLowerCase()} · ${familias}`;
 }
 
 // Monta la franja en `contenedor` y devuelve `actualizar()`, que se llama al
