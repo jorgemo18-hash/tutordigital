@@ -51,6 +51,12 @@ export async function run({ test, assert }) {
     assert.equal(m.llamadas.generar[0].tema, "funciones");
     assert.equal(m.llamadas.generar[0].actividades, 6);
     assert.equal(m.llamadas.generar[0].dificultad, undefined, "dificultad variada: no se manda");
+    assert.equal(m.llamadas.generar[0].soloEnteros, undefined, "por defecto, pueden ser fracciones");
+    const resultados = [...m.raiz.querySelectorAll("select")].find((sel) => [...sel.options].some((o) => o.value === "enteros"));
+    resultados.value = "enteros";
+    boton(m.raiz, "Escribir la hoja").click();
+    await tick(); await tick();
+    assert.equal(m.llamadas.generar[1].soloEnteros, true, "«Solo enteros» llega al servidor");
     assert.equal(m.llamadas.pintadas[0].centro, "IES de prueba");
     const tags = [...m.raiz.querySelectorAll(".rc-ia__ej .rc-tag")].map((t) => t.textContent);
     assert.deepEqual(tags, ["Solución comprobada", "Sin verificar: revísala", "Cuentas comprobadas: lee el enunciado"]);

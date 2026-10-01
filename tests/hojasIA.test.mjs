@@ -206,6 +206,25 @@ export async function run({ test }) {
     assert.equal(r.huecos[0].revisar, undefined);
   });
 
+  test("SOLO ENTEROS si el profesor lo pide: se quitan los apartados con fracción y se dice en el mensaje; por defecto, las fracciones valen", async () => {
+    const conFraccion = bueno({
+      apartados: ["$2x = 6$", "$5x = 2$"],
+      comprobar: [
+        { tipo: "ecuacion", apartado: "a", ecuacion: "2*x = 6", respuesta: ["3"] },
+        { tipo: "ecuacion", apartado: "b", ecuacion: "5*x = 2", respuesta: ["2/5"] },
+      ],
+    });
+    const ia = iaQueDevuelve([conFraccion]);
+    const r = await generaHojaIA({ client: ia, model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 1, soloEnteros: true });
+    assert.deepEqual(r.hoja.actividades[0].apartados, ["$2x = 6$"]);
+    assert.match(r.descartes.map((d) => d.motivo).join(), /no es entero/);
+    assert.match(ia.llamadas[0].messages[0].content, /TODAS las soluciones tienen que ser números enteros/);
+    const libre = iaQueDevuelve([conFraccion]);
+    const r2 = await generaHojaIA({ client: libre, model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 1 });
+    assert.equal(r2.hoja.actividades[0].apartados.length, 2, "sin pedirlo, 2/5 se queda");
+    assert.doesNotMatch(libre.llamadas[0].messages[0].content, /números enteros/);
+  });
+
   test("un tema sin referencias no se genera", async () => {
     assert.equal(await generaHojaIA({ client: iaQueDevuelve([]), model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "no-existe" }), null);
   });

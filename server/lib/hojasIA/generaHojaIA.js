@@ -12,8 +12,8 @@ import { verificaEjercicioIA, huellasDeReferencias } from "./verificaEjercicioIA
 export const DE_MAS = 2;
 
 // Una llamada a la IA y la verificación de lo que devuelve.
-async function unaRonda({ client, model, ctx, pide, dificultad, yaHay, pensar, verifica }) {
-  const { brutos, usage, sinHerramienta } = await llamadaDeHojaIA({ client, model, ctx, pide, dificultad, yaHay, pensar });
+async function unaRonda({ client, model, ctx, pide, dificultad, soloEnteros, yaHay, pensar, verifica }) {
+  const { brutos, usage, sinHerramienta } = await llamadaDeHojaIA({ client, model, ctx, pide, dificultad, soloEnteros, yaHay, pensar });
   const buenos = [];
   const descartes = [];
   for (const b of brutos) {
@@ -33,17 +33,17 @@ const suma = (a, b) => ({ input_tokens: (a.input_tokens || 0) + (b.input_tokens 
 // que faltan (más DE_MAS), diciendo qué tipos ya hay para que no los repita.
 // Solo una: si la segunda también falla, mejor una hoja más corta que un
 // bucle que gasta sin límite.
-export async function generaHojaIA({ client, model, etapa, materia, curso, tema, cuantos = 6, dificultad = null, pensar = true }) {
+export async function generaHojaIA({ client, model, etapa, materia, curso, tema, cuantos = 6, dificultad = null, soloEnteros = false, pensar = true }) {
   const ctx = contextoDelTema({ etapa, materia, curso, tema });
   if (!ctx) return null;
   const huellas = huellasDeReferencias(ctx.todasLasReferencias);
   const saberesDelTema = ctx.saberes.map((s) => s.codigo);
-  const verifica = (b) => verificaEjercicioIA(b, { saberesDelTema, huellas });
-  const r1 = await unaRonda({ client, model, ctx, pide: cuantos + DE_MAS, dificultad, yaHay: [], pensar, verifica });
+  const verifica = (b) => verificaEjercicioIA(b, { saberesDelTema, huellas, soloEnteros });
+  const r1 = await unaRonda({ client, model, ctx, pide: cuantos + DE_MAS, dificultad, soloEnteros, yaHay: [], pensar, verifica });
   let { buenos, descartes, usage } = r1;
   const faltan = cuantos - buenos.length;
   if (faltan > 0) {
-    const r2 = await unaRonda({ client, model, ctx, pide: faltan + DE_MAS, dificultad, yaHay: buenos.map((e) => e.subtipo), pensar, verifica });
+    const r2 = await unaRonda({ client, model, ctx, pide: faltan + DE_MAS, dificultad, soloEnteros, yaHay: buenos.map((e) => e.subtipo), pensar, verifica });
     buenos = [...buenos, ...r2.buenos];
     descartes = [...descartes, ...r2.descartes];
     usage = suma(usage, r2.usage);

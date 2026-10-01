@@ -31,6 +31,8 @@ export const GenerarIASchema = Donde.extend({
   tema: nombre,
   actividades: z.number().int().min(1).max(10).optional(),
   dificultad: z.number().int().min(1).max(3).nullable().optional(),
+  // Solo resultados enteros (lo elige el profesor; por defecto, no).
+  soloEnteros: z.boolean().optional(),
 });
 
 export function crearRutasDeHojasIA({ roles, clientFn = createAnthropicClient, adminFn = createSupabaseAdmin }) {

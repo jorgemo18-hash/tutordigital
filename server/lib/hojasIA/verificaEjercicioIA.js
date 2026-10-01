@@ -67,7 +67,22 @@ function valoresDe(c) {
   return valores.filter((v) => !["sin solución", "identidad", "infinitas"].includes(v));
 }
 
-export function verificaEjercicioIA(bruto, { saberesDelTema, huellas }) {
+// SOLO ENTEROS, si el profesor lo pide (Jorge, 1/10/2026: «depende del tema,
+// normalmente se trabaja más con fracciones»). Por eso no es la regla por
+// defecto: en la hoja se elige. Un resultado que no es entero se trata como
+// uno que no cuadra: el apartado se quita (el problema entero, fuera).
+export function noEsEntero(c) {
+  return valoresDe(c).some((v) => {
+    try {
+      const x = evalua(lee(String(v)));
+      return !Number.isFinite(x) || Math.abs(x - Math.round(x)) > 1e-9;
+    } catch {
+      return false; // lo que no es un número (una expresión simplificada) no se juzga aquí
+    }
+  });
+}
+
+export function verificaEjercicioIA(bruto, { saberesDelTema, huellas, soloEnteros = false }) {
   const p = EjercicioIA.safeParse(bruto);
   if (!p.success) return { descarte: "no tiene la forma pedida" };
   // La IA a veces pone dos códigos («D.2, D.4»): vale si todos son del tema,
@@ -83,7 +98,8 @@ export function verificaEjercicioIA(bruto, { saberesDelTema, huellas }) {
     const malos = new Set();
     const motivos = [];
     e.comprobar.forEach((c, i) => {
-      const r = repetida(c) ? { ok: false, motivo: "repite una cuenta de referencia" } : comprueba(c);
+      let r = repetida(c) ? { ok: false, motivo: "repite una cuenta de referencia" } : comprueba(c);
+      if (r.ok && soloEnteros && noEsEntero(c)) r = { ok: false, motivo: "el resultado no es entero" };
       if (!r.ok) { malos.add(i); motivos.push(`${c.apartado}) ${r.motivo}`); }
     });
     if (malos.size === e.apartados.length) return { descarte: `ningún apartado cuadra: ${motivos.join("; ")}` };
@@ -98,6 +114,7 @@ export function verificaEjercicioIA(bruto, { saberesDelTema, huellas }) {
     };
   }
   if ((e.comprobar || []).some(repetida)) return { descarte: "repite una cuenta de un ejercicio de referencia" };
+  if (soloEnteros && (e.comprobar || []).some(noEsEntero)) return { descarte: "el resultado no es entero" };
   for (const c of e.comprobar || []) {
     const r = comprueba(c);
     if (!r.ok) return { descarte: `comprobación ${c.apartado || ""} no cuadra: ${r.motivo}` };

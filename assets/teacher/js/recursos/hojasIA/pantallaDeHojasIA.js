@@ -78,6 +78,7 @@ export function createPantallaDeHojasIA({
     try {
       const cuerpo = { ...c, tema: p.tema.value, actividades: Number(p.cuantos.value) };
       if (p.dificultad.value) cuerpo.dificultad = Number(p.dificultad.value);
+      if (p.resultados.value === "enteros") cuerpo.soloEnteros = true;
       actual = await api.generaHojaIA(cuerpo);
       const sinVerificar = actual.huecos.filter((h) => h.verificacion !== "comprobada").length;
       const aLeer = actual.huecos.filter((h) => h.verificacion === "comprobada" && h.revisar === "enunciado").length;
@@ -127,12 +128,14 @@ export function createPantallaDeHojasIA({
     p.tema = el(doc, "select", "rc-sel");
     p.cuantos = selector(doc, [4, 5, 6, 7, 8].map((n) => [n, `${n} ejercicios`]), 6);
     p.dificultad = selector(doc, [["", "Dificultad variada"], [1, "Sobre todo fácil"], [2, "Sobre todo media"], [3, "Sobre todo difícil"]], "");
+    // Depende del tema: con fracciones es lo normal; en otros, mejor enteros.
+    p.resultados = selector(doc, [["", "Pueden ser fracciones"], ["enteros", "Solo enteros"]], "");
     p.escribir = boton(doc, "Escribir la hoja", { clase: "rc-btn--pri", onClick: () => escribir() });
     p.pdf = boton(doc, "PDF para imprimir", { onClick: () => imprimir() });
     p.pdf.disabled = true;
     p.curso.addEventListener("change", () => cargarTemas());
     const barra = el(doc, "div", "rc-card rc-ctx");
-    barra.append(campo(doc, "Curso", p.curso), campo(doc, "Tema", p.tema), campo(doc, "Cuántos", p.cuantos), campo(doc, "Dificultad", p.dificultad), p.escribir, p.pdf);
+    barra.append(campo(doc, "Curso", p.curso), campo(doc, "Tema", p.tema), campo(doc, "Cuántos", p.cuantos), campo(doc, "Dificultad", p.dificultad), campo(doc, "Resultados", p.resultados), p.escribir, p.pdf);
     p.msg = el(doc, "p", "rc-msg");
     p.msg.setAttribute("role", "status");
     p.lista = el(doc, "div", "rc-ia__lista");

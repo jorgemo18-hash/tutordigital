@@ -21,9 +21,9 @@ import { HERRAMIENTA, ESQUEMA, promptDeHojaIA, mensajeDeHojaIA } from "./promptD
 export const MAX_TOKENS_PENSANDO = 20000;
 const MAX_TOKENS_DIRECTO = 8000;
 
-export function parametrosDeLlamada({ model, ctx, pide, dificultad, yaHay, pensar }) {
+export function parametrosDeLlamada({ model, ctx, pide, dificultad, soloEnteros = false, yaHay, pensar }) {
   const tools = [{ name: HERRAMIENTA, description: "Escribe los ejercicios de la hoja.", input_schema: ESQUEMA }];
-  const mensaje = mensajeDeHojaIA({ ...ctx, cuantos: pide, dificultad, yaHay });
+  const mensaje = mensajeDeHojaIA({ ...ctx, cuantos: pide, dificultad, soloEnteros, yaHay });
   if (!pensar) {
     return {
       model, max_tokens: MAX_TOKENS_DIRECTO, system: promptDeHojaIA(ctx), tools,

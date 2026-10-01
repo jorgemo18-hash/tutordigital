@@ -70,7 +70,7 @@ export function promptDeHojaIA({ materia, curso, tema }) {
   ].join("\n");
 }
 
-export function mensajeDeHojaIA({ saberes, referencias, cuantos, dificultad, yaHay = [] }) {
+export function mensajeDeHojaIA({ saberes, referencias, cuantos, dificultad, soloEnteros = false, yaHay = [] }) {
   const lineasSaberes = saberes.map((s) => `${s.codigo} ${s.nombre}: ${s.textos.join(" / ")}`);
   const lineasRef = referencias.map((r, i) => `${i + 1}. [${r.tipo}, dificultad ${r.dificultad}, ${r.saberes.join(", ")}] ${r.enunciado}\n   Solución: ${r.solucion}`);
   const nivel = dificultad ? `Dificultad: sobre todo ${dificultad} (de 1 a 3).` : "Dificultad: variada, de 1 a 3.";
@@ -78,6 +78,7 @@ export function mensajeDeHojaIA({ saberes, referencias, cuantos, dificultad, yaH
     `SABERES BÁSICOS DEL TEMA (currículo de Aragón, literal):\n${lineasSaberes.join("\n")}`,
     `EJERCICIOS DE REFERENCIA (nivel y tipos; no los copies):\n${lineasRef.join("\n")}`,
     `ESCRIBE ${cuantos} ejercicios. ${nivel} Cada ejercicio con 1 a 6 apartados.`,
+    ...(soloEnteros ? ["TODAS las soluciones tienen que ser números enteros (nada de fracciones ni decimales): lo pide el profesor para esta hoja."] : []),
     ...(yaHay.length ? [`La hoja ya tiene ejercicios de estos tipos; escribe de otros: ${yaHay.join("; ")}.`] : []),
   ].join("\n\n");
 }
