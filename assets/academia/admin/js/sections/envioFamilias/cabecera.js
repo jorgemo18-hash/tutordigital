@@ -20,6 +20,16 @@ export function textoOkLote(base) {
   };
 }
 
+// EL SELECTOR DICE QUÉ INFORME VA EN CADA MES (Jorge, 1/10/2026: «quiero que
+// se vean los de septiembre» — elegía «Septiembre» y le salía el informe de
+// agosto). En el modo del informe del mes anterior, cada opción lleva su
+// informe: «Octubre · informe de septiembre». En el modo del mismo mes, null
+// (el selector de siempre).
+export function etiquetaDelEnvio(mes, periodoInforme) {
+  if (!periodoInforme || periodoInforme.mes === mes) return null;
+  return (m) => `${NOMBRE_MES[m].replace(/^./, (c) => c.toUpperCase())} · informe de ${NOMBRE_MES[m === 1 ? 12 : m - 1]}`;
+}
+
 // EL ATAJO AL INFORME DEL MES DEL ENVÍO (Jorge, 1/10/2026). Con «recibo del
 // mes que empieza + informe del que acaba», quien busca los informes de
 // septiembre elige septiembre… y le sale el de agosto, sin clases, y nada
@@ -86,7 +96,9 @@ export function buildCabecera({
   const acciones = document.createElement("div");
   acciones.className = "ef-head-acciones";
 
-  acciones.appendChild(buildPeriodoSelector({ mes, anio, mesesEnviados, anioActualSistema, onChange: onCambiarPeriodo }));
+  acciones.appendChild(buildPeriodoSelector({
+    mes, anio, mesesEnviados, anioActualSistema, onChange: onCambiarPeriodo, etiquetaMes: etiquetaDelEnvio(mes, periodoInforme),
+  }));
 
   const msg = document.createElement("span");
   msg.className = "ac-drawer-msg";

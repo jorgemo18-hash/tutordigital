@@ -113,4 +113,16 @@ export async function run({ test, assert }) {
     assert.equal(r.code, "sin_sesiones");
     assert.equal(emails.length, 0);
   });
+
+  test("el selector del envío dice qué informe lleva cada mes (modo del mes anterior)", async () => {
+    const { etiquetaDelEnvio, buildCabecera } = await import("../../assets/academia/admin/js/sections/envioFamilias/cabecera.js");
+    const e = etiquetaDelEnvio(10, { mes: 9, anio: 2026 });
+    assert.equal(e(10), "Octubre · informe de septiembre");
+    assert.equal(e(1), "Enero · informe de diciembre");
+    assert.equal(etiquetaDelEnvio(10, { mes: 10, anio: 2026 }) === null, true, "mismo mes: el selector de siempre");
+    const head = buildCabecera({ mes: 10, anio: 2026, periodoInforme: { mes: 9, anio: 2026 }, mesesEnviados: [9], anioActualSistema: 2026, hayPendientes: false, onCambiarPeriodo: () => {}, onRegenerar: async () => {}, onEnviar: async () => {} });
+    const opciones = [...head.querySelectorAll(".ef-selector-mes-desplegable option")].map((o) => o.textContent);
+    assert.equal(opciones[9], "Octubre · informe de septiembre");
+    assert.equal(opciones[8], "Septiembre · informe de agosto ✓");
+  });
 }

@@ -20,13 +20,14 @@ function buildSelectAnio(anioSeleccionado, anioActualSistema) {
 // Meses con al menos un recibo enviado ese año se marcan con "✓" — un
 // <select> nativo no admite estilos por <option>, así que el indicador va
 // en el propio texto.
-function buildSelectMes(mesSeleccionado, mesesEnviados) {
+function buildSelectMes(mesSeleccionado, mesesEnviados, etiquetaMes) {
   const select = document.createElement("select");
   select.className = "ac-select ef-selector-mes-desplegable";
   for (let m = 1; m <= 12; m += 1) {
     const opt = document.createElement("option");
     opt.value = String(m);
-    opt.textContent = mesesEnviados.includes(m) ? `${MESES[m]} ✓` : MESES[m];
+    const texto = etiquetaMes ? etiquetaMes(m) : MESES[m];
+    opt.textContent = mesesEnviados.includes(m) ? `${texto} ✓` : texto;
     opt.selected = m === mesSeleccionado;
     select.appendChild(opt);
   }
@@ -36,11 +37,14 @@ function buildSelectMes(mesSeleccionado, mesesEnviados) {
 // Dos desplegables (mes + año) en vez de un <input type="month">. `onChange`
 // recibe siempre el período completo {mes, anio}, leyendo el valor del otro
 // selector en el momento del cambio.
-export function buildPeriodoSelector({ mes, anio, mesesEnviados = [], anioActualSistema, onChange }) {
+// `etiquetaMes(m)`: el texto de cada mes si no basta con su nombre (Envío a
+// familias, en el modo del informe del mes anterior: «Octubre · informe de
+// septiembre»).
+export function buildPeriodoSelector({ mes, anio, mesesEnviados = [], anioActualSistema, onChange, etiquetaMes = null }) {
   const wrap = document.createElement("div");
   wrap.className = "ef-periodo-selector";
 
-  const selectMes = buildSelectMes(mes, mesesEnviados);
+  const selectMes = buildSelectMes(mes, mesesEnviados, etiquetaMes);
   const selectAnio = buildSelectAnio(anio, anioActualSistema);
 
   const notificar = () => onChange({ mes: Number(selectMes.value), anio: Number(selectAnio.value) });
