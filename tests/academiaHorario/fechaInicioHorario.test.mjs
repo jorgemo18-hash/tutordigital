@@ -111,9 +111,12 @@ export async function run({ test, assert }) {
     // izquierda mientras el de todos los demás seguía a la derecha. Una
     // columna de etiquetas alineadas con UNA desalineada se lee como un
     // error de la aplicación.
+    //
+    // La fecha es de 2099 a propósito: la pastilla solo sale si la franja AÚN
+    // no ha empezado, y con "2026-10-01" el test dejó de pasar ese mismo día.
     const { buildCell } = await import("../../assets/academia/aula/js/horario/horarioCelda.js");
     const franja = {
-      id: "f1", hora_inicio: "18:30", hora_fin: "19:30", fecha_inicio: "2026-10-01",
+      id: "f1", hora_inicio: "18:30", hora_fin: "19:30", fecha_inicio: "2099-10-01",
       alumno: { id: "c", nombre: "Cristian Marquez Castan", curso: "1º BACH", nivel: "bachillerato" },
     };
     const cell = buildCell({ dentro: [franja], sueltas: [], ocupacion: 1 }, 6);
