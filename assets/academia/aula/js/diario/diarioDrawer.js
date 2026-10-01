@@ -3,6 +3,8 @@ import { nivelInfo } from "../nivel.js";
 import { estadoDeEntry } from "./diarioCard.js";
 import { buildClaseBody, buildAusenciaEditBody, buildAusenteReadonly } from "./diarioDrawerBody.js";
 import { esFechaFutura } from "./diarioFechas.js";
+import { buildUltimasClases } from "./ultimasClases.js";
+import { fetchSesionesRecientes } from "../api.js";
 import { createUnsavedChangesGuard } from "../../../../shared/js/unsavedChanges/unsavedChangesGuard.js";
 import { snapshotFormValues } from "../../../../shared/js/unsavedChanges/snapshotFormValues.js";
 import { attachCierreConGuarda } from "../../../../shared/js/unsavedChanges/attachCierreConGuarda.js";
@@ -46,7 +48,7 @@ function buildHead(entry, close) {
 // estado ya guardado). Se cierra con la X o al guardar; el clic fuera y
 // Escape pasan por la guarda de cambios sin guardar (mismo patrón que el
 // resto del panel, ver gastoDrawer.js) en vez de no cerrarse nunca.
-export function createDiarioDrawer(root) {
+export function createDiarioDrawer(root, { fetchRecientesFn = fetchSesionesRecientes } = {}) {
   const overlay = document.createElement("div");
   overlay.className = "ac-drawer-overlay";
   const drawer = document.createElement("div");
@@ -79,24 +81,29 @@ export function createDiarioDrawer(root) {
       close();
     };
 
+    let cuerpo;
     if (modo === "ausencia-edit") {
-      drawer.appendChild(buildAusenciaEditBody(entry, fecha, horaDeEntry(entry), {
+      cuerpo = buildAusenciaEditBody(entry, fecha, horaDeEntry(entry), {
         onCancelarAusencia,
         onGuardado: onGuardadoYCerrar,
         // Cuando falla el envío del email la ausencia ya se guardó, pero el
         // drawer se queda abierto con el aviso visible — no cierra solo.
         onDatosActualizados,
-      }));
+      });
     } else if (modo === "ausente") {
-      drawer.appendChild(buildAusenteReadonly(entry, { onReactivar }));
+      cuerpo = buildAusenteReadonly(entry, { onReactivar });
     } else {
       // En una fecha futura solo se permite marcar ausencia (ver
       // esFechaFutura/diarioFechas.js) — buildClaseBody se lo salta todo
       // salvo el botón "Marcar ausente" cuando esto es true.
-      drawer.appendChild(buildClaseBody(entry, fecha, {
+      cuerpo = buildClaseBody(entry, fecha, {
         onMarcarAusente, onGuardado: onGuardadoYCerrar, esFechaFutura: esFechaFutura(fecha),
-      }));
+      });
     }
+    // Las últimas clases, arriba del cuerpo (y dentro, para que se desplacen
+    // con él): para saber por dónde va antes de escribir el parte.
+    cuerpo.prepend(buildUltimasClases(entry, fecha, { fetchRecientesFn }));
+    drawer.appendChild(cuerpo);
     guard.marcarLimpio();
   }
 

@@ -251,6 +251,15 @@
    solo faltaba esto. */
 .ac-drawer-sub { font-family: var(--mono, monospace); font-size: 11px; color: rgba(242,237,229,0.5); margin-top: 4px; }
 .ac-claro .ac-drawer-sub { color: rgba(60,45,30,0.55); }
+/* Últimas clases del alumno, debajo de la cabecera del drawer del Diario. */
+.ac-ultimas-clases { margin: 0 0 16px; flex-shrink: 0; padding: 10px 12px; border: 1px solid rgba(242,237,229,0.12); border-radius: 10px; background: rgba(242,237,229,0.04); }
+.ac-ultimas-clases-cuerpo { font-size: 13px; color: rgba(242,237,229,0.75); }
+.ac-ultimas-clases-lista { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 4px; }
+.ac-ultimas-clases-lista li { display: flex; gap: 10px; align-items: baseline; }
+.ac-ultimas-clases-fecha { font-family: var(--mono, monospace); font-size: 11px; color: rgba(242,237,229,0.5); min-width: 38px; }
+.ac-claro .ac-ultimas-clases { border-color: rgba(60,45,30,0.15); background: rgba(60,45,30,0.03); }
+.ac-claro .ac-ultimas-clases-cuerpo { color: rgba(60,45,30,0.8); }
+.ac-claro .ac-ultimas-clases-fecha { color: rgba(60,45,30,0.55); }
 .ac-field-label-spaced { margin-top: 9px; }
 .ac-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 9px; }
 .ac-chip { padding: 8px 14px; border-radius: 100px; cursor: pointer; font-family: var(--sans); font-size: 12.5px; background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.1); color: rgba(242,237,229,0.75); transition: all .14s; }

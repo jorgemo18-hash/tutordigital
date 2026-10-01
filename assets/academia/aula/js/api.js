@@ -43,6 +43,15 @@ export async function fetchDiario(fecha) {
   return { ...data, sinAlumnosAsignados: Boolean(data.sin_alumnos_asignados) };
 }
 
+// Las últimas clases del alumno antes de `antes` (materia y tema), para el
+// Diario. Ver server/lib/academiaDiario/sesionesRecientes.js.
+export async function fetchSesionesRecientes(alumnoId, antes) {
+  const res = await apiFetch(`/api/v1/academia/diario/recientes?alumno_id=${encodeURIComponent(alumnoId)}&antes=${encodeURIComponent(antes)}`);
+  const body = await parseJson(res);
+  if (!res.ok) throw new Error(body?.error?.message || "No se pudieron cargar las últimas clases.");
+  return body?.data?.sesiones || [];
+}
+
 export async function saveSesion(sesion) {
   const res = await apiFetch("/api/v1/academia/sesiones", {
     method: "POST",
