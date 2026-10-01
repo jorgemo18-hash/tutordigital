@@ -13,6 +13,19 @@ export function createAnthropicClient(apiKey) {
 export const OPUS_MODEL = "claude-opus-4-8";
 export const SONNET_MODEL = "claude-sonnet-4-6";
 
+// HOJAS CON IA: Sonnet 5.5, pensando antes de escribir (1/10/2026). En el
+// banco de pruebas (scripts/hojas-ia-banco.mjs, 3 temas de 2.º ESO):
+//   - claude-sonnet-4-6 sin pensar (lo que había): 3 apartados mal y 3
+//     ejercicios tirados; 0,056–0,073 USD por hoja;
+//   - claude-sonnet-4-6 pensando: más de 170 s por hoja, inservible;
+//   - claude-sonnet-5-5 pensando: 0 apartados mal, 0 tirados; 0,058–0,074
+//     USD y 29–45 s (cuesta lo mismo: el modelo nuevo es más barato);
+//   - claude-opus-5-5 pensando: igual de bien, el doble de caro.
+// Sonnet 5.5 no admite obligar a usar una herramienta: llamadaDeHojaIA.js
+// ya va en "auto". El chat del tutor sigue en SONNET_MODEL: cambiarlo es
+// otra decisión, con sus propias pruebas.
+export const HOJAS_IA_MODEL = "claude-sonnet-5-5";
+
 // EL MODELO NO LO ELIGE QUIEN LLAMA (auditoría del 08/09/2026).
 //
 // El cuerpo del chat admitía un campo `model` y se usaba tal cual: quien

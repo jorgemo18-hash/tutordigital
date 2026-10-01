@@ -56,9 +56,11 @@ export function createPantallaDeHojasIA({
       const item = el(doc, "div", "rc-card rc-ia__ej");
       item.dataset.orden = String(h.orden);
       const cab = el(doc, "div", "rc-ia__cab");
-      const estado = h.verificacion === "comprobada"
-        ? el(doc, "span", "rc-tag rc-tag--ok", "Solución comprobada")
-        : el(doc, "span", "rc-tag rc-tag--aviso", "Sin verificar: revísala");
+      const estado = h.verificacion !== "comprobada"
+        ? el(doc, "span", "rc-tag rc-tag--aviso", "Sin verificar: revísala")
+        : h.revisar === "enunciado"
+          ? el(doc, "span", "rc-tag rc-tag--aviso", "Cuentas comprobadas: lee el enunciado")
+          : el(doc, "span", "rc-tag rc-tag--ok", "Solución comprobada");
       cab.append(el(doc, "b", "", `${h.orden}. ${h.nombre}`), estado);
       const saber = el(doc, "p", "rc-sub", `${h.saber?.codigo || ""} ${h.saber?.nombre || ""} · dificultad ${h.dificultad}`);
       const sol = el(doc, "details", "rc-ia__sol");
@@ -72,15 +74,18 @@ export function createPantallaDeHojasIA({
     const c = elegido();
     if (!c || !p.tema.value) return;
     p.escribir.disabled = true;
-    mensaje("Escribiendo la hoja… (puede tardar medio minuto)");
+    mensaje("Escribiendo la hoja… (puede tardar hasta un minuto)");
     try {
       const cuerpo = { ...c, tema: p.tema.value, actividades: Number(p.cuantos.value) };
       if (p.dificultad.value) cuerpo.dificultad = Number(p.dificultad.value);
       actual = await api.generaHojaIA(cuerpo);
       const sinVerificar = actual.huecos.filter((h) => h.verificacion !== "comprobada").length;
+      const aLeer = actual.huecos.filter((h) => h.verificacion === "comprobada" && h.revisar === "enunciado").length;
       mensaje([
         `${actual.huecos.length} ejercicios.`,
-        sinVerificar ? `${sinVerificar} sin verificar: revísalos antes de imprimir.` : "Todas las soluciones comprobadas.",
+        sinVerificar ? `${sinVerificar} sin verificar: revísalos antes de imprimir.` : "",
+        aLeer ? `${aLeer} ${aLeer === 1 ? "problema" : "problemas"} con las cuentas comprobadas: lee ${aLeer === 1 ? "su enunciado" : "sus enunciados"} antes de imprimir.` : "",
+        !sinVerificar && !aLeer ? "Todas las soluciones comprobadas." : "",
         actual.descartados ? `Se han descartado ${actual.descartados} que no pasaron la comprobación.` : "",
       ].filter(Boolean).join(" "));
       pintarEjercicios();

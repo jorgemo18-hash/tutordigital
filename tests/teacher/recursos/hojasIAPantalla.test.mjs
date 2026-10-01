@@ -17,10 +17,11 @@ export async function run({ test, assert }) {
         llamadas.generar.push(c);
         if (falla) throw new Error("La IA no ha respondido. Prueba otra vez.");
         return {
-          hoja: { materia: "Matemáticas", curso: "2.º ESO", tema: "Ecuaciones", actividades: [{ enunciado: "Resuelve:" }, { enunciado: "Problema" }] },
+          hoja: { materia: "Matemáticas", curso: "2.º ESO", tema: "Ecuaciones", actividades: [{ enunciado: "Resuelve:" }, { enunciado: "Problema" }, { enunciado: "Problema de edades" }] },
           huecos: [
             { orden: 1, nombre: "ecuaciones con paréntesis", dificultad: 2, saber: { codigo: "D.4", nombre: "Igualdad y desigualdad" }, verificacion: "comprobada", solucion: "x = 7" },
             { orden: 2, nombre: "problema abierto", dificultad: 3, saber: { codigo: "D.2", nombre: "Modelo matemático" }, verificacion: "sin_verificar", solucion: "Abierto" },
+            { orden: 3, nombre: "problema de edades", dificultad: 3, saber: { codigo: "D.2", nombre: "Modelo matemático" }, verificacion: "comprobada", revisar: "enunciado", solucion: "12 años" },
           ],
           descartados: 1,
         };
@@ -52,8 +53,8 @@ export async function run({ test, assert }) {
     assert.equal(m.llamadas.generar[0].dificultad, undefined, "dificultad variada: no se manda");
     assert.equal(m.llamadas.pintadas[0].centro, "IES de prueba");
     const tags = [...m.raiz.querySelectorAll(".rc-ia__ej .rc-tag")].map((t) => t.textContent);
-    assert.deepEqual(tags, ["Solución comprobada", "Sin verificar: revísala"]);
-    assert.match(m.raiz.querySelector('[role="status"]').textContent, /1 sin verificar.*descartado 1/);
+    assert.deepEqual(tags, ["Solución comprobada", "Sin verificar: revísala", "Cuentas comprobadas: lee el enunciado"]);
+    assert.match(m.raiz.querySelector('[role="status"]').textContent, /1 sin verificar.*1 problema con las cuentas comprobadas: lee su enunciado.*descartado 1/);
     assert.equal(m.raiz.querySelectorAll(".rc-ia__sol")[0].textContent.includes("x = 7"), true, "la solución, para el profesor");
     boton(m.raiz, "PDF").click();
     await tick();

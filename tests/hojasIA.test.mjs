@@ -93,7 +93,9 @@ export async function run({ test }) {
     for (const m of ["no cuadra", "fuera del tema", "referencia", "no dice 7"]) assert.match(motivos, new RegExp(m));
     // Lo que se le da a la IA: los saberes literales de Aragón y referencias.
     const p = ia.llamadas[0];
-    assert.equal(p.tool_choice.name, "escribir_hoja");
+    assert.deepEqual(p.thinking, { type: "adaptive" }, "piensa antes de escribir");
+    assert.equal(p.tool_choice.type, "auto", "con pensamiento no se puede obligar a usar la herramienta");
+    assert.ok(p.max_tokens > 8000 && p.max_tokens <= 21333, "sitio para pensar, sin pasar del límite sin streaming");
     assert.match(p.messages[0].content, /D\.4 Igualdad y desigualdad: .*Estrategias de búsqueda de soluciones en ecuaciones/);
     assert.match(p.messages[0].content, /EJERCICIOS DE REFERENCIA/);
     assert.match(p.messages[0].content, new RegExp(`ESCRIBE ${3 + DE_MAS} ejercicios`));
@@ -124,9 +126,18 @@ export async function run({ test }) {
 
   test("…pero si no cuadra ninguno, fuera; y la solución de la IA que contradice lo comprobado no llega", async () => {
     const todoMal = bueno({ apartados: ["$2x = 6$"], comprobar: [{ tipo: "ecuacion", apartado: "a", ecuacion: "2*x = 6", respuesta: ["4"] }] });
-    const r = await generaHojaIA({ client: iaQueDevuelve([todoMal, tresApartados("4")]), model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 1 });
+    const contradice = { ...tresApartados("4"), solucion: "a) 3; b) 4; c) 6" };
+    const r = await generaHojaIA({ client: iaQueDevuelve([todoMal, contradice]), model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 1 });
     assert.match(r.descartes[0].motivo, /ningún apartado cuadra/);
-    assert.equal(r.huecos[0].solucion, "a) $x = 3$; b) $x = 4$; c) $x = 5$", "la «a) 3; b) 4; c) 5» de la IA se sustituye");
+    assert.equal(r.huecos[0].solucion, "a) $x = 3$; b) $x = 4$; c) $x = 5$", "la «c) 6» de la IA no llega: la escribe el código");
+  });
+
+  test("…y si la solución de la IA dice todo lo comprobado y no se quitó nada, se queda (lleva unidades y pasos)", async () => {
+    const piscina = bueno({ tipo: "problema", enunciado: "Una piscina de 10 m × 5 m × 2 m.", apartados: ["¿Cuántos litros caben?", "¿Cuántos minutos tarda un grifo de 500 l/min?"],
+      solucion: "a) 10·5·2 = 100 m³ = 100000 litros; b) 100000 : 500 = 200 minutos",
+      comprobar: [{ tipo: "valor", apartado: "a", expresion: "10*5*2*1000", respuesta: "100000" }, { tipo: "valor", apartado: "b", expresion: "100000/500", respuesta: "200" }] });
+    const r = await generaHojaIA({ client: iaQueDevuelve([piscina]), model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 1 });
+    assert.equal(r.huecos[0].solucion, "a) 10·5·2 = 100 m³ = 100000 litros; b) 100000 : 500 = 200 minutos");
   });
 
   test("SI FALTAN EJERCICIOS, UNA segunda llamada pide los que faltan (y no más de una)", async () => {
@@ -149,6 +160,50 @@ export async function run({ test }) {
     assert.equal(latexDeTexto("0.5"), "0{,}5");
     assert.equal(solucionDeApartados([{ tipo: "sistema", apartado: "a", respuesta: { x: "6", y: "4" } }, { tipo: "ecuacion", apartado: "b", respuesta: "sin solución" }]), "a) $x = 6$, $y = 4$; b) sin solución");
     assert.equal(solucionDeApartados([{ tipo: "igualdad", expresion: "2*(x+1)", respuesta: "2*x+2" }]), "$2x+2$");
+  });
+
+  test("PENSAR ES LO NORMAL; sin pensar, se obliga a usar la herramienta (para comparar en el banco de pruebas)", async () => {
+    const ia = iaQueDevuelve([bueno()]);
+    await generaHojaIA({ client: ia, model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 1, pensar: false });
+    assert.equal(ia.llamadas[0].thinking, undefined);
+    assert.deepEqual(ia.llamadas[0].tool_choice, { type: "tool", name: "escribir_hoja" });
+  });
+
+  test("si la IA no usa la herramienta, cero ejercicios, se dice, y la segunda llamada lo intenta", async () => {
+    const llamadas = [];
+    const ia = { messages: { create: async (p) => { llamadas.push(p); return llamadas.length === 1 ? { content: [{ type: "text", text: "Aquí tienes…" }], usage: {} } : { content: [{ type: "tool_use", name: "escribir_hoja", input: { ejercicios: [bueno()] } }], usage: {} }; } } };
+    const r = await generaHojaIA({ client: ia, model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 1 });
+    assert.equal(llamadas.length, 2);
+    assert.equal(r.hoja.actividades.length, 1);
+    assert.match(r.descartes.map((d) => d.motivo).join(), /no usó la herramienta/);
+  });
+
+  test("LO QUE EL VERIFICADOR NO VE (2.ª prueba real): la IA corrigiéndose en el enunciado, y el problema de respuesta 0", async () => {
+    const cine = { tipo: "problema", subtipo: "planteamiento", dificultad: 2, saber: "D.2",
+      enunciado: "Tres amigos van al cine… En realidad, simplifica: el precio rebajado es 6 €. Plantea y resuelve.",
+      solucion: "x = 1", comprobar: [{ tipo: "ecuacion", ecuacion: "8*x+6*(3-x) = 20", respuesta: ["1"] }] };
+    const cero = { ...cine, enunciado: "Tres amigos pagan 18 € por tres entradas de 8 € o 6 €. ¿Cuántas son de 8 €?", solucion: "x = 0", comprobar: [{ tipo: "ecuacion", ecuacion: "8*x+6*(3-x) = 18", respuesta: ["0"] }] };
+    const bien = { ...cine, enunciado: "Tres amigos pagan 20 € por tres entradas de 8 € o 6 €. ¿Cuántas son de 8 €?" };
+    const r = await generaHojaIA({ client: iaQueDevuelve([cine, cero, bien]), model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 3 });
+    const motivos = r.descartes.map((d) => d.motivo).join(" | ");
+    assert.match(motivos, /se corrige dentro del enunciado/);
+    assert.match(motivos, /respuesta 0/);
+    assert.equal(r.huecos.filter((h) => h.nombre === "planteamiento").length >= 1, true);
+    const problema = r.huecos.find((h) => h.nombre === "planteamiento");
+    assert.equal(problema.verificacion, "comprobada");
+    assert.equal(problema.revisar, "enunciado", "un problema con la cuenta bien sigue necesitando que alguien lea el enunciado");
+  });
+
+  test("dos códigos de saber del tema («D.2, D.4», 3.ª prueba real): vale, con el primero; si uno es de fuera, fuera", async () => {
+    const r = await generaHojaIA({ client: iaQueDevuelve([bueno({ saber: "D.2, D.4" }), bueno({ saber: "D.4, E.1", dificultad: 1 })]), model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 1 });
+    assert.equal(r.huecos.length, 1);
+    assert.equal(r.huecos[0].saber.codigo, "D.2");
+    assert.match(r.descartes[0].motivo, /D\.4, E\.1 fuera del tema/);
+  });
+
+  test("un ejercicio de técnica no lleva «revisar el enunciado»", async () => {
+    const r = await generaHojaIA({ client: iaQueDevuelve([bueno()]), model: "m", etapa: "eso", materia: "matematicas", curso: 2, tema: "ecuaciones-primer-grado", cuantos: 1 });
+    assert.equal(r.huecos[0].revisar, undefined);
   });
 
   test("un tema sin referencias no se genera", async () => {

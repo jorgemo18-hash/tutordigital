@@ -20,6 +20,12 @@
 const PRICING_USD_PER_MILLION = {
   "claude-sonnet-4-6": { input: 3, output: 15, cacheWrite5m: 3.75, cacheRead: 0.30 },
   "claude-opus-4-8":   { input: 5, output: 25, cacheWrite5m: 6.25, cacheRead: 0.50 },
+  // Añadidos el 2026-10-01 (página de precios de Anthropic, consultada ese
+  // día). Opus 5.5 cobra la lectura de caché a 0.05x, no a 0.1x.
+  "claude-sonnet-5":   { input: 2, output: 10, cacheWrite5m: 2.5, cacheRead: 0.20 },
+  "claude-sonnet-5-5": { input: 2, output: 10, cacheWrite5m: 2.5, cacheRead: 0.20 },
+  "claude-opus-5":     { input: 5, output: 25, cacheWrite5m: 6.25, cacheRead: 0.50 },
+  "claude-opus-5-5":   { input: 4, output: 20, cacheWrite5m: 5, cacheRead: 0.20 },
 };
 
 // ── Tipo de cambio USD → EUR ────────────────────────────────────────────

@@ -23,7 +23,7 @@ if (!apiKey) {
   console.error("Falta ANTHROPIC_API_KEY (en el entorno o en .env).");
   process.exit(2);
 }
-const { createAnthropicClient, SONNET_MODEL } = await import("../server/lib/anthropic.js");
+const { createAnthropicClient, HOJAS_IA_MODEL } = await import("../server/lib/anthropic.js");
 const { generaHojaIA } = await import("../server/lib/hojasIA/generaHojaIA.js");
 
 const pedido = {
@@ -34,14 +34,15 @@ const pedido = {
   cuantos: Number(opcion("--cuantos", "6")),
 };
 console.log(`Escribiendo ${pedido.cuantos} ejercicios de ${pedido.tema} (${pedido.materia}, ${pedido.curso}.º ${pedido.etapa})…\n`);
-const r = await generaHojaIA({ client: createAnthropicClient(apiKey), model: process.env.ANTHROPIC_MODEL || SONNET_MODEL, ...pedido });
+const r = await generaHojaIA({ client: createAnthropicClient(apiKey), model: process.env.HOJAS_IA_MODEL || HOJAS_IA_MODEL, ...pedido });
 if (!r) {
   console.error("Ese tema no tiene ejercicios de referencia.");
   process.exit(2);
 }
 r.hoja.actividades.forEach((a, i) => {
   const h = r.huecos[i];
-  console.log(`${h.orden}. [${h.verificacion === "comprobada" ? "COMPROBADA" : "SIN VERIFICAR"}] ${h.nombre} · ${h.saber.codigo} · dificultad ${h.dificultad}`);
+  const estado = h.verificacion !== "comprobada" ? "SIN VERIFICAR" : h.revisar === "enunciado" ? "CUENTAS COMPROBADAS, LEER EL ENUNCIADO" : "COMPROBADA";
+  console.log(`${h.orden}. [${estado}] ${h.nombre} · ${h.saber.codigo} · dificultad ${h.dificultad}`);
   console.log(`   ${a.enunciado}`);
   for (const ap of a.apartados || []) console.log(`     - ${ap}`);
   console.log(`   Solución: ${h.solucion}\n`);

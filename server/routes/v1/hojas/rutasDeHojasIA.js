@@ -6,7 +6,7 @@ import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { rateLimit } from "../../../lib/rateLimit.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
-import { createAnthropicClient, SONNET_MODEL } from "../../../lib/anthropic.js";
+import { createAnthropicClient, HOJAS_IA_MODEL } from "../../../lib/anthropic.js";
 import { recordTokenUsage } from "../../../lib/tokenUsage.js";
 import { temasConReferencias, cursosConReferencias } from "../../../lib/ejerciciosReferencia/referencias.js";
 import { generaHojaIA } from "../../../lib/hojasIA/generaHojaIA.js";
@@ -65,10 +65,10 @@ export function crearRutasDeHojasIA({ roles, clientFn = createAnthropicClient, a
       if (!apiKey) return fail(reply, 503, "ia_no_configurada", "La IA no está configurada", requestId);
       try {
         const r = await generaHojaIA({
-          client: clientFn(apiKey), model: SONNET_MODEL, ...p.data, cuantos: p.data.actividades || 6,
+          client: clientFn(apiKey), model: HOJAS_IA_MODEL, ...p.data, cuantos: p.data.actividades || 6,
         });
         if (!r) return fail(reply, 404, "tema_sin_referencias", "Ese tema no tiene ejercicios de referencia", requestId);
-        recordTokenUsage({ admin: adminFn(), tenantId: auth.tenant.id, source: SOURCE, model: SONNET_MODEL, usage: r.usage }).catch(() => {});
+        recordTokenUsage({ admin: adminFn(), tenantId: auth.tenant.id, source: SOURCE, model: HOJAS_IA_MODEL, usage: r.usage }).catch(() => {});
         if (r.descartes.length) req.log.info({ requestId, descartes: r.descartes }, "hojas IA: ejercicios descartados por la comprobación");
         if (!r.hoja.actividades.length) return fail(reply, 502, "ia_sin_ejercicios", "La IA no ha escrito ningún ejercicio que pase la comprobación. Prueba otra vez.", requestId);
         return ok(reply, { hoja: r.hoja, huecos: r.huecos, descartados: r.descartes.filter((d) => !d.soloApartado).length }, requestId);
