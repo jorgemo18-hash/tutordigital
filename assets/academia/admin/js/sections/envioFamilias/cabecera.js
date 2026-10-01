@@ -4,8 +4,37 @@ import { buildRegenerarBoton } from "./regenerarBoton.js";
 import { elegirAccion } from "./elegirAccionDialog.js";
 import { opcionesLote, opcionesRegenerarRecibos } from "./acciones/opcionesAccion.js";
 
-function textoOkLote(base) {
-  return (resultado) => (resultado?.fallidos ? `${base} (${resultado.fallidos} error${resultado.fallidos > 1 ? "es" : ""})` : base);
+const NOMBRE_MES = [null, "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+// "✓ Regenerado (2 errores; 5 sin clases en agosto)". Los alumnos sin clases
+// el mes del informe no son errores: no tienen informe que hacer.
+export function textoOkLote(base) {
+  return (resultado) => {
+    const partes = [];
+    if (resultado?.fallidos) partes.push(`${resultado.fallidos} error${resultado.fallidos > 1 ? "es" : ""}`);
+    if (resultado?.sinClases) {
+      const mesInforme = NOMBRE_MES[resultado.periodoInforme?.mes] || "ese mes";
+      partes.push(`${resultado.sinClases} sin clases en ${mesInforme}`);
+    }
+    return partes.length ? `${base} (${partes.join("; ")})` : base;
+  };
+}
+
+// EL ATAJO AL INFORME DEL MES DEL ENVÍO (Jorge, 1/10/2026). Con «recibo del
+// mes que empieza + informe del que acaba», quien busca los informes de
+// septiembre elige septiembre… y le sale el de agosto, sin clases, y nada
+// que generar. Cuando el mes del informe no tuvo ninguna clase, se dice y
+// se da el camino: los de septiembre están en el envío de octubre. Con
+// clases no sale: el mes del envío es el bueno y sería ruido.
+export function buildAtajoAlInforme({ mes, anio, periodoInforme, informeSinClases, onCambiarPeriodo }) {
+  if (!informeSinClases || !periodoInforme || (periodoInforme.mes === mes && periodoInforme.anio === anio) || !onCambiarPeriodo) return null;
+  const siguiente = mes === 12 ? { mes: 1, anio: anio + 1 } : { mes: mes + 1, anio };
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "ef-atajo-informe";
+  btn.textContent = `En ${NOMBRE_MES[periodoInforme.mes]} no hubo clases: este envío va sin informes. Los de ${NOMBRE_MES[mes]} van en el envío de ${NOMBRE_MES[siguiente.mes]} →`;
+  btn.addEventListener("click", () => onCambiarPeriodo(siguiente));
+  return btn;
 }
 
 function cancelado() {
@@ -26,6 +55,7 @@ export function buildCabecera({
   mes,
   anio,
   periodoInforme = null,
+  informeSinClases = false,
   mesesEnviados,
   anioActualSistema,
   hayPendientes,
@@ -49,6 +79,8 @@ export function buildCabecera({
   queSeEnvia.className = "ef-que-se-envia";
   queSeEnvia.textContent = textoDelEnvio({ mes, anio }, periodoInforme);
   titulos.appendChild(queSeEnvia);
+  const atajo = buildAtajoAlInforme({ mes, anio, periodoInforme, informeSinClases, onCambiarPeriodo });
+  if (atajo) titulos.appendChild(atajo);
   head.appendChild(titulos);
 
   const acciones = document.createElement("div");

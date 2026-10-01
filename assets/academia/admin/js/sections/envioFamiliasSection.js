@@ -1,3 +1,4 @@
+import { alumnosDelInforme } from "./envioFamilias/alumnosDelInforme.js";
 import {
   fetchRecibos, fetchRecibo, generarRecibos, generarReciboFamilia, regenerarRecibos, regenerarRecibo, regenerarInformes,
   updateRecibo, enviarFamilia, enviarInforme, generarInforme, editarComentarioInforme,
@@ -109,6 +110,9 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
         mes,
         anio,
         periodoInforme,
+        // Ningún alumno tuvo clases el mes del informe (agosto, o el primer
+        // mes de uso): la cabecera lo dice y lleva al envío siguiente.
+        informeSinClases: familias.length > 0 && !familias.some((f) => alumnosDelInforme(f).some((a) => a.tiene_sesiones)),
         mesesEnviados,
         anioActualSistema,
         // Pendientes O con error: si falla el lote entero (microservicio de

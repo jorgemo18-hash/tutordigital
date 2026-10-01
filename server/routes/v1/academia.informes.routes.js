@@ -137,7 +137,7 @@ export default async function academiaInformesRoutes(app) {
       if (status >= 500) req.log.error({ err: resultado, requestId }, "academia informes generar failed");
       return fail(reply, status, code, resultado.motivo, requestId);
     }
-    return ok(reply, { comentario: resultado.comentario, dias: resultado.dias }, requestId);
+    return ok(reply, { comentario: resultado.comentario, dias: resultado.dias, sin_clases: Boolean(resultado.sinClases) }, requestId);
   });
 
   // POST /api/v1/academia/informes/regenerar — regenera el comentario (con
@@ -188,15 +188,19 @@ export default async function academiaInformesRoutes(app) {
       return fail(reply, 409, "requiere_confirmacion", "Hay informes ya enviados en este período", requestId, { afectados });
     }
 
+    // Los que no tuvieron clases ese mes no tienen informe: se cuentan
+    // aparte (`sin_clases`), no como fallos.
     let regenerados = 0;
+    let sinClases = 0;
     const errores = [];
     for (const alumnoId of alumnoIds) {
       const resultado = await generarYGuardarComentario(admin, { tenantId, alumnoId, mes, anio, apiKey, forzar: true });
-      if (resultado.ok) regenerados += 1;
+      if (resultado.ok && resultado.sinClases) sinClases += 1;
+      else if (resultado.ok) regenerados += 1;
       else errores.push({ alumnoId, motivo: resultado.motivo });
     }
     if (errores.length) req.log.error({ errores, requestId }, "academia informes regenerar: algunos fallaron");
-    return ok(reply, { regenerados, fallidos: errores.length }, requestId);
+    return ok(reply, { regenerados, fallidos: errores.length, sin_clases: sinClases }, requestId);
   });
 
   // PUT /api/v1/academia/informes/comentario — sobrescribe el comentario a

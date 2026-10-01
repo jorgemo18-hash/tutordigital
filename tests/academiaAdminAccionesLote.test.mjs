@@ -68,6 +68,6 @@ export async function run({ test, assert }) {
     fakes.regenerarRecibosFn = async () => ({ fallidos: 2 });
     fakes.regenerarInformesFn = async () => ({ fallidos: 3 });
     const resultado = await regenerarLote("completo", { mes: 7, anio: 2026, hayRecibosEnPeriodo: true, ...fakes });
-    assert.deepEqual(resultado, { fallidos: 5 });
+    assert.deepEqual(resultado, { fallidos: 5, sinClases: 0, periodoInforme: { mes: 7, anio: 2026 } });
   });
 }

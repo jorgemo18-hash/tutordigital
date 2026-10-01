@@ -250,6 +250,7 @@ async function loadTests() {
     "./academiaRecibos/tieneTarifaEnListado.test.mjs",
     "./academiaInformes/evaluarConfirmacionInformes.test.mjs",
     "./academiaInformes/regenerarEnviadoAt.test.mjs",
+    "./academiaInformes/informeSinClases.test.mjs",
     "./academiaRecibos/economicoFamilia.test.mjs",
     "./academiaEnvio/textoAcompanamiento.test.mjs",
     "./academiaEnvio/cuerpoEmail.test.mjs",

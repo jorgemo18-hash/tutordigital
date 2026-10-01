@@ -11,6 +11,9 @@ function buildBtn(texto, claseExtra) {
   return btn;
 }
 
+// ¿Algún día de clase? (los demás días de la tabla son festivos o ausencias)
+export const hayClases = (dias = []) => dias.some((d) => !d.ausencia && !d.festivo);
+
 function formatFecha(iso) {
   return new Date(iso).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
@@ -60,6 +63,15 @@ export function buildInformeCard(alumno, { mes, anio, api, familiaId = null }) {
     const msg = buildMsg();
 
     if (!estado.comentario) {
+      // Sin ninguna clase (solo festivos o ausencias): no hay informe que
+      // generar, y el botón solo llevaba a un error (Jorge, 1/10/2026).
+      if (!hayClases(estado.dias)) {
+        const p = document.createElement("p");
+        p.className = "ac-empty";
+        p.textContent = "Sin clases este mes: no lleva informe.";
+        cuerpo.appendChild(p);
+        return;
+      }
       cuerpo.append(buildGenerarInformeBoton(msg), msg);
       return;
     }

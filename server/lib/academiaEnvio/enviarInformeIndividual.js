@@ -39,6 +39,7 @@ export async function enviarInformeDeAlumno(admin, {
 
   const generado = await generarYGuardarComentario(admin, { tenantId, alumnoId, mes, anio, apiKey });
   if (!generado.ok) return generado;
+  if (generado.sinClases) return { ok: false, code: "sin_sesiones", motivo: "El alumno no tiene clases registradas ese mes: no hay informe que enviar." };
 
   const [config, textosLopd, textosExencion] = await Promise.all([
     fetchConfigEnvio(admin, tenantId),

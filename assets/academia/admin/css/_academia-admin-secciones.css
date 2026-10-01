@@ -195,6 +195,8 @@ select.ac-legal-tipo-select { width: auto; flex-shrink: 0; font-size: 11px; padd
    envioFamilias/cabecera.js y shared/js/periodosDeEnvio.js). */
 .ef-que-se-envia { margin: 6px 0 0; font-size: 13px; color: rgba(242, 237, 229, 0.7); }
 .ac-claro .ef-que-se-envia { color: #6b5d4f; }
+.ef-atajo-informe { display: block; margin: 6px 0 0; padding: 0; border: 0; background: none; font: inherit; font-size: 13px; color: #d9a066; text-align: left; cursor: pointer; text-decoration: underline; }
+.ac-claro .ef-atajo-informe { color: #8a4f1d; }
 /* Lo que falta para poder enviar (ver envioFamilias/queFalta.js). */
 .ef-que-falta { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
 .ef-que-falta-listo { margin: 0; font-size: 13px; color: #8fbf8a; }

@@ -32,8 +32,14 @@ export async function generarYGuardarComentario(admin, { tenantId, alumnoId, mes
     comentario = forzar ? null : informeExistente?.comentario || null;
     if (!comentario) {
       const sesionesClase = sesiones.filter((s) => s.tipo === "clase");
+      // SIN CLASES ESE MES NO ES UN ERROR (Jorge, 1/10/2026): con el envío
+      // «recibo del mes que empieza + informe del que acaba», el envío de
+      // septiembre lleva el informe de agosto, sin clases, y el lote salía
+      // lleno de «no se pueden generar». No hay informe que hacer: no se
+      // guarda nada y quien llama decide (el lote lo cuenta aparte; enviar
+      // un informe suelto sí lo rechaza, ver enviarInformeIndividual.js).
       if (!sesionesClase.length) {
-        return { ok: false, code: "sin_sesiones", motivo: "El alumno no tiene sesiones registradas este mes." };
+        return { ok: true, sinClases: true, comentario: null, dias, enviadoAt: informeExistente?.enviado_at ?? null };
       }
       const { notas, error: notasErr } = await fetchNotasExamenMes(admin, tenantId, alumnoId, { mes, anio });
       if (notasErr) return { ok: false, code: "fetch_failed", motivo: "No se pudieron leer las notas de examen." };

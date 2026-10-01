@@ -34,6 +34,7 @@ export async function regenerarLote(tipo, {
 }) {
   let fallidosRecibos = 0;
   let fallidosInformes = 0;
+  let sinClases = 0;
 
   if (tipo !== "solo_informe") {
     const soloCrear = modo === "faltan" || !hayRecibosEnPeriodo;
@@ -50,7 +51,8 @@ export async function regenerarLote(tipo, {
       { mensajeConfirmacion: mensajeConfirmacionLote("informe"), confirmFn }
     );
     fallidosInformes = resultado?.fallidos || 0;
+    sinClases = resultado?.sin_clases || 0;
   }
 
-  return { fallidos: fallidosRecibos + fallidosInformes };
+  return { fallidos: fallidosRecibos + fallidosInformes, sinClases, periodoInforme };
 }

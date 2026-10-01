@@ -1,0 +1,82 @@
+import { Window } from "happy-dom";
+import { makeFakeSupabaseAdmin } from "../support/fakeSupabaseAdmin.mjs";
+
+if (!globalThis.document) globalThis.document = new Window().document;
+
+// EL MES DEL INFORME SIN CLASES NO ES UN ERROR (Jorge, 1/10/2026): con el
+// envío «recibo del mes que empieza + informe del que acaba», el envío de
+// septiembre lleva el informe de agosto; sin clases en agosto, generar los
+// informes acababa en «no se pueden generar: no hay sesiones», alumno por
+// alumno. Ahora: no hay informe que hacer, se dice, y la cabecera lleva al
+// envío donde está el informe que se buscaba.
+export async function run({ test, assert }) {
+  const { generarYGuardarComentario } = await import("../../server/lib/academiaInformes/generarInforme.js");
+  const { regenerarLote } = await import("../../assets/academia/admin/js/sections/envioFamilias/acciones/accionesLote.js");
+  const { textoOkLote, buildAtajoAlInforme } = await import("../../assets/academia/admin/js/sections/envioFamilias/cabecera.js");
+  const { hayClases } = await import("../../assets/academia/admin/js/sections/envioFamilias/informeCard.js");
+
+  const T = "t1";
+  const A = "a1";
+  // Agosto: una ausencia y un festivo, ninguna clase. La tabla de informes
+  // apunta cada upsert para ver que NO se guarda nada.
+  function fakeAdmin() {
+    const upserts = [];
+    const base = makeFakeSupabaseAdmin({
+      academia_alumnos: [{ id: A, tenant_id: T, nombre: "Ana", curso: "1º ESO", familia_id: "f1", familia: { email: "f@example.com" } }],
+      academia_sesiones: [{ tenant_id: T, alumno_id: A, fecha: "2026-08-04", tipo: "ausencia" }],
+      academia_festivos: [{ tenant_id: T, fecha: "2026-08-15", descripcion: "Asunción" }],
+    });
+    const informes = {
+      select: () => {
+        const q = { eq: () => q, maybeSingle: () => Promise.resolve({ data: null, error: null }) };
+        return q;
+      },
+      upsert: (payload) => { upserts.push(payload); return { select: () => ({ single: () => Promise.resolve({ data: { id: "i", enviado_at: null }, error: null }) }) }; },
+    };
+    return { upserts, from: (t) => (t === "academia_informes" ? informes : base.from(t)) };
+  }
+
+  test("sin clases (solo ausencias y festivos): ok, sinClases, sin guardar nada y sin llamar a la IA", async () => {
+    const admin = fakeAdmin();
+    const r = await generarYGuardarComentario(admin, { tenantId: T, alumnoId: A, mes: 8, anio: 2026, apiKey: "" });
+    assert.equal(r.ok, true, r.motivo);
+    assert.equal(r.sinClases, true);
+    assert.equal(r.comentario, null);
+    assert.equal(r.dias.length, 2, "la tabla de días sigue saliendo");
+    assert.equal(admin.upserts.length, 0, "no se guarda un informe vacío que luego se mandaría");
+  });
+
+  test("el lote cuenta los «sin clases» aparte, no como errores, y el botón lo dice con el mes del informe", async () => {
+    const r = await regenerarLote("solo_informe", {
+      mes: 9, anio: 2026, periodoInforme: { mes: 8, anio: 2026 },
+      regenerarInformesFn: async () => ({ regenerados: 0, fallidos: 0, sin_clases: 12 }),
+      confirmFn: async () => true,
+    });
+    assert.equal(r.fallidos, 0);
+    assert.equal(r.sinClases, 12);
+    assert.equal(textoOkLote("✓ Regenerado")(r), "✓ Regenerado (12 sin clases en agosto)");
+    assert.equal(textoOkLote("✓ Regenerado")({ fallidos: 2, sinClases: 0 }), "✓ Regenerado (2 errores)");
+  });
+
+  test("la cabecera lleva al envío del mes siguiente cuando el informe no tuvo clases, y solo entonces", () => {
+    const cambios = [];
+    const onCambiarPeriodo = (p) => cambios.push(p);
+    const atajo = buildAtajoAlInforme({ mes: 9, anio: 2026, periodoInforme: { mes: 8, anio: 2026 }, informeSinClases: true, onCambiarPeriodo });
+    assert.match(atajo.textContent, /En agosto no hubo clases.*Los de septiembre van en el envío de octubre/);
+    atajo.click();
+    assert.deepEqual(cambios, [{ mes: 10, anio: 2026 }]);
+    // Booleanos, no el nodo: al fallar, assert serializa el nodo de happy-dom
+    // entero y el proceso se queda sin memoria.
+    assert.equal(buildAtajoAlInforme({ mes: 10, anio: 2026, periodoInforme: { mes: 9, anio: 2026 }, informeSinClases: false, onCambiarPeriodo }) === null, true, "con clases, ruido");
+    assert.equal(buildAtajoAlInforme({ mes: 9, anio: 2026, periodoInforme: { mes: 9, anio: 2026 }, informeSinClases: true, onCambiarPeriodo }) === null, true, "modo mismo mes: no hay otro envío al que ir");
+    const dic = buildAtajoAlInforme({ mes: 12, anio: 2026, periodoInforme: { mes: 11, anio: 2026 }, informeSinClases: true, onCambiarPeriodo });
+    dic.click();
+    assert.deepEqual(cambios[1], { mes: 1, anio: 2027 }, "de diciembre a enero del año siguiente");
+  });
+
+  test("la card del informe: sin ningún día de clase no ofrece «Generar informe»", () => {
+    assert.equal(hayClases([{ dia: 4, ausencia: true }, { dia: 15, festivo: "Asunción" }]), false);
+    assert.equal(hayClases([{ dia: 4, ausencia: true }, { dia: 7, asignatura: "Matemáticas", tema: "Fracciones" }]), true);
+    assert.equal(hayClases([]), false);
+  });
+}
