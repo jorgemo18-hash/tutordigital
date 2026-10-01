@@ -7,7 +7,7 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 import { requireAuthPreHandler } from "../../lib/middleware.js";
 import { getAllowedOrigins, matchesAllowedOrigin } from "../../lib/security/origins.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
-import { SONNET_MODEL } from "../../lib/anthropic.js";
+import { TUTOR_MODEL } from "../../lib/anthropic.js";
 import { Sentry } from "../../lib/sentry.js";
 import { recordTokenUsage } from "../../lib/tokenUsage.js";
 import { comprobarLimiteDiario } from "../../lib/chat/limiteDiario.js";
@@ -107,7 +107,7 @@ export default async function chatRoutes(app) {
       }
 
       const apiKey       = getEnv("ANTHROPIC_API_KEY", "");
-      const defaultModel = getEnv("ANTHROPIC_MODEL", SONNET_MODEL);
+      const defaultModel = getEnv("ANTHROPIC_MODEL", TUTOR_MODEL);
       const { sessionId, stream } = validation.data;
 
       // sessionId viene del body del cliente — hay que resolver el tenant_id

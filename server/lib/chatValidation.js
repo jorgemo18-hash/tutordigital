@@ -80,6 +80,8 @@ const ChatSchema = z
     // Se acepta para no romper a un cliente viejo que lo mande, pero NO
     // se usa: el modelo lo decide el servidor (ver anthropic.js).
     model: z.string().max(80).optional(),
+    // Igual que `model`: se acepta pero no se usa (Sonnet 5.5 la rechaza;
+    // ver chat/peticionDelTutor.js).
     temperature: z.number().min(0).max(2).optional(),
     attemptsSameError: z.number().int().min(0).max(10).optional(),
     image: z.string().optional(),

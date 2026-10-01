@@ -22,9 +22,21 @@ export const SONNET_MODEL = "claude-sonnet-4-6";
 //     USD y 29–45 s (cuesta lo mismo: el modelo nuevo es más barato);
 //   - claude-opus-5-5 pensando: igual de bien, el doble de caro.
 // Sonnet 5.5 no admite obligar a usar una herramienta: llamadaDeHojaIA.js
-// ya va en "auto". El chat del tutor sigue en SONNET_MODEL: cambiarlo es
-// otra decisión, con sus propias pruebas.
+// ya va en "auto".
 export const HOJAS_IA_MODEL = "claude-sonnet-5-5";
+
+// EL CHAT DEL TUTOR: Sonnet 5.5, sin pensamiento (1/10/2026). Con los 14
+// escenarios de `npm run tutor:escenarios`, dos pasadas y el mismo prompt:
+//   - claude-sonnet-4-6: 22 de 28 (79 %); dio por bueno un paso con el signo
+//     mal en las dos pasadas;
+//   - claude-sonnet-5-5: 27 de 28 (96 %); su único fallo, dos preguntas en un
+//     mensaje.
+// Se pasó tal cual se midió: sin `thinking` y sin `temperature` (la rechaza).
+// Es más barato por token (2 $/10 $ frente a 3 $/15 $). Los informes
+// mensuales siguen en SONNET_MODEL hasta que se midan aparte.
+// Ojo: la variable de entorno ANTHROPIC_MODEL, si está puesta en el servidor,
+// manda sobre esto (chat.routes.js).
+export const TUTOR_MODEL = "claude-sonnet-5-5";
 
 // EL MODELO NO LO ELIGE QUIEN LLAMA (auditoría del 08/09/2026).
 //

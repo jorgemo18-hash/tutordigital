@@ -1,11 +1,12 @@
 import mammoth from "mammoth";
 import pdfParse from "pdf-parse";
 import { getBase64FromMaybeDataUrl, MAX_FILENAME_CHARS } from "./chatValidation.js";
-import { buildTutorInstructions, procesarRespuestaTutor } from "./chatPrompt.js";
+import { partesDelPromptDelTutor, procesarRespuestaTutor } from "./chatPrompt.js";
 import { sanitizeControlSignals } from "./sanitizeUserInput.js";
-import { createAnthropicClient, SONNET_MODEL } from "./anthropic.js";
+import { createAnthropicClient, TUTOR_MODEL } from "./anthropic.js";
 import { Sentry } from "./sentry.js";
 import { crearFiltroDeSenales } from "./chat/filtroDeSenales.js";
+import { peticionDelTutor } from "./chat/peticionDelTutor.js";
 
 export { validateChatBody } from "./chatValidation.js";
 
@@ -92,7 +93,7 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
 
 export async function askAnthropicChat(
   validatedData = {},
-  { apiKey = "", defaultModel = SONNET_MODEL, onChunk = null } = {}
+  { apiKey = "", defaultModel = TUTOR_MODEL, onChunk = null } = {}
 ) {
   if (!apiKey) {
     return {
@@ -165,7 +166,7 @@ export async function askAnthropicChat(
 
   // ── Construir historial ────────────────────────────────────────────────
 
-  const messages = [];
+  let historialDelPrompt = [];
 
   if (Array.isArray(validatedData.messages) && validatedData.messages.length > 0) {
     const historial = validatedData.messages
@@ -185,14 +186,12 @@ export async function askAnthropicChat(
         historialLimpio.push(msg);
       }
     }
-    messages.push(...historialLimpio.slice(-20));
+    historialDelPrompt = historialLimpio.slice(-20);
   }
-
-  messages.push({ role: "user", content });
 
   // ── System prompt (con mapa de pasos si existe) ────────────────────────
 
-  const system = buildTutorInstructions(
+  const partes = partesDelPromptDelTutor(
     mode,
     validatedData.taskContext || null,
     validatedData.attemptsSameError,
@@ -204,12 +203,11 @@ export async function askAnthropicChat(
     hasVisualDoc
   );
 
-  // ── Request params — sin thinking (no compatible con Sonnet) ──────────
+  // ── Request params: caché y sin temperature (chat/peticionDelTutor.js) ──
 
-  const reqParams = { model, system, messages, max_tokens: 1600 };
-  if (Number.isFinite(validatedData.temperature)) {
-    reqParams.temperature = validatedData.temperature;
-  }
+  const reqParams = peticionDelTutor({
+    model, partes, historial: historialDelPrompt, mensajeActual: { role: "user", content },
+  });
 
   // ── Llamada a la API ───────────────────────────────────────────────────
 

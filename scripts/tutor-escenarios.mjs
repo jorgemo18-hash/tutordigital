@@ -50,9 +50,9 @@ if (!apiKey) {
 // Se importan después de cargar el .env, por si algún módulo lee el entorno
 // al cargarse.
 const { askAnthropicChat } = await import("../server/lib/chat.js");
-const { createAnthropicClient, SONNET_MODEL, OPUS_MODEL } = await import("../server/lib/anthropic.js");
+const { createAnthropicClient, TUTOR_MODEL, OPUS_MODEL } = await import("../server/lib/anthropic.js");
 
-const modelo = process.env.ANTHROPIC_MODEL || SONNET_MODEL;
+const modelo = process.env.ANTHROPIC_MODEL || TUTOR_MODEL;
 const veces = Math.max(1, Number(opcion("--veces")) || 3);
 const solo = opcion("--solo");
 const conJuez = !process.argv.includes("--sin-juez");
@@ -72,8 +72,25 @@ async function preguntarAlJuez(prompt) {
 }
 
 console.log(`${escenarios.length} escenarios × ${veces} · tutor ${modelo}${conJuez ? ` · juez ${OPUS_MODEL}` : " · sin juez"}\n`);
+// CUÁNTO TARDA Y SI LA CACHÉ ACIERTA (1/10/2026). Se pide por streaming, como
+// la app, para medir lo que espera el alumno hasta ver la primera palabra.
+const tiempos = [];
+const cache = { leidos: 0, escritos: 0, sinCache: 0 };
+async function tutorMedido(datos) {
+  const inicio = Date.now();
+  let primera = null;
+  const r = await askAnthropicChat(datos, { apiKey, defaultModel: modelo, onChunk: () => { primera ??= Date.now() - inicio; } });
+  tiempos.push({ primera: primera ?? Date.now() - inicio, total: Date.now() - inicio });
+  const u = r?.data?.usage || {};
+  cache.leidos += u.cache_read_input_tokens || 0;
+  cache.escritos += u.cache_creation_input_tokens || 0;
+  cache.sinCache += u.input_tokens || 0;
+  return r;
+}
+const mediana = (xs) => { const o = [...xs].sort((a, b) => a - b); return o[Math.floor(o.length / 2)] ?? 0; };
+
 const resultados = await ejecutarTodos(escenarios, {
-  tutor: (datos) => askAnthropicChat(datos, { apiKey, defaultModel: modelo }),
+  tutor: tutorMedido,
   preguntarAlJuez: conJuez ? preguntarAlJuez : null,
   veces,
 }, (r) => console.log(`${r.bien === r.veces ? "✓" : "✗"} ${r.bien}/${r.veces}  ${r.que}`));
@@ -86,6 +103,9 @@ const ruta = resolve(dir, `${fecha.replace(/[: ]/g, "-")}.md`);
 for (const linea of avisoDelJuez(resultados)) if (linea) console.error(`\n${linea.replace(/^> /, "")}`);
 writeFileSync(ruta, textoDelInforme(resultados, { fecha, modelo, modeloJuez: conJuez ? OPUS_MODEL : null }));
 console.log(`\nInforme: ${ruta}`);
+const seg = (ms) => (ms / 1000).toFixed(1).replace(".", ",");
+console.log(`Primera palabra: mediana ${seg(mediana(tiempos.map((t) => t.primera)))} s, la más lenta ${seg(Math.max(0, ...tiempos.map((t) => t.primera)))} s · respuesta entera: mediana ${seg(mediana(tiempos.map((t) => t.total)))} s`);
+console.log(`Tokens de entrada: ${cache.leidos} leídos de caché, ${cache.escritos} escritos en caché, ${cache.sinCache} sin caché`);
 
 if (hayFallosGraves(resultados)) {
   console.error("\n⚠️  Alguna respuesta regala la solución o enseña una señal. Mira el informe.");

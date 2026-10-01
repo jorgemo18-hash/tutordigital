@@ -2,7 +2,7 @@
 
 import { askAnthropicChat } from "../chat.js";
 import { createSupabaseAdmin } from "../supabase.js";
-import { SONNET_MODEL } from "../anthropic.js";
+import { TUTOR_MODEL } from "../anthropic.js";
 import { recordTokenUsage } from "../tokenUsage.js";
 import { fetchHistorialDeSesion, guardarTurno, avisarFalloDeLectura } from "./historialDeSesion.js";
 import { fetchContextoDelAlumno } from "./contextoDelAlumno.js";
@@ -11,7 +11,7 @@ export async function handleMessage({
   validatedData,
   tenantId,
   apiKey        = "",
-  defaultModel  = SONNET_MODEL,
+  defaultModel  = TUTOR_MODEL,
   onChunk       = null,
 }) {
   const admin     = createSupabaseAdmin();

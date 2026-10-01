@@ -46,7 +46,17 @@ No añadas texto después de estas señales.`;
 
 // ── Main system prompt ─────────────────────────────────────────────────────
 
-export function buildTutorInstructions(modo, taskContext, attemptsSameError, sesion, stepMap = null, documentText = "", sessionExercises = [], hasVisualDoc = false) {
+// EL PROMPT EN DOS PARTES (1/10/2026), para la caché de la API.
+// `fijo`: lo que no cambia en toda la sesión (quién es, reglas, enunciado,
+// alumno). `variable`: lo que cambia de un mensaje a otro (intentos y mapa de
+// pasos). La caché guarda el principio del prompt mientras sea idéntico: si
+// algo variable va arriba, se rompe en cada mensaje y se paga entero.
+export function buildTutorInstructions(...args) {
+  const { fijo, variable } = partesDelPromptDelTutor(...args);
+  return variable ? `${fijo}\n${variable}` : fijo;
+}
+
+export function partesDelPromptDelTutor(modo, taskContext, attemptsSameError, sesion, stepMap = null, documentText = "", sessionExercises = [], hasVisualDoc = false) {
   const mapSection = buildStepMapSection(stepMap);
 
   const docSection = documentText
@@ -76,7 +86,7 @@ export function buildTutorInstructions(modo, taskContext, attemptsSameError, ses
   // hablas, sobre qué, y cómo respondes. Las reglas son las mismas que
   // aguantaron las 32 conversaciones reales; lo nuevo (25/09/2026) es pedir
   // el razonamiento antes de corregir, y el cierre del ejercicio.
-  return `QUIÉN ERES
+  const fijo = `QUIÉN ERES
 Un tutor académico para estudiantes españoles de Primaria, ESO y Bachillerato: paciente, cercano y exigente a la vez, como un buen profesor particular.
 
 QUÉ HACES
@@ -87,7 +97,6 @@ CON QUIÉN HABLAS
 - Nivel: ${nivel}
 - Asignatura: ${asignatura}
 - Modo: ${modo?.toUpperCase() || "DEBERES"}
-- Intentos con el mismo error: ${attemptsSameError || 0}
 Adapta el vocabulario y los ejemplos a ese nivel. Si ves que un paso le cuesta, baja a algo más básico; si va sobrado, no le hagas repetir lo que ya domina.
 
 SOBRE QUÉ
@@ -115,8 +124,14 @@ CÓMO RESPONDES:
 - Si el alumno comete el mismo error dos veces seguidas, no repitas la misma pregunta. Ve a algo más básico: "¿Qué crees que significa el signo igual en una ecuación?"
 - Reconoce el esfuerzo concreto ("bien visto lo del signo"), no con elogios vacíos, y nunca regales la respuesta para animarle.
 - Cuando termine el ejercicio, en una frase: qué ha hecho bien y, si viene al caso, dónde se usa eso fuera del cuaderno. Sin pregunta nueva si ya no quedan pasos.
+`;
+
+  const variable = `ESTADO DEL ALUMNO EN ESTE EJERCICIO
+- Intentos con el mismo error: ${attemptsSameError || 0}
 
 ${mapSection ? mapSection + "\n" : ""}`;
+
+  return { fijo, variable };
 }
 
 // ── Response processing ────────────────────────────────────────────────────
