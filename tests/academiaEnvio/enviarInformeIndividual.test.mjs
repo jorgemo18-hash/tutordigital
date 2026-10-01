@@ -3,20 +3,19 @@ import { makeFakeSupabaseAdmin } from "../support/fakeSupabaseAdmin.mjs";
 const TENANT_ID = "t1";
 const ALUMNO_ID = "a1";
 
-// Fixture sin sesiones/festivos ese mes -> generarYGuardarComentario toma
-// el camino barato "Sin actividad..." (sin llamar a Claude), igual truco
-// que enviarInforme.test.mjs usaba antes de que ese archivo se retirase.
+// Fixture con UNA clase ese mes y el comentario ya redactado: así
+// generarYGuardarComentario lo reutiliza sin llamar a Claude. (Hasta el
+// 1/10/2026 se usaba un mes sin sesiones y se mandaba el «Sin actividad…»;
+// un informe sin clases ya no se manda, ver informeSinClases.test.mjs.)
 function fixture({ enviadoAtPrevio = null } = {}) {
   return makeFakeSupabaseAdmin({
     academia_alumnos: [{
       id: ALUMNO_ID, tenant_id: TENANT_ID, nombre: "Ana García", curso: "1º ESO", familia_id: "f1",
       familia: { id: "f1", nombre: "Familia García", email: "familia@example.com" },
     }],
-    academia_sesiones: [],
+    academia_sesiones: [{ tenant_id: TENANT_ID, alumno_id: ALUMNO_ID, fecha: "2026-07-10", tipo: "clase", asignatura: "Matemáticas", tema: "Fracciones" }],
     academia_festivos: [],
-    academia_informes: enviadoAtPrevio !== undefined && enviadoAtPrevio !== null
-      ? [{ id: "inf1", tenant_id: TENANT_ID, alumno_id: ALUMNO_ID, mes: 7, anio: 2026, comentario: "Comentario viejo", enviado_at: enviadoAtPrevio }]
-      : [],
+    academia_informes: [{ id: "inf1", tenant_id: TENANT_ID, alumno_id: ALUMNO_ID, mes: 7, anio: 2026, comentario: "Comentario viejo", enviado_at: enviadoAtPrevio }],
     academia_config: [{ tenant_id: TENANT_ID, nombre_emisor: "Academia Lyceo", email_texto_solo_informe: "Hola {familia}, el informe de {mes}." }],
     academia_textos_legales: [{ tenant_id: TENANT_ID, tipo: "email", contenido: "Texto LOPD.", activo: true }],
   });

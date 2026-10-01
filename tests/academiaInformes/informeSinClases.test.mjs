@@ -79,4 +79,38 @@ export async function run({ test, assert }) {
     assert.equal(hayClases([{ dia: 4, ausencia: true }, { dia: 7, asignatura: "Matemáticas", tema: "Fracciones" }]), true);
     assert.equal(hayClases([]), false);
   });
+
+  test("la ficha de un alumno sin clases: no genera nada al abrirse, y un «Sin actividad» viejo no se ofrece (1/10/2026)", async () => {
+    const { buildInformeCard } = await import("../../assets/academia/admin/js/sections/envioFamilias/informeCard.js");
+    const generados = [];
+    const api = {
+      fetchInformePreview: async () => ({ comentario: "Sin actividad registrada este mes.", dias: [], enviadoAt: null }),
+      generarInforme: async (a) => { generados.push(a); return { comentario: "x", dias: [] }; },
+    };
+    const card = buildInformeCard({ id: "a1", nombre: "Aarón", curso: "1º ESO" }, { mes: 8, anio: 2026, api });
+    await new Promise((r) => setTimeout(r, 20));
+    assert.equal(generados.length, 0, "abrir la ficha no guarda ningún informe");
+    assert.match(card.textContent, /Sin clases este mes: no lleva informe/);
+    assert.equal([...card.querySelectorAll("button")].some((b) => /Editar informe|Generar informe/.test(b.textContent)), false);
+  });
+
+  test("enviar: un informe sin clases ese mes no sale, aunque tenga el «Sin actividad» guardado", async () => {
+    const { enviarInformeDeAlumno } = await import("../../server/lib/academiaEnvio/enviarInformeIndividual.js");
+    const admin = makeFakeSupabaseAdmin({
+      academia_alumnos: [{ id: A, tenant_id: T, nombre: "Ana", curso: "1º ESO", familia_id: "f1", familia: { id: "f1", nombre: "F", email: "f@example.com" } }],
+      academia_sesiones: [],
+      academia_festivos: [],
+      academia_informes: [{ id: "i1", tenant_id: T, alumno_id: A, mes: 8, anio: 2026, comentario: "Sin actividad registrada este mes.", enviado_at: null }],
+      academia_config: [{ tenant_id: T }],
+      academia_textos_legales: [],
+    });
+    const emails = [];
+    const r = await enviarInformeDeAlumno(admin, {
+      tenantId: T, tenantNombre: "Lyceo", alumnoId: A, mes: 8, anio: 2026, apiKey: "", pdfServiceUrl: "http://pdf.test",
+      generarInformePdfFn: async () => ({ ok: true, buffer: Buffer.from("x") }), enviarEmailFn: async (e) => { emails.push(e); },
+    });
+    assert.equal(r.ok, false);
+    assert.equal(r.code, "sin_sesiones");
+    assert.equal(emails.length, 0);
+  });
 }

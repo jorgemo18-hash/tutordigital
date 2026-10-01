@@ -50,7 +50,7 @@ export async function run({ test, assert }) {
       academia_recibos: [{ id: "r1", tenant_id: "t1", familia_id: "f1", mes: 10, anio: 2026, estado: "borrador", total_bruto: 85, total_neto: 85, total_descuento: 0, numero_recibo: "REC-2026-040", concepto: "Octubre", familia: { id: "f1", nombre: "Familia Ruiz", email: "r@x.es" } }],
       academia_recibos_lineas: [{ id: "l1", recibo_id: "r1", alumno_id: "a1", nombre_alumno: "Eric", precio_bruto: 85, descuentos_recurrentes: [] }],
       academia_informes: [{ id: "i1", tenant_id: "t1", alumno_id: "a1", mes: 9, anio: 2026, comentario: "Bien", enviado_at: null }],
-      academia_sesiones: [], academia_festivos: [], academia_textos_legales: [], academia_documentos_enviados: [],
+      academia_sesiones: [{ tenant_id: "t1", alumno_id: "a1", fecha: "2026-09-15", tipo: "clase", asignatura: "Matemáticas", tema: "Fracciones" }], academia_festivos: [], academia_textos_legales: [], academia_documentos_enviados: [],
     }));
     const r = await enviarReciboYInformesDeFamilia(admin, {
       tenantId: "t1", tenantNombre: "Lyceo", familiaId: "f1", mes: 10, anio: 2026, pdfServiceUrl: "http://pdf",

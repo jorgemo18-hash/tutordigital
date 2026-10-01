@@ -90,7 +90,13 @@ export async function enviarReciboYInformesDeFamilia(admin, {
       const { informe: existente, error: informeErr } = await fetchInformeExistente(admin, tenantId, alumno.id, periodoInforme);
       if (informeErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo comprobar los informes." };
       if (!existente?.comentario) continue;
-      informesElegibles.push({ alumno, informe: existente });
+      // Sin ninguna clase en el mes del informe no se manda informe, aunque
+      // haya un «Sin actividad registrada este mes» guardado (1/10/2026: el
+      // envío de septiembre iba a adjuntar seis informes vacíos de agosto).
+      const { dias, error: diasErr } = await fetchDiasMesYSesiones(admin, tenantId, alumno.id, periodoInforme);
+      if (diasErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo comprobar los informes." };
+      if (!dias.some((d) => d.asignatura)) continue;
+      informesElegibles.push({ alumno, informe: existente, dias });
     }
   }
 
@@ -132,9 +138,7 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   }
 
   const informesAdjuntados = [];
-  for (const { alumno, informe: existente } of informesElegibles) {
-    const { dias, error: diasErr } = await fetchDiasMesYSesiones(admin, tenantId, alumno.id, periodoInforme);
-    if (diasErr) continue;
+  for (const { alumno, informe: existente, dias } of informesElegibles) {
     const resultado = await generarInformePdfFn({
       tenantId, alumnoId: alumno.id, pdfServiceUrl,
       payload: buildInformePdfPayload({ alumno, mes: periodoInforme.mes, anio: periodoInforme.anio, dias, comentario: existente.comentario, academiaPayload }),

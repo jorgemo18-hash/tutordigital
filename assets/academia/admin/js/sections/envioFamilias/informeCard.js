@@ -62,16 +62,19 @@ export function buildInformeCard(alumno, { mes, anio, api, familiaId = null }) {
     cuerpo.appendChild(buildDiasTable(estado.dias));
     const msg = buildMsg();
 
+    // Sin ninguna clase (solo festivos o ausencias, o nada): no hay informe.
+    // Ni botón de generar (llevaba a un error) ni el «Sin actividad
+    // registrada este mes» que se guardaba antes al abrir la ficha y que el
+    // envío habría mandado a la familia (Jorge, 1/10/2026).
+    if (!hayClases(estado.dias) && !estado.enviadoAt) {
+      const p = document.createElement("p");
+      p.className = "ac-empty";
+      p.textContent = "Sin clases este mes: no lleva informe.";
+      cuerpo.appendChild(p);
+      return;
+    }
+
     if (!estado.comentario) {
-      // Sin ninguna clase (solo festivos o ausencias): no hay informe que
-      // generar, y el botón solo llevaba a un error (Jorge, 1/10/2026).
-      if (!hayClases(estado.dias)) {
-        const p = document.createElement("p");
-        p.className = "ac-empty";
-        p.textContent = "Sin clases este mes: no lleva informe.";
-        cuerpo.appendChild(p);
-        return;
-      }
       cuerpo.append(buildGenerarInformeBoton(msg), msg);
       return;
     }
@@ -150,18 +153,11 @@ export function buildInformeCard(alumno, { mes, anio, api, familiaId = null }) {
 
   renderCargando();
   api.fetchInformePreview(alumno.id, { mes, anio })
-    .then(async (preview) => {
+    .then((preview) => {
       estado = { comentario: preview.comentario, dias: preview.dias, enviadoAt: preview.enviadoAt };
-      // Sin días que informar y sin comentario todavía: el backend
-      // devuelve el texto fijo "Sin actividad..." sin gastar IA (ver
-      // generarYGuardarComentario) — se guarda ya aquí para saltar
-      // directamente al render normal de "con comentario" (sin botón
-      // "Generar informe": no hay nada que generar) y que Editar funcione
-      // igual que con un informe con datos.
-      if (!estado.dias.length && !estado.comentario) {
-        const res = await api.generarInforme({ alumno_id: alumno.id, mes, anio, forzar: false });
-        estado.comentario = res.comentario;
-      }
+      // Abrir la ficha ya no genera nada: antes, sin días, se guardaba aquí
+      // el texto fijo «Sin actividad…» (seis informes de agosto vacíos el
+      // 1/10/2026, a punto de salir con el envío de septiembre).
       renderVista();
     })
     .catch((err) => {

@@ -12,6 +12,9 @@ function fixture({
   // julio). El modo del informe del mes anterior tiene los suyos al final.
   modoEnvio = "mismo_mes",
   mesInformes = 7,
+  // Alumnos SIN ninguna clase en el mes del informe: su informe no se manda
+  // aunque tenga comentario (1/10/2026). Los demás tienen una clase.
+  sinClases = [],
 } = {}) {
   const alumnos = [
     { id: "a1", tenant_id: TENANT_ID, familia_id: FAMILIA_ID, nombre: "Ana García", curso: "1º ESO", activo: true },
@@ -53,7 +56,9 @@ function fixture({
       id: `inf${i + 1}`, tenant_id: TENANT_ID, alumno_id: alumnoId, mes: mesInformes, anio: 2026,
       comentario: informesDeAlumnos[alumnoId], enviado_at: informesEnviadosAt[alumnoId] || null,
     })),
-    academia_sesiones: [],
+    academia_sesiones: alumnosConInforme.filter((id) => !sinClases.includes(id)).map((alumnoId) => ({
+      tenant_id: TENANT_ID, alumno_id: alumnoId, fecha: `2026-${String(mesInformes).padStart(2, "0")}-10`, tipo: "clase", asignatura: "Matemáticas", tema: "Fracciones",
+    })),
     academia_festivos: [],
   });
 }
@@ -428,5 +433,16 @@ export async function run({ test, assert }) {
     assert.equal(resultado.ok, true, resultado.motivo);
     assert.equal(resultado.informesAdjuntados, 1);
     assert.ok(fakes.llamadas.email[0].attachments.some((a) => a.filename.includes("luis")), "va el informe de junio de Luis");
+  });
+
+  test("un hermano SIN clases en el mes del informe no lleva informe, aunque tenga comentario guardado (1/10/2026)", async () => {
+    const admin = fixture({ informesDeAlumnos: { a1: "Comentario de Ana", a2: "Sin actividad registrada este mes." }, sinClases: ["a2"] });
+    const fakes = fakesOk();
+    const resultado = await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test", ...fakes,
+    });
+    assert.equal(resultado.ok, true, resultado.motivo);
+    assert.equal(resultado.informesAdjuntados, 1, "solo el de Ana");
+    assert.equal(fakes.llamadas.informe.length, 1);
   });
 }

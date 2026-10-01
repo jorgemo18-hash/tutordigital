@@ -39,7 +39,11 @@ export async function enviarInformeDeAlumno(admin, {
 
   const generado = await generarYGuardarComentario(admin, { tenantId, alumnoId, mes, anio, apiKey });
   if (!generado.ok) return generado;
-  if (generado.sinClases) return { ok: false, code: "sin_sesiones", motivo: "El alumno no tiene clases registradas ese mes: no hay informe que enviar." };
+  // Sin ninguna clase ese mes (también el texto fijo «Sin actividad…» de un
+  // mes sin días): no hay informe que mandar a la familia (1/10/2026).
+  if (generado.sinClases || !(generado.dias || []).some((d) => d.asignatura)) {
+    return { ok: false, code: "sin_sesiones", motivo: "El alumno no tiene clases registradas ese mes: no hay informe que enviar." };
+  }
 
   const [config, textosLopd, textosExencion] = await Promise.all([
     fetchConfigEnvio(admin, tenantId),
