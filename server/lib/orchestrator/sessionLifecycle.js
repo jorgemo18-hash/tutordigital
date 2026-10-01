@@ -12,7 +12,7 @@
 // para que el cliente lo trate como una sesión recién lista (picker + saludo),
 // no como una restauración silenciosa.
 
-import { runFullAnalysis } from "./analysis.js";
+import { analizarConFicha } from "./analisisConFicha.js";
 import { createSupabaseAdmin } from "../supabase.js";
 import { GUIDE_MODEL } from "../agents/guide.js";
 import { recordTokenUsage } from "../tokenUsage.js";
@@ -22,13 +22,10 @@ function statementAttachmentsOf(attachments = []) {
 }
 
 async function _runAndPersistAnalysis({ admin, sessionId, tenantId, taskContext, mode, apiKey, hasExistingMap }) {
-  const { exercises, documentText, needsChoice, steps, guideOk, usageEvents } = await runFullAnalysis({
-    taskTitle:       taskContext.title        || "",
-    taskDescription: taskContext.description  || "",
-    teacherNotes:    taskContext.teacherNotes || "",
-    attachments:     taskContext.attachments  || [],
-    mode,
-    apiKey,
+  // La hoja se prepara una vez y la comparten todos los alumnos que la abren
+  // (fichaDeLaTarea.js): solo el primero paga el análisis.
+  const { exercises, documentText, needsChoice, steps, guideOk, usageEvents } = await analizarConFicha({
+    admin, tenantId, taskContext, mode, apiKey,
   });
 
   // Fire-and-forget, nunca bloquea la creación/reanudación de la sesión —

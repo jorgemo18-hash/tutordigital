@@ -27,7 +27,7 @@ export async function runFullAnalysis({
 
   // Varios ejercicios → el alumno debe elegir antes de generar pasos (Phase 2 se pospone)
   if (exercises.length > 1) {
-    return { exercises, documentText, needsChoice: true, steps: [], guideOk: null, usageEvents };
+    return { exercises, documentText, needsChoice: true, steps: [], guideOk: null, detectOk: Boolean(detectResult.ok), usageEvents };
   }
 
   // Cero o un ejercicio → Phase 2 inmediata
@@ -45,5 +45,5 @@ export async function runFullAnalysis({
   if (guideResult.usage) usageEvents.push({ source: "guide_steps", model: guideResult.model || GUIDE_MODEL, usage: guideResult.usage });
 
   const steps = guideResult.ok ? guideResult.steps : [];
-  return { exercises, documentText, needsChoice: false, steps, guideOk: guideResult.ok, usageEvents };
+  return { exercises, documentText, needsChoice: false, steps, guideOk: guideResult.ok, detectOk: Boolean(detectResult.ok), usageEvents };
 }

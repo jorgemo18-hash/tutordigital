@@ -9,7 +9,9 @@
 // esto añade la misma defensa dentro de la función, para que un caller nuevo
 // no pueda reintroducir el bug por accidente.
 
-import { generateStepMap, GUIDE_MODEL } from "../agents/guide.js";
+import { GUIDE_MODEL } from "../agents/guide.js";
+import { pasosDelEjercicio } from "./analisisConFicha.js";
+import { huellaDeLaTarea, leerFicha } from "./fichaDeLaTarea.js";
 import { createSupabaseAdmin } from "../supabase.js";
 import { recordTokenUsage } from "../tokenUsage.js";
 
@@ -33,17 +35,17 @@ export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle =
       .eq("owner_type", "task").eq("owner_id", sessionRow.task_id),
   ]);
 
-  // Phase 2 — cache hit del documento de Phase 1
-  const guideResult = await generateStepMap({
-    taskTitle:       task?.title         || "",
-    taskDescription: task?.description   || "",
-    attachments:     attachmentRows      || [],
-    exerciseIndex,
-    exerciseTitle,
-    teacherNotes:    task?.teacher_notes || "",
-    mode:            "",
-    apiKey,
-  });
+  // Phase 2: de la ficha compartida si otro alumno ya eligió este ejercicio
+  // de la misma hoja; si no, la guía (y se guarda para el siguiente).
+  const taskContext = {
+    title:        task?.title         || "",
+    description:  task?.description   || "",
+    teacherNotes: task?.teacher_notes || "",
+    attachments:  attachmentRows      || [],
+  };
+  const huella = await huellaDeLaTarea(admin, taskContext);
+  const ficha = await leerFicha(admin, { tenantId, huella });
+  const guideResult = await pasosDelEjercicio({ admin, tenantId, huella, ficha, taskContext, exerciseIndex, exerciseTitle, apiKey });
 
   // Fire-and-forget, nunca bloquea la elección de ejercicio — ver tokenUsage.js.
   if (guideResult.usage) {
