@@ -30,6 +30,10 @@ export const TemaSchema = z.object({
   materia: z.string().regex(/^[a-z0-9-]+$/),
   etapa: z.enum(["primaria", "eso", "bachillerato"]),
   curso: z.number().int().min(1).max(6),
+  // 4.º ESO de Matemáticas tiene dos materias con los mismos códigos de
+  // saber (Matemáticas A y B): el archivo dice de cuál es. El nombre del
+  // archivo empieza por "a-" o "b-" para que no choquen.
+  opcion: z.enum(["A", "B"]).optional(),
   tema: z.string().regex(/^[a-z0-9-]+$/),
   titulo: z.string().min(1).max(120),
   saberes: z.array(z.string().regex(/^[A-H]\.\d{1,2}$/)).min(1),

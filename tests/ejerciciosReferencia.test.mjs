@@ -19,6 +19,7 @@ export async function run({ test }) {
   const { curriculoDeCurso } = await import("../server/lib/curriculo/curriculoAragon.js");
   const { slugConEtapa } = await import("../assets/shared/curriculo/etapas.js");
   const R = await import("../server/lib/ejerciciosReferencia/referencias.js");
+  const { codigosDeSaberes } = await import("../server/lib/ejerciciosReferencia/saberesDelArchivo.js");
   const todos = archivos(RAIZ).map((ruta) => ({ ruta, datos: JSON.parse(readFileSync(ruta, "utf8")) }));
 
   test("hay referencias, y cada archivo tiene la forma del esquema y está en su carpeta", () => {
@@ -34,7 +35,7 @@ export async function run({ test }) {
     for (const { ruta, datos } of todos) {
       const c = curriculoDeCurso(slugConEtapa(datos.etapa, datos.materia), datos.curso);
       assert.ok(c, `${ruta}: la materia no está en el currículo`);
-      const codigos = new Set(c.saberes.flatMap((s) => s.bloques.flatMap((b) => b.apartados.map((a) => a.codigo))));
+      const codigos = codigosDeSaberes(c, datos.opcion);
       for (const s of datos.saberes) assert.ok(codigos.has(s), `${ruta}: el saber ${s} no está en ${datos.curso}.º`);
       for (const e of datos.ejercicios) for (const s of e.saberes) assert.ok(codigos.has(s), `${e.id}: el saber ${s} no está en ${datos.curso}.º`);
     }
@@ -50,6 +51,16 @@ export async function run({ test }) {
         if (e.comprobar) assert.equal(e.verificacion, "comprobada", `${e.id}: pasa tools/referencias/comprueba.py`);
       }
     }
+  });
+
+  test("4.º ESO: los saberes de Matemáticas A y B se leen por separado (tienen los mismos códigos)", async () => {
+    const { curriculoDeCurso: cdc } = await import("../server/lib/curriculo/curriculoAragon.js");
+    const { listasDeSaberes } = await import("../server/lib/ejerciciosReferencia/saberesDelArchivo.js");
+    const c = cdc("matematicas", 4);
+    assert.equal(c.saberes.length, 2);
+    assert.deepEqual(listasDeSaberes(c, "A").map((s) => s.etiqueta), ["Matemáticas A (4º ESO)"]);
+    assert.deepEqual(listasDeSaberes(c, "B").map((s) => s.etiqueta), ["Matemáticas B (4º ESO)"]);
+    assert.equal(listasDeSaberes(c, null).length, 2, "sin opción, las dos");
   });
 
   test("LECTURA: temas de un curso, un tema, y los ejercicios de un saber con variedad de tipos", () => {

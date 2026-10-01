@@ -88,10 +88,10 @@ def problema(tipo, dif, saberes, texto, planteo, respuesta, solucion, fuente, re
 RAIZ = Path(__file__).resolve().parents[2]
 
 
-def guarda(*, materia, etapa, curso, tema, titulo, saberes, prefijo):
+def guarda(*, materia, etapa, curso, tema, titulo, saberes, prefijo, opcion=None):
     for i, e in enumerate(EJ, 1): e["id"] = f"{prefijo}-{i:03d}"
     usadas = {e["fuente"] for e in EJ}
-    datos = {"materia": materia, "etapa": etapa, "curso": curso, "tema": tema, "titulo": titulo, "saberes": saberes,
+    datos = {"materia": materia, "etapa": etapa, "curso": curso, **({"opcion": opcion} if opcion else {}), "tema": tema, "titulo": titulo, "saberes": saberes,
              "fuentes": {k: v for k, v in FUENTES.items() if k in usadas}, "ejercicios": EJ}
     ruta = RAIZ / "server/lib/ejerciciosReferencia/datos" / etapa / materia / str(curso) / f"{tema}.json"
     ruta.parent.mkdir(parents=True, exist_ok=True)

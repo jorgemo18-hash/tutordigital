@@ -1,6 +1,7 @@
 import { curriculoDeCurso } from "../curriculo/curriculoAragon.js";
 import { slugConEtapa, nombreDelCurso } from "../../../assets/shared/curriculo/etapas.js";
 import { referenciasDelTema } from "../ejerciciosReferencia/referencias.js";
+import { apartadosDeSaberes } from "../ejerciciosReferencia/saberesDelArchivo.js";
 
 // LO QUE LA IA NECESITA SABER DE UN TEMA para escribir una hoja: la materia y
 // el curso, los saberes del currículo de Aragón que trabaja el tema (con su
@@ -28,7 +29,8 @@ export function contextoDelTema({ etapa, materia, curso, tema }) {
   if (!datos) return null;
   const slug = slugConEtapa(etapa, materia);
   const curriculo = curriculoDeCurso(slug, curso);
-  const apartados = (curriculo?.saberes || []).flatMap((s) => s.bloques.flatMap((b) => b.apartados));
+  // En 4.º ESO, los de su opción (A o B): los códigos se repiten.
+  const apartados = apartadosDeSaberes(curriculo, datos.opcion);
   const saberes = datos.saberes.map((codigo) => {
     const a = apartados.find((x) => x.codigo === codigo);
     return { codigo, nombre: a?.nombre || "", textos: a?.saberes || [] };

@@ -13,6 +13,15 @@ Lo decidió Jorge el 30/9/2026.
   con las ayudas de `escribe.py`.
 - Regenerar y comprobar todo: `python3 tools/referencias/genera.py`. Necesita
   `pip install sympy`.
+- Comprobar solo una carpeta o unos archivos (varios agentes a la vez, o 4.º A
+  y 4.º B, que comparten carpeta):
+  `python3 tools/referencias/comprueba.py …/datos/eso/matematicas/4/a-*.json` y
+  `node tools/referencias/valida.mjs …/datos/eso/matematicas/4/a-*.json`.
+  `valida.mjs` hace lo del test y además pasa cada comprobación por el
+  verificador de JavaScript (el que juzga lo que escribe la IA).
+- **4.º ESO de Matemáticas**: A y B son dos materias con los mismos códigos de
+  saber. El archivo lleva `"opcion": "A"` o `"B"` (`guarda(..., opcion="A")`), el
+  tema empieza por `a-` o `b-`, y los saberes se comprueban contra los de su opción.
 - El test `tests/ejerciciosReferencia.test.mjs` va en `npm test`.
 
 ## Reglas (el molde: 2.º ESO de Matemáticas)

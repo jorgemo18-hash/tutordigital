@@ -1,6 +1,7 @@
 """COMPRUEBA LAS SOLUCIONES DE LOS EJERCICIOS DE REFERENCIA (con sympy).
 
     python3 tools/referencias/comprueba.py server/lib/ejerciciosReferencia/datos/eso/matematicas/2
+    python3 tools/referencias/comprueba.py server/lib/ejerciciosReferencia/datos/eso/matematicas/4/a-*.json
 
 Los ejercicios de referencia (server/lib/ejerciciosReferencia/) se sacan de
 hojas y libros libres. Sus soluciones NO se creen: en el piloto del 30/9 una
@@ -204,9 +205,11 @@ def comprueba_archivo(ruta):
 
 
 def main():
-    carpeta = Path(sys.argv[1])
+    # Carpetas o archivos sueltos (4.º A y 4.º B comparten carpeta: cada uno
+    # pasa solo los suyos, `…/4/a-*.json`).
+    rutas = sorted({r for a in map(Path, sys.argv[1:]) for r in ([a] if a.is_file() else a.rglob("*.json"))})
     todos = []
-    for ruta in sorted(carpeta.rglob("*.json")):
+    for ruta in rutas:
         fallos, datos = comprueba_archivo(ruta)
         n = len(datos["ejercicios"])
         ok = sum(e["verificacion"] == "comprobada" for e in datos["ejercicios"])
