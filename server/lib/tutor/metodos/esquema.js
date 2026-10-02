@@ -16,6 +16,9 @@ import { z } from "zod";
 //     migración) que se esperan en ESE hito. Los que pueden salir en
 //     cualquier paso (cuenta mal, descuido) van una vez, en
 //     `erroresDeCualquierPaso`.
+//   - `alumno`: el título del hito, NEUTRO («El paréntesis», «Despejar la
+//     x»), nunca la orden («Quita el paréntesis»): el título no puede
+//     decirle qué hacer.
 //   - `pista`: la pista general del hito (nivel 2 de la ayuda), una sola
 //     pregunta que dirige la atención sin dar la operación.
 //
