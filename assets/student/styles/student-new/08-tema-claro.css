@@ -111,6 +111,12 @@ html[data-theme="light"] .escalationNotice {
   -webkit-backdrop-filter: none;
 }
 html[data-theme="light"] .escalationNoticeBody { color: var(--ink-soft); }
+html[data-theme="light"] .comprobacionCard { background: rgba(0,0,0,.03); border-color: rgba(0,0,0,.12); color: var(--ink); }
+html[data-theme="light"] .comprobacionCard--hecho { border-color: rgba(76,122,72,.5); }
+html[data-theme="light"] .comprobacionTitulo, html[data-theme="light"] .comprobacionNota { color: var(--ink-soft); }
+html[data-theme="light"] .comprobacionPaso--hecho .comprobacionMarca { color: #4c7a48; }
+html[data-theme="light"] .comprobacionPaso--mal .comprobacionMarca { color: #a4432e; }
+html[data-theme="light"] .comprobacionPaso--pendiente, html[data-theme="light"] .comprobacionPaso--sin_decidir { color: var(--ink-soft); }
 html[data-theme="light"] .topicChip {
   color: var(--copper-deep);
   background: rgba(176,115,56,0.10);

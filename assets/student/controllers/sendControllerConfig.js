@@ -30,6 +30,7 @@ export function buildSendControllerConfig({
   showModeQuestion,
   startStreamingBubble, appendStreamToken, finalizeStreamingBubble,
   onEscalate,
+  onComprobacion,
 }) {
   return {
     STATE,
@@ -79,6 +80,7 @@ export function buildSendControllerConfig({
     },
     onStepCompleted: (stepMap) => stepMapPanel.update(stepMap),
     onEscalate: (reason) => { try { onEscalate?.(reason); } catch {} },
+    onComprobacion: (c) => { try { onComprobacion?.(c); } catch {} },
     showExercisePicker: (exercises) => {
       const onMobile = window.matchMedia("(max-width: 768px)").matches;
       return onMobile ? mobileExercisePicker.show(exercises) : exercisePicker.show(exercises);

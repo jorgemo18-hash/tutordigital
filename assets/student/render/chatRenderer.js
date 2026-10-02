@@ -2,6 +2,7 @@
 // Chat rendering helpers extracted from index.js to keep index.js small.
 
 import { createEscalationNotice } from "./escalationNotice.js";
+import { createComprobacionCard } from "./comprobacionCard.js";
 import { createStreamingBubble } from "./chatStreamingBubble.js";
 import { createChatPromptCards } from "./chatPromptCards.js";
 import { escHtml } from "../../shared/js/escHtml.js";
@@ -425,6 +426,7 @@ export function createChatRenderer({
   }
 
   const { addEscalationNotice } = createEscalationNotice({ chatList, scrollEl, isNearBottom, autoScrollEnabled });
+  const { addComprobacion } = createComprobacionCard({ chatList, scrollEl, isNearBottom });
   const { startStreamingBubble, appendStreamToken, finalizeStreamingBubble } =
     createStreamingBubble({ chatList, scrollEl, isNearBottom });
 
@@ -432,6 +434,7 @@ export function createChatRenderer({
     add,
     addTopicChips,
     addEscalationNotice,
+    addComprobacion,
     addImageAttachment,
     addFileAttachment,
     renderFromHistory,

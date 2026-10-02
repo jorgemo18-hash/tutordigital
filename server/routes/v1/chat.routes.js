@@ -159,11 +159,13 @@ export default async function chatRoutes(app) {
         });
 
         const onChunk = (token) => sseWrite(reply.raw, { type: "token", text: token });
+        // La tarjeta ✓/✗ del comprobador sale ANTES que los tokens del tutor.
+        const onComprobacion = (comprobacion) => sseWrite(reply.raw, { type: "comprobacion", comprobacion });
 
         let run;
         try {
           run = await withTimeout(
-            handleMessage({ validatedData: validation.data, tenantId, apiKey, defaultModel, onChunk }),
+            handleMessage({ validatedData: validation.data, tenantId, apiKey, defaultModel, onChunk, onComprobacion }),
             Number(getEnv("CHAT_HANDLER_TIMEOUT_MS", "60000"))  // timeout mayor en streaming
           );
         } catch (err) {
@@ -193,7 +195,8 @@ export default async function chatRoutes(app) {
         }
 
         // Señales de estado tras los tokens
-        if ((run.data.stepsCompleted ?? 0) > 0) {
+        // Con el comprobador, el mapa cambia aunque no avance (un paso mal).
+        if ((run.data.stepsCompleted ?? 0) > 0 || run.data.comprobacion) {
           sseWrite(reply.raw, { type: "step_completed", stepsCompleted: run.data.stepsCompleted, stepMap: run.data.stepMap || null });
         }
         if (run.data.escalate?.should) {

@@ -6,7 +6,7 @@ import { TUTOR_MODEL } from "../anthropic.js";
 import { recordTokenUsage } from "../tokenUsage.js";
 import { fetchHistorialDeSesion, guardarTurno, avisarFalloDeLectura } from "./historialDeSesion.js";
 import { fetchContextoDelAlumno } from "./contextoDelAlumno.js";
-import { prepararVeredicto, aplicarVeredicto, pasosQueCuentan } from "./comprobadorEnElChat.js";
+import { prepararVeredicto, aplicarVeredicto, pasosQueCuentan, resumenDelVeredicto } from "./comprobadorEnElChat.js";
 
 export async function handleMessage({
   validatedData,
@@ -14,6 +14,7 @@ export async function handleMessage({
   apiKey        = "",
   defaultModel  = TUTOR_MODEL,
   onChunk       = null,
+  onComprobacion = null,   // (resumen) — la tarjeta ✓/✗, antes que la respuesta de la IA
 }) {
   const admin     = createSupabaseAdmin();
   const sessionId = validatedData.sessionId;
@@ -57,6 +58,9 @@ export async function handleMessage({
     prepararVeredicto({ admin, tenantId, sessionId, taskId: sessionRow.task_id, exerciseIndex: sessionRow.exercise_index, texto: validatedData.text }),
   ]);
   if (hilo.error) avisarFalloDeLectura(sessionId, hilo.error);
+  if (veredicto?.v?.estado === "comprobado" && typeof onComprobacion === "function") {
+    try { onComprobacion(resumenDelVeredicto(veredicto.v, veredicto.actividad)); } catch { /* la tarjeta es un extra */ }
+  }
 
   const dataWithMap = {
     ...validatedData,
@@ -83,6 +87,11 @@ export async function handleMessage({
   if (aplicado) {
     run.data.stepMap = aplicado.stepMap;
     run.data.comprobacion = aplicado.resumen;
+    // Peldaño 4: el aviso a la profe ya lo ha marcado el servidor; el alumno
+    // ve el mismo aviso que cuando escala la IA (evento «escalate»).
+    if (aplicado.resumen.escalado && !run.data.escalate?.should) {
+      run.data.escalate = { should: true, reason: "Tu profe lo verá contigo", yaGuardado: true };
+    }
   }
   const stepsCompleted = pasosQueCuentan({ veredicto, aplicado, pasosDeLaIA: run.data.stepsCompleted });
   run.data.stepsCompleted = stepsCompleted;
@@ -105,7 +114,7 @@ export async function handleMessage({
     run.data.stepMap = { steps: updatedSteps, currentStep: nextStep, allCompleted: allDone };
   }
 
-  if (run.data.escalate?.should) {
+  if (run.data.escalate?.should && !run.data.escalate.yaGuardado) {
     await admin.from("tutor_sessions").update({
       needs_help:        true,
       outcome:           "escalated",

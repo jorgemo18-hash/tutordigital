@@ -112,6 +112,7 @@ export async function askGPT({
   onToken,         // callback(token: string) — activa streaming
   onStepCompleted, // callback(stepMap)       — paso completado
   onEscalate,      // callback(reason)        — escalado al profesor
+  onComprobacion,  // callback(resumen)       — tarjeta ✓/✗ del comprobador
 } = {}) {
   const payload = buildPayload({ text, mode, studentCourse, imageDataUrl, pdfImageDataUrl, fileDataUrl, fileName, fileMime });
 
@@ -128,7 +129,7 @@ export async function askGPT({
 
   // Streaming — solo si hay sessionId Y callback onToken
   if (typeof onToken === "function" && payload.sessionId) {
-    return askGPTStreaming(payload, { onToken, onStepCompleted, onEscalate, timeoutMs });
+    return askGPTStreaming(payload, { onToken, onStepCompleted, onEscalate, onComprobacion, timeoutMs });
   }
 
   // Síncrono
@@ -169,7 +170,7 @@ export async function askGPT({
 
 // ── Streaming interno ──────────────────────────────────────────────────────
 
-async function askGPTStreaming(payload, { onToken, onStepCompleted, onEscalate, timeoutMs } = {}) {
+async function askGPTStreaming(payload, { onToken, onStepCompleted, onEscalate, onComprobacion, timeoutMs } = {}) {
   let r;
   try {
     r = await fetchWithTimeout(
@@ -226,6 +227,8 @@ async function askGPTStreaming(payload, { onToken, onStepCompleted, onEscalate, 
           applyStepMap(advanced);
           try { onStepCompleted?.(advanced); } catch {}
         }
+      } else if (event.type === "comprobacion") {
+        try { onComprobacion?.(event.comprobacion); } catch {}
       } else if (event.type === "escalate") {
         try { onEscalate?.(event.reason); } catch {}
       } else if (event.type === "error") {

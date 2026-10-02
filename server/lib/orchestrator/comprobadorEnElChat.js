@@ -70,17 +70,20 @@ export async function aplicarVeredicto({ admin, tenantId, sessionId, prep, pasos
     }).eq("id", sessionId);
   }
 
+  return { stepMap: mapa, avance, resumen: resumenDelVeredicto(v, actividad) };
+}
+
+// Lo que ve el alumno en la tarjeta ✓/✗ (y lo que viaja en el evento
+// «comprobacion» del chat). Se calcula ANTES de la respuesta de la IA para
+// que la lista salga primero y el comentario del tutor después.
+export function resumenDelVeredicto(v, actividad) {
   return {
-    stepMap: mapa,
-    avance,
-    resumen: {
-      apartado: v.apartado,
-      hitos: v.hitos.map((h, i) => ({ titulo: actividad.metodo.hitos[i]?.alumno, estado: h.estado })),
-      lineas: v.comprobacion.lineas.map((l) => ({ texto: l.texto, estado: !l.leida || l.equivalente === null ? "duda" : l.equivalente ? "bien" : "mal" })),
-      nivel: v.nivel,
-      todoHecho: v.todoHecho,
-      escalado,
-    },
+    apartado: "abcdefgh"[v.apartado],
+    hitos: v.hitos.map((h, i) => ({ titulo: actividad.metodo.hitos[i]?.alumno || h.id, estado: h.estado })),
+    lineas: v.comprobacion.lineas.map((l) => ({ texto: l.texto, estado: !l.leida || l.equivalente === null ? "duda" : l.equivalente ? "bien" : "mal" })),
+    nivel: v.nivel,
+    todoHecho: v.todoHecho,
+    escalado: v.nivel === PELDANOS,
   };
 }
 

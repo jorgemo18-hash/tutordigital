@@ -116,6 +116,33 @@
   color: rgba(255,255,255,.85);
 }
 
+/* Tarjeta ✓/✗ del comprobador (comprobacionCard.js): sobria, sin aspecto de
+   juego. Cada paso aparece un instante después del anterior. */
+.comprobacionCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.88);
+}
+.comprobacionCard--hecho { border-color: rgba(127,163,122,.55); }
+/* Alineada con el texto de las burbujas del tutor, que llevan avatar delante. */
+.row.a > .comprobacionCard { margin-left: 40px; }
+.comprobacionTitulo { font-weight: 700; font-size: 13px; color: rgba(255,255,255,.7); }
+.comprobacionLista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.comprobacionPaso { display: flex; gap: 10px; align-items: baseline; opacity: 0; animation: comprobacionAparece .25s ease forwards; }
+.comprobacionMarca { width: 1.1em; text-align: center; font-weight: 700; }
+.comprobacionPaso--hecho .comprobacionMarca { color: #7fa37a; }
+.comprobacionPaso--mal .comprobacionMarca { color: #cf7c6b; }
+.comprobacionPaso--mal { font-weight: 600; }
+.comprobacionPaso--pendiente, .comprobacionPaso--sin_decidir { color: rgba(255,255,255,.5); }
+.comprobacionNota { font-size: 12.5px; color: rgba(255,255,255,.6); }
+@keyframes comprobacionAparece { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .comprobacionPaso { animation: none; opacity: 1; } }
+
 .escalationNoticeTitle { font-weight: 700; }
 .escalationNoticeBody { font-size: 13px; color: rgba(255,255,255,.65); }
 

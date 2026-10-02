@@ -129,6 +129,7 @@ export function createSendController({
   hideSessionLoading,      // fn() — oculta pantalla de carga
   onStepCompleted,         // callback(stepMap) — paso completado detectado por Socrático
   onEscalate,              // callback(reason) — escalado al profesor
+  onComprobacion,          // callback(resumen) — tarjeta ✓/✗ del comprobador
   showExercisePicker,      // fn(exercises [{index,title}]) → Promise<{index,title}|null>
   // ── Streaming SSE ──────────────────────────────────────────────────────
   startStreamingBubble,    // fn() → { bub, row }
@@ -362,6 +363,7 @@ export function createSendController({
         onToken:         hasStreaming ? (token) => { try { appendStreamToken(streamBub, token); } catch {} } : undefined,
         onStepCompleted: hasStreaming ? (stepMap) => { try { onStepCompleted?.(stepMap); } catch {} } : undefined,
         onEscalate:      hasStreaming ? (reason)  => { try { onEscalate?.(reason); }      catch {} } : undefined,
+        onComprobacion:  hasStreaming ? (c) => { try { onComprobacion?.(c); } catch {} } : undefined,
       });
 
       const answerText = typeof answer === "string" ? answer : String(answer?.text || "");
