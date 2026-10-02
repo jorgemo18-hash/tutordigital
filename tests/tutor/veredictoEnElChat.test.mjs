@@ -174,4 +174,19 @@ export async function run({ test, assert }) {
     assert.equal(v.todoHecho, true);
     assert.deepEqual(v.hitos.map((h) => h.estado), ["hecho", "hecho"]);
   });
+
+  test("la cadena de iguales FALSA se le señala (aunque acabe bien); la bien hecha, no", async () => {
+    const { cadenaFalsa } = await import("../../server/lib/tutor/comprobador/lineasDelMensaje.js");
+    assert.equal(cadenaFalsa("3 + 4 = 7 · 2 = 14"), true, "la cuenta seguida de Primaria");
+    assert.equal(cadenaFalsa("3x = 19 − 4 = 16"), true);
+    assert.equal(cadenaFalsa("3x = 19 − 4 = 15"), false);
+    assert.equal(cadenaFalsa("x = 15 : 3 = 5"), false);
+    assert.equal(cadenaFalsa("2(x − 4) + 2x = 2x − 8 + 2x = 4x − 8"), false);
+    assert.equal(cadenaFalsa("2(x − 4) + 2x = 2x − 4 + 2x = 4x − 4"), true);
+    assert.equal(cadenaFalsa("3x = 15"), false, "sin cadena no hay nada que señalar");
+    const v = comprobar("a) 3x = 19 − 4 = 16\nx = 5");
+    assert.equal(v.cadenaFalsa, "3x = 19 − 4 = 16");
+    assert.match(instruccionesParaElTutor(v), /separe los pasos con flechas/);
+    assert.doesNotMatch(instruccionesParaElTutor(comprobar("a) 3x = 19 − 4 = 15\nx = 5")), /flechas/);
+  });
 }

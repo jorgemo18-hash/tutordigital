@@ -7,7 +7,7 @@
 //
 // Puro: lo que viene de la base de datos (fallos previos, el error del
 // catálogo, el ejemplo) llega como funciones, para poder probarlo sin base.
-import { lineasDeCuentas, apartadoDelMensaje, expandirCadena } from "./comprobador/lineasDelMensaje.js";
+import { lineasDeCuentas, apartadoDelMensaje, expandirCadena, cadenaFalsa } from "./comprobador/lineasDelMensaje.js";
 import { comprobarLineas } from "./comprobador/lineas.js";
 import { hitosDelEnvio } from "./comprobador/hitos.js";
 import { peldano } from "./escalera.js";
@@ -50,5 +50,6 @@ export function comprobarMensaje({ texto, actividad, fallosPrevios = () => 0, de
     nivel,
     todoHecho,
     ejemplo: nivel === 3 ? ejemplo(apartado.texto) : null,
+    cadenaFalsa: escritas.find(cadenaFalsa) || null,
   };
 }

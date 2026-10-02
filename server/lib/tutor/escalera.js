@@ -20,7 +20,18 @@ const lista = (hitos, metodo) => hitos.map((h) => {
 
 // Lo que se le dice al tutor (la IA) en la parte variable del prompt. El
 // veredicto es del CÓDIGO: la IA no lo discute, lo explica.
+// Aviso de Jorge (2/10): la cadena de iguales falsa («3 + 4 = 7 · 2 = 14»),
+// sobre todo en Primaria. Se le señala aunque el resultado esté bien.
+function notaDeCadena(v) {
+  if (!v.cadenaFalsa) return "";
+  return `\n\nAdemás: en «${v.cadenaFalsa}» ha unido con iguales cosas que no valen lo mismo. Recuérdaselo en una frase (el igual quiere decir «vale lo mismo») y dile que separe los pasos con flechas o en líneas distintas.`;
+}
+
 export function instruccionesParaElTutor(v) {
+  return textoDelVeredicto(v) + (v.estado === "comprobado" ? notaDeCadena(v) : "");
+}
+
+function textoDelVeredicto(v) {
   const cab = "VEREDICTO DEL COMPROBADOR (lo ha calculado el código y es fiable: no lo contradigas, no des por buena una línea que el código marca mal):";
   if (v.estado === "apartado_desconocido") {
     return `${cab}\nHa escrito cuentas pero no sé de qué apartado son. Pregúntale qué apartado está haciendo. No corrijas nada todavía.`;

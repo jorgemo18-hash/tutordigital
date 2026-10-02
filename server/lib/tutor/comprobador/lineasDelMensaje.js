@@ -11,6 +11,7 @@
 // ejercicio.
 import { normaliza } from "./notacionDelAlumno.js";
 import { comprobarLineas } from "./lineas.js";
+import { lee, evalua, variables, casiIgual } from "../../verificador/expresionDeTexto.js";
 
 const TROZO = /[0-9x(−-][0-9x+\-−–*/·×:÷=()²³ ,.]*[0-9x)²³]/g;
 // Separadores de pasos que se escriben en la MISMA línea: flechas, «y
@@ -57,6 +58,27 @@ export function expandirCadena(linea, tipo) {
   if (tipo === "expresion") return miembros.length ? miembros : [linea];
   if (miembros.length <= 2) return [linea];
   return miembros.slice(1).map((m) => `${miembros[0]} = ${m}`);
+}
+
+// ¿UNA CADENA DE IGUALES FALSA? «3 + 4 = 7 · 2 = 14» (la cuenta seguida,
+// típica de Primaria) o «3x = 19 − 4 = 16»: el igual une cosas que no valen
+// lo mismo. Los miembros sin x tienen que valer todos lo mismo, y los que
+// llevan x tienen que ser la misma expresión. Una cadena bien hecha
+// («x = 15 : 3 = 5») no es un error y no se marca.
+export function cadenaFalsa(linea) {
+  let miembros;
+  try {
+    miembros = normaliza(linea).split("=").filter(Boolean).map((m) => lee(m));
+  } catch {
+    return false;
+  }
+  if (miembros.length < 3) return false;
+  const conX = miembros.filter((m) => variables(m).has("x"));
+  const sinX = miembros.filter((m) => !variables(m).has("x"));
+  const valores = sinX.map((m) => evalua(m));
+  if (valores.some((v) => !casiIgual(v, valores[0], 1e-9))) return true;
+  const PUNTOS = [0, 1, 2, -3];
+  return conX.some((m) => PUNTOS.some((x) => !casiIgual(evalua(m, { x }), evalua(conX[0], { x }), 1e-9)));
 }
 
 const LETRAS = "abcdefgh";
