@@ -140,4 +140,38 @@ export async function run({ test, assert }) {
     const chat = (await import("node:fs")).readFileSync(new URL("../../server/lib/orchestrator/chatHandler.js", import.meta.url), "utf8");
     assert.match(chat, /pasosQueCuentan\(\{ veredicto, aplicado, pasosDeLaIA: run\.data\.stepsCompleted \}\)/);
   });
+
+  test("REGRESIÓN (2/10): los pasos escritos SEGUIDOS en una línea se separan igual que en líneas", () => {
+    const comoLineas = comprobar("a) 3x = 19 − 4\n3x = 15\nx = 5");
+    for (const seguido of [
+      "a) 3x + 4 = 19 → 3x = 15 → x = 5",
+      "a) 3x=15→x=5",
+      "a) 3x = 19 − 4 = 15 y luego x = 15 : 3 = 5",
+      "a) 3x + 4 = 19 3x = 15 x = 5",
+      "a) 3x=15, x=5",
+    ]) {
+      const v = comprobar(seguido);
+      assert.equal(v.estado, "comprobado", seguido);
+      assert.equal(v.todoHecho, true, seguido);
+      assert.deepEqual(v.hitos.map((h) => h.estado), comoLineas.hitos.map((h) => h.estado), seguido);
+    }
+  });
+
+  test("la cadena de iguales con un error dentro: se marca el trozo malo, no la cadena entera", () => {
+    const v = comprobar("a) 3x = 19 + 4 = 23");
+    assert.deepEqual(v.comprobacion.lineas.map((l) => l.texto), ["3x = 19 + 4", "3x = 23"]);
+    assert.equal(v.comprobacion.primeraMal, 0);
+    const mitad = comprobar("a) 3x = 19 − 4 = 16");
+    assert.deepEqual(mitad.comprobacion.lineas.map((l) => l.equivalente), [true, false], "19 − 4 bien, el 16 es una cuenta mal");
+  });
+
+  test("en reducir, la cadena de iguales son pasos de la misma expresión", () => {
+    const reducir = { clave: "reduce_con_parentesis", nombre: "Quita el paréntesis y reduce", respuestas: [
+      { texto: "2(x − 4) + 2x = ___", solucion: "4x − 8", trampas: [] },
+    ] };
+    const actR = actividadesDeLaHoja({ temaId: TEMA, huecos: [reducir] })[0];
+    const v = comprobarMensaje({ texto: "2(x − 4) + 2x = 2x − 8 + 2x = 4x − 8", actividad: actR });
+    assert.equal(v.todoHecho, true);
+    assert.deepEqual(v.hitos.map((h) => h.estado), ["hecho", "hecho"]);
+  });
 }
