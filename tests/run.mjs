@@ -300,6 +300,7 @@ async function loadTests() {
     "./tutor/metodos.test.mjs",
     "./tutor/fichaDeLaTarea.test.mjs",
     "./tutor/comprobador.test.mjs",
+    "./tutor/veredictoEnElChat.test.mjs",
     "./student/unEnvioALaVez.test.mjs",
     "./teacher/asignaturaDeLaTarea.test.mjs",
     "./academiaFinanzas/ingresosCobradoVsFacturado.test.mjs",

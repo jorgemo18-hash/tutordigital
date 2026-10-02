@@ -203,6 +203,10 @@ export async function askAnthropicChat(
     hasVisualDoc
   );
 
+  // El veredicto del comprobador (orchestrator/comprobadorEnElChat.js) va en
+  // la parte variable: cambia en cada mensaje y no rompe la caché.
+  if (validatedData.veredicto) partes.variable = `${partes.variable}\n${validatedData.veredicto}\n`;
+
   // ── Request params: caché y sin temperature (chat/peticionDelTutor.js) ──
 
   const reqParams = peticionDelTutor({

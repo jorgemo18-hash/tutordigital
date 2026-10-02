@@ -6,6 +6,7 @@ import { TUTOR_MODEL } from "../anthropic.js";
 import { recordTokenUsage } from "../tokenUsage.js";
 import { fetchHistorialDeSesion, guardarTurno, avisarFalloDeLectura } from "./historialDeSesion.js";
 import { fetchContextoDelAlumno } from "./contextoDelAlumno.js";
+import { prepararVeredicto, aplicarVeredicto, pasosQueCuentan } from "./comprobadorEnElChat.js";
 
 export async function handleMessage({
   validatedData,
@@ -24,7 +25,7 @@ export async function handleMessage({
   // seguridad, corregido 2026-07-07).
   const { data: sessionRow, error: sessionErr } = await admin
     .from("tutor_sessions")
-    .select("id")
+    .select("id, task_id, exercise_index")
     .eq("id", sessionId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -50,9 +51,10 @@ export async function handleMessage({
   // `validatedData.messages` se descarta: un array que manda el cliente decide
   // lo que el modelo cree haber dicho él mismo, y los turnos del asistente no
   // pasan por el saneado de señales de control (ver historialDeSesion.js).
-  const [hilo, contextoDelAlumno] = await Promise.all([
+  const [hilo, contextoDelAlumno, veredicto] = await Promise.all([
     fetchHistorialDeSesion(admin, sessionId),
     fetchContextoDelAlumno(admin, { sessionId, tenantId }),
+    prepararVeredicto({ admin, tenantId, sessionId, taskId: sessionRow.task_id, exerciseIndex: sessionRow.exercise_index, texto: validatedData.text }),
   ]);
   if (hilo.error) avisarFalloDeLectura(sessionId, hilo.error);
 
@@ -63,6 +65,7 @@ export async function handleMessage({
     documentText,
     sessionExercises,
     contextoDelAlumno,
+    veredicto: veredicto?.instrucciones || "",
   };
   const run         = await askAnthropicChat(dataWithMap, { apiKey, defaultModel, onChunk });
 
@@ -75,8 +78,15 @@ export async function handleMessage({
     model: run.data.model, usage: run.data.usage,
   }).catch(() => {});
 
-  const stepsCompleted = run.data.stepsCompleted ?? 0;
-  if (stepsCompleted > 0 && stepMap && stepMap.steps.length > 0) {
+  // En un ejercicio comprobable los pasos los marca el código, nunca la IA.
+  const aplicado = await aplicarVeredicto({ admin, tenantId, sessionId, prep: veredicto, pasosAntes: stepMap?.steps || [] });
+  if (aplicado) {
+    run.data.stepMap = aplicado.stepMap;
+    run.data.comprobacion = aplicado.resumen;
+  }
+  const stepsCompleted = pasosQueCuentan({ veredicto, aplicado, pasosDeLaIA: run.data.stepsCompleted });
+  run.data.stepsCompleted = stepsCompleted;
+  if (!veredicto?.comprobable && stepsCompleted > 0 && stepMap && stepMap.steps.length > 0) {
     const prevStep     = stepMap.currentStep;
     const lastIdx      = stepMap.steps.length - 1;
     const completedTo  = Math.min(prevStep + stepsCompleted - 1, lastIdx);

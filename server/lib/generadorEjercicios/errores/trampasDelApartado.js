@@ -117,8 +117,13 @@ export function trampasDelApartado(clave, apartado) {
 
 // Lo que se guarda con la hoja, por apartado: la solución y sus trampas. El
 // ejemplo resuelto va marcado y sin trampas (el alumno no lo contesta).
+//
+// Y el apartado en TEXTO plano («2(x + 4) = 20 → x = ___», 2/10/2026): lo
+// impreso va en LaTeX, que el comprobador del tutor no lee. Con el texto, el
+// tutor sabe qué ecuación tiene delante el alumno sin gastar IA.
 export function respuestasDe(ejercicio) {
   return (ejercicio.apartados || []).map((a) => ({
+    ...(typeof a.texto === "string" ? { texto: a.texto } : {}),
     solucion: aTexto(a.solucion, SEPARADOR[ejercicio.clave]),
     ...(a.resuelto ? { ejemplo: true } : {}),
     trampas: trampasDelApartado(ejercicio.clave, a),

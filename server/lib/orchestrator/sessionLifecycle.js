@@ -13,6 +13,7 @@
 // no como una restauración silenciosa.
 
 import { analizarConFicha } from "./analisisConFicha.js";
+import { hojaDeLaTarea, hojaConMetodo, analisisDeLaHoja } from "../tutor/hoja/fichaDeHoja.js";
 import { createSupabaseAdmin } from "../supabase.js";
 import { GUIDE_MODEL } from "../agents/guide.js";
 import { recordTokenUsage } from "../tokenUsage.js";
@@ -21,12 +22,15 @@ function statementAttachmentsOf(attachments = []) {
   return attachments.filter((a) => !a.role || a.role === "statement");
 }
 
-async function _runAndPersistAnalysis({ admin, sessionId, tenantId, taskContext, mode, apiKey, hasExistingMap }) {
+async function _runAndPersistAnalysis({ admin, sessionId, tenantId, taskId, taskContext, mode, apiKey, hasExistingMap, hoja = null }) {
   // La hoja se prepara una vez y la comparten todos los alumnos que la abren
   // (fichaDeLaTarea.js): solo el primero paga el análisis.
-  const { exercises, documentText, needsChoice, steps, guideOk, usageEvents } = await analizarConFicha({
-    admin, tenantId, taskContext, mode, apiKey,
-  });
+  // Si la tarea sale de nuestra hoja (y su tema tiene método), ni eso: los
+  // ejercicios y los pasos están en la hoja guardada (tutor/hoja/).
+  const deLaHoja = hoja || (taskId ? await hojaDeLaTarea(admin, { tenantId, taskId }) : null);
+  const { exercises, documentText, needsChoice, steps, guideOk, usageEvents } = hojaConMetodo(deLaHoja)
+    ? analisisDeLaHoja(deLaHoja)
+    : await analizarConFicha({ admin, tenantId, taskContext, mode, apiKey });
 
   // Fire-and-forget, nunca bloquea la creación/reanudación de la sesión —
   // ver tokenUsage.js.
@@ -100,7 +104,7 @@ async function _findActiveSession({ admin, studentId, taskId, tenantId, taskCont
   if (steps.length === 0 && exercises.length <= 1) {
     const statementAttachments = statementAttachmentsOf(taskContext?.attachments);
     if (statementAttachments.length > 0) {
-      return _runAndPersistAnalysis({ admin, sessionId, tenantId, taskContext, mode, apiKey, hasExistingMap: !!mapRow });
+      return _runAndPersistAnalysis({ admin, sessionId, tenantId, taskId, taskContext, mode, apiKey, hasExistingMap: !!mapRow });
     }
   }
 
@@ -150,18 +154,19 @@ export async function startSession({
   }
 
   const statementAttachments = statementAttachmentsOf(taskContext.attachments);
+  const hoja = await hojaDeLaTarea(admin, { tenantId, taskId });
 
   // Guard: sin adjuntos aún no hay documento que analizar → pasos vacíos, placeholder.
   // guide_model queda null a propósito: marca que el análisis nunca llegó a
   // correr (vs. haber corrido y no encontrar ejercicios), aunque la
   // detección de "sesión muerta" de arriba ya no depende de este campo —
   // solo mira si hay adjunto de enunciado disponible.
-  if (statementAttachments.length === 0) {
+  if (statementAttachments.length === 0 && !hojaConMetodo(hoja)) {
     const emptyMapRow = { session_id: session.id, steps: [], current_step: 0, guide_model: null, document_text: "", exercises: [] };
     await admin.from("tutor_session_maps").insert(emptyMapRow);
     return { status: "ready", sessionId: session.id, steps: [], currentStep: 0, exercises: [], guideOk: false };
   }
 
   // 2-3. Fase 1 (detectar ejercicios) + Fase 2 si aplica
-  return _runAndPersistAnalysis({ admin, sessionId: session.id, tenantId, taskContext, mode, apiKey, hasExistingMap: false });
+  return _runAndPersistAnalysis({ admin, sessionId: session.id, tenantId, taskId, taskContext, mode, apiKey, hasExistingMap: false, hoja });
 }

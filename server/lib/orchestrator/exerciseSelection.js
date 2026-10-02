@@ -12,6 +12,7 @@
 import { GUIDE_MODEL } from "../agents/guide.js";
 import { pasosDelEjercicio } from "./analisisConFicha.js";
 import { huellaDeLaTarea, leerFicha } from "./fichaDeLaTarea.js";
+import { hojaDeLaTarea, hojaConMetodo, pasosDelMetodo, textoDeLaHoja } from "../tutor/hoja/fichaDeHoja.js";
 import { createSupabaseAdmin } from "../supabase.js";
 import { recordTokenUsage } from "../tokenUsage.js";
 
@@ -43,9 +44,17 @@ export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle =
     teacherNotes: task?.teacher_notes || "",
     attachments:  attachmentRows      || [],
   };
-  const huella = await huellaDeLaTarea(admin, taskContext);
-  const ficha = await leerFicha(admin, { tenantId, huella });
-  const guideResult = await pasosDelEjercicio({ admin, tenantId, huella, ficha, taskContext, exerciseIndex, exerciseTitle, apiKey });
+  // De nuestra hoja (con método): los pasos son los hitos del método, sin IA.
+  const hoja = await hojaDeLaTarea(admin, { tenantId, taskId: sessionRow.task_id });
+  const actividad = hojaConMetodo(hoja) ? hoja.actividades.find((a) => a.index === exerciseIndex) : null;
+  let guideResult;
+  if (actividad) {
+    guideResult = { ok: true, steps: pasosDelMetodo(actividad.metodo), extractedText: textoDeLaHoja(hoja), usage: null };
+  } else {
+    const huella = await huellaDeLaTarea(admin, taskContext);
+    const ficha = await leerFicha(admin, { tenantId, huella });
+    guideResult = await pasosDelEjercicio({ admin, tenantId, huella, ficha, taskContext, exerciseIndex, exerciseTitle, apiKey });
+  }
 
   // Fire-and-forget, nunca bloquea la elección de ejercicio — ver tokenUsage.js.
   if (guideResult.usage) {
