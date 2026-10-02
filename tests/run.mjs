@@ -299,6 +299,7 @@ async function loadTests() {
     "./chat/peticionDelTutor.test.mjs",
     "./tutor/metodos.test.mjs",
     "./tutor/fichaDeLaTarea.test.mjs",
+    "./tutor/comprobador.test.mjs",
     "./student/unEnvioALaVez.test.mjs",
     "./teacher/asignaturaDeLaTarea.test.mjs",
     "./academiaFinanzas/ingresosCobradoVsFacturado.test.mjs",
